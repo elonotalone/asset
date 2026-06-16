@@ -3,10 +3,19 @@
 // Asset library client — thin wrapper over the shared gateway's /v1/assets/*.
 // Browsing is PUBLIC (no token needed), so unlike other sites' gateway clients
 // these are unauthenticated GETs. The gateway holds every source key.
+import { accessToken } from "@oceanleo/ui/lib/auth";
+
 const GATEWAY =
   process.env.NEXT_PUBLIC_GATEWAY_URL || "https://api.oceanleo.com";
 
-export type AssetType = "image" | "vector" | "video" | "audio" | "music" | "3d";
+export type AssetType =
+  | "image"
+  | "vector"
+  | "video"
+  | "audio"
+  | "music"
+  | "3d"
+  | "ppt";
 export type LicenseFilter = "commercial" | "modify" | "any";
 
 export interface AssetLicense {
@@ -33,6 +42,10 @@ export interface Asset {
   author: string;
   source_url: string;
   license: AssetLicense;
+  /** 后端质量排序分（来源等级 + 人气信号）；前端一般不直接展示。 */
+  score?: number;
+  /** 仅在「我的素材库」里出现：收藏时间。 */
+  saved_at?: string;
 }
 
 export interface SearchResult {
@@ -120,6 +133,7 @@ export const TYPE_LABELS: Record<AssetType, string> = {
   audio: "音效",
   music: "音乐",
   "3d": "3D 模型",
+  ppt: "PPT 模板",
 };
 
 export const TYPE_ORDER: AssetType[] = [
@@ -129,4 +143,62 @@ export const TYPE_ORDER: AssetType[] = [
   "audio",
   "3d",
   "vector",
+  "ppt",
 ];
+
+// --- Personal asset library (collection) ----------------------------------
+// All authed against the shared SSO bearer token. Unauthenticated callers get a
+// clean "未登录" so the UI can prompt login instead of crashing.
+
+async function authedJson<T>(path: string, init?: RequestInit): Promise<T> {
+  const token = await accessToken();
+  if (!token) throw new Error("未登录");
+  let resp: Response;
+  try {
+    resp = await fetch(`${GATEWAY}${path}`, {
+      ...init,
+      headers: {
+        ...(init?.headers || {}),
+        Authorization: `Bearer ${token}`,
+        ...(init?.body ? { "Content-Type": "application/json" } : {}),
+      },
+      cache: "no-store",
+    });
+  } catch {
+    throw new Error("网络错误：无法连接到素材网关。");
+  }
+  let data: unknown = null;
+  try {
+    data = await resp.json();
+  } catch {
+    /* non-JSON */
+  }
+  if (!resp.ok) {
+    const detail =
+      (data as { detail?: string } | null)?.detail || `请求失败（HTTP ${resp.status}）`;
+    throw new Error(detail);
+  }
+  return data as T;
+}
+
+export function listCollection(limit = 200): Promise<{ items: Asset[] }> {
+  return authedJson<{ items: Asset[] }>(`/v1/assets/collection?limit=${limit}`);
+}
+
+export function listCollectionIds(): Promise<{ ids: string[] }> {
+  return authedJson<{ ids: string[] }>("/v1/assets/collection/ids");
+}
+
+export function saveToCollection(asset: Asset): Promise<{ ok: boolean; id: string }> {
+  return authedJson<{ ok: boolean; id: string }>("/v1/assets/collection", {
+    method: "POST",
+    body: JSON.stringify(asset),
+  });
+}
+
+export function removeFromCollection(id: string): Promise<{ ok: boolean; id: string }> {
+  return authedJson<{ ok: boolean; id: string }>(
+    `/v1/assets/collection?id=${encodeURIComponent(id)}`,
+    { method: "DELETE" },
+  );
+}

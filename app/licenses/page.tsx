@@ -11,6 +11,7 @@ const SOURCES = [
   { name: "Poly Haven", types: "3D / HDRI / 贴图", license: "CC0", note: "完全公共领域，最自由" },
   { name: "Freesound", types: "音效", license: "CC0 / CC-BY 系列", note: "逐条标注授权，需看具体许可" },
   { name: "Jamendo", types: "音乐", license: "CC 系列（含 NC/ND）", note: "默认已过滤掉禁止商用的曲目" },
+  { name: "OfficePLUS / 开源模板库", types: "PPT 模板", license: "CC-BY 系列", note: "聚合开源 PPT 模板，使用时按 CC-BY 署名" },
 ];
 
 const CODES = [

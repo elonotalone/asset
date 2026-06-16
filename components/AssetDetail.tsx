@@ -4,6 +4,40 @@ import { useEffect, useState } from "react";
 import { Asset, assetDetail, downloadHref } from "@/lib/assets";
 import { LicenseFlags } from "@/components/LicenseBadge";
 
+// 放大图：先用已加载好的缩略图秒显占位，原始大图后台加载完再淡入替换。
+// 解决「点开后白屏 / 转圈很久」——尤其是 preview_url 对部分源是几 MB 的大图。
+function ZoomImage({ thumb, full, alt }: { thumb: string; full: string; alt: string }) {
+  const [loaded, setLoaded] = useState(false);
+  const src = full || thumb;
+  return (
+    <div className="relative flex max-h-[50vh] w-full items-center justify-center">
+      {thumb && !loaded && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={thumb}
+          alt=""
+          aria-hidden
+          className="max-h-[50vh] w-full scale-105 object-contain blur-md"
+        />
+      )}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        alt={alt}
+        onLoad={() => setLoaded(true)}
+        className={`max-h-[50vh] w-full object-contain transition-opacity duration-300 ${
+          loaded ? "opacity-100" : "absolute inset-0 opacity-0"
+        }`}
+      />
+      {thumb && !loaded && (
+        <span className="absolute bottom-2 right-2 rounded bg-black/55 px-2 py-0.5 text-[11px] text-white">
+          高清加载中…
+        </span>
+      )}
+    </div>
+  );
+}
+
 // Where each asset type can be "used" downstream. URL hand-off only (every site
 // shares SSO + the gateway), so no per-pair integration is needed.
 const USE_TARGETS: Record<string, { label: string; site: string }[]> = {
@@ -39,7 +73,17 @@ function CopyButton({ text }: { text: string }) {
   );
 }
 
-export function AssetDetail({ asset, onClose }: { asset: Asset; onClose: () => void }) {
+export function AssetDetail({
+  asset,
+  onClose,
+  saved,
+  onToggleSave,
+}: {
+  asset: Asset;
+  onClose: () => void;
+  saved?: boolean;
+  onToggleSave?: (a: Asset) => void;
+}) {
   const [files, setFiles] = useState<{ format: string; url: string }[] | null>(null);
 
   useEffect(() => {
@@ -96,8 +140,7 @@ export function AssetDetail({ asset, onClose }: { asset: Asset; onClose: () => v
             ) : isVideo ? (
               <video controls poster={asset.thumb_url} src={asset.preview_url} className="max-h-[50vh] w-full" />
             ) : (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={asset.preview_url || asset.thumb_url} alt={asset.title} className="max-h-[50vh] w-full object-contain" />
+              <ZoomImage thumb={asset.thumb_url} full={asset.preview_url || asset.thumb_url} alt={asset.title} />
             )}
           </div>
 
@@ -155,6 +198,22 @@ export function AssetDetail({ asset, onClose }: { asset: Asset; onClose: () => v
           >
             下载
           </a>
+          {onToggleSave && (
+            <button
+              type="button"
+              onClick={() => onToggleSave(asset)}
+              className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition ${
+                saved
+                  ? "bg-sky-50 text-sky-700 ring-1 ring-sky-300 hover:bg-sky-100"
+                  : "border border-zinc-300 text-zinc-700 hover:bg-zinc-50"
+              }`}
+            >
+              <svg className="h-4 w-4" viewBox="0 0 24 24" fill={saved ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.8">
+                <path d="M6 4h12v16l-6-4-6 4z" strokeLinejoin="round" />
+              </svg>
+              {saved ? "已收藏" : "收藏到我的素材库"}
+            </button>
+          )}
           {targets.map((t) => (
             <button
               key={t.site}

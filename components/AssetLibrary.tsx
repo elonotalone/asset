@@ -1,16 +1,22 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   Asset,
   AssetType,
   LicenseFilter,
+  listCollectionIds,
+  removeFromCollection,
+  saveToCollection,
   searchAssets,
   TYPE_LABELS,
   TYPE_ORDER,
 } from "@/lib/assets";
 import { AssetCard } from "@/components/AssetCard";
 import { AssetDetail } from "@/components/AssetDetail";
+
+// TYPE_ORDER 用于校验 URL 里的 type 合法性（左侧栏分区驱动）。
 
 const LICENSE_OPTIONS: { value: LicenseFilter; label: string; hint: string }[] = [
   { value: "commercial", label: "可商用", hint: "默认：只看能用于商业作品的素材" },
@@ -26,10 +32,17 @@ const SUGGESTIONS: Record<AssetType, string[]> = {
   audio: ["rain", "click", "whoosh", "notification", "applause"],
   "3d": ["chair", "car", "tree", "robot", "lamp"],
   vector: ["icon", "logo", "arrow", "pattern", "flat"],
+  ppt: ["商务", "教育", "极简", "图表", "总结汇报"],
 };
 
+const VALID_TYPES = new Set<AssetType>(TYPE_ORDER);
+
 export function AssetLibrary() {
-  const [type, setType] = useState<AssetType>("image");
+  // 当前类别由左侧栏（URL ?type=）驱动；缺省/非法值回落到「图片」。
+  const search = useSearchParams();
+  const urlType = search.get("type") as AssetType | null;
+  const type: AssetType = urlType && VALID_TYPES.has(urlType) ? urlType : "image";
+
   const [license, setLicense] = useState<LicenseFilter>("commercial");
   const [query, setQuery] = useState("");
   const [input, setInput] = useState("");
@@ -39,7 +52,48 @@ export function AssetLibrary() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [active, setActive] = useState<Asset | null>(null);
+  const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
   const reqId = useRef(0);
+
+  // 登录用户的已收藏 id 集合（用于卡片高亮收藏态）。未登录则静默为空。
+  useEffect(() => {
+    let alive = true;
+    listCollectionIds()
+      .then((r) => {
+        if (alive) setSavedIds(new Set(r.ids));
+      })
+      .catch(() => {
+        /* 未登录 / 网络错误：保持空集合，不打扰浏览 */
+      });
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  const toggleSave = useCallback(
+    (a: Asset) => {
+      const isSaved = savedIds.has(a.id);
+      // 乐观更新
+      setSavedIds((prev) => {
+        const next = new Set(prev);
+        if (isSaved) next.delete(a.id);
+        else next.add(a.id);
+        return next;
+      });
+      const p = isSaved ? removeFromCollection(a.id) : saveToCollection(a);
+      p.catch((e) => {
+        // 回滚 + 提示（多数失败=未登录）
+        setSavedIds((prev) => {
+          const next = new Set(prev);
+          if (isSaved) next.add(a.id);
+          else next.delete(a.id);
+          return next;
+        });
+        setError(e instanceof Error ? e.message : "收藏失败，请先登录");
+      });
+    },
+    [savedIds],
+  );
 
   const load = useCallback(
     async (opts: { type: AssetType; license: LicenseFilter; q: string; page: number; append: boolean }) => {
@@ -82,9 +136,9 @@ export function AssetLibrary() {
   return (
     <div className="mx-auto max-w-6xl px-5 py-6 sm:py-8">
       <header className="mb-5">
-        <h1 className="text-2xl font-semibold text-zinc-900">素材库</h1>
+        <h1 className="text-2xl font-semibold text-zinc-900">{TYPE_LABELS[type]}</h1>
         <p className="mt-1 text-sm text-zinc-500">
-          免费 · 开源授权的图片 / 视频 / 音乐 / 音效 / 3D 素材，浏览后可直接拿去创作。默认只展示可商用素材。
+          免费 · 开源授权素材，按质量排序，浏览后可直接收藏到「我的素材库」或拿去创作。默认只展示可商用素材。
         </p>
       </header>
 
@@ -100,23 +154,6 @@ export function AssetLibrary() {
           搜索
         </button>
       </form>
-
-      {/* Type tabs */}
-      <div className="mb-3 flex flex-wrap gap-2">
-        {TYPE_ORDER.map((t) => (
-          <button
-            key={t}
-            onClick={() => setType(t)}
-            className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition ${
-              t === type
-                ? "bg-sky-500 text-white"
-                : "border border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50"
-            }`}
-          >
-            {TYPE_LABELS[t]}
-          </button>
-        ))}
-      </div>
 
       {/* License filter + suggestions */}
       <div className="mb-5 flex flex-wrap items-center gap-3">
@@ -162,7 +199,13 @@ export function AssetLibrary() {
       ) : (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {items.map((a) => (
-            <AssetCard key={a.id} asset={a} onOpen={setActive} />
+            <AssetCard
+              key={a.id}
+              asset={a}
+              onOpen={setActive}
+              saved={savedIds.has(a.id)}
+              onToggleSave={toggleSave}
+            />
           ))}
         </div>
       )}
@@ -182,7 +225,14 @@ export function AssetLibrary() {
         </div>
       )}
 
-      {active && <AssetDetail asset={active} onClose={() => setActive(null)} />}
+      {active && (
+        <AssetDetail
+          asset={active}
+          onClose={() => setActive(null)}
+          saved={savedIds.has(active.id)}
+          onToggleSave={toggleSave}
+        />
+      )}
     </div>
   );
 }
