@@ -1,0 +1,7 @@
+@import "tailwindcss";
+
+/* 全家桶统一样式（共享组件全部工具类 + 字体/底色/v-* 动画/滚动条）= 预编译产物
+   @oceanleo/ui/theme/ui.css。它**在 app/layout.tsx 里以 JS 方式 import**，不在这里
+   用 CSS @import —— 因为 pnpm git 依赖目录名含 `#`，Tailwind 的 CSS @import 解析器
+   会读到带 null byte 的真实路径而崩溃；Next/Turbopack 的 JS CSS import 走干净的
+   node_modules 符号链接，不受影响。单一事实源仍在 @oceanleo/ui。 */
