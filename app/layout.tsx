@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 // 全家桶统一样式预编译产物（JS 方式 import，避开 pnpm git 依赖路径含 # 的问题）。
 import "@oceanleo/ui/theme/ui.css";
+import { LeoAssistant } from "@oceanleo/ui/shell";
 
 export const metadata: Metadata = {
   title: "免费开源素材库 · 图片/视频/音乐/音效/3D | asset.oceanleo.com",
@@ -14,7 +15,10 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="zh-CN">
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        {children}
+        <LeoAssistant siteId="asset" docType="doc" />
+      </body>
     </html>
   );
 }
