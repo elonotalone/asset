@@ -34,6 +34,12 @@ import {
 
 const MENU_ITEMS = [
   {
+    label: "我的数据库",
+    href: "/database",
+    desc: "你在全 OceanLeo 系列产出的作品、上传的素材与知识库（跨站共享）",
+    external: false,
+  },
+  {
     label: "API",
     href: "/api",
     desc: "选择模型、查看价格与 token 余额",
@@ -47,9 +53,9 @@ const MENU_ITEMS = [
   },
   {
     label: "插件与连接器",
-    href: "https://oceanleo.com/plugins",
+    href: "/plugins",
     desc: "技能、连接器与 MCP 服务器",
-    external: true,
+    external: false,
   },
 ];
 
