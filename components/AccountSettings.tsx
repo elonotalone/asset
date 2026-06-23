@@ -6,11 +6,9 @@
 // 与主站 https://oceanleo.com/settings 对齐：个人资料 · 知识库 · 用量记录。
 // 这份文件在所有 *.oceanleo.com 子站里逐字相同（纯拼接）。
 //
-// 2026-06-14：移除「BYOK 自带密钥」板块——OceanLeo 不再让用户上传自己的
-// API key（海量用户密钥托管是不必要的安全风险）。所有请求统一走 OceanLeo
-// 的阿里云百炼平台 key，用户充值 token 余额（人民币）按量消费。模型选择 +
-// 标价改到「账户 → API」页（AccountApi.tsx）。用量以 token 量 + 对应费用(¥)
-// 展示，不再有「积分」概念。
+// 计费：费用即 token 市场价，OceanLeo 不加价。用户充值 token 余额（人民币）
+// 按量消费，用量以 token 量 + 对应费用(¥) 展示。模型选择 + 标价在「账户 →
+// API」页（AccountApi.tsx）。
 //
 // 零站点特有依赖：仅 react + lib/oceanleo-auth（全站都有）。
 // ============================================================================
@@ -127,7 +125,7 @@ export function AccountSettings() {
         <section className="v-fade-up" style={{ animationDelay: "120ms" }}>
           <h2 className="mb-1 text-[14px] font-semibold text-neutral-900">用量记录</h2>
           <p className="mb-3 text-[12px] text-neutral-500">
-            每一次调用的真实计费：输入 token / 输出 token / 模型 / 本次成本价（人民币，已含服务运维费，按实际用量精确到 ¥0.00001）。
+            每一次调用的真实计费：输入 token / 输出 token / 模型 / 本次成本价（人民币，费用即 token 市场价，OceanLeo 不加价，按实际用量精确到 ¥0.00001）。
           </p>
           {history.length === 0 ? (
             <div className="rounded-xl border border-dashed border-neutral-300 p-6 text-center">
@@ -153,7 +151,7 @@ export function AccountSettings() {
                     const totalTokens = metaNum(ev, "tokens");
                     const model = eventModel(ev);
                     const yuan = Number(ev?.amount_yuan ?? 0);
-                    // 这一次调用的真实成本价（人民币，已含服务费）。usage 事件按
+                    // 这一次调用的真实成本价（人民币，费用即 token 市场价，OceanLeo 不加价）。usage 事件按
                     // millifen 精确计费，meta.price_cny 是本次调用的真实花费；
                     // amount_yuan 只是钱包按整分滚动扣减的那一部分，可能为 0。
                     const isUsage = ev?.kind === "usage";
