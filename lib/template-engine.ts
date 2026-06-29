@@ -446,6 +446,28 @@ export function renderTemplateHTML(meta: TemplateMeta, content: SiteContent): st
 </head>
 <body class="bg-white" style="color:${p.ink}">
 ${body}
+<script>
+// 预览 iframe 用 srcdoc 渲染，其 baseURI 会继承父页（/templates/<slug>），导致
+// 站内 <a href="#x"> / href="#" 解析成「父页地址 + #x」。在 sandbox 同源 iframe 里
+// 点这些链接会让 iframe 把整张 /templates/<slug> 详情页加载进自己 —— 表现为
+// 「预览工具条里又套了一整张带工具条的预览页」的嵌套。这里拦截所有 <a> 点击：
+//   · 纯锚点(#section)：阻止默认导航，改为在 iframe 内平滑滚动到目标；
+//   · 其它链接：这是纯静态预览，统一阻止跳转，避免 iframe 被替换或弹外站。
+(function(){
+  document.addEventListener('click', function(e){
+    var a = e.target && e.target.closest ? e.target.closest('a') : null;
+    if (!a) return;
+    e.preventDefault();
+    var raw = a.getAttribute('href') || '';
+    var hash = raw.indexOf('#') >= 0 ? raw.slice(raw.indexOf('#') + 1) : '';
+    if (hash) {
+      var el = document.getElementById(hash) || document.getElementsByName(hash)[0];
+      if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      else window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, true);
+})();
+</script>
 </body>
 </html>`;
 }
