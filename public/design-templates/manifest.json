@@ -1,0 +1,550 @@
+[
+  {
+    "id": "baby-class",
+    "title": "亲子早教课",
+    "industry": "母婴亲子",
+    "channel": "线下门店",
+    "material": "海报",
+    "width": 1242,
+    "height": 1656,
+    "preview": "/design-templates/preview/baby-class.png",
+    "doc": "/design-templates/doc/baby-class.json",
+    "attributions": [
+      "Image by neildodhia on Pixabay"
+    ]
+  },
+  {
+    "id": "baby-promo",
+    "title": "母婴优选促销",
+    "industry": "母婴亲子",
+    "channel": "电商平台",
+    "material": "海报",
+    "width": 1242,
+    "height": 1656,
+    "preview": "/design-templates/preview/baby-promo.png",
+    "doc": "/design-templates/doc/baby-promo.json",
+    "attributions": [
+      "Image by ddimitrova on Pixabay",
+      "Image by Couleur on Pixabay"
+    ]
+  },
+  {
+    "id": "beauty-salon",
+    "title": "美容院开业活动",
+    "industry": "美容美妆",
+    "channel": "线下门店",
+    "material": "海报",
+    "width": 1242,
+    "height": 1656,
+    "preview": "/design-templates/preview/beauty-salon.png",
+    "doc": "/design-templates/doc/beauty-salon.json",
+    "attributions": [
+      "Image by OlyaLole on Pixabay"
+    ]
+  },
+  {
+    "id": "beauty-skincare",
+    "title": "护肤新品种草",
+    "industry": "美容美妆",
+    "channel": "小红书",
+    "material": "小红书封面",
+    "width": 1080,
+    "height": 1440,
+    "preview": "/design-templates/preview/beauty-skincare.png",
+    "doc": "/design-templates/doc/beauty-skincare.json",
+    "attributions": [
+      "Image by Gromovataya on Pixabay"
+    ]
+  },
+  {
+    "id": "corp-anniversary",
+    "title": "周年庆典",
+    "industry": "企业行政",
+    "channel": "线下门店",
+    "material": "海报",
+    "width": 1242,
+    "height": 1656,
+    "preview": "/design-templates/preview/corp-anniversary.png",
+    "doc": "/design-templates/doc/corp-anniversary.json",
+    "attributions": [
+      "Photo by Pavel Danilyuk on Pexels"
+    ]
+  },
+  {
+    "id": "corp-meeting",
+    "title": "企业峰会",
+    "industry": "企业行政",
+    "channel": "微信公众号",
+    "material": "横版海报",
+    "width": 1920,
+    "height": 1080,
+    "preview": "/design-templates/preview/corp-meeting.png",
+    "doc": "/design-templates/doc/corp-meeting.json",
+    "attributions": []
+  },
+  {
+    "id": "edu-kaoyan-camp",
+    "title": "考研集训营招生海报",
+    "industry": "教育培训",
+    "channel": "小红书",
+    "material": "海报",
+    "width": 1242,
+    "height": 1656,
+    "preview": "/design-templates/preview/edu-kaoyan-camp.png",
+    "doc": "/design-templates/doc/edu-kaoyan-camp.json",
+    "attributions": [
+      "Photo by RDNE Stock project on Pexels"
+    ]
+  },
+  {
+    "id": "edu-summer-class",
+    "title": "暑期培训班招生",
+    "industry": "教育培训",
+    "channel": "微信公众号",
+    "material": "横版海报",
+    "width": 1920,
+    "height": 1080,
+    "preview": "/design-templates/preview/edu-summer-class.png",
+    "doc": "/design-templates/doc/edu-summer-class.json",
+    "attributions": [
+      "Image by kalyanayahaluwo on Pixabay"
+    ]
+  },
+  {
+    "id": "ent-concert",
+    "title": "演出活动",
+    "industry": "文体娱乐",
+    "channel": "短视频平台",
+    "material": "海报",
+    "width": 1242,
+    "height": 1656,
+    "preview": "/design-templates/preview/ent-concert.png",
+    "doc": "/design-templates/doc/ent-concert.json",
+    "attributions": [
+      "Image by Pexels on Pixabay"
+    ]
+  },
+  {
+    "id": "ent-fitness",
+    "title": "健身房招募",
+    "industry": "文体娱乐",
+    "channel": "社群朋友圈",
+    "material": "方形海报",
+    "width": 1080,
+    "height": 1080,
+    "preview": "/design-templates/preview/ent-fitness.png",
+    "doc": "/design-templates/doc/ent-fitness.json",
+    "attributions": [
+      "Photo by Andrea Piacquadio on Pexels"
+    ]
+  },
+  {
+    "id": "fashion-bag",
+    "title": "包袋种草",
+    "industry": "服饰箱包",
+    "channel": "小红书",
+    "material": "方形海报",
+    "width": 1080,
+    "height": 1080,
+    "preview": "/design-templates/preview/fashion-bag.png",
+    "doc": "/design-templates/doc/fashion-bag.json",
+    "attributions": [
+      "Image by SplitShire on Pixabay"
+    ]
+  },
+  {
+    "id": "fashion-season",
+    "title": "新季上新",
+    "industry": "服饰箱包",
+    "channel": "电商平台",
+    "material": "海报",
+    "width": 1242,
+    "height": 1656,
+    "preview": "/design-templates/preview/fashion-season.png",
+    "doc": "/design-templates/doc/fashion-season.json",
+    "attributions": [
+      "Image by Pexels on Pixabay"
+    ]
+  },
+  {
+    "id": "finance-insurance",
+    "title": "保险方案",
+    "industry": "金融保险",
+    "channel": "线下印刷",
+    "material": "海报",
+    "width": 1242,
+    "height": 1656,
+    "preview": "/design-templates/preview/finance-insurance.png",
+    "doc": "/design-templates/doc/finance-insurance.json",
+    "attributions": []
+  },
+  {
+    "id": "finance-wealth",
+    "title": "理财产品推广",
+    "industry": "金融保险",
+    "channel": "微信公众号",
+    "material": "横版海报",
+    "width": 1920,
+    "height": 1080,
+    "preview": "/design-templates/preview/finance-wealth.png",
+    "doc": "/design-templates/doc/finance-wealth.json",
+    "attributions": [
+      "Image by Goumbik on Pixabay"
+    ]
+  },
+  {
+    "id": "food-coffee-promo",
+    "title": "咖啡饮品促销",
+    "industry": "餐饮美食",
+    "channel": "电商平台",
+    "material": "方形海报",
+    "width": 1080,
+    "height": 1080,
+    "preview": "/design-templates/preview/food-coffee-promo.png",
+    "doc": "/design-templates/doc/food-coffee-promo.json",
+    "attributions": [
+      "Image by Engin_Akyurt on Pixabay"
+    ]
+  },
+  {
+    "id": "food-new-dish",
+    "title": "餐厅新品上市",
+    "industry": "餐饮美食",
+    "channel": "线下门店",
+    "material": "海报",
+    "width": 1242,
+    "height": 1656,
+    "preview": "/design-templates/preview/food-new-dish.png",
+    "doc": "/design-templates/doc/food-new-dish.json",
+    "attributions": [
+      "Image by Pexels on Pixabay"
+    ]
+  },
+  {
+    "id": "game-launch",
+    "title": "游戏上线预约",
+    "industry": "电竞游戏",
+    "channel": "短视频平台",
+    "material": "海报",
+    "width": 1242,
+    "height": 1656,
+    "preview": "/design-templates/preview/game-launch.png",
+    "doc": "/design-templates/doc/game-launch.json",
+    "attributions": [
+      "Image by Sunriseforever on Pixabay"
+    ]
+  },
+  {
+    "id": "game-tournament",
+    "title": "电竞赛事",
+    "industry": "电竞游戏",
+    "channel": "社群朋友圈",
+    "material": "横版海报",
+    "width": 1920,
+    "height": 1080,
+    "preview": "/design-templates/preview/game-tournament.png",
+    "doc": "/design-templates/doc/game-tournament.json",
+    "attributions": []
+  },
+  {
+    "id": "general-promo",
+    "title": "通用促销海报",
+    "industry": "通用",
+    "channel": "社群朋友圈",
+    "material": "方形海报",
+    "width": 1080,
+    "height": 1080,
+    "preview": "/design-templates/preview/general-promo.png",
+    "doc": "/design-templates/doc/general-promo.json",
+    "attributions": [
+      "Image by AS_Photography on Pixabay"
+    ]
+  },
+  {
+    "id": "general-quote",
+    "title": "金句语录海报",
+    "industry": "通用",
+    "channel": "小红书",
+    "material": "海报",
+    "width": 1242,
+    "height": 1656,
+    "preview": "/design-templates/preview/general-quote.png",
+    "doc": "/design-templates/doc/general-quote.json",
+    "attributions": []
+  },
+  {
+    "id": "gov-event",
+    "title": "活动通知",
+    "industry": "政务媒体",
+    "channel": "微信公众号",
+    "material": "横版海报",
+    "width": 1920,
+    "height": 1080,
+    "preview": "/design-templates/preview/gov-event.png",
+    "doc": "/design-templates/doc/gov-event.json",
+    "attributions": [
+      "Photo by Ambam Gorilla on Pexels"
+    ]
+  },
+  {
+    "id": "gov-notice",
+    "title": "公益宣传",
+    "industry": "政务媒体",
+    "channel": "线下印刷",
+    "material": "海报",
+    "width": 1242,
+    "height": 1656,
+    "preview": "/design-templates/preview/gov-notice.png",
+    "doc": "/design-templates/doc/gov-notice.json",
+    "attributions": []
+  },
+  {
+    "id": "grocery-fresh",
+    "title": "生鲜到家促销",
+    "industry": "食品生鲜",
+    "channel": "电商平台",
+    "material": "海报",
+    "width": 1242,
+    "height": 1656,
+    "preview": "/design-templates/preview/grocery-fresh.png",
+    "doc": "/design-templates/doc/grocery-fresh.json",
+    "attributions": [
+      "Image by PublicDomainPictures on Pixabay"
+    ]
+  },
+  {
+    "id": "grocery-snack",
+    "title": "零食礼盒",
+    "industry": "食品生鲜",
+    "channel": "小红书",
+    "material": "方形海报",
+    "width": 1080,
+    "height": 1080,
+    "preview": "/design-templates/preview/grocery-snack.png",
+    "doc": "/design-templates/doc/grocery-snack.json",
+    "attributions": [
+      "Image by image4you on Pixabay"
+    ]
+  },
+  {
+    "id": "home-decor",
+    "title": "家居好物种草",
+    "industry": "家居百货",
+    "channel": "小红书",
+    "material": "小红书封面",
+    "width": 1080,
+    "height": 1440,
+    "preview": "/design-templates/preview/home-decor.png",
+    "doc": "/design-templates/doc/home-decor.json",
+    "attributions": [
+      "Photo by Ioana Motoc on Pexels"
+    ]
+  },
+  {
+    "id": "home-furniture",
+    "title": "家居焕新季",
+    "industry": "家居百货",
+    "channel": "电商平台",
+    "material": "横版海报",
+    "width": 1920,
+    "height": 1080,
+    "preview": "/design-templates/preview/home-furniture.png",
+    "doc": "/design-templates/doc/home-furniture.json",
+    "attributions": [
+      "Photo by Sandeep Lasar on Pexels"
+    ]
+  },
+  {
+    "id": "it-recruit",
+    "title": "技术招聘",
+    "industry": "IT互联网",
+    "channel": "社群朋友圈",
+    "material": "海报",
+    "width": 1242,
+    "height": 1656,
+    "preview": "/design-templates/preview/it-recruit.png",
+    "doc": "/design-templates/doc/it-recruit.json",
+    "attributions": []
+  },
+  {
+    "id": "it-saas",
+    "title": "SaaS产品发布",
+    "industry": "IT互联网",
+    "channel": "微信公众号",
+    "material": "横版海报",
+    "width": 1920,
+    "height": 1080,
+    "preview": "/design-templates/preview/it-saas.png",
+    "doc": "/design-templates/doc/it-saas.json",
+    "attributions": [
+      "Image by Innovalabs on Pixabay"
+    ]
+  },
+  {
+    "id": "life-cleaning",
+    "title": "家政保洁服务",
+    "industry": "生活服务",
+    "channel": "社群朋友圈",
+    "material": "方形海报",
+    "width": 1080,
+    "height": 1080,
+    "preview": "/design-templates/preview/life-cleaning.png",
+    "doc": "/design-templates/doc/life-cleaning.json",
+    "attributions": [
+      "Image by 4787421 on Pixabay"
+    ]
+  },
+  {
+    "id": "life-moving",
+    "title": "搬家服务",
+    "industry": "生活服务",
+    "channel": "线下印刷",
+    "material": "海报",
+    "width": 1242,
+    "height": 1656,
+    "preview": "/design-templates/preview/life-moving.png",
+    "doc": "/design-templates/doc/life-moving.json",
+    "attributions": []
+  },
+  {
+    "id": "medical-checkup",
+    "title": "健康体检套餐",
+    "industry": "医疗保健",
+    "channel": "线下印刷",
+    "material": "海报",
+    "width": 1242,
+    "height": 1656,
+    "preview": "/design-templates/preview/medical-checkup.png",
+    "doc": "/design-templates/doc/medical-checkup.json",
+    "attributions": [
+      "Image by Parentingupstream on Pixabay"
+    ]
+  },
+  {
+    "id": "medical-dental",
+    "title": "口腔护理活动",
+    "industry": "医疗保健",
+    "channel": "社群朋友圈",
+    "material": "方形海报",
+    "width": 1080,
+    "height": 1080,
+    "preview": "/design-templates/preview/medical-dental.png",
+    "doc": "/design-templates/doc/medical-dental.json",
+    "attributions": [
+      "Image by drshohmelian on Pixabay"
+    ]
+  },
+  {
+    "id": "realestate-open",
+    "title": "楼盘开盘",
+    "industry": "房地产",
+    "channel": "线下印刷",
+    "material": "海报",
+    "width": 1242,
+    "height": 1656,
+    "preview": "/design-templates/preview/realestate-open.png",
+    "doc": "/design-templates/doc/realestate-open.json",
+    "attributions": [
+      "Image by wal_172619 on Pixabay"
+    ]
+  },
+  {
+    "id": "realestate-rent",
+    "title": "精装房出租",
+    "industry": "房地产",
+    "channel": "社群朋友圈",
+    "material": "方形海报",
+    "width": 1080,
+    "height": 1080,
+    "preview": "/design-templates/preview/realestate-rent.png",
+    "doc": "/design-templates/doc/realestate-rent.json",
+    "attributions": [
+      "Image by ErikaWittlieb on Pixabay"
+    ]
+  },
+  {
+    "id": "retail-618",
+    "title": "618年中大促",
+    "industry": "电商零售",
+    "channel": "电商平台",
+    "material": "海报",
+    "width": 1242,
+    "height": 1656,
+    "preview": "/design-templates/preview/retail-618.png",
+    "doc": "/design-templates/doc/retail-618.json",
+    "attributions": [
+      "Image by image4you on Pixabay"
+    ]
+  },
+  {
+    "id": "retail-newstore",
+    "title": "新店开业",
+    "industry": "电商零售",
+    "channel": "社群朋友圈",
+    "material": "方形海报",
+    "width": 1080,
+    "height": 1080,
+    "preview": "/design-templates/preview/retail-newstore.png",
+    "doc": "/design-templates/doc/retail-newstore.json",
+    "attributions": [
+      "Image by stevepb on Pixabay",
+      "Image by kaboompics on Pixabay"
+    ]
+  },
+  {
+    "id": "tech-appliance",
+    "title": "家电以旧换新",
+    "industry": "数码家电",
+    "channel": "线下门店",
+    "material": "横版海报",
+    "width": 1920,
+    "height": 1080,
+    "preview": "/design-templates/preview/tech-appliance.png",
+    "doc": "/design-templates/doc/tech-appliance.json",
+    "attributions": [
+      "Image by justinedgecreative on Pixabay"
+    ]
+  },
+  {
+    "id": "tech-newphone",
+    "title": "数码新品发布",
+    "industry": "数码家电",
+    "channel": "电商平台",
+    "material": "海报",
+    "width": 1242,
+    "height": 1656,
+    "preview": "/design-templates/preview/tech-newphone.png",
+    "doc": "/design-templates/doc/tech-newphone.json",
+    "attributions": [
+      "Image by JESHOOTS-com on Pixabay"
+    ]
+  },
+  {
+    "id": "travel-hotel",
+    "title": "酒店预订",
+    "industry": "旅游出行",
+    "channel": "电商平台",
+    "material": "方形海报",
+    "width": 1080,
+    "height": 1080,
+    "preview": "/design-templates/preview/travel-hotel.png",
+    "doc": "/design-templates/doc/travel-hotel.json",
+    "attributions": [
+      "Image by MagicDesk on Pixabay"
+    ]
+  },
+  {
+    "id": "travel-route",
+    "title": "旅行线路推荐",
+    "industry": "旅游出行",
+    "channel": "小红书",
+    "material": "海报",
+    "width": 1242,
+    "height": 1656,
+    "preview": "/design-templates/preview/travel-route.png",
+    "doc": "/design-templates/doc/travel-route.json",
+    "attributions": [
+      "Image by GiuseppeDio on Pixabay"
+    ]
+  }
+]
