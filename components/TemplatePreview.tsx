@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { TemplateMeta } from "@/lib/template-taxonomy";
 
 type Device = "desktop" | "tablet" | "mobile";
@@ -24,8 +24,18 @@ export function TemplatePreview({
   const router = useRouter();
   const [device, setDevice] = useState<Device>("desktop");
 
+  // 全屏预览期间锁住页面滚动：避免任何残留的其它路由内容在预览背后被滚出来，
+  // 也保证 fixed 覆盖层之外不出现可滚动的空白。
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, []);
+
   return (
-    <div className="flex h-screen flex-col bg-zinc-100">
+    <div className="fixed inset-0 z-50 flex flex-col bg-zinc-100">
       {/* 顶部预览工具条 */}
       <header className="flex items-center justify-between gap-3 border-b border-zinc-200 bg-white px-4 py-2.5">
         <div className="flex items-center gap-3 min-w-0">
