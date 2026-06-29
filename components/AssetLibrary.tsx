@@ -1,11 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   Asset,
   AssetType,
-  LicenseFilter,
   listCollectionIds,
   removeFromCollection,
   saveToCollection,
@@ -18,11 +17,30 @@ import { AssetDetail } from "@/components/AssetDetail";
 
 // TYPE_ORDER 用于校验 URL 里的 type 合法性（左侧栏分区驱动）。
 
-const LICENSE_OPTIONS: { value: LicenseFilter; label: string; hint: string }[] = [
-  { value: "commercial", label: "可商用", hint: "默认：只看能用于商业作品的素材" },
-  { value: "modify", label: "可商用 + 可改编", hint: "进一步排除「禁止改编」(ND) 的素材" },
-  { value: "any", label: "全部", hint: "包含仅非商用 (NC) 的素材" },
+// 推荐的筛选维度（取代原「可商用 / 可商用+可改编 / 全部」授权三选一——授权口径已
+// 默认只展示可商用素材，用户不必再手动切）。改用对「挑图」真正有用、且基于已加载
+// 数据即可瞬时本地过滤的维度：
+//   · 方向（横/竖/方形）——对图片/视频最常用，基于 width/height 本地判定。
+// 其余类型（音乐/音效/3D/字体/PPT…）没有方向概念，则不显示该筛选条。
+type Orientation = "all" | "landscape" | "portrait" | "square";
+
+const ORIENTATION_OPTIONS: { value: Orientation; label: string }[] = [
+  { value: "all", label: "全部方向" },
+  { value: "landscape", label: "横版" },
+  { value: "portrait", label: "竖版" },
+  { value: "square", label: "方形" },
 ];
+
+// 仅这些类型有「方向」语义。
+const ORIENTATION_TYPES = new Set<AssetType>(["image", "video", "vector", "sticker"]);
+
+function orientationOf(a: Asset): Orientation {
+  if (!a.width || !a.height) return "all";
+  const r = a.width / a.height;
+  if (r > 1.15) return "landscape";
+  if (r < 0.87) return "portrait";
+  return "square";
+}
 
 // Curated quick searches per type, to give an empty-state something to browse.
 const SUGGESTIONS: Record<AssetType, string[]> = {
@@ -45,7 +63,7 @@ export function AssetLibrary() {
   const urlType = search.get("type") as AssetType | null;
   const type: AssetType = urlType && VALID_TYPES.has(urlType) ? urlType : "image";
 
-  const [license, setLicense] = useState<LicenseFilter>("commercial");
+  const [orientation, setOrientation] = useState<Orientation>("all");
   const [query, setQuery] = useState("");
   const [input, setInput] = useState("");
   const [items, setItems] = useState<Asset[]>([]);
@@ -56,6 +74,18 @@ export function AssetLibrary() {
   const [active, setActive] = useState<Asset | null>(null);
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
   const reqId = useRef(0);
+
+  // 授权口径固定为「只看可商用」（默认且唯一，不再让用户手切）。
+  const LICENSE = "commercial" as const;
+
+  const showOrientation = ORIENTATION_TYPES.has(type);
+
+  // 方向筛选是已加载结果的「本地」过滤——瞬时、不发网络请求。（React Compiler 会
+  // 自动 memo，无需手写 useMemo。）
+  const visible =
+    !showOrientation || orientation === "all"
+      ? items
+      : items.filter((a) => orientationOf(a) === orientation);
 
   // 登录用户的已收藏 id 集合（用于卡片高亮收藏态）。未登录则静默为空。
   useEffect(() => {
@@ -72,63 +102,80 @@ export function AssetLibrary() {
     };
   }, []);
 
-  const toggleSave = useCallback(
-    (a: Asset) => {
-      const isSaved = savedIds.has(a.id);
-      // 乐观更新
+  function toggleSave(a: Asset) {
+    const isSaved = savedIds.has(a.id);
+    // 乐观更新
+    setSavedIds((prev) => {
+      const next = new Set(prev);
+      if (isSaved) next.delete(a.id);
+      else next.add(a.id);
+      return next;
+    });
+    const p = isSaved ? removeFromCollection(a.id) : saveToCollection(a);
+    p.catch((e) => {
+      // 回滚 + 提示（多数失败=未登录）
       setSavedIds((prev) => {
         const next = new Set(prev);
-        if (isSaved) next.delete(a.id);
-        else next.add(a.id);
+        if (isSaved) next.add(a.id);
+        else next.delete(a.id);
         return next;
       });
-      const p = isSaved ? removeFromCollection(a.id) : saveToCollection(a);
-      p.catch((e) => {
-        // 回滚 + 提示（多数失败=未登录）
-        setSavedIds((prev) => {
-          const next = new Set(prev);
-          if (isSaved) next.add(a.id);
-          else next.delete(a.id);
-          return next;
-        });
-        setError(e instanceof Error ? e.message : "收藏失败，请先登录");
-      });
-    },
-    [savedIds],
-  );
+      setError(e instanceof Error ? e.message : "收藏失败，请先登录");
+    });
+  }
 
-  const load = useCallback(
-    async (opts: { type: AssetType; license: LicenseFilter; q: string; page: number; append: boolean }) => {
-      const my = ++reqId.current;
-      setLoading(true);
-      setError("");
-      try {
-        const r = await searchAssets({
-          q: opts.q,
-          type: opts.type,
-          license: opts.license,
-          page: opts.page,
-          pageSize: 30,
-        });
-        if (my !== reqId.current) return; // a newer request superseded this one
-        setItems((prev) => (opts.append ? [...prev, ...r.items] : r.items));
+  async function runSearch(opts: { type: AssetType; q: string; page: number; append: boolean }) {
+    const my = ++reqId.current;
+    setLoading(true);
+    setError("");
+    // 切换类别/搜索时立即清空旧网格 → 先出骨架屏，不再让用户盯着上一个分区的内容
+    // 干等网络回包。这是「按按键要等很久才跳页」的体感根因（之前换分区时整页保持
+    // 旧素材静止 0.5~1.5s）。append（加载更多）时保留已有项。
+    if (!opts.append) setItems([]);
+    try {
+      const r = await searchAssets({
+        q: opts.q,
+        type: opts.type,
+        license: LICENSE,
+        page: opts.page,
+        pageSize: 30,
+      });
+      if (my !== reqId.current) return; // a newer request superseded this one
+      setItems((prev) => (opts.append ? [...prev, ...r.items] : r.items));
+      setHasMore(r.has_more);
+      setPage(opts.page);
+    } catch (e) {
+      if (my !== reqId.current) return;
+      setError(e instanceof Error ? e.message : "加载失败");
+      if (!opts.append) setItems([]);
+    } finally {
+      if (my === reqId.current) setLoading(false);
+    }
+  }
+
+  // Reload whenever type / query changes. 内联取数（不把函数放进 deps），避免每次渲染
+  // 重新触发 effect；这也是 React Compiler 推荐的写法（无需手动 useCallback 稳定化）。
+  useEffect(() => {
+    const my = ++reqId.current;
+    setLoading(true);
+    setError("");
+    setItems([]);
+    searchAssets({ q: query, type, license: LICENSE, page: 1, pageSize: 30 })
+      .then((r) => {
+        if (my !== reqId.current) return;
+        setItems(r.items);
         setHasMore(r.has_more);
-        setPage(opts.page);
-      } catch (e) {
+        setPage(1);
+      })
+      .catch((e) => {
         if (my !== reqId.current) return;
         setError(e instanceof Error ? e.message : "加载失败");
-        if (!opts.append) setItems([]);
-      } finally {
+        setItems([]);
+      })
+      .finally(() => {
         if (my === reqId.current) setLoading(false);
-      }
-    },
-    [],
-  );
-
-  // Reload whenever type / license / query changes.
-  useEffect(() => {
-    void load({ type, license, q: query, page: 1, append: false });
-  }, [type, license, query, load]);
+      });
+  }, [type, query]);
 
   function submitSearch(e?: React.FormEvent) {
     e?.preventDefault();
@@ -157,22 +204,23 @@ export function AssetLibrary() {
         </button>
       </form>
 
-      {/* License filter + suggestions */}
+      {/* 推荐筛选（方向，仅图片/视频/矢量/贴纸）+ 快捷词建议 */}
       <div className="mb-5 flex flex-wrap items-center gap-3">
-        <div className="flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white p-1">
-          {LICENSE_OPTIONS.map((o) => (
-            <button
-              key={o.value}
-              onClick={() => setLicense(o.value)}
-              title={o.hint}
-              className={`rounded-md px-3 py-1 text-xs font-medium transition ${
-                o.value === license ? "bg-zinc-900 text-white" : "text-zinc-600 hover:bg-zinc-100"
-              }`}
-            >
-              {o.label}
-            </button>
-          ))}
-        </div>
+        {showOrientation && (
+          <div className="flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white p-1">
+            {ORIENTATION_OPTIONS.map((o) => (
+              <button
+                key={o.value}
+                onClick={() => setOrientation(o.value)}
+                className={`rounded-md px-3 py-1 text-xs font-medium transition ${
+                  o.value === orientation ? "bg-zinc-900 text-white" : "text-zinc-600 hover:bg-zinc-100"
+                }`}
+              >
+                {o.label}
+              </button>
+            ))}
+          </div>
+        )}
         <div className="flex flex-wrap gap-1.5">
           {SUGGESTIONS[type].map((s) => (
             <button
@@ -194,13 +242,29 @@ export function AssetLibrary() {
       )}
 
       {/* Grid */}
-      {items.length === 0 && !loading && !error ? (
+      {loading && items.length === 0 ? (
+        // 切类别/搜索时的瞬时骨架屏——立刻给反馈，不让用户盯着旧内容干等网络。
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div
+              key={i}
+              className="animate-pulse overflow-hidden rounded-xl border border-zinc-200 bg-white"
+            >
+              <div className="aspect-[4/3] w-full bg-zinc-100" />
+              <div className="space-y-2 px-3 py-3">
+                <div className="h-3 w-3/4 rounded bg-zinc-100" />
+                <div className="h-2.5 w-1/2 rounded bg-zinc-100" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : visible.length === 0 && !error ? (
         <div className="rounded-xl border border-dashed border-zinc-300 py-16 text-center text-sm text-zinc-400">
-          没有找到符合条件的素材，换个关键词或放宽授权过滤试试。
+          没有找到符合条件的素材，换个关键词或筛选条件试试。
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-          {items.map((a) => (
+          {visible.map((a) => (
             <AssetCard
               key={a.id}
               asset={a}
@@ -212,14 +276,14 @@ export function AssetLibrary() {
         </div>
       )}
 
-      {loading && (
+      {loading && items.length > 0 && (
         <div className="py-8 text-center text-sm text-zinc-400">加载中…</div>
       )}
 
       {!loading && hasMore && items.length > 0 && (
         <div className="mt-6 text-center">
           <button
-            onClick={() => load({ type, license, q: query, page: page + 1, append: true })}
+            onClick={() => runSearch({ type, q: query, page: page + 1, append: true })}
             className="rounded-lg border border-zinc-300 px-6 py-2.5 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
           >
             加载更多

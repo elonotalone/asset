@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactNode, Suspense, useEffect, useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { AppShell, ShellNavItem } from "@/components/AppShell";
 import { browserClient, getCredits, signOutEverywhere } from "@/lib/oceanleo-auth";
 import { AssetType, TYPE_LABELS, TYPE_ORDER } from "@/lib/assets";
@@ -29,6 +29,17 @@ function IconBookmark() {
   return (
     <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
       <path d="M6 4h12v16l-6-4-6 4z" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function IconDesign() {
+  return (
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="7" height="7" rx="1.5" />
+      <rect x="14" y="3" width="7" height="7" rx="1.5" />
+      <rect x="3" y="14" width="7" height="7" rx="1.5" />
+      <rect x="14" y="14" width="7" height="7" rx="1.5" />
     </svg>
   );
 }
@@ -78,7 +89,6 @@ export function SiteShell({ children }: { children: ReactNode }) {
 
 function SiteShellInner({ children }: { children: ReactNode }) {
   const email = useEmail();
-  const router = useRouter();
   const pathname = usePathname() || "/";
   const search = useSearchParams();
   const [credits, setCredits] = useState<number | null>(null);
@@ -93,11 +103,12 @@ function SiteShellInner({ children }: { children: ReactNode }) {
   const activeType = (search.get("type") as AssetType) || "image";
 
   // 左侧栏分区：素材类别（图片/视频/音乐/音效/3D/矢量/PPT）→ 跳 /?type=<t>。
-  // 当前在素材库页且 type 匹配时高亮。
+  // 用 href（Next <Link>）而非 onClick(router.push)：<Link> 会预取目标路由、点击即
+  // 客户端瞬时切换并高亮，不必等网络。这是消除「按按键要等很久才跳页」的关键。
   const categoryItems: ShellNavItem[] = TYPE_ORDER.map((t) => ({
     label: TYPE_LABELS[t],
     icon: <TypeIcon type={t} />,
-    onClick: () => router.push(t === "image" ? "/" : `/?type=${t}`),
+    href: t === "image" ? "/" : `/?type=${t}`,
     match: () => onLibrary && activeType === t,
   }));
 
@@ -105,8 +116,14 @@ function SiteShellInner({ children }: { children: ReactNode }) {
     {
       label: "我的素材库",
       icon: <IconBookmark />,
-      onClick: () => router.push("/collection"),
+      href: "/collection",
       match: (p) => p === "/collection",
+    },
+    {
+      label: "设计模板",
+      icon: <IconDesign />,
+      href: "/design",
+      match: (p) => p === "/design",
     },
     ...categoryItems,
     { label: "授权说明", href: "/licenses", icon: <IconLicense /> },
