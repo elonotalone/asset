@@ -84,7 +84,18 @@ async function getJson<T>(path: string): Promise<T> {
   return data as T;
 }
 
-export function searchAssets(params: {
+interface LibraryResult {
+  items: Asset[];
+  page: number;
+  page_size: number;
+  total: number;
+  source: string;
+}
+
+// Search our SELF-OWNED hoarded library (platform_assets, served from OSS) first
+// — instant + curated. Fall back to the realtime upstream gateway only when the
+// library has no hit, so asset.oceanleo.com surfaces our own material by default.
+export async function searchAssets(params: {
   q: string;
   type: AssetType;
   license?: LicenseFilter;
@@ -92,12 +103,43 @@ export function searchAssets(params: {
   page?: number;
   pageSize?: number;
 }): Promise<SearchResult> {
+  const page = params.page || 1;
+  const pageSize = params.pageSize || 24;
+  const license = params.license || "commercial";
+
+  // 1) self-owned library — but only when no explicit upstream source is forced
+  if (!params.source) {
+    try {
+      const libQs = new URLSearchParams({
+        q: params.q || "",
+        type: params.type,
+        license,
+        page: String(page),
+        page_size: String(pageSize),
+      });
+      const lib = await getJson<LibraryResult>(
+        `/v1/assets/library/search?${libQs.toString()}`,
+      );
+      if (lib.items && lib.items.length > 0) {
+        return {
+          items: lib.items,
+          page: lib.page,
+          has_more: lib.page * lib.page_size < (lib.total || 0),
+          sources_queried: ["library"],
+        };
+      }
+    } catch {
+      // ignore and fall through to realtime gateway
+    }
+  }
+
+  // 2) realtime upstream gateway (breadth fallback / forced source)
   const qs = new URLSearchParams({
     q: params.q || "",
     type: params.type,
-    license: params.license || "commercial",
-    page: String(params.page || 1),
-    page_size: String(params.pageSize || 24),
+    license,
+    page: String(page),
+    page_size: String(pageSize),
   });
   if (params.source) qs.set("source", params.source);
   return getJson<SearchResult>(`/v1/assets/search?${qs.toString()}`);
