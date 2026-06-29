@@ -33,6 +33,17 @@ function IconBookmark() {
   );
 }
 
+function IconTemplates() {
+  return (
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="7" height="9" rx="1" />
+      <rect x="14" y="3" width="7" height="5" rx="1" />
+      <rect x="14" y="12" width="7" height="9" rx="1" />
+      <rect x="3" y="16" width="7" height="5" rx="1" />
+    </svg>
+  );
+}
+
 function IconDesign() {
   return (
     <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
@@ -113,6 +124,12 @@ function SiteShellInner({ children }: { children: ReactNode }) {
   }));
 
   const nav: ShellNavItem[] = [
+    {
+      label: "模板专区",
+      icon: <IconTemplates />,
+      href: "/templates",
+      match: (p) => p.startsWith("/templates"),
+    },
     {
       label: "我的素材库",
       icon: <IconBookmark />,
