@@ -32,6 +32,8 @@ const SUGGESTIONS: Record<AssetType, string[]> = {
   audio: ["rain", "click", "whoosh", "notification", "applause"],
   "3d": ["chair", "car", "tree", "robot", "lamp"],
   vector: ["icon", "logo", "arrow", "pattern", "flat"],
+  sticker: ["花朵", "边框", "爱心", "庆祝", "手绘"],
+  font: ["黑体", "宋体", "手写", "书法", "标题"],
   ppt: ["商务", "教育", "极简", "图表", "总结汇报"],
 };
 

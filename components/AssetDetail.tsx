@@ -3,6 +3,13 @@
 import { useEffect, useState } from "react";
 import { Asset, assetDetail, downloadHref } from "@/lib/assets";
 import { LicenseFlags } from "@/components/LicenseBadge";
+import { ModelViewer } from "@/components/ModelViewer";
+
+function is3dModel(asset: Asset): boolean {
+  if (asset.type !== "3d") return false;
+  const u = (asset.full_url || "").toLowerCase();
+  return u.endsWith(".gltf") || u.endsWith(".glb");
+}
 
 // 放大图：先用已加载好的缩略图秒显占位，原始大图后台加载完再淡入替换。
 // 解决「点开后白屏 / 转圈很久」——尤其是 preview_url 对部分源是几 MB 的大图。
@@ -47,6 +54,11 @@ const USE_TARGETS: Record<string, { label: string; site: string }[]> = {
     { label: "在线设计", site: "https://design.oceanleo.com" },
   ],
   vector: [{ label: "在线设计", site: "https://design.oceanleo.com" }],
+  sticker: [
+    { label: "在线设计", site: "https://design.oceanleo.com" },
+    { label: "图片编辑", site: "https://image.oceanleo.com" },
+  ],
+  font: [{ label: "在线设计", site: "https://design.oceanleo.com" }],
   video: [{ label: "视频工作室", site: "https://studio.oceanleo.com" }],
   audio: [
     { label: "视频工作室", site: "https://studio.oceanleo.com" },
@@ -87,7 +99,9 @@ export function AssetDetail({
   const [files, setFiles] = useState<{ format: string; url: string }[] | null>(null);
 
   useEffect(() => {
-    if (asset.source === "polyhaven") {
+    // Only realtime-upstream polyhaven assets need the second files lookup; our
+    // own library items (id `library:…`) are fully self-contained on OSS.
+    if (asset.source === "polyhaven" && !asset.id.startsWith("library:")) {
       assetDetail(asset.id)
         .then((d) => setFiles(d.files || []))
         .catch(() => setFiles([]));
@@ -96,6 +110,7 @@ export function AssetDetail({
 
   const isAudio = asset.type === "audio" || asset.type === "music";
   const isVideo = asset.type === "video";
+  const is3d = is3dModel(asset);
   const targets = USE_TARGETS[asset.type] || [];
 
   function useIn(site: string) {
@@ -129,7 +144,9 @@ export function AssetDetail({
 
         <div className="flex-1 overflow-y-auto p-5">
           <div className="overflow-hidden rounded-xl bg-zinc-100">
-            {isAudio ? (
+            {is3d ? (
+              <ModelViewer src={asset.full_url} poster={asset.thumb_url} alt={asset.title} />
+            ) : isAudio ? (
               <div className="flex flex-col gap-3 p-6">
                 {asset.thumb_url && (
                   // eslint-disable-next-line @next/next/no-img-element

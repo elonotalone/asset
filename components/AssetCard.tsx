@@ -56,6 +56,10 @@ export function AssetCard({
   const isMedia = asset.type === "audio" || asset.type === "music";
   const isVideo = asset.type === "video";
   const is3d = asset.type === "3d";
+  // Stickers (transparent PNG/webp), vectors (SVG) and font previews look bad
+  // cropped — contain them on a neutral/checker backdrop instead of cover.
+  const isContain =
+    asset.type === "sticker" || asset.type === "vector" || asset.type === "font";
 
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
@@ -63,14 +67,20 @@ export function AssetCard({
         onClick={() => onOpen(asset)}
         className="flex flex-col text-left focus:outline-none focus:ring-2 focus:ring-sky-400"
       >
-        <div className="relative aspect-[4/3] w-full overflow-hidden bg-zinc-100">
+        <div
+          className={`relative aspect-[4/3] w-full overflow-hidden ${
+            isContain ? "bg-[conic-gradient(#f1f5f9_90deg,#fff_90deg_180deg,#f1f5f9_180deg_270deg,#fff_270deg)] bg-[length:20px_20px] p-3" : "bg-zinc-100"
+          }`}
+        >
           {asset.thumb_url ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={asset.thumb_url}
               alt={asset.title}
               loading="lazy"
-              className="h-full w-full object-cover transition group-hover:scale-105"
+              className={`h-full w-full transition group-hover:scale-105 ${
+                isContain ? "object-contain" : "object-cover"
+              }`}
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center text-zinc-400">

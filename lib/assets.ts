@@ -11,10 +11,12 @@ const GATEWAY =
 export type AssetType =
   | "image"
   | "vector"
+  | "sticker"
   | "video"
   | "audio"
   | "music"
   | "3d"
+  | "font"
   | "ppt";
 export type LicenseFilter = "commercial" | "modify" | "any";
 
@@ -160,8 +162,13 @@ export function assetDetail(id: string): Promise<DetailResult> {
   return getJson<DetailResult>(`/v1/assets/detail?id=${encodeURIComponent(id)}`);
 }
 
-// For polyhaven the real file needs a server resolve → use the download route.
+// For realtime-upstream polyhaven the real file needs a server resolve → use the
+// download route. Our OWN hoarded library items (id `library:…`) already carry a
+// direct OSS full_url (incl. re-hosted 3D gltf), so download them straight.
 export function downloadHref(asset: Asset): string {
+  if (asset.id.startsWith("library:")) {
+    return asset.full_url;
+  }
   if (asset.source === "polyhaven") {
     return `${GATEWAY}/v1/assets/download?id=${encodeURIComponent(asset.id)}`;
   }
@@ -171,20 +178,24 @@ export function downloadHref(asset: Asset): string {
 export const TYPE_LABELS: Record<AssetType, string> = {
   image: "图片",
   vector: "矢量图",
+  sticker: "贴纸",
   video: "视频",
   audio: "音效",
   music: "音乐",
   "3d": "3D 模型",
+  font: "字体",
   ppt: "PPT 模板",
 };
 
 export const TYPE_ORDER: AssetType[] = [
   "image",
   "video",
+  "sticker",
+  "vector",
+  "3d",
+  "font",
   "music",
   "audio",
-  "3d",
-  "vector",
   "ppt",
 ];
 
