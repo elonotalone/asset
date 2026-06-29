@@ -59,6 +59,10 @@ const USE_TARGETS: Record<string, { label: string; site: string }[]> = {
     { label: "图片编辑", site: "https://image.oceanleo.com" },
   ],
   font: [{ label: "在线设计", site: "https://design.oceanleo.com" }],
+  ppt: [
+    { label: "PPT 里使用", site: "https://ppt.oceanleo.com" },
+    { label: "在线设计", site: "https://design.oceanleo.com" },
+  ],
   video: [{ label: "视频工作室", site: "https://studio.oceanleo.com" }],
   audio: [
     { label: "视频工作室", site: "https://studio.oceanleo.com" },
