@@ -56,15 +56,6 @@ export function TemplatePreview({
             </button>
           ))}
         </div>
-
-        <div className="flex items-center gap-2">
-          <a
-            href={`https://oceanleo.com/workspace?domain=websites&template=${meta.slug}`}
-            className="rounded-lg bg-sky-500 px-4 py-1.5 text-sm font-semibold text-white hover:bg-sky-600"
-          >
-            立即使用此模板
-          </a>
-        </div>
       </header>
 
       {/* 预览画布 */}
