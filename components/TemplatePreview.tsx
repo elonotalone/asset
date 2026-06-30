@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { TemplateMeta } from "@/lib/template-taxonomy";
 
 type Device = "desktop" | "tablet" | "mobile";
@@ -16,13 +16,22 @@ export function TemplatePreview({
   meta,
   html,
   siblings,
+  pages,
 }: {
   meta: TemplateMeta;
   html: string;
   siblings: TemplateMeta[];
+  pages?: { key: string; label: string }[];
 }) {
   const router = useRouter();
   const [device, setDevice] = useState<Device>("desktop");
+  const [activePage, setActivePage] = useState(pages?.[0]?.key ?? "home");
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  function goPage(key: string) {
+    setActivePage(key);
+    iframeRef.current?.contentWindow?.postMessage({ __leoGo: key }, "*");
+  }
 
   // 全屏预览期间锁住页面滚动：避免任何残留的其它路由内容在预览背后被滚出来，
   // 也保证 fixed 覆盖层之外不出现可滚动的空白。
@@ -68,6 +77,29 @@ export function TemplatePreview({
         </div>
       </header>
 
+      {/* 多页导航条（点击在预览内切页） */}
+      {pages && pages.length > 1 && (
+        <div className="flex items-center gap-1 overflow-x-auto border-b border-zinc-200 bg-white px-4 py-2">
+          <span className="mr-1 shrink-0 text-xs text-zinc-400">页面</span>
+          {pages.map((pg) => (
+            <button
+              key={pg.key}
+              onClick={() => goPage(pg.key)}
+              className={`shrink-0 rounded-full px-3.5 py-1 text-xs font-medium transition ${
+                activePage === pg.key
+                  ? "bg-sky-500 text-white shadow-sm"
+                  : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
+              }`}
+            >
+              {pg.label}
+            </button>
+          ))}
+          <span className="ml-auto shrink-0 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-medium text-emerald-600">
+            {pages.length} 个页面 · 多页模板
+          </span>
+        </div>
+      )}
+
       {/* 预览画布 */}
       <div className="flex-1 overflow-auto p-4">
         <div
@@ -75,6 +107,7 @@ export function TemplatePreview({
           style={{ width: DEVICE_W[device], maxWidth: "100%" }}
         >
           <iframe
+            ref={iframeRef}
             title={meta.title}
             srcDoc={html}
             className="h-full w-full"

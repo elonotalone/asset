@@ -1,7 +1,13 @@
 // 模板专区分类单一事实源（对标 aliyun.wezhan.cn 的「行业 + 子类」）。
 // 列表页、详情页、slug 生成、sitemap 全部读这里。改这一处即可全站对齐。
 //
-// 13 个一级行业，105 个子类，每个子类生成 >=5 个模板 → 全库 >=525 个模板。
+// 13 个一级行业，105 个子类。v2：每子类数量由 countForSub 派生，全库恰好 500，
+// 每个模板是多页 + 真多样（见 template-dna.ts / template-engine.ts）。
+
+import { hashStr } from "./hash";
+import { dnaFor } from "./template-dna";
+
+export { hashStr };
 
 export type ColorKey =
   | "multi"
@@ -248,8 +254,29 @@ export const INDUSTRIES: Industry[] = [
   },
 ];
 
-/** 每个子类生成多少个模板（不能少于 5）。 */
-export const TEMPLATES_PER_SUB = 5;
+// 全库目标模板总数（v2：多页 + 真多样）。每子类的数量由 countForSub 派生，
+// 全部加起来恰好等于这个数，覆盖 13 行业 / 105 子类、各行各业。
+export const TARGET_TOTAL = 500;
+
+// 兼容旧引用：v1 曾按「每子类固定 5 个」生成；v2 改为可变数量（见 countForSub）。
+// 仍导出一个常量供 sitemap/静态参数等粗略上限使用（取每子类最大数）。
+export const TEMPLATES_PER_SUB = 6;
+
+/**
+ * 每个子类生成多少个模板（确定性，4–6 个），使全库恰好 = TARGET_TOTAL(500)。
+ * 105 子类，基准 5（=525）。需要砍 25 个 → 让 25 个子类降到 4。
+ * 用确定性 hash 选出「降为 4」的子类，保证每次构建一致、分布均匀。
+ */
+export function countForSub(subKey: string): number {
+  const all = ALL_SUB_KEYS;
+  const base = 5;
+  const total = all.length * base; // 525
+  const toCut = total - TARGET_TOTAL; // 25
+  // 按 hash 排序取前 toCut 个子类降为 4。
+  const ranked = [...all].sort((a, b) => hashStr(a + ":cut") - hashStr(b + ":cut"));
+  const cutSet = new Set(ranked.slice(0, toCut));
+  return cutSet.has(subKey) ? base - 1 : base;
+}
 
 export interface TemplateMeta {
   slug: string;
@@ -261,7 +288,14 @@ export interface TemplateMeta {
   subLabel: string;
   /** 该模板第几个变体（1-based）。 */
   variant: number;
+  /** 该模板的色系归类（用于列表页色系筛选；来自 DNA palette.family）。 */
   color: ColorKey;
+  /** DNA 选中的配色 key（引擎据此取色）。 */
+  paletteKey: string;
+  /** DNA 选中的布局家族 key（卡片/缩略图据此表现站型）。 */
+  layoutKey: string;
+  /** 布局家族中文名（如「企业官网」），卡片副标题用。 */
+  layoutLabel: string;
   photo: string;
   /** 用于「最热」排序的确定性热度分（同时也驱动卡片上的浏览/使用数）。 */
   hot: number;
@@ -269,41 +303,24 @@ export interface TemplateMeta {
   fresh: number;
 }
 
-// 确定性 hash（slug → 稳定整数），用来给每个模板挑色系/骨架/热度，
-// 保证服务端每次渲染一致，且同子类下 5 个变体彼此不同。
-export function hashStr(s: string): number {
-  let h = 2166136261;
-  for (let i = 0; i < s.length; i++) {
-    h ^= s.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return h >>> 0;
-}
+/** 全部子类 key（供 countForSub 计算确定性裁剪集合）。 */
+export const ALL_SUB_KEYS: string[] = INDUSTRIES.flatMap((i) =>
+  i.subs.map((s) => s.key),
+);
 
-const COLOR_CYCLE: ColorKey[] = [
-  "blue",
-  "red",
-  "green",
-  "orange",
-  "purple",
-  "dark",
-  "light",
-  "multi",
-];
-
-/** 给定子类，确定性生成它的 N 个模板元数据。 */
+/** 给定子类，确定性生成它的 N 个模板元数据（数量来自 countForSub）。 */
 export function templatesForSub(
   industry: Industry,
   sub: SubCategory,
-  count = TEMPLATES_PER_SUB,
+  count?: number,
 ): TemplateMeta[] {
+  const n0 = count ?? countForSub(sub.key);
   const out: TemplateMeta[] = [];
-  for (let n = 1; n <= count; n++) {
+  for (let n = 1; n <= n0; n++) {
     const slug = `${sub.key}-${n}`;
     const h = hashStr(slug);
-    // 第 1 个变体用行业默认色，后续按 hash 在色系里轮换，保证多样。
-    const color =
-      n === 1 ? industry.color : COLOR_CYCLE[(h + n) % COLOR_CYCLE.length];
+    // 由 DNA 决定配色家族 + 布局家族（真正拉开每个模板的观感）。
+    const dna = dnaFor(slug, industry.key, n, industry.color);
     out.push({
       slug,
       title: `${sub.label} · ${String(n).padStart(2, "0")}`,
@@ -312,7 +329,10 @@ export function templatesForSub(
       subKey: sub.key,
       subLabel: sub.label,
       variant: n,
-      color,
+      color: dna.palette.family,
+      paletteKey: dna.palette.key,
+      layoutKey: dna.layout.key,
+      layoutLabel: dna.layout.label,
       photo: sub.photo,
       hot: 800 + (h % 9200), // 800 – 10000
       fresh: h % 100000,
@@ -338,7 +358,7 @@ export function templateBySlug(slug: string): TemplateMeta | null {
     for (const sub of ind.subs) {
       if (slug.startsWith(sub.key + "-")) {
         const n = Number(slug.slice(sub.key.length + 1));
-        if (Number.isInteger(n) && n >= 1 && n <= TEMPLATES_PER_SUB) {
+        if (Number.isInteger(n) && n >= 1 && n <= countForSub(sub.key)) {
           return templatesForSub(ind, sub).find((t) => t.slug === slug) ?? null;
         }
       }

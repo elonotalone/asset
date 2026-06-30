@@ -1,21 +1,23 @@
 import { notFound } from "next/navigation";
 import {
   INDUSTRIES,
+  countForSub,
   subByKey,
   templateBySlug,
-  TEMPLATES_PER_SUB,
   templatesForSub,
 } from "@/lib/template-taxonomy";
 import { buildContent } from "@/lib/template-content";
-import { renderTemplateHTML } from "@/lib/template-engine";
+import { renderTemplate } from "@/lib/template-engine";
+import { buildExt } from "@/lib/template-content-ext";
+import { dnaFor } from "@/lib/template-dna";
 import { TemplatePreview } from "@/components/TemplatePreview";
 
-// 全部 525 个模板在构建期静态生成 → 详情页纯静态、秒开、可深链。
+// 全部 500 个模板在构建期静态生成 → 详情页纯静态、秒开、可深链。
 export function generateStaticParams() {
   const out: { slug: string }[] = [];
   for (const ind of INDUSTRIES) {
     for (const sub of ind.subs) {
-      for (let n = 1; n <= TEMPLATES_PER_SUB; n++) {
+      for (let n = 1; n <= countForSub(sub.key); n++) {
         out.push({ slug: `${sub.key}-${n}` });
       }
     }
@@ -50,7 +52,9 @@ export default async function TemplateDetailPage({
   if (!found) notFound();
 
   const content = buildContent(meta, found.ind, found.sub);
-  const html = renderTemplateHTML(meta, content);
+  const dna = dnaFor(meta.slug, meta.industryKey, meta.variant, found.ind.color);
+  const ext = buildExt(meta.slug, meta.industryKey, meta.subLabel);
+  const { html, pages } = renderTemplate(meta, content, ext, dna);
 
   // 同子类的其它模板（详情页底部「同类推荐」）。
   const siblings = templatesForSub(found.ind, found.sub).filter(
@@ -58,6 +62,6 @@ export default async function TemplateDetailPage({
   );
 
   return (
-    <TemplatePreview meta={meta} html={html} siblings={siblings} />
+    <TemplatePreview meta={meta} html={html} siblings={siblings} pages={pages} />
   );
 }

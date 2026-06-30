@@ -13,7 +13,7 @@ export function TemplateThumb({
   meta: TemplateMeta;
   onOpen: () => void;
 }) {
-  const p = paletteFor(meta.color);
+  const p = paletteFor(meta.paletteKey);
   const [loaded, setLoaded] = useState(false);
   const skel = skeletonIndexFor(meta);
   const img = photo(meta.photo, meta.hot, 600, 400);
@@ -35,6 +35,11 @@ export function TemplateThumb({
 
         {/* 迷你站点内容（按骨架变体微调版式） */}
         <MiniLayout meta={meta} skel={skel} p={p} img={img} loaded={loaded} onLoad={() => setLoaded(true)} />
+
+        {/* 多页徽标 */}
+        <span className="absolute right-2 top-[41px] z-10 rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-medium text-emerald-600 shadow-sm">
+          多页 · {meta.layoutLabel}
+        </span>
 
         {/* 悬停遮罩 */}
         <div className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition group-hover:bg-black/30 group-hover:opacity-100">
