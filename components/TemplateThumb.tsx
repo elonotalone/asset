@@ -113,8 +113,8 @@ function MiniLayout({
           }}
           className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${loaded ? "opacity-100" : "opacity-0"}`}
         />
-        {!heroImage && <div className="absolute inset-0" style={{ background: grad, opacity: 0.88 }} />}
-        {heroImage && <div className="absolute inset-0" style={{ background: grad, opacity: 0.5 }} />}
+        {!heroImage && <div className="absolute inset-0 thumb-grad-anim" style={{ background: grad, opacity: 0.88 }} />}
+        {heroImage && <div className="absolute inset-0 thumb-grad-anim" style={{ background: grad, opacity: 0.5 }} />}
         <div className={`absolute inset-0 flex flex-col justify-center gap-1 px-3 ${skel === 3 ? "items-start" : "items-center text-center"}`}>
           <div className="text-[9px] font-extrabold leading-tight text-white drop-shadow">{shortTitle(meta.subLabel)}</div>
           <div className="h-1 w-16 rounded-full bg-white/70" />

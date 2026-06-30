@@ -1,5 +1,18 @@
 @import "tailwindcss";
 
+/* 模板缩略图：悬停时渐变微动（对标微站预览质感） */
+@keyframes thumb-grad-shift {
+  0%, 100% { background-position: 0% 42%; }
+  50% { background-position: 100% 58%; }
+}
+.thumb-grad-anim {
+  background-size: 220% 220%;
+  animation: thumb-grad-shift 9s ease-in-out infinite;
+}
+.group:hover .thumb-grad-anim {
+  opacity: 0.95 !important;
+}
+
 /* 全家桶统一样式（共享组件全部工具类 + 字体/底色/v-* 动画/滚动条）= 预编译产物
    @oceanleo/ui/theme/ui.css。它**在 app/layout.tsx 里以 JS 方式 import**，不在这里
    用 CSS @import —— 因为 pnpm git 依赖目录名含 `#`，Tailwind 的 CSS @import 解析器

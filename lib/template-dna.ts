@@ -9,6 +9,7 @@
 // 设计文档：docs/architecture/oceanleo-template-gallery-v2-multipage.md（oceandino repo）。
 
 import { hashStr } from "./hash";
+import { accentFxFor, type AccentFx } from "./template-effects";
 
 // ————————————————————————————————————————————————————————————
 // 配色（在 v1 的 8 色基础上扩展到 12 个，含中性/暗色/糖果色，拉开观感差异）
@@ -282,6 +283,8 @@ export interface TemplateDNA {
   styleSeed: number;
   /** 配图基准 seed。 */
   imgSeed: number;
+  /** 装饰/动效风格（渐变光斑 / 网格 / 光束…）。 */
+  accentFx: AccentFx;
 }
 
 // 用不同盐值从 slug 派生互相独立的 hash，保证各维度不耦合。
@@ -324,5 +327,6 @@ export function dnaFor(
     font: pick(FONTS, slug, "font"),
     styleSeed: hashStr(slug + ":style"),
     imgSeed: 100 + (hashStr(slug + ":img") % 90000),
+    accentFx: accentFxFor(slug, layout.key),
   };
 }

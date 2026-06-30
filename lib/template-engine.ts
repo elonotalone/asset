@@ -26,6 +26,12 @@ import {
   dnaFor,
 } from "./template-dna";
 import { hashStr } from "./hash";
+import {
+  decorLayer,
+  effectsScript,
+  effectsStyles,
+  type AccentFx,
+} from "./template-effects";
 
 // ————————————————————————————————————————————————————————————
 // 渲染上下文（一次渲染共享）
@@ -37,6 +43,7 @@ interface Ctx {
   ext: ExtContent;
   dna: TemplateDNA;
   p: PaletteV2;
+  fx: AccentFx;
   R: ReturnType<typeof radiusTokens>;
   D: ReturnType<typeof densityTokens>;
   /** 给定章节种类取它的样式变体序号。 */
@@ -123,13 +130,33 @@ function heading(ctx: Ctx, title: string, sub?: string, align: "center" | "left"
   </div>`;
 }
 function btnPrimary(ctx: Ctx, label: string, href = "#contact"): string {
-  return `<a href="${href}" data-nav class="inline-block px-7 py-3 font-semibold text-white transition hover:opacity-90" style="background:${ctx.p.primary};border-radius:${ctx.R.btn}">${esc(label)}</a>`;
+  return `<a href="${href}" data-nav class="leo-btn-shine inline-block px-7 py-3 font-semibold text-white transition hover:opacity-90 hover:scale-[1.02]" style="background:${ctx.p.primary};border-radius:${ctx.R.btn}">${esc(label)}</a>`;
 }
 function btnGhost(ctx: Ctx, label: string, href = "#about"): string {
   return `<a href="${href}" data-nav class="inline-block px-7 py-3 font-semibold transition hover:opacity-80" style="color:${ctx.p.primary};border:1.5px solid ${ctx.p.primary};border-radius:${ctx.R.btn}">${esc(label)}</a>`;
 }
 function svgIcon(path: string, color: string, size = 24): string {
   return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="${path}"/></svg>`;
+}
+
+/** 章节滚动显现 class（hero / logos 除外，它们有独立入场）。 */
+function revealCls(kind: SectionKind): string {
+  const left: SectionKind[] = ["about", "features", "process", "team", "faq"];
+  const right: SectionKind[] = ["services", "gallery", "cases", "news", "products", "menu"];
+  const scale: SectionKind[] = ["pricing", "cta", "contact", "pageHeader"];
+  if (left.includes(kind)) return "leo-reveal leo-from-left";
+  if (right.includes(kind)) return "leo-reveal leo-from-right";
+  if (scale.includes(kind)) return "leo-reveal leo-scale";
+  return "leo-reveal";
+}
+
+function wrapSectionReveal(html: string, kind: SectionKind): string {
+  if (kind === "hero" || kind === "logos") return html;
+  const cls = revealCls(kind);
+  if (html.includes('class="')) {
+    return html.replace(/<section class="/, `<section class="${cls} `);
+  }
+  return html.replace("<section ", `<section class="${cls}" `);
 }
 
 // ————————————————————————————————————————————————————————————
@@ -206,59 +233,58 @@ function footer(ctx: Ctx, pages: PageKey[]): string {
 // ————————————————————————————————————————————————————————————
 
 function renderHero(ctx: Ctx): string {
-  const { c, p, R, D } = ctx;
+  const { c, p, R, D, fx, dna } = ctx;
+  const deco = decorLayer(p, fx, dna.styleSeed);
   const v = ctx.variantOf("hero", 5);
   const badge = `<span class="inline-block px-3 py-1 text-xs font-medium" style="background:${p.soft};color:${p.primary};border-radius:${R.pill}">${esc(ctx.meta.subLabel)} · 专业方案</span>`;
   const title = `<h1 style="font-size:${D.h1};font-weight:800;line-height:1.12">${esc(c.heroTitle)}</h1>`;
   const subt = `<p class="mt-5 text-lg" style="opacity:.9">${esc(c.heroSubtitle)}</p>`;
   const ctas = `<div class="mt-8 flex flex-wrap gap-4">${btnPrimary(ctx, c.heroCta)}${btnGhost(ctx, c.heroCtaAlt, "#services")}</div>`;
+  const copy = `<div class="leo-reveal leo-in">${badge}<div class="mt-5">${title}</div>${subt}${ctas}</div>`;
 
   if (v === 0) {
-    // 渐变深底 · 左文右图
     return `
-    <section class="relative overflow-hidden text-white" style="background:linear-gradient(135deg,${p.gradFrom},${p.gradTo})">
-      <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center" style="${sectionPad(ctx)}">
-        <div>${badge}<div class="mt-5">${title}</div>${subt}${ctas}</div>
-        <div>${img(ctx, 0, 900, 700, "w-full object-cover shadow-2xl", `border-radius:${R.img};height:24rem`)}</div>
+    <section class="relative overflow-hidden text-white leo-grad-anim" style="background:linear-gradient(135deg,${p.gradFrom},${p.gradTo})">
+      ${deco}
+      <div class="relative max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center" style="${sectionPad(ctx)}">
+        ${copy}
+        <div class="leo-reveal leo-in leo-from-right" style="transition-delay:.12s">${img(ctx, 0, 900, 700, "w-full object-cover shadow-2xl leo-card", `border-radius:${R.img};height:24rem`)}</div>
       </div>
     </section>`;
   }
   if (v === 1) {
-    // 全屏大图 + 居中文案
     return `
-    <section class="relative flex items-center justify-center text-center text-white" style="min-height:78vh">
-      ${img(ctx, 0, 1600, 1000, "absolute inset-0 h-full w-full object-cover")}
-      <div class="absolute inset-0" style="background:linear-gradient(135deg,${p.gradFrom}cc,${p.gradTo}99)"></div>
-      <div class="relative max-w-3xl px-6">${badge}<div class="mt-5">${title}</div>${subt}<div class="mt-8 flex justify-center gap-4">${btnPrimary(ctx, c.heroCta)}${btnGhost(ctx, c.heroCtaAlt, "#services")}</div></div>
+    <section class="relative flex items-center justify-center text-center text-white overflow-hidden" style="min-height:78vh">
+      ${img(ctx, 0, 1600, 1000, "absolute inset-0 h-full w-full object-cover leo-kenburns")}
+      <div class="absolute inset-0 leo-grad-anim" style="background:linear-gradient(135deg,${p.gradFrom}cc,${p.gradTo}99)"></div>
+      ${deco}
+      <div class="relative max-w-3xl px-6">${copy}</div>
     </section>`;
   }
   if (v === 2) {
-    // 浅底居中 · 下方大图（极简）
     return `
-    <section class="bg-white text-center" style="color:${p.ink}">
+    <section class="relative bg-white text-center overflow-hidden" style="color:${p.ink}">
       <div class="max-w-4xl mx-auto px-6" style="${sectionPad(ctx)}">
-        ${badge}<div class="mt-6">${title}</div>${`<p class="mt-6 text-lg max-w-2xl mx-auto" style="color:${p.sub}">${esc(c.heroSubtitle)}</p>`}
-        <div class="mt-8 flex justify-center gap-4">${btnPrimary(ctx, c.heroCta)}${btnGhost(ctx, c.heroCtaAlt, "#services")}</div>
-        ${img(ctx, 0, 1200, 600, "mt-12 w-full object-cover shadow-xl", `border-radius:${R.img};height:26rem`)}
+        ${copy}
+        <div class="leo-reveal leo-in leo-scale" style="transition-delay:.15s">${img(ctx, 0, 1200, 600, "mt-12 w-full object-cover shadow-xl leo-card", `border-radius:${R.img};height:26rem`)}</div>
       </div>
     </section>`;
   }
   if (v === 3) {
-    // 分栏色块 · 左色底文案，右满图
     return `
-    <section class="grid md:grid-cols-2" style="min-height:72vh">
-      <div class="flex items-center px-6 md:px-16 py-16" style="background:${p.soft};color:${p.ink}">
-        <div><span class="inline-block px-3 py-1 text-xs font-medium text-white" style="background:${p.primary};border-radius:${R.pill}">${esc(ctx.meta.subLabel)}</span><div class="mt-5">${title}</div><p class="mt-5 text-lg" style="color:${p.sub}">${esc(c.heroSubtitle)}</p>${ctas}</div>
+    <section class="grid md:grid-cols-2 relative overflow-hidden" style="min-height:72vh">
+      <div class="relative flex items-center px-6 md:px-16 py-16" style="background:${p.soft};color:${p.ink}">
+        ${deco}
+        <div class="relative">${copy.replace("leo-reveal leo-in", "leo-reveal leo-in leo-from-left")}</div>
       </div>
-      <div class="relative">${img(ctx, 0, 900, 1100, "absolute inset-0 h-full w-full object-cover")}</div>
+      <div class="relative">${img(ctx, 0, 900, 1100, "absolute inset-0 h-full w-full object-cover leo-kenburns")}</div>
     </section>`;
   }
-  // v === 4：深底 · 居中文案 + 下方数据条预览
   return `
-    <section class="text-white" style="background:linear-gradient(160deg,${p.gradFrom},${p.gradTo})">
-      <div class="max-w-4xl mx-auto px-6 text-center" style="${sectionPad(ctx)}">
-        ${badge}<div class="mt-6">${title}</div>${subt}
-        <div class="mt-8 flex justify-center gap-4">${btnPrimary(ctx, c.heroCta)}${btnGhost(ctx, c.heroCtaAlt, "#services")}</div>
+    <section class="relative overflow-hidden text-white leo-grad-anim" style="background:linear-gradient(160deg,${p.gradFrom},${p.gradTo})">
+      ${deco}
+      <div class="relative max-w-4xl mx-auto px-6 text-center" style="${sectionPad(ctx)}">
+        ${copy}
       </div>
     </section>`;
 }
@@ -270,7 +296,7 @@ function renderStats(ctx: Ctx): string {
     .map(
       (s) => `
       <div class="text-center">
-        <div style="font-size:2.25rem;font-weight:800;color:${p.primary}">${esc(s.value)}</div>
+        <div class="leo-stat-num" style="font-size:2.25rem;font-weight:800;color:${p.primary}">${esc(s.value)}</div>
         <div class="mt-1 text-sm" style="color:${p.sub}">${esc(s.label)}</div>
       </div>`,
     )
@@ -337,7 +363,7 @@ function renderFeatures(ctx: Ctx): string {
         return `<div class="p-6 text-white" style="background:${p.ink};border-radius:${R.card}"><div class="h-11 w-11 flex items-center justify-center" style="background:${p.primary};border-radius:${R.btn}">${svgIcon(f.icon || FEATURE_ICONS[i % FEATURE_ICONS.length], "#fff", 22)}</div><h3 class="mt-4 font-semibold">${esc(f.title)}</h3><p class="mt-2 text-sm text-white/70">${esc(f.desc)}</p></div>`;
       }
       // v0 默认卡片
-      return `<div class="p-6 transition hover:-translate-y-1" style="background:#fff;border:1px solid #0000000a;border-radius:${R.card};box-shadow:0 6px 20px #0000000a"><div class="h-12 w-12 flex items-center justify-center" style="background:${p.soft};border-radius:${R.btn}">${icon}</div><h3 class="mt-4 font-semibold text-lg" style="color:${p.ink}">${esc(f.title)}</h3><p class="mt-2 text-sm leading-relaxed" style="color:${p.sub}">${esc(f.desc)}</p></div>`;
+      return `<div class="leo-card p-6 transition hover:-translate-y-1" style="background:#fff;border:1px solid #0000000a;border-radius:${R.card};box-shadow:0 6px 20px #0000000a"><div class="h-12 w-12 flex items-center justify-center" style="background:${p.soft};border-radius:${R.btn}">${icon}</div><h3 class="mt-4 font-semibold text-lg" style="color:${p.ink}">${esc(f.title)}</h3><p class="mt-2 text-sm leading-relaxed" style="color:${p.sub}">${esc(f.desc)}</p></div>`;
     })
     .join("");
   const bg = v === 3 ? "background:#fff" : `background:${p.soft}`;
@@ -418,7 +444,7 @@ function renderCases(ctx: Ctx): string {
   const { ext, p, R } = ctx;
   const cards = ext.cases
     .map(
-      (cs, i) => `<div class="overflow-hidden" style="background:#fff;border:1px solid #0000000a;border-radius:${R.card}">${img(ctx, 80 + i, 700, 440, "h-44 w-full object-cover")}<div class="p-5"><span class="inline-block px-2 py-0.5 text-xs font-medium" style="background:${p.soft};color:${p.primary};border-radius:${R.pill}">${esc(cs.tag)}</span><h3 class="mt-3 font-semibold" style="color:${ctx.p.ink}">${esc(cs.title)}</h3><p class="mt-2 text-sm" style="color:${p.sub}">${esc(cs.desc)}</p></div></div>`,
+      (cs, i) => `<div class="leo-card overflow-hidden" style="background:#fff;border:1px solid #0000000a;border-radius:${R.card}">${img(ctx, 80 + i, 700, 440, "h-44 w-full object-cover")}<div class="p-5"><span class="inline-block px-2 py-0.5 text-xs font-medium" style="background:${p.soft};color:${p.primary};border-radius:${R.pill}">${esc(cs.tag)}</span><h3 class="mt-3 font-semibold" style="color:${ctx.p.ink}">${esc(cs.title)}</h3><p class="mt-2 text-sm" style="color:${p.sub}">${esc(cs.desc)}</p></div></div>`,
     )
     .join("");
   return `<section style="background:${p.soft};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, "成功案例", "服务过的代表性项目，见证我们的专业与诚意。")}<div class="mt-12 grid md:grid-cols-3 gap-6">${cards}</div></div></section>`;
@@ -483,23 +509,25 @@ function renderFaq(ctx: Ctx): string {
 
 function renderLogos(ctx: Ctx): string {
   const { ext, p } = ctx;
-  const items = ext.logos.map((l) => `<div class="text-center text-lg font-bold tracking-wide" style="color:${p.sub};opacity:.55">${esc(l)}</div>`).join("");
-  return `<section class="bg-white border-y" style="border-color:#0000000a"><div class="max-w-6xl mx-auto px-6 py-8"><p class="text-center text-xs mb-5" style="color:${p.sub};opacity:.7">受到众多客户信赖与选择</p><div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-8 gap-6 items-center">${items}</div></div></section>`;
+  const item = (l: string) => `<div class="shrink-0 px-8 text-center text-lg font-bold tracking-wide" style="color:${p.sub};opacity:.55">${esc(l)}</div>`;
+  const row = ext.logos.map(item).join("");
+  return `<section class="bg-white border-y overflow-hidden" style="border-color:#0000000a"><div class="max-w-6xl mx-auto px-6 py-8"><p class="text-center text-xs mb-5" style="color:${p.sub};opacity:.7">受到众多客户信赖与选择</p><div class="relative"><div class="leo-marquee gap-0">${row}${row}</div></div></div></section>`;
 }
 
 function renderNews(ctx: Ctx): string {
   const { ext, p, R } = ctx;
   const cards = ext.news
     .map(
-      (n, i) => `<div class="overflow-hidden" style="background:#fff;border:1px solid #0000000a;border-radius:${R.card}">${img(ctx, 120 + i, 700, 420, "h-40 w-full object-cover")}<div class="p-5"><div class="flex items-center gap-2 text-xs" style="color:${p.primary}"><span class="font-medium">${esc(n.cat)}</span><span style="color:${p.sub};opacity:.6">${esc(n.date)}</span></div><h3 class="mt-2 font-semibold leading-snug" style="color:${ctx.p.ink}">${esc(n.title)}</h3><p class="mt-2 text-sm" style="color:${p.sub}">${esc(n.excerpt)}</p></div></div>`,
+      (n, i) => `<div class="leo-card overflow-hidden" style="background:#fff;border:1px solid #0000000a;border-radius:${R.card}">${img(ctx, 120 + i, 700, 420, "h-40 w-full object-cover")}<div class="p-5"><div class="flex items-center gap-2 text-xs" style="color:${p.primary}"><span class="font-medium">${esc(n.cat)}</span><span style="color:${p.sub};opacity:.6">${esc(n.date)}</span></div><h3 class="mt-2 font-semibold leading-snug" style="color:${ctx.p.ink}">${esc(n.title)}</h3><p class="mt-2 text-sm" style="color:${p.sub}">${esc(n.excerpt)}</p></div></div>`,
     )
     .join("");
   return `<section style="background:${p.soft};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, "新闻资讯", "了解我们的最新动态与行业洞察。")}<div class="mt-12 grid md:grid-cols-3 gap-6">${cards}</div></div></section>`;
 }
 
 function renderCta(ctx: Ctx): string {
-  const { c, p, R } = ctx;
-  return `<section style="${sectionPad(ctx)}"><div class="max-w-5xl mx-auto px-6"><div class="text-center text-white px-8 py-14" style="background:linear-gradient(135deg,${p.gradFrom},${p.gradTo});border-radius:${R.card}"><h2 style="font-size:${ctx.D.h2};font-weight:800">${esc(c.ctaTitle)}</h2><p class="mt-3 text-white/85">${esc(c.ctaSubtitle)}</p><a href="tel:${esc(c.contactPhone)}" class="mt-8 inline-block bg-white px-8 py-3 font-semibold" style="color:${p.primaryDark};border-radius:${R.btn}">${esc(c.ctaButton)} · ${esc(c.contactPhone)}</a></div></div></section>`;
+  const { c, p, R, fx, dna } = ctx;
+  const deco = decorLayer(p, fx, dna.styleSeed + 7);
+  return `<section style="${sectionPad(ctx)}"><div class="max-w-5xl mx-auto px-6"><div class="relative overflow-hidden text-center text-white px-8 py-14 leo-grad-anim" style="background:linear-gradient(135deg,${p.gradFrom},${p.gradTo});border-radius:${R.card}">${deco}<div class="relative"><h2 style="font-size:${ctx.D.h2};font-weight:800">${esc(c.ctaTitle)}</h2><p class="mt-3 text-white/85">${esc(c.ctaSubtitle)}</p><a href="tel:${esc(c.contactPhone)}" class="leo-btn-shine mt-8 inline-block bg-white px-8 py-3 font-semibold transition hover:scale-[1.02]" style="color:${p.primaryDark};border-radius:${R.btn}">${esc(c.ctaButton)} · ${esc(c.contactPhone)}</a></div></div></div></section>`;
 }
 
 function renderContact(ctx: Ctx): string {
@@ -523,11 +551,13 @@ function renderContact(ctx: Ctx): string {
 }
 
 function renderPageHeader(ctx: Ctx, label: string): string {
-  const { p } = ctx;
-  return `<section class="text-white" style="background:linear-gradient(135deg,${p.gradFrom},${p.gradTo})"><div class="max-w-6xl mx-auto px-6 py-16"><h1 style="font-size:${ctx.D.h2};font-weight:800">${esc(label)}</h1><p class="mt-2 text-white/80 text-sm">${esc(ctx.c.brand)} · ${esc(label)}</p></div></section>`;
+  const { p, fx, dna } = ctx;
+  const deco = decorLayer(p, fx, dna.styleSeed + 3);
+  return `<section class="relative overflow-hidden text-white leo-grad-anim" style="background:linear-gradient(135deg,${p.gradFrom},${p.gradTo})">${deco}<div class="relative max-w-6xl mx-auto px-6 py-16"><h1 style="font-size:${ctx.D.h2};font-weight:800">${esc(label)}</h1><p class="mt-2 text-white/80 text-sm">${esc(ctx.c.brand)} · ${esc(label)}</p></div></section>`;
 }
 
 function renderSection(ctx: Ctx, kind: SectionKind, pageLabel: string): string {
+  const html = (() => {
   switch (kind) {
     case "hero": return renderHero(ctx);
     case "stats": return renderStats(ctx);
@@ -550,6 +580,8 @@ function renderSection(ctx: Ctx, kind: SectionKind, pageLabel: string): string {
     case "pageHeader": return renderPageHeader(ctx, pageLabel);
     default: return "";
   }
+  })();
+  return wrapSectionReveal(html, kind);
 }
 
 // ————————————————————————————————————————————————————————————
@@ -574,6 +606,7 @@ export function renderTemplate(
     ext,
     dna,
     p,
+    fx: dna.accentFx,
     R: radiusTokens(dna),
     D: densityTokens(dna),
     variantOf: (kind, count) =>
@@ -614,27 +647,32 @@ ${footer(ctx, pages)}`;
   .nav-link.active::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:2px;background:${p.primary}}
   [data-page]{animation:fade .35s ease}
   @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  ${effectsStyles(p)}
 </style>
 </head>
 <body>
 ${body}
 <script>
 (function(){
+  ${effectsScript()}
   function show(page){
     var pages=document.querySelectorAll('[data-page]');
     var found=false;
+    var active=null;
     pages.forEach(function(el){
       var on=el.getAttribute('data-page')===page;
       el.hidden=!on; el.style.display=on?'':'none';
-      if(on)found=true;
+      if(on){found=true;active=el;}
     });
-    if(!found && pages[0]){pages[0].hidden=false;pages[0].style.display='';}
+    if(!found && pages[0]){pages[0].hidden=false;pages[0].style.display='';active=pages[0];}
     document.querySelectorAll('.nav-link').forEach(function(a){
       a.classList.toggle('active', a.getAttribute('data-go')===page);
     });
     var sc=document.scrollingElement||document.documentElement;
     sc.scrollTop=0;
+    if(active) leoInitReveal(active);
   }
+  leoInitReveal(document);
   // 外层预览工具条可通过 postMessage 驱动切页。
   window.addEventListener('message',function(ev){
     var d=ev&&ev.data;
