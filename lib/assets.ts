@@ -102,6 +102,8 @@ export async function searchAssets(params: {
   type: AssetType;
   license?: LicenseFilter;
   source?: string;
+  category?: string;
+  subtab?: string;
   page?: number;
   pageSize?: number;
 }): Promise<SearchResult> {
@@ -112,13 +114,16 @@ export async function searchAssets(params: {
   // 1) self-owned library — but only when no explicit upstream source is forced
   if (!params.source) {
     try {
-      const libQs = new URLSearchParams({
+      const libParams: Record<string, string> = {
         q: params.q || "",
         type: params.type,
         license,
         page: String(page),
         page_size: String(pageSize),
-      });
+      };
+      if (params.category) libParams.category = params.category;
+      if (params.subtab) libParams.subtab = params.subtab;
+      const libQs = new URLSearchParams(libParams);
       const lib = await getJson<LibraryResult>(
         `/v1/assets/library/search?${libQs.toString()}`,
       );
@@ -130,8 +135,17 @@ export async function searchAssets(params: {
           sources_queried: ["library"],
         };
       }
+      // 分类浏览（指定了 category/subtab）时不回落到实时上游——上游不认识我们的
+      // 目录键，回落只会展示一堆不相关图，破坏「分类」的准确性。空就如实显示空态。
+      if (params.category || params.subtab) {
+        return { items: [], page, has_more: false, sources_queried: ["library"] };
+      }
     } catch {
-      // ignore and fall through to realtime gateway
+      // 分类浏览失败也不回落上游（同上）。
+      if (params.category || params.subtab) {
+        return { items: [], page, has_more: false, sources_queried: ["library"] };
+      }
+      // 自由搜索：继续回落到实时上游网关。
     }
   }
 
@@ -307,6 +321,167 @@ export const DESIGN_FILTER_GROUPS: FilterGroup[] = [
     ],
   },
 ];
+
+// ---------------------------------------------------------------------------
+// 素材库「目录」分类树（对标稿定 23 面板 + 二级 tab）
+// ---------------------------------------------------------------------------
+// 这是 operator 最强调的「分类」：左栏按面板（热门/小红书/符号/节日/…/icon图标）
+// 浏览，每个面板下有二级 tab。它与后端 ingest 的 taxonomy.py 一一对应：
+//   panel.key  == platform_assets.category
+//   sub.key    ∈  platform_assets.scene_tags
+// 切面板/二级 tab → searchAssets({category, subtab}) → 库里精确命中那一类素材。
+// 顺序、命名、图标都照 operator 提供的稿定截图。
+
+export interface CategorySub {
+  /** 机器键（= scene_tags 里的二级 tab 键） */
+  key: string;
+  /** 中文 tab 名（对齐稿定截图文案） */
+  label: string;
+}
+
+export interface CategoryPanel {
+  /** 面板机器键（= platform_assets.category） */
+  key: string;
+  /** 面板中文名（左栏目录名） */
+  label: string;
+  /** 面板图标 emoji（纯装饰） */
+  icon: string;
+  /** 该面板素材落在哪个 AssetType（驱动 library/search 的 type 参数） */
+  type: AssetType;
+  /** 二级 tab；首项恒为「全部」(key="") 表示该面板不按二级 tab 过滤 */
+  subs: CategorySub[];
+}
+
+const ALL_SUB: CategorySub = { key: "", label: "全部" };
+
+export const CATEGORY_PANELS: CategoryPanel[] = [
+  {
+    key: "hot", label: "热门", icon: "🔥", type: "sticker",
+    subs: [ALL_SUB, { key: "heart", label: "爱心" }, { key: "star", label: "星星" },
+      { key: "megaphone", label: "喇叭" }, { key: "magnifier", label: "放大镜" },
+      { key: "number", label: "数字" }, { key: "money", label: "钱" },
+      { key: "phone", label: "手机电话" }],
+  },
+  {
+    key: "xhs", label: "小红书", icon: "📕", type: "sticker",
+    subs: [ALL_SUB, { key: "featured", label: "精选" }, { key: "emoji", label: "emoji符号" },
+      { key: "metoo-pet", label: "猫狗梗图" }, { key: "memo", label: "手帐备忘录" }],
+  },
+  {
+    key: "symbol", label: "符号", icon: "✓", type: "sticker",
+    subs: [ALL_SUB, { key: "check-cross", label: "圈叉勾" },
+      { key: "punctuation", label: "标点符号" }, { key: "arrow", label: "箭头" }],
+  },
+  {
+    key: "festival", label: "节日", icon: "🎉", type: "sticker",
+    subs: [ALL_SUB, { key: "jieqi", label: "二十四节气" }, { key: "summer", label: "夏日" },
+      { key: "qixi", label: "七夕" }, { key: "teacher", label: "教师节" },
+      { key: "national", label: "国庆节" }, { key: "midautumn", label: "中秋节" },
+      { key: "double11", label: "双11" }, { key: "christmas", label: "圣诞节" },
+      { key: "newyear", label: "元旦节" }],
+  },
+  {
+    key: "industry", label: "行业", icon: "🏢", type: "sticker",
+    subs: [ALL_SUB, { key: "education", label: "教育" }, { key: "ecommerce", label: "电商" },
+      { key: "travel", label: "旅游" }, { key: "baby", label: "母婴" },
+      { key: "home", label: "家居" }, { key: "finance", label: "金融" },
+      { key: "medical", label: "医疗" }],
+  },
+  {
+    key: "flat-illust", label: "扁平插画", icon: "🖼", type: "vector",
+    subs: [ALL_SUB, { key: "featured", label: "精选" }, { key: "people", label: "人物" },
+      { key: "animal-plant", label: "动植物" }, { key: "transport", label: "交通" },
+      { key: "building", label: "建筑" }, { key: "furniture", label: "家具" },
+      { key: "chart", label: "图表" }, { key: "entertainment", label: "文娱" },
+      { key: "life", label: "生活" }, { key: "prop", label: "道具" },
+      { key: "scene", label: "场景" }],
+  },
+  { key: "element-3d", label: "3D元素", icon: "🧊", type: "sticker", subs: [ALL_SUB] },
+  {
+    key: "guofeng", label: "国风水墨", icon: "🀄", type: "sticker",
+    subs: [ALL_SUB, { key: "ink-element", label: "水墨元素" },
+      { key: "guochao-element", label: "国潮元素" }, { key: "ink-bg", label: "水墨背景" }],
+  },
+  {
+    key: "texture-style", label: "肌理风格", icon: "🎨", type: "sticker",
+    subs: [ALL_SUB, { key: "inflate", label: "膨胀风" }, { key: "clay", label: "粘土风" },
+      { key: "glass", label: "玻璃风" }, { key: "fluffy", label: "毛绒风" },
+      { key: "gilt", label: "鎏金风" }, { key: "particle", label: "粒子风" },
+      { key: "torn-paper", label: "撕纸风" }, { key: "crayon", label: "蜡笔风" }],
+  },
+  {
+    key: "sticker-dyn", label: "动态贴纸", icon: "✨", type: "sticker",
+    subs: [ALL_SUB, { key: "featured", label: "精选" }, { key: "emoji-pack", label: "表情包" },
+      { key: "fruit", label: "水果" }, { key: "promo-text", label: "促销文字" },
+      { key: "simple-deco", label: "简约装饰" }, { key: "people", label: "人物" },
+      { key: "action", label: "动作" }, { key: "animal", label: "动物" }],
+  },
+  { key: "art-text", label: "艺术字", icon: "🅰", type: "font", subs: [ALL_SUB] },
+  {
+    key: "nature", label: "自然", icon: "🌿", type: "sticker",
+    subs: [ALL_SUB, { key: "moon-star", label: "星月" }, { key: "sun", label: "太阳" },
+      { key: "cloud", label: "云朵" }, { key: "flower", label: "花" },
+      { key: "grass", label: "草" }, { key: "tree", label: "树" },
+      { key: "mountain-river", label: "山河" }, { key: "lake-sea", label: "湖海" }],
+  },
+  {
+    key: "people", label: "人物", icon: "🧑", type: "sticker",
+    subs: [ALL_SUB, { key: "child", label: "儿童" }, { key: "elder", label: "老人" },
+      { key: "woman", label: "女士" }, { key: "man", label: "男士" },
+      { key: "occupation", label: "职业" }],
+  },
+  {
+    key: "animal", label: "动物", icon: "🐾", type: "sticker",
+    subs: [ALL_SUB, { key: "cat", label: "猫" }, { key: "dog", label: "狗" },
+      { key: "snake", label: "蛇" }, { key: "horse", label: "马" },
+      { key: "sheep", label: "羊" }, { key: "monkey", label: "猴" },
+      { key: "chicken", label: "鸡" }, { key: "pig", label: "猪" },
+      { key: "mouse", label: "鼠" }, { key: "ox", label: "牛" }, { key: "tiger", label: "虎" }],
+  },
+  {
+    key: "food", label: "美食", icon: "🍔", type: "image",
+    subs: [ALL_SUB, { key: "fruit", label: "水果" }, { key: "vegetable", label: "蔬菜" },
+      { key: "chinese-dish", label: "中式料理" }, { key: "foreign-dish", label: "外国料理" },
+      { key: "drink", label: "饮料酒水" }, { key: "dessert", label: "蛋糕甜品" },
+      { key: "meat-egg", label: "肉类蛋禽" }, { key: "seasoning", label: "调味蘸料" }],
+  },
+  { key: "city", label: "城市建筑", icon: "🏙", type: "image", subs: [ALL_SUB] },
+  {
+    key: "transport", label: "交通工具", icon: "🚗", type: "sticker",
+    subs: [ALL_SUB, { key: "element", label: "立体交通" }, { key: "photo", label: "交通摄影" }],
+  },
+  { key: "brush", label: "色块笔刷", icon: "🖌", type: "sticker", subs: [ALL_SUB] },
+  { key: "life-photo", label: "生活晒照", icon: "📸", type: "sticker", subs: [ALL_SUB] },
+  { key: "face-cover", label: "挡脸元素", icon: "🙈", type: "sticker", subs: [ALL_SUB] },
+  { key: "gesture", label: "热门手势", icon: "👍", type: "sticker", subs: [ALL_SUB] },
+  {
+    key: "icon", label: "icon图标", icon: "🔧", type: "vector",
+    subs: [ALL_SUB, { key: "featured", label: "精选" }, { key: "people", label: "人物" },
+      { key: "ecommerce", label: "电商" }, { key: "app", label: "手机App" },
+      { key: "internet", label: "互联网" }, { key: "gesture", label: "手势" },
+      { key: "animal", label: "动物" }, { key: "weather", label: "天气" },
+      { key: "food", label: "美食" }, { key: "daily", label: "日用品" },
+      { key: "biz-finance", label: "商务金融" }, { key: "baby", label: "母婴育儿" },
+      { key: "entertainment", label: "娱乐" }, { key: "beauty", label: "美妆" },
+      { key: "fashion", label: "服饰箱包" }, { key: "appliance", label: "电器" },
+      { key: "tool", label: "工具" }, { key: "device", label: "电子产品" },
+      { key: "sport", label: "运动" }, { key: "medical", label: "医疗" },
+      { key: "transport", label: "交通" }, { key: "eco", label: "环保" },
+      { key: "building", label: "建筑" }, { key: "edu", label: "教培" },
+      { key: "line", label: "线性" }, { key: "color", label: "彩色" },
+      { key: "justice", label: "司法" }, { key: "safety", label: "消防安全" },
+      { key: "charity", label: "慈善公益" }],
+  },
+  {
+    key: "background", label: "背景", icon: "🎴", type: "image",
+    subs: [ALL_SUB, { key: "gradient", label: "渐变背景" }, { key: "texture", label: "纹理背景" },
+      { key: "festive", label: "节日背景" }, { key: "fresh", label: "清新背景" }],
+  },
+];
+
+export function panelByKey(key: string): CategoryPanel | undefined {
+  return CATEGORY_PANELS.find((p) => p.key === key);
+}
 
 // --- Personal asset library (collection) ----------------------------------
 // All authed against the shared SSO bearer token. Unauthenticated callers get a
