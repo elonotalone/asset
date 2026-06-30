@@ -189,7 +189,7 @@ export function TemplateGallery({ total, subs }: { total: number; subs: number }
       {/* 网格 */}
       <section className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {visible.map((t) => (
-          <TemplateThumb key={t.slug} meta={t} onOpen={() => router.push(`/templates/${t.slug}`)} />
+          <TemplateThumb key={t.slug} meta={t} href={`/templates/${t.slug}`} />
         ))}
       </section>
 

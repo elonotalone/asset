@@ -8,10 +8,10 @@ import { paletteFor, photo, photoFallback, skeletonIndexFor } from "@/lib/templa
 // 每个模板的真实观感，而不是在网格里塞 525 个重量级 iframe。点开才渲染整页。
 export function TemplateThumb({
   meta,
-  onOpen,
+  href,
 }: {
   meta: TemplateMeta;
-  onOpen: () => void;
+  href: string;
 }) {
   const p = paletteFor(meta.paletteKey);
   const [loaded, setLoaded] = useState(false);
@@ -19,8 +19,12 @@ export function TemplateThumb({
   const img = photo(meta.photo, meta.hot, 600, 400);
 
   return (
-    <button
-      onClick={onOpen}
+    // 真链接 + target=_blank：点开后浏览器整页加载这个模板网站本身（route.ts
+    // 返回的纯 HTML 文档），完全独立、可深链、可分享，不再嵌在素材库壳里。
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
       className="group block w-full overflow-hidden rounded-2xl border border-zinc-200 bg-white text-left shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
     >
       {/* 迷你浏览器预览 */}
@@ -58,7 +62,7 @@ export function TemplateThumb({
           {meta.hot.toLocaleString()}
         </div>
       </div>
-    </button>
+    </a>
   );
 }
 

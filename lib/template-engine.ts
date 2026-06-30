@@ -1,7 +1,7 @@
 // 模板渲染引擎 v2 —— 把 (TemplateMeta + SiteContent + ExtContent + DNA) 渲染成一个
-// 自包含的【多页】HTML 文档。详情页 /templates/<slug> 把它塞进 iframe srcdoc 全屏
-// 展示：顶部导航点击在 iframe 内切换页面（首页/关于/服务/案例/资讯/联系…），
-// 零额外请求，即点即逛。
+// 自包含的【多页】HTML 文档。/templates/<slug>（route.ts）把它作为 text/html 响应体
+// **直接整页返回**：浏览器渲染出来的就是这个模板网站本身，可独立打开/深链/分享，
+// 顶部导航点击在文档内切换页面（首页/关于/服务/案例/资讯/联系…），零额外请求。
 //
 // 「真多样」来自 DNA（template-dna.ts）：布局家族决定有哪些页/每页哪些章节；每类
 // 章节有多个样式变体由 styleSeed 选取；再叠加配色/圆角/密度/字体，所以每个模板的
@@ -673,7 +673,7 @@ ${body}
     if(active) leoInitReveal(active);
   }
   leoInitReveal(document);
-  // 外层预览工具条可通过 postMessage 驱动切页。
+  // 兼容：若被任何外层嵌入，可通过 postMessage 驱动切页（独立打开时不会触发）。
   window.addEventListener('message',function(ev){
     var d=ev&&ev.data;
     if(d&&d.__leoGo){show(d.__leoGo);}
@@ -689,7 +689,7 @@ ${body}
       var key=href.replace('#','');
       if(key){e.preventDefault();show(key);return;}
     }
-    // 其它锚点/链接：纯静态预览，统一拦截，避免 iframe 被替换
+    // 其它锚点/链接：纯静态多页站点，统一拦截，避免整页跳走
     var raw=a.getAttribute('href')||'';
     if(raw==='#'||raw.charAt(0)==='#'){e.preventDefault();}
   },true);
