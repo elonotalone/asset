@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* 全家桶统一主题：class 策略 dark（配合 <html class="dark">，支持 Light/Dark/Auto）。 */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* 模板缩略图：悬停时渐变微动（对标微站预览质感） */
 @keyframes thumb-grad-shift {
   0%, 100% { background-position: 0% 42%; }
