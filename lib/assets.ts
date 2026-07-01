@@ -48,6 +48,21 @@ export interface Asset {
   score?: number;
   /** 仅在「我的素材库」里出现：收藏时间。 */
   saved_at?: string;
+  /** 「成套素材」分组键（同一套风格一致）；非成套素材为空。 */
+  series_id?: string;
+  /** 成套素材的中文套名（如「国风文化成套」）。 */
+  series_name?: string;
+}
+
+// 「成套素材」——一套风格统一、可整套浏览的开源素材（来自 svgrepo 同一 data_pack，
+// 每套均已人工逐张过目）。列表用于「成套素材」专区的成套卡片，点开进整套。
+export interface Series {
+  series_id: string;
+  series_name: string;
+  type: AssetType;
+  count: number;
+  /** 前 4 张缩略图，做成套封面拼贴。 */
+  covers: string[];
 }
 
 export interface SearchResult {
@@ -104,6 +119,7 @@ export async function searchAssets(params: {
   license?: LicenseFilter;
   category?: string;
   subtab?: string;
+  seriesId?: string;
   page?: number;
   pageSize?: number;
 }): Promise<SearchResult> {
@@ -120,6 +136,7 @@ export async function searchAssets(params: {
   };
   if (params.category) libParams.category = params.category;
   if (params.subtab) libParams.subtab = params.subtab;
+  if (params.seriesId) libParams.series_id = params.seriesId;
   const libQs = new URLSearchParams(libParams);
   const lib = await getJson<LibraryResult>(
     `/v1/assets/library/search?${libQs.toString()}`,
@@ -586,12 +603,11 @@ const CATEGORY_LABELS: Record<string, string> = {
   "sticker-dyn": "动态贴纸",
   shape: "形状",
   ornament: "装饰花纹",
-  // sticker
+  // sticker（emoji 贴纸大全，按 OpenMoji group 分中文子类目）
+  emoji: "emoji 贴纸",
   hot: "热门",
   xhs: "小红书",
   guofeng: "国风水墨",
-  "element-3d": "3D 元素",
-  transport: "交通工具",
   // font
   "art-text": "艺术字",
 };
@@ -642,6 +658,12 @@ export function listLibraryCategories(
   return getJson<{ categories: string[] }>(
     `/v1/assets/library/categories?type=${encodeURIComponent(type)}`,
   );
+}
+
+// 「成套素材」列表：按 series 分组。type 留空=所有类型的成套。
+export function listSeries(type?: AssetType): Promise<{ series: Series[] }> {
+  const qs = type ? `?type=${encodeURIComponent(type)}` : "";
+  return getJson<{ series: Series[] }>(`/v1/assets/library/series${qs}`);
 }
 
 // --- Personal asset library (collection) ----------------------------------

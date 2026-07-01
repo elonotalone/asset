@@ -64,6 +64,17 @@ function IconOpenSource() {
   );
 }
 
+function IconSeries() {
+  return (
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="7" height="7" rx="1.5" />
+      <rect x="14" y="3" width="7" height="7" rx="1.5" />
+      <rect x="3" y="14" width="7" height="7" rx="1.5" />
+      <path d="M14 17.5h7M17.5 14v7" />
+    </svg>
+  );
+}
+
 // 每个素材类别一个图标（左侧栏分区用）。
 function TypeIcon({ type }: { type: AssetType }) {
   const D: Record<AssetType, string> = {
@@ -142,6 +153,12 @@ function SiteShellInner({ children }: { children: ReactNode }) {
           icon: <IconOpenSource />,
           href: "/open",
           match: (p) => p.startsWith("/open"),
+        },
+        {
+          label: "成套素材",
+          icon: <IconSeries />,
+          href: "/series",
+          match: (p) => p.startsWith("/series"),
         },
         {
           label: "模板专区",
