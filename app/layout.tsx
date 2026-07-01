@@ -5,7 +5,7 @@ import "@oceanleo/ui/theme/ui.css";
 import { LeoAssistant } from "@oceanleo/ui/shell";
 import { FreshBundleGuard } from "@/components/FreshBundleGuard";
 import { I18nProvider } from "@oceanleo/ui/i18n";
-import { getLocale, normalizeLocale, htmlLang, localeDir } from "@oceanleo/ui/i18n/server";
+import { getLocale, getMessages, normalizeLocale, htmlLang, localeDir } from "@oceanleo/ui/i18n/server";
 import { ThemeScript, ThemeProvider } from "@oceanleo/ui/theme";
 import { getThemeClass } from "@oceanleo/ui/theme/server";
 
@@ -21,6 +21,7 @@ export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const locale = normalizeLocale(await getLocale());
+  const messages = await getMessages();
   const { htmlClass } = await getThemeClass();
 
   return (
@@ -30,7 +31,7 @@ export default async function RootLayout({
       </head>
       <body className="antialiased">
         <ThemeProvider>
-          <I18nProvider locale={locale}>
+          <I18nProvider locale={locale} messages={messages}>
         <FreshBundleGuard />
         {children}
         <LeoAssistant siteId="asset" docType="doc" />
