@@ -100,7 +100,7 @@ function useEmail(): string | null {
   useEffect(() => {
     const c = browserClient();
     if (!c) return;
-    void c.auth.getUser().then(({ data }) => setEmail(data.user?.email ?? null));
+    void c.auth.getSession().then(({ data }) => setEmail(data.session?.user?.email ?? null));
     const sub = c.auth.onAuthStateChange((_e, s) => setEmail(s?.user?.email ?? null));
     return () => sub.data.subscription.unsubscribe();
   }, []);

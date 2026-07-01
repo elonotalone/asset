@@ -18,7 +18,7 @@ export function MyCollection() {
       setAuthed(false);
       return;
     }
-    void c.auth.getUser().then(({ data }) => setAuthed(!!data.user));
+    void c.auth.getSession().then(({ data }) => setAuthed(!!data.session?.user));
   }, []);
 
   const reload = useCallback(() => {

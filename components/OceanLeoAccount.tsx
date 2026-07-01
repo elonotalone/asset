@@ -26,8 +26,8 @@ export function OceanLeoAccount() {
       setLoading(false);
       return;
     }
-    const { data } = await c.auth.getUser();
-    setUser(data.user ?? null);
+    const { data } = await c.auth.getSession();
+    setUser(data.session?.user ?? null);
     setLoading(false);
   }, []);
 

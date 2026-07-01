@@ -16,8 +16,8 @@
 //   主站第三格是「任务数」(agent_tasks)，子站无任务体系，故用有真实数据的
 //   「近 30 天请求」，前两格与主站同文案同位置，布局像素级一致。
 //
-// 余额为人民币 token 余额，消耗以 ¥ 计。费用即 token 市场价，OceanLeo 不加价。
-// 「API」入口为模型选择 + 标价。
+// 2026-06-14：余额改为人民币 token 余额（不再是「积分」），消耗改为 ¥。
+// 「密钥管理」入口去掉（BYOK 已移除），新增「API」入口（模型选择 + 标价）。
 // ============================================================================
 
 import Link from "next/link";
@@ -33,6 +33,12 @@ import {
 } from "@/lib/oceanleo-auth";
 
 const MENU_ITEMS = [
+  {
+    label: "通用",
+    href: "/general",
+    desc: "语言与主题（浅色 / 深色 / 自动）等外观设置",
+    external: false,
+  },
   {
     label: "我的数据库",
     href: "/database",
@@ -89,8 +95,13 @@ export function AccountCenter() {
       setChecked(true);
       return;
     }
-    c.auth.getUser().then(({ data }) => {
-      setUser(data.user ?? null);
+    // SSO 修复（2026-07-01）：用 getSession() 读本地共享 cookie 里的会话，而不是
+    // getUser()。getUser() 会向 Supabase Auth 服务器发网络请求校验 access_token，
+    // 在跨子域 SSO 场景下（token 刚打开页面尚未刷新 / access_token 已过期而 refresh
+    // 尚未完成）会返回 null → 明明登录了却显示「尚未登录」。getSession() 会先本地
+    // 用 refresh_token 续期再返回，只要共享 cookie 在就稳定拿到会话（与主站一致）。
+    c.auth.getSession().then(({ data }) => {
+      setUser(data.session?.user ?? null);
       setChecked(true);
     });
     const { data: sub } = c.auth.onAuthStateChange((_e, s) =>
