@@ -149,6 +149,44 @@ export async function searchAssets(params: {
   };
 }
 
+// 分区浏览用：给一批目录各取少量样本，拼成「目录 → 一行缩略图」的分区块首页
+// （对标稿定/Foco 的分区浏览：每个目录一个 section，标题 + 「查看全部」+ 一行预览）。
+// 后端没有「一次取多目录样本」的批接口，这里对每个目录并发一发轻量 search（page_size
+// 小、只要头几张）。失败/空的目录静默丢弃，不阻塞其他分区。
+export interface CategoryPreview {
+  key: string;
+  items: Asset[];
+}
+
+export async function previewCategories(params: {
+  type: AssetType;
+  categories: string[];
+  license?: LicenseFilter;
+  perCategory?: number;
+}): Promise<CategoryPreview[]> {
+  const per = Math.max(4, params.perCategory || 8);
+  const license = params.license || "commercial";
+  const results = await Promise.all(
+    params.categories.map(async (key) => {
+      try {
+        const r = await searchAssets({
+          q: "",
+          type: params.type,
+          license,
+          category: key,
+          page: 1,
+          pageSize: per,
+        });
+        return { key, items: r.items };
+      } catch {
+        return { key, items: [] as Asset[] };
+      }
+    }),
+  );
+  // 只保留真正有内容的目录（空目录不成块），保序。
+  return results.filter((r) => r.items.length > 0);
+}
+
 // 「开源专区」专用：直查实时上游开源素材网关（openverse/pexels/pixabay/polyhaven/
 // freesound/jamendo…）。这是**唯一**一个能看到 OSS 之外内容的入口，供用户搜索开源
 // 素材。结果的 id 形如 "<source>:<native_id>"，不带 library: 前缀。
@@ -603,6 +641,13 @@ const CATEGORY_LABELS: Record<string, string> = {
   "sticker-dyn": "动态贴纸",
   shape: "形状",
   ornament: "装饰花纹",
+  // vector 里若干「裸工程键」曾直接漏到前端目录名（ecommerce-svg / party-vec /
+  // medal-svg / home / baby …）。补上友好中文名，杜绝界面出现英文键。
+  "ecommerce-svg": "电商矢量",
+  "party-vec": "派对庆祝",
+  "medal-svg": "奖牌徽章",
+  home: "家居",
+  baby: "母婴",
   // sticker（emoji 贴纸大全，按 OpenMoji group 分中文子类目）
   emoji: "emoji 贴纸",
   hot: "热门",
