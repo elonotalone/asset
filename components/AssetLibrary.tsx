@@ -20,26 +20,6 @@ import { AssetDetail } from "@/components/AssetDetail";
 
 // TYPE_ORDER 用于校验 URL 里的 type 合法性（左侧栏分区驱动）。
 
-// 推荐的筛选维度：方向（横/竖/方形）——对图片/视频最常用，基于已加载结果本地过滤。
-type Orientation = "all" | "landscape" | "portrait" | "square";
-
-const ORIENTATION_OPTIONS: { value: Orientation; label: string }[] = [
-  { value: "all", label: "全部方向" },
-  { value: "landscape", label: "横版" },
-  { value: "portrait", label: "竖版" },
-  { value: "square", label: "方形" },
-];
-
-const ORIENTATION_TYPES = new Set<AssetType>(["image", "video", "vector", "sticker"]);
-
-function orientationOf(a: Asset): Orientation {
-  if (!a.width || !a.height) return "all";
-  const r = a.width / a.height;
-  if (r > 1.15) return "landscape";
-  if (r < 0.87) return "portrait";
-  return "square";
-}
-
 const VALID_TYPES = new Set<AssetType>(TYPE_ORDER);
 
 function normType(t: string | null): AssetType {
@@ -65,7 +45,6 @@ export function AssetLibrary() {
   const [panelKey, setPanelKey] = useState<string>(() => urlCat || "");
   const [panelsExpanded, setPanelsExpanded] = useState(false);
   const [subtab, setSubtab] = useState<string>("");
-  const [orientation, setOrientation] = useState<Orientation>("all");
   const [query, setQuery] = useState("");
   const [input, setInput] = useState("");
   const [items, setItems] = useState<Asset[]>([]);
@@ -90,7 +69,6 @@ export function AssetLibrary() {
     setQuery("");
     setInput("");
     setSubtab("");
-    setOrientation("all");
     setPanelsExpanded(false);
     setPanels([allPanel]);
     setPanelKey(urlCat || "");
@@ -112,13 +90,6 @@ export function AssetLibrary() {
   }, [urlType, urlCat]);
 
   const panel = panels.find((p) => p.key === panelKey) || panels[0] || null;
-  const showOrientation = ORIENTATION_TYPES.has(type);
-
-  // 方向筛选是已加载结果的本地过滤——瞬时、不发网络请求。
-  const visible =
-    !showOrientation || orientation === "all"
-      ? items
-      : items.filter((a) => orientationOf(a) === orientation);
 
   // 登录用户的已收藏 id 集合（卡片高亮收藏态）。未登录则静默为空。
   useEffect(() => {
@@ -228,7 +199,6 @@ export function AssetLibrary() {
     setQuery("");
     setInput("");
     setSubtab("");
-    setOrientation("all");
     setPanelKey(p.key);
   }
 
@@ -330,23 +300,6 @@ export function AssetLibrary() {
         )}
       </form>
 
-      {/* 方向筛选（仅图片/视频/矢量/贴纸） */}
-      {showOrientation && (
-        <div className="mb-5 flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white p-1 w-fit">
-          {ORIENTATION_OPTIONS.map((o) => (
-            <button
-              key={o.value}
-              onClick={() => setOrientation(o.value)}
-              className={`rounded-md px-3 py-1 text-xs font-medium transition ${
-                o.value === orientation ? "bg-zinc-900 text-white" : "text-zinc-600 hover:bg-zinc-100"
-              }`}
-            >
-              {o.label}
-            </button>
-          ))}
-        </div>
-      )}
-
       {error && (
         <div className="mb-4 rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
           {error}
@@ -369,7 +322,7 @@ export function AssetLibrary() {
             </div>
           ))}
         </div>
-      ) : visible.length === 0 && !error ? (
+      ) : items.length === 0 && !error ? (
         <div className="rounded-xl border border-dashed border-zinc-300 py-16 text-center text-sm text-zinc-400">
           平台自有素材里暂时没有匹配内容。换个目录试试，或去左侧
           <a href="/open" className="mx-1 text-sky-600 hover:underline">开源专区</a>
@@ -377,7 +330,7 @@ export function AssetLibrary() {
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-          {visible.map((a) => (
+          {items.map((a) => (
             <AssetCard
               key={a.id}
               asset={a}

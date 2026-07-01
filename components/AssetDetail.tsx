@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { Asset, assetDetail, downloadHref } from "@/lib/assets";
 import { LicenseFlags } from "@/components/LicenseBadge";
 import { ModelViewer } from "@/components/ModelViewer";
@@ -101,6 +102,9 @@ export function AssetDetail({
   onToggleSave?: (a: Asset) => void;
 }) {
   const [files, setFiles] = useState<{ format: string; url: string }[] | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     // Only realtime-upstream polyhaven assets need the second files lookup; our
@@ -111,6 +115,15 @@ export function AssetDetail({
         .catch(() => setFiles([]));
     }
   }, [asset]);
+
+  // 打开时锁 body 滚动，避免弹窗背后页面还能滚动。
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, []);
 
   const isAudio = asset.type === "audio" || asset.type === "music";
   const isVideo = asset.type === "video";
@@ -128,9 +141,14 @@ export function AssetDetail({
     window.open(url.toString(), "_blank", "noopener");
   }
 
-  return (
+  if (!mounted) return null;
+
+  // 通过 portal 挂到 <body>，让弹窗脱离外壳的 .v-page（带 transform 的入场动画）
+  // 祖先——否则 position:fixed 会相对那个 transform 祖先定位，弹窗被推到页面中段、
+  // 要往下滚才能看见。挂到 body 后 fixed 真正相对视口，永远居中。
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      className="fixed inset-0 z-[90] flex items-center justify-center bg-black/50 p-4"
       onClick={onClose}
     >
       <div
@@ -246,6 +264,7 @@ export function AssetDetail({
           ))}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
