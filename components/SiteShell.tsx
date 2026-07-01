@@ -2,7 +2,7 @@
 
 import { ReactNode, Suspense, useEffect, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
-import { AppShell, ShellNavItem } from "@/components/AppShell";
+import { AppShell, ShellNavGroup, ShellNavItem } from "@/components/AppShell";
 import { browserClient, getCredits, signOutEverywhere } from "@/lib/oceanleo-auth";
 import { AssetType, TYPE_LABELS, TYPE_ORDER } from "@/lib/assets";
 
@@ -51,6 +51,15 @@ function IconDesign() {
       <rect x="14" y="3" width="7" height="7" rx="1.5" />
       <rect x="3" y="14" width="7" height="7" rx="1.5" />
       <rect x="14" y="14" width="7" height="7" rx="1.5" />
+    </svg>
+  );
+}
+
+function IconOpenSource() {
+  return (
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 3a9 9 0 0 1 0 18M12 3a9 9 0 0 0 0 18M3 12h18" />
     </svg>
   );
 }
@@ -113,7 +122,9 @@ function SiteShellInner({ children }: { children: ReactNode }) {
   const onLibrary = pathname === "/";
   const activeType = (search.get("type") as AssetType) || "image";
 
-  // 左侧栏分区：素材类别（图片/视频/音乐/音效/3D/矢量/PPT）→ 跳 /?type=<t>。
+  // 左侧栏「平台素材」分区：按素材类型浏览（图片/矢量图/贴纸/视频/3D/音频/字体）。
+  // 这些栏目**只**展示平台已囤到 OSS 的自有素材——用户在这里看不到、搜不到 OSS 之外
+  // 的内容。想找开源素材请用下面独立的「开源专区」。
   // 用 href（Next <Link>）而非 onClick(router.push)：<Link> 会预取目标路由、点击即
   // 客户端瞬时切换并高亮，不必等网络。这是消除「按按键要等很久才跳页」的关键。
   const categoryItems: ShellNavItem[] = TYPE_ORDER.map((t) => ({
@@ -123,27 +134,42 @@ function SiteShellInner({ children }: { children: ReactNode }) {
     match: () => onLibrary && activeType === t,
   }));
 
-  const nav: ShellNavItem[] = [
+  const navGroups: ShellNavGroup[] = [
     {
-      label: "模板专区",
-      icon: <IconTemplates />,
-      href: "/templates",
-      match: (p) => p.startsWith("/templates"),
+      items: [
+        {
+          label: "开源专区",
+          icon: <IconOpenSource />,
+          href: "/open",
+          match: (p) => p.startsWith("/open"),
+        },
+        {
+          label: "模板专区",
+          icon: <IconTemplates />,
+          href: "/templates",
+          match: (p) => p.startsWith("/templates"),
+        },
+        {
+          label: "我的素材库",
+          icon: <IconBookmark />,
+          href: "/collection",
+          match: (p) => p === "/collection",
+        },
+        {
+          label: "设计模板",
+          icon: <IconDesign />,
+          href: "/design",
+          match: (p) => p === "/design",
+        },
+      ],
     },
     {
-      label: "我的素材库",
-      icon: <IconBookmark />,
-      href: "/collection",
-      match: (p) => p === "/collection",
+      heading: "平台素材",
+      items: categoryItems,
     },
     {
-      label: "设计模板",
-      icon: <IconDesign />,
-      href: "/design",
-      match: (p) => p === "/design",
+      items: [{ label: "授权说明", href: "/licenses", icon: <IconLicense /> }],
     },
-    ...categoryItems,
-    { label: "授权说明", href: "/licenses", icon: <IconLicense /> },
   ];
 
   return (
@@ -151,7 +177,7 @@ function SiteShellInner({ children }: { children: ReactNode }) {
       brand={{ name: "LeoAsset", accent: "#0ea5e9", logo: <LeoAssetLogo /> }}
       collapseKey="asset_sidebar_collapsed"
       siteId="asset"
-      nav={nav}
+      navGroups={navGroups}
       userEmail={email}
       credits={credits}
       onSignOut={() => signOutEverywhere()}

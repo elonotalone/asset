@@ -94,14 +94,14 @@ interface LibraryResult {
   source: string;
 }
 
-// Search our SELF-OWNED hoarded library (platform_assets, served from OSS) first
-// — instant + curated. Fall back to the realtime upstream gateway only when the
-// library has no hit, so asset.oceanleo.com surfaces our own material by default.
+// Search our SELF-OWNED hoarded library (platform_assets, served from OSS) ONLY.
+// 除「开源专区」外的所有栏目都只查我们自己囤到 OSS 的素材——用户在这些栏目里
+// 看不到、也搜不到我们 OSS 里没有的内容。想搜实时上游开源素材请走「开源专区」
+// (searchOpenSource)。所以这里**永不**回落到 /v1/assets/search 实时上游。
 export async function searchAssets(params: {
   q: string;
   type: AssetType;
   license?: LicenseFilter;
-  source?: string;
   category?: string;
   subtab?: string;
   page?: number;
@@ -111,45 +111,41 @@ export async function searchAssets(params: {
   const pageSize = params.pageSize || 24;
   const license = params.license || "commercial";
 
-  // 1) self-owned library — but only when no explicit upstream source is forced
-  if (!params.source) {
-    try {
-      const libParams: Record<string, string> = {
-        q: params.q || "",
-        type: params.type,
-        license,
-        page: String(page),
-        page_size: String(pageSize),
-      };
-      if (params.category) libParams.category = params.category;
-      if (params.subtab) libParams.subtab = params.subtab;
-      const libQs = new URLSearchParams(libParams);
-      const lib = await getJson<LibraryResult>(
-        `/v1/assets/library/search?${libQs.toString()}`,
-      );
-      if (lib.items && lib.items.length > 0) {
-        return {
-          items: lib.items,
-          page: lib.page,
-          has_more: lib.page * lib.page_size < (lib.total || 0),
-          sources_queried: ["library"],
-        };
-      }
-      // 分类浏览（指定了 category/subtab）时不回落到实时上游——上游不认识我们的
-      // 目录键，回落只会展示一堆不相关图，破坏「分类」的准确性。空就如实显示空态。
-      if (params.category || params.subtab) {
-        return { items: [], page, has_more: false, sources_queried: ["library"] };
-      }
-    } catch {
-      // 分类浏览失败也不回落上游（同上）。
-      if (params.category || params.subtab) {
-        return { items: [], page, has_more: false, sources_queried: ["library"] };
-      }
-      // 自由搜索：继续回落到实时上游网关。
-    }
-  }
+  const libParams: Record<string, string> = {
+    q: params.q || "",
+    type: params.type,
+    license,
+    page: String(page),
+    page_size: String(pageSize),
+  };
+  if (params.category) libParams.category = params.category;
+  if (params.subtab) libParams.subtab = params.subtab;
+  const libQs = new URLSearchParams(libParams);
+  const lib = await getJson<LibraryResult>(
+    `/v1/assets/library/search?${libQs.toString()}`,
+  );
+  return {
+    items: lib.items || [],
+    page: lib.page,
+    has_more: lib.page * lib.page_size < (lib.total || 0),
+    sources_queried: ["library"],
+  };
+}
 
-  // 2) realtime upstream gateway (breadth fallback / forced source)
+// 「开源专区」专用：直查实时上游开源素材网关（openverse/pexels/pixabay/polyhaven/
+// freesound/jamendo…）。这是**唯一**一个能看到 OSS 之外内容的入口，供用户搜索开源
+// 素材。结果的 id 形如 "<source>:<native_id>"，不带 library: 前缀。
+export async function searchOpenSource(params: {
+  q: string;
+  type: AssetType;
+  license?: LicenseFilter;
+  source?: string;
+  page?: number;
+  pageSize?: number;
+}): Promise<SearchResult> {
+  const page = params.page || 1;
+  const pageSize = params.pageSize || 24;
+  const license = params.license || "commercial";
   const qs = new URLSearchParams({
     q: params.q || "",
     type: params.type,
@@ -160,6 +156,26 @@ export async function searchAssets(params: {
   if (params.source) qs.set("source", params.source);
   return getJson<SearchResult>(`/v1/assets/search?${qs.toString()}`);
 }
+
+// 「开源专区」上游各来源能提供的类型（对齐后端 assets.SOURCE_TYPES）。用于开源专区
+// 的类型切换，避免展示上游根本不支持的类型（如上游没有 sticker/font）。
+export const OPEN_SOURCE_TYPES: AssetType[] = [
+  "image",
+  "vector",
+  "video",
+  "audio",
+  "music",
+  "3d",
+];
+
+export const OPEN_SOURCE_TYPE_LABELS: Record<string, string> = {
+  image: "图片",
+  vector: "矢量图",
+  video: "视频",
+  audio: "音效",
+  music: "音乐",
+  "3d": "3D / HDRI",
+};
 
 export function listSources(): Promise<{ sources: SourceInfo[] }> {
   return getJson<{ sources: SourceInfo[] }>("/v1/assets/sources");
@@ -194,23 +210,25 @@ export const TYPE_LABELS: Record<AssetType, string> = {
   vector: "矢量图",
   sticker: "贴纸",
   video: "视频",
-  audio: "音效",
+  audio: "音频",
   music: "音乐",
   "3d": "3D 模型",
   font: "字体",
   ppt: "PPT 模板",
 };
 
+// 左侧栏「素材类型」分区——**只列我们真正囤到 OSS 的类型**。用户在这些栏目里只能看到
+// 我们自有素材（platform_assets），OSS 里没有的类型不出现（例如 music/ppt 目前 OSS 无
+// 数据就不放进侧栏，避免出现「点进去永远空」的死栏目）。想找开源素材去「开源专区」。
+// 顺序对齐首页图片优先。DB 实有类型：image/vector/sticker/video/3d/audio/font。
 export const TYPE_ORDER: AssetType[] = [
   "image",
-  "video",
-  "sticker",
   "vector",
+  "sticker",
+  "video",
   "3d",
-  "font",
-  "music",
   "audio",
-  "ppt",
+  "font",
 ];
 
 // ---------------------------------------------------------------------------
@@ -481,6 +499,149 @@ export const CATEGORY_PANELS: CategoryPanel[] = [
 
 export function panelByKey(key: string): CategoryPanel | undefined {
   return CATEGORY_PANELS.find((p) => p.key === key);
+}
+
+// ---------------------------------------------------------------------------
+// 「素材类型 → 顶部一级目录」面板（DB 驱动 + 手写配置叠加）
+// ---------------------------------------------------------------------------
+// operator 诉求：① 图片与矢量图必须分开；② 进到某个类型（字体/3D/视频…）时，顶部一级
+// 目录只能展示**这个类型**真实拥有的目录；③ 用户看不到、搜不到我们 OSS 里没有的内容。
+//
+// 关键教训：不能只信 CATEGORY_PANELS[].type（手写配置常与真实库存脱节——例如手写把
+// symbol/festival/sticker-dyn 标成 sticker，但 OSS 里这些 category 的数据其实是 vector/
+// image/video，若照手写 type 过滤会渲染出一排「点进去永远空」的死目录）。
+//
+// 因此面板一律**以后端 library/categories 返回的真实 category 为准**（保证每个目录都有
+// 内容、且类型正确），再用手写的 CATEGORY_PANELS 作为**叠加配置**补上中文名/图标/二级
+// tab（有配就用配、没配就用友好名兜底）。这样彻底消除类型/面板错配与空目录。
+
+// 工程 category 键 → 友好中文目录名（手写 CATEGORY_PANELS 没覆盖到的兜底）。
+const CATEGORY_LABELS: Record<string, string> = {
+  // 3D / HDRI / texture
+  model: "3D 模型",
+  hdri: "HDRI 环境",
+  texture: "材质纹理",
+  // audio（音乐 mus-* / 音效 sfx-*）
+  "mus-festive": "节日音乐",
+  "mus-upbeat": "欢快音乐",
+  "mus-relax": "轻松音乐",
+  "mus-emotional": "情感音乐",
+  "mus-electronic": "电子音乐",
+  "mus-corporate": "商务音乐",
+  "sfx-transition": "转场音效",
+  "sfx-applause": "掌声欢呼",
+  "sfx-ui": "界面音效",
+  "sfx-nature": "自然音效",
+  "sfx-coin": "金币音效",
+  // video
+  abstract: "抽象",
+  fitness: "健身",
+  clouds: "云朵",
+  flowers: "花卉",
+  flowers2: "花卉",
+  food: "美食",
+  light: "光效",
+  nature: "自然",
+  "vid-nature": "自然",
+  city: "城市",
+  "vid-city": "城市",
+  festival: "节日",
+  "vid-festive": "节日",
+  ocean: "海洋",
+  business: "商务",
+  "vid-business": "商务",
+  water: "水",
+  "vid-tech": "科技",
+  tech: "科技",
+  particles: "粒子",
+  "vid-particle": "粒子",
+  smoke: "烟雾",
+  travel2: "旅行",
+  celebration: "庆祝",
+  // image（照片主体 / 行业 / 背景色系风格 / 节令）
+  background: "背景",
+  wedding: "婚礼",
+  beauty: "美妆",
+  ecommerce: "电商",
+  finance: "金融",
+  pet: "宠物",
+  medical: "医疗",
+  fashion: "服饰",
+  education: "教育",
+  travel: "旅行",
+  realestate: "房产",
+  kids: "儿童",
+  music: "音乐现场",
+  office: "办公",
+  spring: "春",
+  summer: "夏",
+  autumn: "秋",
+  winter: "冬",
+  gaming: "电竞",
+  coffee: "咖啡",
+  // vector（icon / 装饰 / 行业矢量 / 形状）
+  icon: "icon 图标",
+  "flat-illust": "扁平插画",
+  symbol: "符号",
+  "sticker-dyn": "动态贴纸",
+  shape: "形状",
+  ornament: "装饰花纹",
+  // sticker
+  hot: "热门",
+  xhs: "小红书",
+  guofeng: "国风水墨",
+  "element-3d": "3D 元素",
+  transport: "交通工具",
+  // font
+  "art-text": "艺术字",
+};
+
+export function categoryLabel(key: string): string {
+  const panel = panelByKey(key);
+  if (panel) return panel.label;
+  if (CATEGORY_LABELS[key]) return CATEGORY_LABELS[key];
+  // 行业前缀 ind-xxx / 背景色系 bg-xxx / 照片主体 ph-xxx 的兜底：去前缀 + 查表。
+  const stripped = key.replace(/^(ind|bg|ph|vid|mus|sfx)-/, "");
+  return CATEGORY_LABELS[stripped] || stripped;
+}
+
+// DB 驱动：把该类型在 OSS 里真实存在的 category 键，构建成顶部一级目录面板。
+// 排序：先按手写 CATEGORY_PANELS 里**该类型**的策划顺序排（有数据的才保留），再接上
+// 其余真实 category（后端已按素材数降序传入）。每个 category 若有同名同类型手写配置则
+// 沿用其二级 tab；否则给单一「全部」子 tab。既来自真实库存（无空目录、无类型错配），
+// 又尽量保留策划过的目录顺序与精细二级导航。
+export function buildPanelsFromCategories(
+  type: AssetType,
+  categories: string[],
+): CategoryPanel[] {
+  const present = new Set(categories);
+  const toPanel = (key: string): CategoryPanel => {
+    const cfg = panelByKey(key);
+    const matched = cfg && cfg.type === type;
+    return {
+      key,
+      label: categoryLabel(key),
+      icon: matched ? cfg!.icon : "",
+      type,
+      subs: matched && cfg!.subs.length > 1 ? cfg!.subs : [ALL_SUB],
+    };
+  };
+  // 1) 策划顺序：该类型的手写面板，且 DB 里真有数据。
+  const curatedKeys = CATEGORY_PANELS.filter(
+    (p) => p.type === type && present.has(p.key),
+  ).map((p) => p.key);
+  const seen = new Set(curatedKeys);
+  // 2) 其余真实 category（按后端传入的素材数降序），去掉已在策划里的。
+  const restKeys = categories.filter((k) => !seen.has(k));
+  return [...curatedKeys, ...restKeys].map(toPanel);
+}
+
+export function listLibraryCategories(
+  type: AssetType,
+): Promise<{ categories: string[] }> {
+  return getJson<{ categories: string[] }>(
+    `/v1/assets/library/categories?type=${encodeURIComponent(type)}`,
+  );
 }
 
 // --- Personal asset library (collection) ----------------------------------
