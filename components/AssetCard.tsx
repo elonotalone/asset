@@ -58,8 +58,11 @@ export function AssetCard({
   const is3d = asset.type === "3d";
   // Stickers (transparent PNG/webp), vectors (SVG) and font previews look bad
   // cropped — contain them on a neutral/checker backdrop instead of cover.
-  const isContain =
+  const isChecker =
     asset.type === "sticker" || asset.type === "vector" || asset.type === "font";
+  // PPT 封面是 16:9 整页设计，裁切会切掉标题——contain 到素色底上（非棋盘格）。
+  const isPpt = asset.type === "ppt";
+  const isContain = isChecker || isPpt;
 
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
@@ -69,7 +72,11 @@ export function AssetCard({
       >
         <div
           className={`relative aspect-[4/3] w-full overflow-hidden ${
-            isContain ? "bg-[conic-gradient(#f1f5f9_90deg,#fff_90deg_180deg,#f1f5f9_180deg_270deg,#fff_270deg)] bg-[length:20px_20px] p-3" : "bg-zinc-100"
+            isChecker
+              ? "bg-[conic-gradient(#f1f5f9_90deg,#fff_90deg_180deg,#f1f5f9_180deg_270deg,#fff_270deg)] bg-[length:20px_20px] p-3"
+              : isPpt
+                ? "bg-zinc-200 p-3"
+                : "bg-zinc-100"
           }`}
         >
           {asset.thumb_url ? (

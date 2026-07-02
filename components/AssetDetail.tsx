@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { Asset, assetDetail, downloadHref } from "@/lib/assets";
+import { Asset, assetDetail, downloadHref, pptPageUrls } from "@/lib/assets";
 import { LicenseFlags } from "@/components/LicenseBadge";
 import { ModelViewer } from "@/components/ModelViewer";
 
@@ -73,6 +73,40 @@ const USE_TARGETS: Record<string, { label: string; site: string }[]> = {
   "3d": [{ label: "3D 工作台", site: "https://3d.oceanleo.com" }],
 };
 
+// PPT 模板专用预览：整页大图 + 底部页缩略条翻阅（p01..pN 命名约定，见 lib/assets.ts）。
+function PptPager({ asset }: { asset: Asset }) {
+  const pages = pptPageUrls(asset);
+  const [idx, setIdx] = useState(0);
+  if (pages.length === 0) {
+    return <ZoomImage thumb={asset.thumb_url} full={asset.preview_url} alt={asset.title} />;
+  }
+  return (
+    <div className="flex flex-col gap-2 p-3">
+      <div className="relative w-full overflow-hidden rounded-lg border border-zinc-200 bg-white">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={pages[idx]} alt={`${asset.title} 第 ${idx + 1} 页`} className="aspect-video w-full object-contain" />
+        <span className="absolute bottom-2 right-2 rounded bg-black/55 px-2 py-0.5 text-[11px] text-white">
+          {idx + 1} / {pages.length}
+        </span>
+      </div>
+      <div className="flex gap-1.5 overflow-x-auto pb-1">
+        {pages.map((u, i) => (
+          <button
+            key={u}
+            onClick={() => setIdx(i)}
+            className={`shrink-0 overflow-hidden rounded border-2 transition ${
+              i === idx ? "border-sky-500" : "border-transparent opacity-70 hover:opacity-100"
+            }`}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={u} alt="" loading="lazy" className="aspect-video w-20 object-cover" />
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function CopyButton({ text }: { text: string }) {
   const [done, setDone] = useState(false);
   return (
@@ -128,6 +162,10 @@ export function AssetDetail({
   const isAudio = asset.type === "audio" || asset.type === "music";
   const isVideo = asset.type === "video";
   const is3d = is3dModel(asset);
+  const isPpt = asset.type === "ppt" && asset.id.startsWith("library:");
+  // PPT 模板的 source_url 按落库约定指向网页版 deck.html。
+  const pptHtmlUrl =
+    isPpt && asset.source_url.endsWith(".html") ? asset.source_url : "";
   const targets = USE_TARGETS[asset.type] || [];
 
   function useIn(site: string) {
@@ -166,7 +204,9 @@ export function AssetDetail({
 
         <div className="flex-1 overflow-y-auto p-5">
           <div className="overflow-hidden rounded-xl bg-zinc-100">
-            {is3d ? (
+            {isPpt ? (
+              <PptPager asset={asset} />
+            ) : is3d ? (
               <ModelViewer src={asset.full_url} poster={asset.thumb_url} alt={asset.title} />
             ) : isAudio ? (
               <div className="flex flex-col gap-3 p-6">
@@ -187,9 +227,15 @@ export function AssetDetail({
             <div>
               <p className="text-xs uppercase tracking-wide text-zinc-400">作者 / 来源</p>
               <p className="mt-1 text-sm text-zinc-800">{asset.author}</p>
-              <a href={asset.source_url} target="_blank" rel="noopener noreferrer" className="text-xs text-sky-600 hover:underline">
-                在 {asset.source} 查看原始页面 ↗
-              </a>
+              {pptHtmlUrl ? (
+                <a href={pptHtmlUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-sky-600 hover:underline">
+                  打开网页版（HTML）↗
+                </a>
+              ) : (
+                <a href={asset.source_url} target="_blank" rel="noopener noreferrer" className="text-xs text-sky-600 hover:underline">
+                  在 {asset.source} 查看原始页面 ↗
+                </a>
+              )}
             </div>
             <div>
               <p className="text-xs uppercase tracking-wide text-zinc-400">授权</p>
@@ -235,8 +281,18 @@ export function AssetDetail({
             download
             className="rounded-lg bg-sky-500 px-4 py-2 text-sm font-medium text-white hover:bg-sky-600"
           >
-            下载
+            {isPpt ? "下载 .pptx" : "下载"}
           </a>
+          {pptHtmlUrl && (
+            <a
+              href={pptHtmlUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-lg border border-sky-300 bg-white px-4 py-2 text-sm font-medium text-sky-700 hover:bg-sky-50"
+            >
+              网页版预览（HTML）
+            </a>
+          )}
           {onToggleSave && (
             <button
               type="button"

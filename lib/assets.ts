@@ -44,6 +44,8 @@ export interface Asset {
   author: string;
   source_url: string;
   license: AssetLicense;
+  /** 库内素材的机器标签（如 ppt 的 "pages:7"）；上游实时素材可能为空。 */
+  tags?: string[];
   /** 后端质量排序分（来源等级 + 人气信号）；前端一般不直接展示。 */
   score?: number;
   /** 仅在「我的素材库」里出现：收藏时间。 */
@@ -273,18 +275,39 @@ export const TYPE_LABELS: Record<AssetType, string> = {
 };
 
 // 左侧栏「素材类型」分区——**只列我们真正囤到 OSS 的类型**。用户在这些栏目里只能看到
-// 我们自有素材（platform_assets），OSS 里没有的类型不出现（例如 music/ppt 目前 OSS 无
+// 我们自有素材（platform_assets），OSS 里没有的类型不出现（例如 music 目前 OSS 无
 // 数据就不放进侧栏，避免出现「点进去永远空」的死栏目）。想找开源素材去「开源专区」。
-// 顺序对齐首页图片优先。DB 实有类型：image/vector/sticker/video/3d/audio/font。
+// 顺序对齐首页图片优先。DB 实有类型：image/vector/sticker/video/3d/audio/font/ppt。
 export const TYPE_ORDER: AssetType[] = [
   "image",
   "vector",
   "sticker",
+  "ppt",
   "video",
   "3d",
   "audio",
   "font",
 ];
+
+// --- PPT 模板（type='ppt'）约定 ---------------------------------------------
+// 每套 deck 在 OSS 上的固定结构：assets/ppt/decks/<slug>/
+//   deck.pptx（full_url，下载）· deck.html（source_url，网页版）
+//   cover.webp（thumb）· p01..pN.webp（整页预览，N 由 tags 里 "pages:N" 声明）
+// 详情页据此渲染「多页翻阅」预览，并提供 .pptx / HTML 双入口。
+export function pptPageCount(a: Asset): number {
+  for (const t of a.tags || []) {
+    const m = /^pages:(\d+)$/.exec(t);
+    if (m) return Math.min(60, Math.max(1, Number(m[1])));
+  }
+  return 0;
+}
+
+export function pptPageUrls(a: Asset): string[] {
+  const n = pptPageCount(a);
+  const base = a.full_url.replace(/\/deck\.pptx$/, "");
+  if (!n || base === a.full_url) return [];
+  return Array.from({ length: n }, (_, i) => `${base}/p${String(i + 1).padStart(2, "0")}.webp`);
+}
 
 // ---------------------------------------------------------------------------
 // 设计模板专区（design-templates zone）
@@ -655,6 +678,8 @@ const CATEGORY_LABELS: Record<string, string> = {
   guofeng: "国风水墨",
   // font
   "art-text": "艺术字",
+  // ppt（风格族目录）
+  etching: "蚀刻编辑风",
 };
 
 export function categoryLabel(key: string): string {
