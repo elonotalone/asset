@@ -309,6 +309,31 @@ export function pptPageUrls(a: Asset): string[] {
   return Array.from({ length: n }, (_, i) => `${base}/p${String(i + 1).padStart(2, "0")}.webp`);
 }
 
+// PPT「行业」维度（与艺术风格目录正交的第二条分类轴）。新 deck 的 scene_tags 里带
+// `ind-<group>` 机器键（如 "ind-edu"），后端 library/search 的 subtab 参数对 scene_tags
+// 做 array-contains 精确匹配，所以把 ind- 键作为 subtab 传即可按行业过滤——category
+// 可以同时给（风格 × 行业叠加），也可以为空单给 subtab（全部风格下按行业筛）。
+export const PPT_INDUSTRIES: CategorySub[] = [
+  { key: "ind-edu", label: "教育培训" },
+  { key: "ind-academic", label: "学术科研" },
+  { key: "ind-medical", label: "医疗健康" },
+  { key: "ind-finance", label: "金融投资" },
+  { key: "ind-tech", label: "科技互联网" },
+  { key: "ind-biz", label: "商务通用" },
+  { key: "ind-marketing", label: "市场营销" },
+  { key: "ind-food", label: "餐饮美食" },
+  { key: "ind-travel", label: "文旅酒店" },
+  { key: "ind-estate", label: "地产建筑" },
+  { key: "ind-mfg", label: "制造工业" },
+  { key: "ind-agri", label: "农业环保" },
+  { key: "ind-law", label: "法律政务" },
+  { key: "ind-media", label: "媒体创意" },
+  { key: "ind-retail", label: "零售电商" },
+  { key: "ind-life", label: "生活服务" },
+  { key: "ind-culture", label: "文化艺术" },
+  { key: "ind-hr", label: "人力组织" },
+];
+
 // ---------------------------------------------------------------------------
 // 设计模板专区（design-templates zone）
 // ---------------------------------------------------------------------------

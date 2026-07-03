@@ -10,6 +10,7 @@ import {
   buildPanelsFromCategories,
   listCollectionIds,
   listLibraryCategories,
+  PPT_INDUSTRIES,
   previewCategories,
   removeFromCollection,
   saveToCollection,
@@ -48,6 +49,9 @@ export function AssetLibrary() {
   // 当前进入的目录 key（""=分区首页，非空=进入该目录看完整网格）。
   const [panelKey, setPanelKey] = useState<string>(() => urlCat || "");
   const [subtab, setSubtab] = useState<string>("");
+  // PPT 专属「行业」第二筛选轴（scene_tags 里的 ind-* 键，经 subtab 参数传后端）。
+  // 与风格目录（category）正交可叠加；独立 state 避免与目录二级 tab 冲突。
+  const [industry, setIndustry] = useState<string>("");
   const [query, setQuery] = useState("");
   const [input, setInput] = useState("");
 
@@ -70,9 +74,10 @@ export function AssetLibrary() {
   const type = urlType;
 
   // 三态：分区首页 / 目录网格 / 搜索网格。
+  // ppt 选中行业后即使没进目录也切到网格（行业本身就是一种筛选）。
   const mode: "browse" | "category" | "search" = query
     ? "search"
-    : panelKey
+    : panelKey || (type === "ppt" && industry)
       ? "category"
       : "browse";
 
@@ -88,6 +93,7 @@ export function AssetLibrary() {
     setQuery("");
     setInput("");
     setSubtab("");
+    setIndustry("");
     setPanels([allPanel]);
     setPanelKey(urlCat || "");
     listLibraryCategories(urlType)
@@ -167,7 +173,9 @@ export function AssetLibrary() {
       type,
       license: LICENSE,
       category: query ? undefined : panelKey || undefined,
-      subtab: query ? undefined : subtab || undefined,
+      // ppt 的行业键优先（目录二级 tab 与行业互斥使用：ppt 目录都是单
+      // 「全部」子 tab，subtab 恒空，行业键借道同一个后端参数）。
+      subtab: query ? undefined : industry || subtab || undefined,
       page: 1,
       pageSize: 30,
     })
@@ -185,7 +193,7 @@ export function AssetLibrary() {
       .finally(() => {
         if (my === reqId.current) setLoading(false);
       });
-  }, [type, panelKey, subtab, query, mode]);
+  }, [type, panelKey, subtab, industry, query, mode]);
 
   function loadMore() {
     const my = ++reqId.current;
@@ -196,7 +204,7 @@ export function AssetLibrary() {
       type,
       license: LICENSE,
       category: query ? undefined : panelKey || undefined,
-      subtab: query ? undefined : subtab || undefined,
+      subtab: query ? undefined : industry || subtab || undefined,
       page: next,
       pageSize: 30,
     })
@@ -216,6 +224,7 @@ export function AssetLibrary() {
   }
 
   function openPanel(key: string) {
+    // 进目录保留行业选择（风格 × 行业可叠加）。
     setQuery("");
     setInput("");
     setSubtab("");
@@ -227,6 +236,7 @@ export function AssetLibrary() {
     setQuery("");
     setInput("");
     setSubtab("");
+    setIndustry("");
     setPanelKey("");
   }
 
@@ -312,6 +322,26 @@ export function AssetLibrary() {
             </button>
           ))}
         </nav>
+      )}
+
+      {/* PPT 行业筛选条（第二分类轴，搜索态隐藏；与风格目录可叠加） */}
+      {type === "ppt" && mode !== "search" && (
+        <div className="mb-6 flex flex-wrap items-center gap-1.5">
+          <span className="mr-1 text-xs font-medium text-zinc-400">行业</span>
+          {[{ key: "", label: "全部行业" }, ...PPT_INDUSTRIES].map((it) => (
+            <button
+              key={it.key || "all"}
+              onClick={() => setIndustry(it.key)}
+              className={`rounded-full px-3 py-1 text-xs font-medium transition ${
+                it.key === industry
+                  ? "bg-sky-500 text-white"
+                  : "bg-white text-zinc-500 ring-1 ring-zinc-200 hover:bg-zinc-100 hover:text-zinc-800"
+              }`}
+            >
+              {it.label}
+            </button>
+          ))}
+        </div>
       )}
 
       {error && (

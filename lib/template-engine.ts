@@ -46,7 +46,9 @@ interface Ctx {
   fx: AccentFx;
   R: ReturnType<typeof radiusTokens>;
   D: ReturnType<typeof densityTokens>;
-  /** 给定章节种类取它的样式变体序号。 */
+  /** 当前正在渲染的页面 key（renderTemplate 循环里逐页赋值）。 */
+  pageKey: string;
+  /** 给定章节种类取它的样式变体序号（掺入 pageKey——同模板不同页不同版式）。 */
   variantOf: (kind: SectionKind, count: number) => number;
 }
 
@@ -235,7 +237,7 @@ function footer(ctx: Ctx, pages: PageKey[]): string {
 function renderHero(ctx: Ctx): string {
   const { c, p, R, D, fx, dna } = ctx;
   const deco = decorLayer(p, fx, dna.styleSeed);
-  const v = ctx.variantOf("hero", 5);
+  const v = ctx.variantOf("hero", 6);
   const badge = `<span class="inline-block px-3 py-1 text-xs font-medium" style="background:${p.soft};color:${p.primary};border-radius:${R.pill}">${esc(ctx.meta.subLabel)} · 专业方案</span>`;
   const title = `<h1 style="font-size:${D.h1};font-weight:800;line-height:1.12">${esc(c.heroTitle)}</h1>`;
   const subt = `<p class="mt-5 text-lg" style="opacity:.9">${esc(c.heroSubtitle)}</p>`;
@@ -280,6 +282,19 @@ function renderHero(ctx: Ctx): string {
       <div class="relative">${img(ctx, 0, 900, 1100, "absolute inset-0 h-full w-full object-cover leo-kenburns")}</div>
     </section>`;
   }
+  if (v === 5) {
+    // 全出血图 + 底部浮层卡片（文案落在卡上）
+    return `
+    <section class="relative overflow-hidden" style="min-height:74vh">
+      ${img(ctx, 0, 1600, 1000, "absolute inset-0 h-full w-full object-cover leo-kenburns")}
+      <div class="absolute inset-0" style="background:linear-gradient(to top,#000a 0%,#0003 55%,transparent)"></div>
+      <div class="relative max-w-6xl mx-auto px-6 flex items-end" style="min-height:74vh;padding-bottom:3.5rem">
+        <div class="leo-reveal leo-in max-w-xl p-8 shadow-2xl" style="background:#ffffffef;border-radius:${R.card};backdrop-filter:blur(6px);color:${p.ink}">
+          ${badge}<div class="mt-4">${title}</div>${subt}${ctas}
+        </div>
+      </div>
+    </section>`;
+  }
   return `
     <section class="relative overflow-hidden text-white leo-grad-anim" style="background:linear-gradient(160deg,${p.gradFrom},${p.gradTo})">
       ${deco}
@@ -291,7 +306,7 @@ function renderHero(ctx: Ctx): string {
 
 function renderStats(ctx: Ctx): string {
   const { c, p, R } = ctx;
-  const v = ctx.variantOf("stats", 2);
+  const v = ctx.variantOf("stats", 3);
   const items = c.stats
     .map(
       (s) => `
@@ -303,6 +318,15 @@ function renderStats(ctx: Ctx): string {
     .join("");
   if (v === 0) {
     return `<section class="bg-white"><div class="max-w-6xl mx-auto px-6 py-12 grid grid-cols-2 md:grid-cols-4 gap-8">${items}</div></section>`;
+  }
+  if (v === 2) {
+    // 深色渐变横幅数字（白字 + 分隔线）
+    const darkItems = c.stats
+      .map(
+        (s, i) => `<div class="text-center px-6 ${i > 0 ? "md:border-l md:border-white/15" : ""}"><div class="leo-stat-num text-white" style="font-size:2.4rem;font-weight:800">${esc(s.value)}</div><div class="mt-1 text-sm text-white/70">${esc(s.label)}</div></div>`,
+      )
+      .join("");
+    return `<section class="leo-grad-anim" style="background:linear-gradient(120deg,${p.gradFrom},${p.gradTo})"><div class="max-w-6xl mx-auto px-6 py-14 grid grid-cols-2 md:grid-cols-4 gap-8">${darkItems}</div></section>`;
   }
   return `<section style="background:${p.soft}"><div class="max-w-6xl mx-auto px-6 py-12"><div class="grid grid-cols-2 md:grid-cols-4 gap-6" style="background:#fff;border-radius:${R.card};padding:2rem;box-shadow:0 10px 30px #0000000d">${items}</div></div></section>`;
 }
@@ -412,6 +436,27 @@ function renderServices(ctx: Ctx): string {
 
 function renderProducts(ctx: Ctx): string {
   const { ext, p, R } = ctx;
+  const v = ctx.variantOf("products", 3);
+  if (v === 1) {
+    // 首件焦点大图 + 其余小卡
+    const [first, ...rest] = ext.products;
+    const small = rest
+      .slice(0, 4)
+      .map(
+        (pr, i) => `<div class="flex items-center gap-4 p-3" style="background:#fff;border:1px solid #0000000d;border-radius:${R.card}"><div class="shrink-0 w-20 h-20 overflow-hidden" style="border-radius:${R.btn}">${img(ctx, 41 + i, 240, 240, "h-full w-full object-cover")}</div><div class="min-w-0"><h3 class="font-medium truncate" style="color:${ctx.p.ink}">${esc(pr.name)}</h3><div class="mt-1 font-extrabold" style="color:${p.primary}">${esc(pr.price)}</div></div></div>`,
+      )
+      .join("");
+    return `<section style="background:${p.soft};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, "热门商品", "甄选好物，正品保障，下单即享会员价。")}<div class="mt-12 grid md:grid-cols-2 gap-6"><div class="relative overflow-hidden" style="border-radius:${R.img}">${img(ctx, 40, 900, 900, "h-full w-full object-cover", "min-height:22rem")}<div class="absolute bottom-0 inset-x-0 p-6 text-white" style="background:linear-gradient(to top,#000c,transparent)"><span class="px-2 py-1 text-xs font-semibold" style="background:${p.primary};border-radius:${R.pill}">${esc(first?.note ?? "")}</span><h3 class="mt-2 text-xl font-bold">${esc(first?.name ?? "")}</h3><div class="mt-1 text-lg font-extrabold">${esc(first?.price ?? "")}</div></div></div><div class="grid content-start gap-4">${small}</div></div></div></section>`;
+  }
+  if (v === 2) {
+    // 横滚商品条
+    const cards = ext.products
+      .map(
+        (pr, i) => `<div class="shrink-0 w-60 snap-start overflow-hidden" style="background:#fff;border:1px solid #0000000d;border-radius:${R.card}">${img(ctx, 40 + i, 480, 480, "aspect-square w-full object-cover")}<div class="p-4"><h3 class="font-medium truncate" style="color:${ctx.p.ink}">${esc(pr.name)}</h3><div class="mt-1.5 flex items-center justify-between"><span class="font-extrabold" style="color:${p.primary}">${esc(pr.price)}</span><span class="text-xs" style="color:${p.sub}">${esc(pr.note)}</span></div></div></div>`,
+      )
+      .join("");
+    return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, "热门商品", "左右滑动查看更多商品。", "left")}</div><div class="mt-10 flex gap-4 overflow-x-auto px-6 pb-4 snap-x" style="scrollbar-width:thin">${cards}</div></section>`;
+  }
   const cards = ext.products
     .map(
       (pr, i) => `<div class="group overflow-hidden" style="background:#fff;border:1px solid #0000000a;border-radius:${R.card}"><div class="relative">${img(ctx, 40 + i, 500, 500, "aspect-square w-full object-cover transition group-hover:scale-105")}<span class="absolute top-3 left-3 px-2 py-1 text-xs font-semibold text-white" style="background:${p.primary};border-radius:${R.pill}">${esc(pr.note)}</span></div><div class="p-4"><h3 class="font-medium truncate" style="color:${ctx.p.ink}">${esc(pr.name)}</h3><div class="mt-2 flex items-center justify-between"><span class="font-extrabold" style="color:${p.primary}">${esc(pr.price)}</span><button class="px-3 py-1.5 text-xs font-semibold text-white" style="background:${p.ink};border-radius:${R.btn}">加入购物车</button></div></div></div>`,
@@ -435,13 +480,45 @@ function renderMenu(ctx: Ctx): string {
 }
 
 function renderGallery(ctx: Ctx): string {
-  const { R } = ctx;
+  const { R, p } = ctx;
+  const v = ctx.variantOf("gallery", 3);
+  if (v === 1) {
+    // 不等高拼贴（首图大跨两行）
+    const rest = Array.from({ length: 4 }, (_, i) => `<div class="overflow-hidden" style="border-radius:${R.img}">${img(ctx, 61 + i, 600, 460, "h-full w-full object-cover transition hover:scale-105 duration-500", "min-height:11rem")}</div>`).join("");
+    return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, "作品 / 案例展示", "用作品说话，每一个项目都全力以赴。")}<div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-4"><div class="sm:col-span-2 sm:row-span-2 overflow-hidden" style="border-radius:${R.img}">${img(ctx, 60, 1000, 940, "h-full w-full object-cover transition hover:scale-105 duration-500", "min-height:23rem")}</div>${rest}</div></div></section>`;
+  }
+  if (v === 2) {
+    // 横向滚动条带
+    const cells = Array.from({ length: 8 }, (_, i) => `<div class="shrink-0 w-72 overflow-hidden snap-start" style="border-radius:${R.img}">${img(ctx, 60 + i, 640, 480, "aspect-[4/3] w-full object-cover")}</div>`).join("");
+    return `<section style="background:${p.soft};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, "作品 / 案例展示", "左右滑动查看更多项目实拍。", "left")}</div><div class="mt-10 flex gap-4 overflow-x-auto px-6 pb-4 snap-x" style="scrollbar-width:thin">${cells}</div></section>`;
+  }
   const cells = Array.from({ length: 6 }, (_, i) => `<div class="overflow-hidden" style="border-radius:${R.img}">${img(ctx, 60 + i, 700, 520, "aspect-[4/3] w-full object-cover transition hover:scale-105 duration-500")}</div>`).join("");
   return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, "作品 / 案例展示", "用作品说话，每一个项目都全力以赴。")}<div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">${cells}</div></div></section>`;
 }
 
 function renderCases(ctx: Ctx): string {
   const { ext, p, R } = ctx;
+  const v = ctx.variantOf("cases", 3);
+  if (v === 1) {
+    // 左右交错图文长条
+    const rows = ext.cases
+      .slice(0, 3)
+      .map(
+        (cs, i) => `<div class="grid md:grid-cols-2 gap-8 items-center"><div class="${i % 2 ? "md:order-2" : ""} overflow-hidden" style="border-radius:${R.img}">${img(ctx, 80 + i, 800, 520, "w-full object-cover", "height:16rem")}</div><div class="${i % 2 ? "md:order-1" : ""}"><span class="inline-block px-2 py-0.5 text-xs font-medium" style="background:${p.soft};color:${p.primary};border-radius:${R.pill}">${esc(cs.tag)}</span><h3 class="mt-3 text-xl font-bold" style="color:${ctx.p.ink}">${esc(cs.title)}</h3><p class="mt-3 leading-relaxed text-sm" style="color:${p.sub}">${esc(cs.desc)}</p><a href="#" class="mt-4 inline-block text-sm font-semibold" style="color:${p.primary}">查看详情 →</a></div></div>`,
+      )
+      .join(`<div class="my-12"></div>`);
+    return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-5xl mx-auto px-6">${heading(ctx, "成功案例", "服务过的代表性项目，见证我们的专业与诚意。")}<div class="mt-12">${rows}</div></div></section>`;
+  }
+  if (v === 2) {
+    // 大图叠字卡（横向 2 列）
+    const cards = ext.cases
+      .slice(0, 4)
+      .map(
+        (cs, i) => `<div class="group relative overflow-hidden" style="border-radius:${R.img}">${img(ctx, 80 + i, 800, 560, "h-64 w-full object-cover transition duration-500 group-hover:scale-105")}<div class="absolute inset-0" style="background:linear-gradient(to top,#000d,transparent 65%)"></div><div class="absolute bottom-0 p-6 text-white"><span class="px-2 py-0.5 text-xs font-medium bg-white/20" style="border-radius:${R.pill};backdrop-filter:blur(4px)">${esc(cs.tag)}</span><h3 class="mt-2 text-lg font-bold">${esc(cs.title)}</h3><p class="mt-1 text-sm text-white/80 line-clamp-2">${esc(cs.desc)}</p></div></div>`,
+      )
+      .join("");
+    return `<section style="background:${p.soft};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, "成功案例", "服务过的代表性项目，见证我们的专业与诚意。")}<div class="mt-12 grid md:grid-cols-2 gap-6">${cards}</div></div></section>`;
+  }
   const cards = ext.cases
     .map(
       (cs, i) => `<div class="leo-card overflow-hidden" style="background:#fff;border:1px solid #0000000a;border-radius:${R.card}">${img(ctx, 80 + i, 700, 440, "h-44 w-full object-cover")}<div class="p-5"><span class="inline-block px-2 py-0.5 text-xs font-medium" style="background:${p.soft};color:${p.primary};border-radius:${R.pill}">${esc(cs.tag)}</span><h3 class="mt-3 font-semibold" style="color:${ctx.p.ink}">${esc(cs.title)}</h3><p class="mt-2 text-sm" style="color:${p.sub}">${esc(cs.desc)}</p></div></div>`,
@@ -452,6 +529,25 @@ function renderCases(ctx: Ctx): string {
 
 function renderTeam(ctx: Ctx): string {
   const { ext, p, R } = ctx;
+  const v = ctx.variantOf("team", 3);
+  if (v === 1) {
+    // 竖版人像卡（图上文下、hover 上浮）
+    const cards = ext.team
+      .map(
+        (m, i) => `<div class="leo-card overflow-hidden transition hover:-translate-y-1" style="background:#fff;border:1px solid #0000000a;border-radius:${R.card}">${img(ctx, 100 + i, 480, 560, "aspect-[6/7] w-full object-cover")}<div class="p-4 text-center"><h3 class="font-semibold" style="color:${ctx.p.ink}">${esc(m.name)}</h3><p class="mt-0.5 text-sm" style="color:${p.primary}">${esc(m.role)}</p></div></div>`,
+      )
+      .join("");
+    return `<section style="background:${p.soft};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, "核心团队", "一群专业、靠谱、对结果负责的人。")}<div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6">${cards}</div></div></section>`;
+  }
+  if (v === 2) {
+    // 横排名片（左圆头像右文，双列）
+    const rows = ext.team
+      .map(
+        (m, i) => `<div class="flex items-center gap-4 p-5" style="background:#fff;border:1px solid #0000000d;border-radius:${R.card}"><div class="shrink-0" style="width:4.5rem;height:4.5rem">${img(ctx, 100 + i, 300, 300, "h-full w-full object-cover", "border-radius:9999px")}</div><div><h3 class="font-semibold" style="color:${ctx.p.ink}">${esc(m.name)}</h3><p class="text-sm" style="color:${p.primary}">${esc(m.role)}</p><p class="mt-1 text-xs" style="color:${p.sub}">深耕${esc(ctx.meta.subLabel)}多年，实战经验丰富。</p></div></div>`,
+      )
+      .join("");
+    return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-5xl mx-auto px-6">${heading(ctx, "核心团队", "一群专业、靠谱、对结果负责的人。")}<div class="mt-12 grid md:grid-cols-2 gap-5">${rows}</div></div></section>`;
+  }
   const cards = ext.team
     .map(
       (m, i) => `<div class="text-center"><div class="relative mx-auto" style="width:11rem;height:11rem">${img(ctx, 100 + i, 400, 400, "h-full w-full object-cover", `border-radius:${R.img}`)}</div><h3 class="mt-4 font-semibold" style="color:${ctx.p.ink}">${esc(m.name)}</h3><p class="text-sm" style="color:${p.primary}">${esc(m.role)}</p></div>`,
@@ -462,6 +558,26 @@ function renderTeam(ctx: Ctx): string {
 
 function renderPricing(ctx: Ctx): string {
   const { ext, p, R } = ctx;
+  const v = ctx.variantOf("pricing", 3);
+  if (v === 1) {
+    // 横排价目行（表格感）
+    const rows = ext.pricing
+      .map(
+        (pl) => `<div class="flex flex-col sm:flex-row sm:items-center gap-4 p-6 ${pl.featured ? "text-white" : ""}" style="${pl.featured ? `background:linear-gradient(120deg,${p.gradFrom},${p.gradTo})` : "background:#fff"};border:1px solid #0000000d;border-radius:${R.card}"><div class="sm:w-40"><h3 class="font-bold text-lg">${esc(pl.name)}</h3>${pl.featured ? `<span class="inline-block mt-1 px-2 py-0.5 text-xs bg-white/20" style="border-radius:${R.pill}">推荐</span>` : ""}</div><div class="flex-1 flex flex-wrap gap-x-5 gap-y-1 text-sm ${pl.featured ? "text-white/85" : ""}" style="${pl.featured ? "" : `color:${p.sub}`}">${pl.features.map((f) => `<span>· ${esc(f)}</span>`).join("")}</div><div class="sm:text-right"><div class="text-2xl font-extrabold" style="${pl.featured ? "" : `color:${p.primary}`}">${esc(pl.price)}<span class="text-xs font-normal opacity-75">${esc(pl.unit)}</span></div><a href="#" data-go="contact" class="mt-2 inline-block px-5 py-2 text-sm font-semibold" style="${pl.featured ? `background:#fff;color:${p.primaryDark}` : `background:${p.soft};color:${p.primary}`};border-radius:${R.btn}">立即咨询</a></div></div>`,
+      )
+      .join("");
+    return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-5xl mx-auto px-6">${heading(ctx, "价格方案", "灵活的套餐组合，总有一款适合你。")}<div class="mt-12 space-y-4">${rows}</div></div></section>`;
+  }
+  if (v === 2) {
+    // 简洁双卡对比（首卡浅底、次卡描边）
+    const two = ext.pricing.slice(0, 2);
+    const cards2 = two
+      .map(
+        (pl, i) => `<div class="p-8 flex flex-col" style="${i === 0 ? `background:${p.soft}` : `background:#fff;border:2px solid ${p.primary}`};border-radius:${R.card}"><h3 class="font-bold text-lg" style="color:${ctx.p.ink}">${esc(pl.name)}</h3><div class="mt-3"><span class="text-4xl font-extrabold" style="color:${p.primary}">${esc(pl.price)}</span><span class="text-sm" style="color:${p.sub}">${esc(pl.unit)}</span></div><ul class="mt-6 space-y-3 flex-1">${pl.features.map((f) => `<li class="flex items-center gap-2 text-sm" style="color:${ctx.p.sub}">${svgIcon("M20 6L9 17l-5-5", p.primary, 18)}${esc(f)}</li>`).join("")}</ul><a href="#" data-go="contact" class="mt-8 text-center px-5 py-3 font-semibold text-white" style="background:${p.primary};border-radius:${R.btn}">立即咨询</a></div>`,
+      )
+      .join("");
+    return `<section style="background:#fff;${sectionPad(ctx)}"><div class="max-w-4xl mx-auto px-6">${heading(ctx, "价格方案", "灵活的套餐组合，总有一款适合你。")}<div class="mt-12 grid md:grid-cols-2 gap-6">${cards2}</div></div></section>`;
+  }
   const cards = ext.pricing
     .map((pl) => {
       const feats = pl.features.map((f) => `<li class="flex items-center gap-2 text-sm" style="color:${pl.featured ? "#fff" : ctx.p.sub}">${svgIcon("M20 6L9 17l-5-5", pl.featured ? "#fff" : p.primary, 18)}${esc(f)}</li>`).join("");
@@ -478,7 +594,26 @@ function renderPricing(ctx: Ctx): string {
 }
 
 function renderProcess(ctx: Ctx): string {
-  const { ext, p } = ctx;
+  const { ext, p, R } = ctx;
+  const v = ctx.variantOf("process", 3);
+  if (v === 1) {
+    // 箭头连贯卡片
+    const steps = ext.process
+      .map(
+        (s, i) => `<div class="relative flex-1 p-6" style="background:#fff;border:1px solid #0000000d;border-radius:${R.card}"><div class="flex h-10 w-10 items-center justify-center font-bold text-white" style="background:${p.primary};border-radius:${R.btn}">${i + 1}</div><h3 class="mt-4 font-semibold" style="color:${ctx.p.ink}">${esc(s.title)}</h3><p class="mt-2 text-sm" style="color:${p.sub}">${esc(s.desc)}</p>${i < ext.process.length - 1 ? `<div class="hidden lg:flex absolute top-1/2 -right-5 z-10 h-8 w-8 items-center justify-center" style="color:${p.primary}">${svgIcon("M5 12h14M13 6l6 6-6 6", p.primary, 22)}</div>` : ""}</div>`,
+      )
+      .join("");
+    return `<section style="background:${p.soft};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, "我们怎么做", "标准化流程，每一步都清晰可控。")}<div class="mt-12 flex flex-col lg:flex-row gap-6">${steps}</div></div></section>`;
+  }
+  if (v === 2) {
+    // 左右交错列表（zigzag）
+    const rows = ext.process
+      .map(
+        (s, i) => `<div class="grid md:grid-cols-2 gap-6 items-center ${i % 2 ? "md:text-right" : ""}"><div class="${i % 2 ? "md:order-2 md:text-left" : ""}"><div class="text-5xl font-extrabold" style="color:${p.primary};opacity:.18">${esc(s.step)}</div></div><div class="${i % 2 ? "md:order-1" : ""}"><h3 class="font-semibold text-lg" style="color:${ctx.p.ink}">${esc(s.title)}</h3><p class="mt-2 text-sm leading-relaxed" style="color:${p.sub}">${esc(s.desc)}</p></div></div>`,
+      )
+      .join(`<div class="my-6" style="height:1px;background:#0000000d"></div>`);
+    return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-4xl mx-auto px-6">${heading(ctx, "我们怎么做", "标准化流程，每一步都清晰可控。")}<div class="mt-12">${rows}</div></div></section>`;
+  }
   const steps = ext.process
     .map(
       (s) => `<div class="relative"><div class="text-4xl font-extrabold" style="color:${p.primary};opacity:.25">${esc(s.step)}</div><h3 class="mt-2 font-semibold" style="color:${ctx.p.ink}">${esc(s.title)}</h3><p class="mt-2 text-sm" style="color:${p.sub}">${esc(s.desc)}</p></div>`,
@@ -489,6 +624,26 @@ function renderProcess(ctx: Ctx): string {
 
 function renderTestimonials(ctx: Ctx): string {
   const { c, p, R } = ctx;
+  const v = ctx.variantOf("testimonials", 3);
+  if (v === 1) {
+    // 大引号单条焦点 + 侧边其余
+    const [first, ...rest] = c.testimonials;
+    const side = rest
+      .map(
+        (t) => `<div class="p-5" style="background:#fff;border:1px solid #0000000d;border-radius:${R.card}"><p class="text-sm leading-relaxed" style="color:${p.sub}">“${esc(t.text)}”</p><div class="mt-3 text-xs font-semibold" style="color:${ctx.p.ink}">${esc(t.name)} · <span style="color:${p.sub};font-weight:400">${esc(t.role)}</span></div></div>`,
+      )
+      .join("");
+    return `<section style="background:${p.soft};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, c.testimonialsTitle, undefined, "left")}<div class="mt-10 grid md:grid-cols-2 gap-8 items-start"><div class="p-8 text-white leo-grad-anim" style="background:linear-gradient(135deg,${p.gradFrom},${p.gradTo});border-radius:${R.card}"><div style="font-size:4rem;line-height:1;opacity:.35;font-weight:800">“</div><p class="text-lg leading-relaxed">${esc(first?.text ?? "")}</p><div class="mt-6 flex items-center gap-3"><div class="h-11 w-11 flex items-center justify-center bg-white font-bold" style="color:${p.primary};border-radius:9999px">${esc((first?.name ?? "客").slice(0, 1))}</div><div><div class="font-semibold">${esc(first?.name ?? "")}</div><div class="text-xs text-white/75">${esc(first?.role ?? "")}</div></div></div></div><div class="space-y-4">${side}</div></div></div></section>`;
+  }
+  if (v === 2) {
+    // 简洁分栏（无卡片、竖线分隔）
+    const cols = c.testimonials
+      .map(
+        (t, i) => `<div class="px-6 ${i > 0 ? "md:border-l" : ""}" style="border-color:#0000000f"><div class="text-lg" style="color:${p.primary}">★★★★★</div><p class="mt-3 text-sm leading-relaxed" style="color:${ctx.p.ink}">“${esc(t.text)}”</p><div class="mt-4 text-xs font-semibold" style="color:${p.sub}">${esc(t.name)} · ${esc(t.role)}</div></div>`,
+      )
+      .join("");
+    return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, c.testimonialsTitle)}<div class="mt-12 grid md:grid-cols-3 gap-y-8">${cols}</div></div></section>`;
+  }
   const cards = c.testimonials
     .map(
       (t) => `<div class="p-6" style="background:#fff;border:1px solid #0000000a;border-radius:${R.card};box-shadow:0 6px 20px #0000000a"><div class="flex gap-1 mb-3" style="color:${p.primary}">★★★★★</div><p class="text-sm leading-relaxed" style="color:${p.sub}">“${esc(t.text)}”</p><div class="mt-4 flex items-center gap-3"><div class="h-10 w-10 flex items-center justify-center text-white font-semibold" style="background:${p.primary};border-radius:9999px">${esc(t.name.slice(0, 1))}</div><div><div class="text-sm font-semibold" style="color:${ctx.p.ink}">${esc(t.name)}</div><div class="text-xs" style="color:${p.sub};opacity:.8">${esc(t.role)}</div></div></div></div>`,
@@ -499,11 +654,25 @@ function renderTestimonials(ctx: Ctx): string {
 
 function renderFaq(ctx: Ctx): string {
   const { ext, p, R } = ctx;
+  const v = ctx.variantOf("faq", 3);
   const rows = ext.faq
     .map(
       (f) => `<details class="group p-5" style="background:#fff;border:1px solid #0000000f;border-radius:${R.card}"><summary class="flex items-center justify-between cursor-pointer font-semibold list-none" style="color:${ctx.p.ink}">${esc(f.q)}<span style="color:${p.primary}">＋</span></summary><p class="mt-3 text-sm leading-relaxed" style="color:${p.sub}">${esc(f.a)}</p></details>`,
     )
     .join("");
+  if (v === 1) {
+    // 左标题右列表
+    return `<section style="background:${p.soft};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6 grid md:grid-cols-3 gap-10"><div>${heading(ctx, "常见问题", "你想知道的，我们都准备好了。", "left")}<p class="mt-6 text-sm" style="color:${p.sub}">还有其他疑问？<a href="#" data-go="contact" style="color:${p.primary};font-weight:600">联系我们 →</a></p></div><div class="md:col-span-2 space-y-3">${rows}</div></div></section>`;
+  }
+  if (v === 2) {
+    // 双列问答平铺（非折叠）
+    const cells = ext.faq
+      .map(
+        (f, i) => `<div class="p-6" style="background:#fff;border:1px solid #0000000d;border-radius:${R.card}"><div class="flex items-start gap-3"><span class="shrink-0 flex h-7 w-7 items-center justify-center text-xs font-bold text-white" style="background:${p.primary};border-radius:9999px">Q${i + 1}</span><h3 class="font-semibold" style="color:${ctx.p.ink}">${esc(f.q)}</h3></div><p class="mt-3 text-sm leading-relaxed" style="color:${p.sub}">${esc(f.a)}</p></div>`,
+      )
+      .join("");
+    return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-5xl mx-auto px-6">${heading(ctx, "常见问题", "你想知道的，我们都准备好了。")}<div class="mt-10 grid md:grid-cols-2 gap-5">${cells}</div></div></section>`;
+  }
   return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-3xl mx-auto px-6">${heading(ctx, "常见问题", "你想知道的，我们都准备好了。")}<div class="mt-10 space-y-3">${rows}</div></div></section>`;
 }
 
@@ -516,6 +685,26 @@ function renderLogos(ctx: Ctx): string {
 
 function renderNews(ctx: Ctx): string {
   const { ext, p, R } = ctx;
+  const v = ctx.variantOf("news", 3);
+  if (v === 1) {
+    // 列表式（左日期块右文，无图）
+    const rows = ext.news
+      .map(
+        (n) => `<div class="flex gap-5 p-5 transition hover:-translate-y-0.5" style="background:#fff;border:1px solid #0000000d;border-radius:${R.card}"><div class="shrink-0 w-16 text-center"><div class="text-2xl font-extrabold" style="color:${p.primary}">${esc(n.date.split("-").pop() ?? "")}</div><div class="text-xs" style="color:${p.sub}">${esc(n.date.split("-").slice(0, 2).join("-"))}</div></div><div class="min-w-0"><div class="text-xs font-medium" style="color:${p.primary}">${esc(n.cat)}</div><h3 class="mt-1 font-semibold leading-snug" style="color:${ctx.p.ink}">${esc(n.title)}</h3><p class="mt-1 text-sm truncate" style="color:${p.sub}">${esc(n.excerpt)}</p></div></div>`,
+      )
+      .join("");
+    return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-4xl mx-auto px-6">${heading(ctx, "新闻资讯", "了解我们的最新动态与行业洞察。")}<div class="mt-10 space-y-4">${rows}</div></div></section>`;
+  }
+  if (v === 2) {
+    // 首条头条大卡 + 右侧列表
+    const [first, ...rest] = ext.news;
+    const side = rest
+      .map(
+        (n, i) => `<div class="flex gap-4 items-start ${i > 0 ? "pt-4 mt-4" : ""}" style="${i > 0 ? "border-top:1px solid #0000000d" : ""}"><div class="shrink-0 w-24 h-16 overflow-hidden" style="border-radius:${R.btn}">${img(ctx, 121 + i, 300, 200, "h-full w-full object-cover")}</div><div class="min-w-0"><div class="text-xs" style="color:${p.primary}">${esc(n.cat)} · <span style="color:${p.sub}">${esc(n.date)}</span></div><h3 class="mt-1 text-sm font-semibold leading-snug" style="color:${ctx.p.ink}">${esc(n.title)}</h3></div></div>`,
+      )
+      .join("");
+    return `<section style="background:${p.soft};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, "新闻资讯", "了解我们的最新动态与行业洞察。")}<div class="mt-12 grid md:grid-cols-2 gap-8"><div class="overflow-hidden" style="background:#fff;border-radius:${R.card};border:1px solid #0000000d">${img(ctx, 120, 900, 540, "h-56 w-full object-cover")}<div class="p-6"><div class="text-xs" style="color:${p.primary}">${esc(first?.cat ?? "")} · <span style="color:${p.sub}">${esc(first?.date ?? "")}</span></div><h3 class="mt-2 text-lg font-bold leading-snug" style="color:${ctx.p.ink}">${esc(first?.title ?? "")}</h3><p class="mt-2 text-sm" style="color:${p.sub}">${esc(first?.excerpt ?? "")}</p></div></div><div class="p-6" style="background:#fff;border-radius:${R.card};border:1px solid #0000000d">${side}</div></div></div></section>`;
+  }
   const cards = ext.news
     .map(
       (n, i) => `<div class="leo-card overflow-hidden" style="background:#fff;border:1px solid #0000000a;border-radius:${R.card}">${img(ctx, 120 + i, 700, 420, "h-40 w-full object-cover")}<div class="p-5"><div class="flex items-center gap-2 text-xs" style="color:${p.primary}"><span class="font-medium">${esc(n.cat)}</span><span style="color:${p.sub};opacity:.6">${esc(n.date)}</span></div><h3 class="mt-2 font-semibold leading-snug" style="color:${ctx.p.ink}">${esc(n.title)}</h3><p class="mt-2 text-sm" style="color:${p.sub}">${esc(n.excerpt)}</p></div></div>`,
@@ -526,7 +715,16 @@ function renderNews(ctx: Ctx): string {
 
 function renderCta(ctx: Ctx): string {
   const { c, p, R, fx, dna } = ctx;
+  const v = ctx.variantOf("cta", 3);
   const deco = decorLayer(p, fx, dna.styleSeed + 7);
+  if (v === 1) {
+    // 全宽深底横幅：左文右按钮
+    return `<section class="relative overflow-hidden text-white leo-grad-anim" style="background:linear-gradient(120deg,${p.gradFrom},${p.gradTo})">${deco}<div class="relative max-w-6xl mx-auto px-6 py-16 flex flex-col md:flex-row md:items-center gap-8"><div class="flex-1"><h2 style="font-size:${ctx.D.h2};font-weight:800">${esc(c.ctaTitle)}</h2><p class="mt-3 text-white/85">${esc(c.ctaSubtitle)}</p></div><div class="shrink-0 flex flex-wrap gap-4"><a href="tel:${esc(c.contactPhone)}" class="leo-btn-shine inline-block bg-white px-8 py-3.5 font-semibold" style="color:${p.primaryDark};border-radius:${R.btn}">${esc(c.ctaButton)}</a><a href="#" data-go="contact" class="inline-block px-8 py-3.5 font-semibold text-white" style="border:2px solid #ffffff66;border-radius:${R.btn}">在线咨询</a></div></div></section>`;
+  }
+  if (v === 2) {
+    // 白底极简：细边框卡 + 电话大字
+    return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-4xl mx-auto px-6"><div class="text-center px-8 py-12" style="border:2px solid ${p.primary}22;border-radius:${R.card}"><span class="inline-block px-3 py-1 text-xs font-semibold" style="background:${p.soft};color:${p.primary};border-radius:${R.pill}">立即行动</span><h2 class="mt-4" style="font-size:${ctx.D.h2};font-weight:800;color:${p.ink}">${esc(c.ctaTitle)}</h2><p class="mt-3" style="color:${p.sub}">${esc(c.ctaSubtitle)}</p><a href="tel:${esc(c.contactPhone)}" class="mt-6 inline-block text-3xl font-extrabold" style="color:${p.primary}">${esc(c.contactPhone)}</a><div class="mt-6">${btnPrimary(ctx, c.ctaButton)}</div></div></div></section>`;
+  }
   return `<section style="${sectionPad(ctx)}"><div class="max-w-5xl mx-auto px-6"><div class="relative overflow-hidden text-center text-white px-8 py-14 leo-grad-anim" style="background:linear-gradient(135deg,${p.gradFrom},${p.gradTo});border-radius:${R.card}">${deco}<div class="relative"><h2 style="font-size:${ctx.D.h2};font-weight:800">${esc(c.ctaTitle)}</h2><p class="mt-3 text-white/85">${esc(c.ctaSubtitle)}</p><a href="tel:${esc(c.contactPhone)}" class="leo-btn-shine mt-8 inline-block bg-white px-8 py-3 font-semibold transition hover:scale-[1.02]" style="color:${p.primaryDark};border-radius:${R.btn}">${esc(c.ctaButton)} · ${esc(c.contactPhone)}</a></div></div></div></section>`;
 }
 
@@ -552,8 +750,144 @@ function renderContact(ctx: Ctx): string {
 
 function renderPageHeader(ctx: Ctx, label: string): string {
   const { p, fx, dna } = ctx;
+  const v = ctx.variantOf("pageHeader", 3);
   const deco = decorLayer(p, fx, dna.styleSeed + 3);
+  if (v === 1) {
+    // 浅底 + 左侧粗竖条 + 面包屑
+    return `<section style="background:${p.soft}"><div class="max-w-6xl mx-auto px-6 py-14"><div class="flex items-center gap-4"><span style="width:6px;height:3.2rem;background:${p.primary};border-radius:3px"></span><div><p class="text-xs mb-1" style="color:${p.sub}">${esc(ctx.c.brand)} / ${esc(label)}</p><h1 style="font-size:${ctx.D.h2};font-weight:800;color:${p.ink}">${esc(label)}</h1></div></div></div></section>`;
+  }
+  if (v === 2) {
+    // 白底居中 + 下划短线
+    return `<section class="bg-white border-b" style="border-color:#0000000d"><div class="max-w-6xl mx-auto px-6 py-14 text-center"><h1 style="font-size:${ctx.D.h2};font-weight:800;color:${p.ink}">${esc(label)}</h1><div class="mx-auto mt-4" style="width:56px;height:4px;background:${p.primary};border-radius:2px"></div><p class="mt-3 text-sm" style="color:${p.sub}">${esc(ctx.c.brand)} · ${esc(label)}</p></div></section>`;
+  }
   return `<section class="relative overflow-hidden text-white leo-grad-anim" style="background:linear-gradient(135deg,${p.gradFrom},${p.gradTo})">${deco}<div class="relative max-w-6xl mx-auto px-6 py-16"><h1 style="font-size:${ctx.D.h2};font-weight:800">${esc(label)}</h1><p class="mt-2 text-white/80 text-sm">${esc(ctx.c.brand)} · ${esc(label)}</p></div></section>`;
+}
+
+// ————————————————————————————————————————————————————————————
+// v2.2 新章节：chart（内联 SVG 数据图表）/ timeline（里程碑）/ marquee（徽标带）
+// ————————————————————————————————————————————————————————————
+
+/** 从 slug+salt 派生一组确定性「业务数据」（幅度合理、递增趋势为主）。 */
+function chartData(ctx: Ctx): { labels: string[]; values: number[]; unit: string; title: string; insight: string } {
+  const h = hashStr(ctx.meta.slug + ":chartdata");
+  const year = 2023;
+  const kindPick = h % 3;
+  const labels = Array.from({ length: 4 }, (_, i) => `${year + i}年`);
+  const base = 40 + (h % 50);
+  const values = labels.map((_, i) => {
+    const wobble = (hashStr(ctx.meta.slug + ":cv" + i) % 18) - 4;
+    return Math.max(8, Math.round(base * (1 + 0.32 * i) + wobble));
+  });
+  const units = ["万元", "单", "家", "人次"];
+  const titles = ["业务规模持续增长", "服务交付量逐年攀升", "合作客户稳步扩大", "服务人次连年新高"];
+  const unit = units[kindPick % units.length];
+  const growth = Math.round(((values[3] - values[0]) / values[0]) * 100);
+  return {
+    labels,
+    values,
+    unit,
+    title: titles[h % titles.length],
+    insight: `近四年${unit === "万元" ? "营收" : "业务量"}累计增长约 ${growth}%，${esc(ctx.meta.subLabel)}赛道保持强劲势头。`,
+  };
+}
+
+function renderChart(ctx: Ctx): string {
+  const { p, R } = ctx;
+  const v = ctx.variantOf("chart", 3);
+  const d = chartData(ctx);
+  const W = 640, H = 320, PADX = 56, PADY = 42;
+  const vmax = Math.max(...d.values) * 1.15;
+  let svg = "";
+  if (v === 0) {
+    // 柱状
+    const n = d.values.length;
+    const bw = (W - PADX * 2) / (n * 1.8);
+    const gap = (W - PADX * 2 - n * bw) / (n + 1);
+    const bars = d.values.map((val, i) => {
+      const x = PADX + gap + i * (bw + gap);
+      const bh = ((H - PADY * 2) * val) / vmax;
+      const y = H - PADY - bh;
+      return `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${bh.toFixed(1)}" rx="6" fill="${i === n - 1 ? p.primary : p.gradTo}" opacity="${i === n - 1 ? 1 : 0.55}"/>
+        <text x="${(x + bw / 2).toFixed(1)}" y="${(y - 10).toFixed(1)}" text-anchor="middle" font-size="15" font-weight="700" fill="${p.ink}">${d.values[i]}</text>
+        <text x="${(x + bw / 2).toFixed(1)}" y="${H - PADY + 24}" text-anchor="middle" font-size="13" fill="${p.sub}">${d.labels[i]}</text>`;
+    }).join("");
+    svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto"><line x1="${PADX}" y1="${H - PADY}" x2="${W - PADX}" y2="${H - PADY}" stroke="#00000022" stroke-width="1.5"/>${bars}</svg>`;
+  } else if (v === 1) {
+    // 折线 + 渐变面积
+    const n = d.values.length;
+    const step = (W - PADX * 2) / (n - 1);
+    const pts = d.values.map((val, i) => [PADX + i * step, H - PADY - ((H - PADY * 2) * val) / vmax] as const);
+    const line = pts.map((pt) => pt.join(",")).join(" ");
+    const area = `${PADX},${H - PADY} ${line} ${W - PADX},${H - PADY}`;
+    const dots = pts.map((pt, i) => `<circle cx="${pt[0]}" cy="${pt[1]}" r="6" fill="#fff" stroke="${p.primary}" stroke-width="3"/>
+      <text x="${pt[0]}" y="${pt[1] - 14}" text-anchor="middle" font-size="15" font-weight="700" fill="${p.ink}">${d.values[i]}</text>
+      <text x="${pt[0]}" y="${H - PADY + 24}" text-anchor="middle" font-size="13" fill="${p.sub}">${d.labels[i]}</text>`).join("");
+    svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto"><defs><linearGradient id="lg-${hashStr(ctx.meta.slug) % 9999}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${p.primary}" stop-opacity=".28"/><stop offset="1" stop-color="${p.primary}" stop-opacity="0"/></linearGradient></defs><line x1="${PADX}" y1="${H - PADY}" x2="${W - PADX}" y2="${H - PADY}" stroke="#00000022" stroke-width="1.5"/><polygon points="${area}" fill="url(#lg-${hashStr(ctx.meta.slug) % 9999})"/><polyline points="${line}" fill="none" stroke="${p.primary}" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>${dots}</svg>`;
+  } else {
+    // 环形占比
+    const total = d.values.reduce((a, b) => a + b, 0);
+    const cx = 160, cy = 160, r = 108, sw = 46;
+    const cols = [p.primary, p.gradTo, p.gradFrom, "#94a3b8"];
+    let a0 = -90;
+    const arcs = d.values.map((val, i) => {
+      const sweep = (360 * val) / total;
+      const a1 = a0 + sweep;
+      const large = sweep > 180 ? 1 : 0;
+      const x1 = cx + r * Math.cos((a0 * Math.PI) / 180), y1 = cy + r * Math.sin((a0 * Math.PI) / 180);
+      const x2 = cx + r * Math.cos(((a1 - 2) * Math.PI) / 180), y2 = cy + r * Math.sin(((a1 - 2) * Math.PI) / 180);
+      a0 = a1;
+      return `<path d="M${x1.toFixed(1)},${y1.toFixed(1)} A${r},${r} 0 ${large} 1 ${x2.toFixed(1)},${y2.toFixed(1)}" fill="none" stroke="${cols[i % 4]}" stroke-width="${sw}"/>`;
+    }).join("");
+    const legend = d.labels.map((lb, i) => `<g transform="translate(340,${86 + i * 44})"><rect width="16" height="16" rx="4" fill="${cols[i % 4]}"/><text x="26" y="13" font-size="14" fill="${p.ink}">${lb} · ${Math.round((d.values[i] / total) * 100)}%</text></g>`).join("");
+    svg = `<svg viewBox="0 0 ${W} 320" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">${arcs}<text x="${cx}" y="${cy + 6}" text-anchor="middle" font-size="22" font-weight="800" fill="${p.ink}">${total}${d.unit}</text>${legend}</svg>`;
+  }
+  return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, d.title, `单位：${d.unit} · 数据为示例展示`)}<div class="mt-10 grid md:grid-cols-3 gap-10 items-center"><div class="md:col-span-2 p-6" style="background:${p.soft};border-radius:${R.card}">${svg}</div><div><div style="width:40px;height:4px;background:${p.primary};border-radius:2px"></div><p class="mt-4 leading-relaxed" style="color:${p.ink};font-weight:600">${d.insight}</p><p class="mt-3 text-sm leading-relaxed" style="color:${p.sub}">图表由模板内置示例数据渲染，替换为您的真实经营数据即可直接使用。</p></div></div></div></section>`;
+}
+
+function renderTimeline(ctx: Ctx): string {
+  const { p, R, ext } = ctx;
+  const v = ctx.variantOf("timeline", 2);
+  const year = 2020 + (hashStr(ctx.meta.slug + ":tl") % 3);
+  const pool = [
+    ["品牌创立", "团队组建，深耕行业首个标杆项目落地。"],
+    ["体系成型", "服务流程标准化，通过行业资质认证。"],
+    ["规模扩张", "服务网络覆盖全省，客户数突破千家。"],
+    ["数字升级", "上线数字化服务平台，体验全面提速。"],
+    ["迈向全国", "跨区域布局，携手伙伴共建行业生态。"],
+  ];
+  const steps = (ext.process.length >= 4
+    ? ext.process.slice(0, 5).map((s, i) => [`${year + i}`, s.title, s.desc] as const)
+    : pool.map((s, i) => [`${year + i}`, s[0], s[1]] as const));
+  if (v === 0) {
+    // 垂直时间线
+    const rows = steps.map(([yr, t, dd], i) => `
+      <div class="relative pl-12 pb-10 leo-reveal leo-from-left" style="transition-delay:${i * 0.06}s">
+        <span class="absolute left-0 top-1 flex h-8 w-8 items-center justify-center text-xs font-bold text-white" style="background:${i === steps.length - 1 ? p.primary : p.gradTo};border-radius:9999px">${i + 1}</span>
+        ${i < steps.length - 1 ? `<span class="absolute left-4 top-9 bottom-0" style="width:2px;background:#0000001a"></span>` : ""}
+        <div class="text-xs font-bold tracking-wider" style="color:${p.primary}">${esc(yr)}</div>
+        <h3 class="mt-1 font-semibold text-lg" style="color:${p.ink}">${esc(t)}</h3>
+        <p class="mt-1 text-sm leading-relaxed" style="color:${p.sub}">${esc(dd)}</p>
+      </div>`).join("");
+    return `<section style="background:${p.soft};${sectionPad(ctx)}"><div class="max-w-3xl mx-auto px-6">${heading(ctx, "发展历程", "一步一个脚印，走出来的信任。")}<div class="mt-12">${rows}</div></div></section>`;
+  }
+  // 水平里程碑（桌面横排、移动纵排）
+  const cols = steps.map(([yr, t, dd], i) => `
+    <div class="relative flex-1 min-w-[10rem] leo-reveal" style="transition-delay:${i * 0.06}s">
+      <div class="hidden md:block absolute top-4 left-1/2 right-0 h-0.5" style="background:${i < steps.length - 1 ? "#0000001a" : "transparent"}"></div>
+      <div class="relative mx-auto md:mx-0 flex h-9 w-9 items-center justify-center text-xs font-bold text-white" style="background:${p.primary};border-radius:9999px">${i + 1}</div>
+      <div class="mt-4 text-xs font-bold tracking-wider" style="color:${p.primary}">${esc(yr)}</div>
+      <h3 class="mt-1 font-semibold" style="color:${p.ink}">${esc(t)}</h3>
+      <p class="mt-1 text-sm leading-relaxed" style="color:${p.sub}">${esc(dd)}</p>
+    </div>`).join("");
+  return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, "发展里程碑", "从起步到领先的每一个关键节点。")}<div class="mt-12 flex flex-col md:flex-row gap-8 text-center md:text-left" style="border-radius:${R.card}">${cols}</div></div></section>`;
+}
+
+function renderMarquee(ctx: Ctx): string {
+  const { ext, p, R } = ctx;
+  const cols = [p.primary, p.gradTo, p.gradFrom];
+  const cell = (l: string, i: number) => `<div class="shrink-0 mx-3 flex items-center gap-3 px-5 py-3" style="background:#fff;border:1px solid #0000000d;border-radius:${R.card};box-shadow:0 4px 14px #00000008"><span class="flex h-9 w-9 items-center justify-center text-sm font-bold text-white" style="background:${cols[i % 3]};border-radius:${R.btn}">${esc(l.slice(0, 1))}</span><span class="text-sm font-semibold whitespace-nowrap" style="color:${p.ink}">${esc(l)}</span></div>`;
+  const row = ext.logos.map(cell).join("");
+  return `<section style="background:${p.soft}"><style>@keyframes leoMq{from{transform:translateX(0)}to{transform:translateX(-50%)}}.leo-mq-track{display:flex;width:max-content;animation:leoMq 26s linear infinite}.leo-mq-track:hover{animation-play-state:paused}</style><div class="py-12 overflow-hidden"><p class="text-center text-sm font-medium mb-6" style="color:${p.sub}">他们都选择了 ${esc(ctx.c.brand)}</p><div class="leo-mq-track">${row}${row}</div></div></section>`;
 }
 
 function renderSection(ctx: Ctx, kind: SectionKind, pageLabel: string): string {
@@ -578,6 +912,9 @@ function renderSection(ctx: Ctx, kind: SectionKind, pageLabel: string): string {
     case "cta": return renderCta(ctx);
     case "contact": return renderContact(ctx);
     case "pageHeader": return renderPageHeader(ctx, pageLabel);
+    case "chart": return renderChart(ctx);
+    case "timeline": return renderTimeline(ctx);
+    case "marquee": return renderMarquee(ctx);
     default: return "";
   }
   })();
@@ -609,8 +946,12 @@ export function renderTemplate(
     fx: dna.accentFx,
     R: radiusTokens(dna),
     D: densityTokens(dna),
+    pageKey: "home",
+    // pageKey 掺进盐：operator 点名「每个网站的各个页面的布局不能一样」。
+    // 同一模板里 services 页与 home 页即使都有 features 章节，版式也不同。
     variantOf: (kind, count) =>
-      (hashStr(meta.slug + ":sec:" + kind) + dna.styleSeed) % count,
+      (hashStr(meta.slug + ":sec:" + kind + ":" + ctx.pageKey) + dna.styleSeed) %
+      count,
   };
 
   const layout: LayoutFamily = dna.layout;
@@ -621,6 +962,7 @@ export function renderTemplate(
     .map((pk, idx) => {
       const kinds = layout.sections[pk] ?? ["pageHeader", "cta"];
       const label = PAGE_LABEL[pk];
+      ctx.pageKey = pk;
       const inner = kinds.map((k) => renderSection(ctx, k, label)).join("\n");
       return `<div data-page="${pk}"${idx === 0 ? "" : ' hidden style="display:none"'}>${inner}</div>`;
     })

@@ -12,7 +12,8 @@ import { hashStr } from "./hash";
 import { accentFxFor, type AccentFx } from "./template-effects";
 
 // ————————————————————————————————————————————————————————————
-// 配色（在 v1 的 8 色基础上扩展到 12 个，含中性/暗色/糖果色，拉开观感差异）
+// 配色（v2.2 扩展到 16 个：8 基础 + 中性/暗色/糖果色 + 摩卡棕/墨绿金/藕荷/冰川，
+// 拉开观感差异；family 仍归入列表页的 8 个色系筛选）
 // ————————————————————————————————————————————————————————————
 
 export interface PaletteV2 {
@@ -45,6 +46,11 @@ export const PALETTES_V2: PaletteV2[] = [
   { key: "indigo", family: "purple", label: "靛蓝", primary: "#4f46e5", primaryDark: "#4338ca", gradFrom: "#312e81", gradTo: "#818cf8", soft: "#eef2ff", ink: "#0d0b23", sub: "#4c4b63", accent: "#a5b4fc", heroDark: true, swatch: "#6366f1" },
   { key: "graphite", family: "dark", label: "石墨黑", primary: "#0ea5e9", primaryDark: "#0284c7", gradFrom: "#0f172a", gradTo: "#1e293b", soft: "#f1f5f9", ink: "#0f172a", sub: "#475569", accent: "#38bdf8", heroDark: true, swatch: "#27272a" },
   { key: "paper", family: "light", label: "米白", primary: "#0f172a", primaryDark: "#020617", gradFrom: "#f8fafc", gradTo: "#e2e8f0", soft: "#f8fafc", ink: "#0f172a", sub: "#475569", accent: "#0f172a", heroDark: false, swatch: "#e5e7eb" },
+  // v2.2 新增 4 个个性配色
+  { key: "mocha", family: "orange", label: "摩卡棕", primary: "#92400e", primaryDark: "#78350f", gradFrom: "#3f2212", gradTo: "#b45309", soft: "#fef3e7", ink: "#241407", sub: "#6f5b48", accent: "#e7b98a", heroDark: true, swatch: "#a16207" },
+  { key: "jade-gold", family: "green", label: "墨绿金", primary: "#065f46", primaryDark: "#064e3b", gradFrom: "#022c22", gradTo: "#0f766e", soft: "#ecfdf5", ink: "#062019", sub: "#4a635b", accent: "#fbbf24", heroDark: true, swatch: "#047857" },
+  { key: "mauve", family: "purple", label: "藕荷", primary: "#9d5b8b", primaryDark: "#82486f", gradFrom: "#4a2545", gradTo: "#c084ac", soft: "#faf3f8", ink: "#2a1526", sub: "#6d5566", accent: "#e9c3dc", heroDark: true, swatch: "#b06fa0" },
+  { key: "glacier", family: "light", label: "冰川灰蓝", primary: "#334155", primaryDark: "#1e293b", gradFrom: "#e0f2fe", gradTo: "#cbd5e1", soft: "#f0f9ff", ink: "#0f172a", sub: "#526074", accent: "#0369a1", heroDark: false, swatch: "#94a3b8" },
 ];
 
 export function paletteByKey(key: string): PaletteV2 {
@@ -66,6 +72,8 @@ export type PageKey =
   | "team"
   | "news"
   | "pricing"
+  | "gallery"
+  | "timeline"
   | "contact";
 
 export const PAGE_LABEL: Record<PageKey, string> = {
@@ -79,10 +87,13 @@ export const PAGE_LABEL: Record<PageKey, string> = {
   team: "团队",
   news: "新闻资讯",
   pricing: "价格方案",
+  gallery: "图库展示",
+  timeline: "发展历程",
   contact: "联系我们",
 };
 
 // 章节种类（每页是若干 section 的有序拼装）。
+// v2.2 新增：chart（数据图表）/ timeline（里程碑时间线）/ marquee（滚动徽标带）。
 export type SectionKind =
   | "hero"
   | "stats"
@@ -100,6 +111,9 @@ export type SectionKind =
   | "faq"
   | "logos"
   | "news"
+  | "chart"
+  | "timeline"
+  | "marquee"
   | "cta"
   | "contact"
   | "pageHeader";
@@ -115,18 +129,23 @@ export interface LayoutFamily {
   industries?: string[];
 }
 
-// 8 个布局家族，覆盖企业/机构/电商/餐饮/作品集/医疗/教育/极简等典型站型。
+// 16 个布局家族（v2.2：8 经典 + 8 行业气质款）。多样性三原则：
+//  1. 家族之间首页开场就不同（hero 开场 / gallery 开场 / pageHeader 克制开场…），
+//     中段信息架构（章节序列）互不雷同；
+//  2. 同一家族内不同页面的中段序列不得相同（除 pageHeader 开头、cta/contact 结尾）；
+//  3. 页数 3–6 页不等，拉开「站型体量感」。
 export const LAYOUT_FAMILIES: LayoutFamily[] = [
+  // —— 经典 8 款（key 兼容 v2.1，内部编排全部重排拉开差异） ——
   {
     key: "corporate",
     label: "企业官网",
-    industries: ["business", "media", "industry", "hardware", "logistics", "general", "tech", "org", "home", "grocery"],
+    industries: ["business", "media", "industry", "hardware", "logistics", "general", "tech", "org", "home"],
     pages: ["home", "about", "services", "cases", "news", "contact"],
     sections: {
-      home: ["hero", "logos", "stats", "about", "features", "services", "cases", "testimonials", "cta"],
-      about: ["pageHeader", "about", "stats", "process", "team", "cta"],
-      services: ["pageHeader", "services", "features", "pricing", "faq", "cta"],
-      cases: ["pageHeader", "gallery", "cases", "testimonials", "cta"],
+      home: ["hero", "marquee", "about", "services", "stats", "cases", "cta"],
+      about: ["pageHeader", "about", "timeline", "team", "cta"],
+      services: ["pageHeader", "services", "process", "faq", "cta"],
+      cases: ["pageHeader", "cases", "chart", "testimonials", "cta"],
       news: ["pageHeader", "news", "cta"],
       contact: ["pageHeader", "contact"],
     },
@@ -135,25 +154,25 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     key: "agency",
     label: "创意机构",
     industries: ["media", "tech", "general", "business", "life"],
-    pages: ["home", "about", "services", "works", "contact"],
+    pages: ["home", "works", "services", "about", "contact"],
     sections: {
-      home: ["hero", "logos", "features", "services", "gallery", "process", "testimonials", "stats", "cta"],
-      about: ["pageHeader", "about", "team", "process", "cta"],
-      services: ["pageHeader", "services", "features", "faq", "cta"],
+      home: ["hero", "gallery", "services", "marquee", "testimonials", "cta"],
       works: ["pageHeader", "gallery", "cases", "cta"],
+      services: ["pageHeader", "services", "process", "pricing", "cta"],
+      about: ["pageHeader", "about", "team", "logos", "cta"],
       contact: ["pageHeader", "contact"],
     },
   },
   {
     key: "commerce",
     label: "品牌商城",
-    industries: ["fashion", "home", "grocery", "general", "hardware", "life"],
+    industries: ["fashion", "home", "grocery", "general", "hardware", "food"],
     pages: ["home", "products", "about", "news", "contact"],
     sections: {
-      home: ["hero", "logos", "products", "features", "gallery", "testimonials", "news", "cta"],
-      products: ["pageHeader", "products", "products", "cta"],
-      about: ["pageHeader", "about", "stats", "process", "cta"],
-      news: ["pageHeader", "news", "cta"],
+      home: ["hero", "marquee", "products", "features", "stats", "news", "cta"],
+      products: ["pageHeader", "products", "gallery", "cta"],
+      about: ["pageHeader", "about", "timeline", "logos", "cta"],
+      news: ["pageHeader", "news", "testimonials", "cta"],
       contact: ["pageHeader", "contact"],
     },
   },
@@ -163,8 +182,8 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     industries: ["food"],
     pages: ["home", "menu", "about", "contact"],
     sections: {
-      home: ["hero", "stats", "about", "menu", "features", "gallery", "testimonials", "cta"],
-      menu: ["pageHeader", "menu", "menu", "cta"],
+      home: ["hero", "menu", "about", "gallery", "testimonials", "cta"],
+      menu: ["pageHeader", "menu", "pricing", "faq", "cta"],
       about: ["pageHeader", "about", "gallery", "team", "cta"],
       contact: ["pageHeader", "contact"],
     },
@@ -175,9 +194,9 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     industries: ["life", "media", "fashion"],
     pages: ["home", "works", "about", "contact"],
     sections: {
-      home: ["hero", "gallery", "services", "process", "testimonials", "cta"],
-      works: ["pageHeader", "gallery", "gallery", "cta"],
-      about: ["pageHeader", "about", "team", "stats", "cta"],
+      home: ["hero", "gallery", "about", "cta"],
+      works: ["pageHeader", "gallery", "cases", "testimonials", "cta"],
+      about: ["pageHeader", "about", "stats", "services", "cta"],
       contact: ["pageHeader", "contact"],
     },
   },
@@ -187,10 +206,10 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     industries: ["grocery", "fashion", "life", "org"],
     pages: ["home", "services", "team", "news", "contact"],
     sections: {
-      home: ["hero", "stats", "features", "services", "team", "testimonials", "faq", "cta"],
-      services: ["pageHeader", "services", "features", "pricing", "cta"],
-      team: ["pageHeader", "team", "stats", "cta"],
-      news: ["pageHeader", "news", "cta"],
+      home: ["hero", "features", "services", "team", "faq", "cta"],
+      services: ["pageHeader", "services", "process", "pricing", "cta"],
+      team: ["pageHeader", "team", "stats", "testimonials", "cta"],
+      news: ["pageHeader", "news", "faq", "cta"],
       contact: ["pageHeader", "contact"],
     },
   },
@@ -200,22 +219,137 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     industries: ["org", "general", "business", "tech"],
     pages: ["home", "services", "team", "cases", "contact"],
     sections: {
-      home: ["hero", "stats", "features", "services", "team", "cases", "testimonials", "cta"],
+      home: ["hero", "about", "services", "stats", "cases", "cta"],
       services: ["pageHeader", "services", "pricing", "faq", "cta"],
       team: ["pageHeader", "team", "process", "cta"],
-      cases: ["pageHeader", "gallery", "cases", "testimonials", "cta"],
+      cases: ["pageHeader", "cases", "testimonials", "gallery", "cta"],
       contact: ["pageHeader", "contact"],
     },
   },
   {
     key: "minimal",
     label: "极简单品",
-    industries: ["tech", "general", "business", "media", "org", "logistics", "hardware", "industry"],
-    pages: ["home", "about", "pricing", "contact"],
+    industries: ["tech", "general", "business", "media", "org", "logistics", "hardware", "industry", "home"],
+    pages: ["home", "pricing", "contact"],
     sections: {
-      home: ["hero", "logos", "features", "process", "pricing", "faq", "testimonials", "cta"],
-      about: ["pageHeader", "about", "stats", "team", "cta"],
+      home: ["hero", "features", "process", "testimonials", "cta"],
       pricing: ["pageHeader", "pricing", "faq", "cta"],
+      contact: ["pageHeader", "contact"],
+    },
+  },
+
+  // —— 行业气质 8 款（v2.2 新增） ——
+  {
+    // 文旅酒店：满屏图感 + 客房设施 + 口碑与常见问题，带独立图库页。
+    key: "hotel-resort",
+    label: "文旅酒店",
+    industries: ["food"],
+    pages: ["home", "gallery", "services", "about", "contact"],
+    sections: {
+      home: ["hero", "gallery", "features", "testimonials", "faq", "cta"],
+      gallery: ["pageHeader", "gallery", "stats", "cta"],
+      services: ["pageHeader", "services", "pricing", "process", "cta"],
+      about: ["pageHeader", "about", "timeline", "team", "cta"],
+      contact: ["pageHeader", "contact"],
+    },
+  },
+  {
+    // 法律/专业服务：克制，无大图 hero，首页用 pageHeader 式开场，重案例/团队/FAQ。
+    key: "legal-pro",
+    label: "专业事务所",
+    industries: ["business", "org"],
+    pages: ["home", "cases", "team", "about", "contact"],
+    sections: {
+      home: ["pageHeader", "about", "cases", "team", "faq", "cta"],
+      cases: ["pageHeader", "cases", "stats", "testimonials", "cta"],
+      team: ["pageHeader", "team", "faq", "cta"],
+      about: ["pageHeader", "about", "timeline", "logos", "cta"],
+      contact: ["pageHeader", "contact"],
+    },
+  },
+  {
+    // 制造工业：数字与产线说话（stats/process/chart），带独立发展历程页。
+    key: "factory",
+    label: "制造工业",
+    industries: ["industry", "hardware", "home"],
+    pages: ["home", "products", "about", "timeline", "cases", "contact"],
+    sections: {
+      home: ["hero", "stats", "products", "process", "logos", "cta"],
+      products: ["pageHeader", "products", "features", "chart", "cta"],
+      about: ["pageHeader", "about", "stats", "team", "cta"],
+      timeline: ["pageHeader", "timeline", "marquee", "cta"],
+      cases: ["pageHeader", "cases", "logos", "testimonials", "cta"],
+      contact: ["pageHeader", "contact"],
+    },
+  },
+  {
+    // 农业环保：土地故事优先（about/process/gallery），带独立图库页。
+    key: "agri-eco",
+    label: "农业环保",
+    industries: ["industry", "food", "grocery"],
+    pages: ["home", "about", "products", "gallery", "contact"],
+    sections: {
+      home: ["hero", "about", "process", "gallery", "stats", "cta"],
+      about: ["pageHeader", "about", "timeline", "testimonials", "cta"],
+      products: ["pageHeader", "products", "features", "faq", "cta"],
+      gallery: ["pageHeader", "gallery", "marquee", "cta"],
+      contact: ["pageHeader", "contact"],
+    },
+  },
+  {
+    // 汽车服务：项目 + 工序 + 价格 + 常见问题的「到店决策」链路。
+    key: "auto-service",
+    label: "汽车服务",
+    industries: ["hardware", "life", "logistics"],
+    pages: ["home", "services", "pricing", "about", "contact"],
+    sections: {
+      home: ["hero", "services", "process", "pricing", "faq", "cta"],
+      services: ["pageHeader", "services", "features", "faq", "cta"],
+      pricing: ["pageHeader", "pricing", "testimonials", "cta"],
+      about: ["pageHeader", "about", "stats", "gallery", "cta"],
+      contact: ["pageHeader", "contact"],
+    },
+  },
+  {
+    // 婚庆摄影：作品画廊主导，首页直接大画廊开场（hero 退居第二位）。
+    key: "wedding-photo",
+    label: "婚庆摄影",
+    industries: ["life", "fashion", "media"],
+    pages: ["home", "works", "services", "about", "contact"],
+    sections: {
+      home: ["gallery", "hero", "services", "testimonials", "cta"],
+      works: ["pageHeader", "gallery", "cases", "cta"],
+      services: ["pageHeader", "services", "pricing", "process", "cta"],
+      about: ["pageHeader", "about", "team", "marquee", "cta"],
+      contact: ["pageHeader", "contact"],
+    },
+  },
+  {
+    // 物流网络：网络规模数据（stats/chart）+ 履约流程 + 合作伙伴。
+    key: "logistics-net",
+    label: "物流网络",
+    industries: ["logistics", "tech"],
+    pages: ["home", "services", "cases", "news", "contact"],
+    sections: {
+      home: ["hero", "stats", "process", "chart", "logos", "cta"],
+      services: ["pageHeader", "services", "features", "stats", "cta"],
+      cases: ["pageHeader", "cases", "chart", "testimonials", "cta"],
+      news: ["pageHeader", "news", "faq", "cta"],
+      contact: ["pageHeader", "contact"],
+    },
+  },
+  {
+    // 医药健康：产品/研发（features/chart）+ 专家团队 + 资讯与合规问答。
+    key: "pharma-care",
+    label: "医药健康",
+    industries: ["grocery", "org"],
+    pages: ["home", "products", "team", "news", "about", "contact"],
+    sections: {
+      home: ["hero", "features", "products", "team", "news", "cta"],
+      products: ["pageHeader", "products", "chart", "faq", "cta"],
+      team: ["pageHeader", "team", "stats", "cta"],
+      news: ["pageHeader", "news", "faq", "cta"],
+      about: ["pageHeader", "about", "timeline", "marquee", "cta"],
       contact: ["pageHeader", "contact"],
     },
   },
@@ -292,6 +426,11 @@ function pick<T>(arr: T[], slug: string, salt: string): T {
   return arr[hashStr(slug + ":" + salt) % arr.length];
 }
 
+function gcd(a: number, b: number): number {
+  while (b) [a, b] = [b, a % b];
+  return a;
+}
+
 const RADII: Radius[] = ["sharp", "soft", "round"];
 const DENSITIES: Density[] = ["compact", "regular", "airy"];
 const FONTS: FontKind[] = ["sans", "serif", "geometric"];
@@ -303,12 +442,16 @@ export function dnaFor(
   defaultPaletteFamily?: string,
 ): TemplateDNA {
   const families = familiesForIndustry(industryKey);
-  // 同子类的多个变体尽量铺开不同布局家族 + 不同基因。variant*7 打散奇偶耦合，
-  // 让相邻变体更可能落到不同家族。
-  const layout =
-    families[(hashStr(slug + ":layout") + variant * 7) % families.length];
+  // 同子类的多个变体必须铺开到不同布局家族：以「子类 key」（slug 去掉尾部
+  // -<变体号>）为哈希基准取起点，再用与家族数互质的确定性步长按 variant 递进 ——
+  // 互质保证相邻变体走遍全部家族才回头（家族数 >= 变体数时同子类内零重复）。
+  const base = slug.replace(/-\d+$/, "");
+  const n = families.length;
+  const strides = [1, 2, 3, 5, 7, 11, 13].filter((s) => s < n && gcd(s, n) === 1);
+  const stride = strides.length ? strides[hashStr(base + ":stride") % strides.length] : 1;
+  const layout = families[(hashStr(base + ":layout") + variant * stride) % n];
 
-  // 第 1 个变体倾向行业默认色系，其余在全 12 色里确定性轮换。
+  // 第 1 个变体倾向行业默认色系，其余在全 16 色里确定性轮换（5 与 16 互质）。
   let palette: PaletteV2;
   if (variant === 1 && defaultPaletteFamily) {
     const inFamily = PALETTES_V2.filter((p) => p.family === defaultPaletteFamily);
