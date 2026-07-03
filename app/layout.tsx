@@ -5,17 +5,21 @@ import "@oceanleo/ui/theme/ui.css";
 import { LeoAssistant } from "@oceanleo/ui/shell";
 import { FreshBundleGuard } from "@/components/FreshBundleGuard";
 import { I18nProvider } from "@oceanleo/ui/i18n";
-import { getLocale, getMessages, normalizeLocale, htmlLang, localeDir } from "@oceanleo/ui/i18n/server";
+import { getLocale, getMessages, normalizeLocale, htmlLang, localeDir, ttServer } from "@oceanleo/ui/i18n/server";
 import { ThemeScript, ThemeProvider } from "@oceanleo/ui/theme";
 import { getThemeClass } from "@oceanleo/ui/theme/server";
 
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = {
-  title: "免费开源素材库 · 图片/视频/音乐/音效/3D | asset.oceanleo.com",
-  description:
-    "一站浏览来自 Openverse / Pexels / Pixabay / Poly Haven / Freesound / Jamendo 的免费开源授权素材，默认只展示可商用素材，下载后可直接拿去 PPT / 设计 / 视频 / 3D 创作。",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const tt = await ttServer();
+  return {
+    title: tt("免费开源素材库 · 图片/视频/音乐/音效/3D | asset.oceanleo.com"),
+    description: tt(
+      "一站浏览来自 Openverse / Pexels / Pixabay / Poly Haven / Freesound / Jamendo 的免费开源授权素材，默认只展示可商用素材，下载后可直接拿去 PPT / 设计 / 视频 / 3D 创作。",
+    ),
+  };
+}
 
 export default async function RootLayout({
   children,

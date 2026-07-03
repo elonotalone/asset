@@ -2,6 +2,7 @@
 
 import { ReactNode, Suspense, useEffect, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
+import { useUI } from "@oceanleo/ui/i18n";
 import { AppShell, ShellNavGroup, ShellNavItem } from "@/components/AppShell";
 import { browserClient, getCredits, signOutEverywhere } from "@/lib/oceanleo-auth";
 import { AssetType, TYPE_LABELS, TYPE_ORDER } from "@/lib/assets";
@@ -87,6 +88,7 @@ function TypeIcon({ type }: { type: AssetType }) {
     "3d": "M12 2l9 5v10l-9 5-9-5V7zM12 12l9-5M12 12v10M12 12L3 7",
     font: "M5 7V5h14v2M9 19h6M12 5v14",
     ppt: "M4 4h16v12H4zM4 16l3 4M20 16l-3 4M9 12V8h3a2 2 0 010 4z",
+    chart: "M4 4v16h16M8 16v-4M12 16V8M16 16v-6",
   };
   return (
     <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
@@ -111,14 +113,16 @@ function useEmail(): string | null {
 // 负责提供边界，内层 SiteShellInner 才真正读 query —— 这样每个引用 SiteShell 的
 // 页面都自动被覆盖，无需逐页再包一层。
 export function SiteShell({ children }: { children: ReactNode }) {
+  const tt = useUI();
   return (
-    <Suspense fallback={<div className="p-8 text-sm text-zinc-400">加载中…</div>}>
+    <Suspense fallback={<div className="p-8 text-sm text-zinc-400">{tt("加载中…")}</div>}>
       <SiteShellInner>{children}</SiteShellInner>
     </Suspense>
   );
 }
 
 function SiteShellInner({ children }: { children: ReactNode }) {
+  const tt = useUI();
   const email = useEmail();
   const pathname = usePathname() || "/";
   const search = useSearchParams();
@@ -139,7 +143,7 @@ function SiteShellInner({ children }: { children: ReactNode }) {
   // 用 href（Next <Link>）而非 onClick(router.push)：<Link> 会预取目标路由、点击即
   // 客户端瞬时切换并高亮，不必等网络。这是消除「按按键要等很久才跳页」的关键。
   const categoryItems: ShellNavItem[] = TYPE_ORDER.map((t) => ({
-    label: TYPE_LABELS[t],
+    label: tt(TYPE_LABELS[t]),
     icon: <TypeIcon type={t} />,
     href: t === "image" ? "/" : `/?type=${t}`,
     match: () => onLibrary && activeType === t,
@@ -149,31 +153,31 @@ function SiteShellInner({ children }: { children: ReactNode }) {
     {
       items: [
         {
-          label: "开源专区",
+          label: tt("开源专区"),
           icon: <IconOpenSource />,
           href: "/open",
           match: (p) => p.startsWith("/open"),
         },
         {
-          label: "成套素材",
+          label: tt("成套素材"),
           icon: <IconSeries />,
           href: "/series",
           match: (p) => p.startsWith("/series"),
         },
         {
-          label: "模板专区",
+          label: tt("模板专区"),
           icon: <IconTemplates />,
           href: "/templates",
           match: (p) => p.startsWith("/templates"),
         },
         {
-          label: "我的素材库",
+          label: tt("我的素材库"),
           icon: <IconBookmark />,
           href: "/collection",
           match: (p) => p === "/collection",
         },
         {
-          label: "设计模板",
+          label: tt("设计模板"),
           icon: <IconDesign />,
           href: "/design",
           match: (p) => p === "/design",
@@ -181,11 +185,11 @@ function SiteShellInner({ children }: { children: ReactNode }) {
       ],
     },
     {
-      heading: "平台素材",
+      heading: tt("平台素材"),
       items: categoryItems,
     },
     {
-      items: [{ label: "授权说明", href: "/licenses", icon: <IconLicense /> }],
+      items: [{ label: tt("授权说明"), href: "/licenses", icon: <IconLicense /> }],
     },
   ];
 

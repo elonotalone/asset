@@ -1,5 +1,6 @@
 "use client";
 
+import { useUI } from "@oceanleo/ui/i18n";
 import { Asset } from "@/lib/assets";
 import { LicenseBadge } from "@/components/LicenseBadge";
 
@@ -53,6 +54,7 @@ export function AssetCard({
   saved?: boolean;
   onToggleSave?: (a: Asset) => void;
 }) {
+  const tt = useUI();
   const isMedia = asset.type === "audio" || asset.type === "music";
   const isVideo = asset.type === "video";
   const is3d = asset.type === "3d";
@@ -62,7 +64,9 @@ export function AssetCard({
     asset.type === "sticker" || asset.type === "vector" || asset.type === "font";
   // PPT 封面是 16:9 整页设计，裁切会切掉标题——contain 到素色底上（非棋盘格）。
   const isPpt = asset.type === "ppt";
-  const isContain = isChecker || isPpt;
+  // 图表封面是整张 pyecharts 静态图，裁切会切掉标题/图例——同样 contain 到素色底。
+  const isChart = asset.type === "chart";
+  const isContain = isChecker || isPpt || isChart;
 
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
@@ -76,7 +80,9 @@ export function AssetCard({
               ? "bg-[conic-gradient(#f1f5f9_90deg,#fff_90deg_180deg,#f1f5f9_180deg_270deg,#fff_270deg)] bg-[length:20px_20px] p-3"
               : isPpt
                 ? "bg-zinc-200 p-3"
-                : "bg-zinc-100"
+                : isChart
+                  ? "bg-white p-2"
+                  : "bg-zinc-100"
           }`}
         >
           {asset.thumb_url ? (
@@ -91,7 +97,7 @@ export function AssetCard({
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center text-zinc-400">
-              {is3d ? <CubeGlyph /> : <span className="text-xs">无预览</span>}
+              {is3d ? <CubeGlyph /> : <span className="text-xs">{tt("无预览")}</span>}
             </div>
           )}
 
@@ -126,7 +132,7 @@ export function AssetCard({
             e.stopPropagation();
             onToggleSave(asset);
           }}
-          title={saved ? "从我的素材库移除" : "收藏到我的素材库"}
+          title={saved ? tt("从我的素材库移除") : tt("收藏到我的素材库")}
           className={`absolute bottom-12 left-2 inline-flex items-center justify-center rounded-full p-1.5 backdrop-blur transition ${
             saved
               ? "bg-sky-500 text-white"

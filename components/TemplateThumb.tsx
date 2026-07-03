@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useUI } from "@oceanleo/ui/i18n";
 import type { TemplateMeta } from "@/lib/template-taxonomy";
 import { paletteFor, photo, photoFallback, skeletonIndexFor } from "@/lib/template-engine";
 
@@ -13,6 +14,7 @@ export function TemplateThumb({
   meta: TemplateMeta;
   href: string;
 }) {
+  const tt = useUI();
   const p = paletteFor(meta.paletteKey);
   const [loaded, setLoaded] = useState(false);
   const skel = skeletonIndexFor(meta);
@@ -42,12 +44,12 @@ export function TemplateThumb({
 
         {/* 多页徽标 */}
         <span className="absolute right-2 top-[41px] z-10 rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-medium text-emerald-600 shadow-sm">
-          多页 · {meta.layoutLabel}
+          {tt("多页 · {label}", { label: meta.layoutLabel })}
         </span>
 
         {/* 悬停遮罩 */}
         <div className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition group-hover:bg-black/30 group-hover:opacity-100">
-          <span className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-zinc-900 shadow-lg">预览模板</span>
+          <span className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-zinc-900 shadow-lg">{tt("预览模板")}</span>
         </div>
       </div>
 
@@ -81,6 +83,7 @@ function MiniLayout({
   loaded: boolean;
   onLoad: () => void;
 }) {
+  const tt = useUI();
   const grad = `linear-gradient(135deg, ${p.gradFrom}, ${p.gradTo})`;
 
   // 骨架 1 (hero image) / 3 (split) → 大图主导；骨架 0/2 → 渐变/留白主导。
@@ -123,7 +126,7 @@ function MiniLayout({
           <div className="text-[9px] font-extrabold leading-tight text-white drop-shadow">{shortTitle(meta.subLabel)}</div>
           <div className="h-1 w-16 rounded-full bg-white/70" />
           <div className="h-1 w-10 rounded-full bg-white/50" />
-          <span className="mt-1 rounded-full px-2 py-0.5 text-[6px] font-semibold text-white" style={{ background: p.primary }}>立即咨询</span>
+          <span className="mt-1 rounded-full px-2 py-0.5 text-[6px] font-semibold text-white" style={{ background: p.primary }}>{tt("立即咨询")}</span>
         </div>
       </div>
 

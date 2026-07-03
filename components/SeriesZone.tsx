@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useUI } from "@oceanleo/ui/i18n";
 import {
   Asset,
   listCollectionIds,
@@ -41,6 +42,7 @@ function CoverCollage({ covers }: { covers: string[] }) {
 }
 
 export function SeriesZone() {
+  const tt = useUI();
   const [series, setSeries] = useState<Series[]>([]);
   const [loadingList, setLoadingList] = useState(true);
   const [listError, setListError] = useState("");
@@ -62,7 +64,7 @@ export function SeriesZone() {
         if (alive) setSeries(r.series || []);
       })
       .catch((e) => {
-        if (alive) setListError(e instanceof Error ? e.message : "加载失败");
+        if (alive) setListError(e instanceof Error ? e.message : tt("加载失败"));
       })
       .finally(() => {
         if (alive) setLoadingList(false);
@@ -141,12 +143,12 @@ export function SeriesZone() {
           }}
           className="mb-4 inline-flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-900"
         >
-          ← 返回全部成套
+          {tt("← 返回全部成套")}
         </button>
         <header className="mb-5">
           <h1 className="text-2xl font-semibold text-zinc-900">{openSeries.series_name}</h1>
           <p className="mt-1 text-sm text-zinc-500">
-            共 {openSeries.count} 件 · 风格统一的整套开源素材，可整套取用
+            {tt("共 {n} 件 · 风格统一的整套开源素材，可整套取用", { n: openSeries.count })}
           </p>
         </header>
 
@@ -171,7 +173,7 @@ export function SeriesZone() {
         )}
 
         {loadingItems && items.length > 0 && (
-          <div className="py-8 text-center text-sm text-zinc-400">加载中…</div>
+          <div className="py-8 text-center text-sm text-zinc-400">{tt("加载中…")}</div>
         )}
         {!loadingItems && hasMore && (
           <div className="mt-6 text-center">
@@ -179,7 +181,7 @@ export function SeriesZone() {
               onClick={loadMore}
               className="rounded-lg border border-zinc-300 px-6 py-2.5 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
             >
-              加载更多
+              {tt("加载更多")}
             </button>
           </div>
         )}
@@ -200,9 +202,9 @@ export function SeriesZone() {
   return (
     <div className="mx-auto max-w-6xl px-5 py-6 sm:py-8">
       <header className="mb-5">
-        <h1 className="text-2xl font-semibold text-zinc-900">成套素材</h1>
+        <h1 className="text-2xl font-semibold text-zinc-900">{tt("成套素材")}</h1>
         <p className="mt-1 text-sm text-zinc-500">
-          风格统一、成组配套的开源素材集（每套均已人工筛选审阅）。点开任意一套，整套风格一致，直接取用不违和。
+          {tt("风格统一、成组配套的开源素材集（每套均已人工筛选审阅）。点开任意一套，整套风格一致，直接取用不违和。")}
         </p>
       </header>
 
@@ -225,7 +227,7 @@ export function SeriesZone() {
         </div>
       ) : series.length === 0 ? (
         <div className="rounded-xl border border-dashed border-zinc-300 py-16 text-center text-sm text-zinc-400">
-          暂无成套素材。
+          {tt("暂无成套素材。")}
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { useUI } from "@oceanleo/ui/i18n";
 import {
   Asset,
   AssetType,
@@ -27,6 +28,7 @@ function normOpenType(t: string | null): AssetType {
 }
 
 export function OpenZone() {
+  const tt = useUI();
   const search = useSearchParams();
   const [type, setType] = useState<AssetType>(() => normOpenType(search.get("type")));
   const [query, setQuery] = useState("");
@@ -72,7 +74,7 @@ export function OpenZone() {
       })
       .catch((e) => {
         if (my !== reqId.current) return;
-        setError(e instanceof Error ? e.message : "加载失败");
+        setError(e instanceof Error ? e.message : tt("加载失败"));
         setItems([]);
       })
       .finally(() => {
@@ -94,7 +96,7 @@ export function OpenZone() {
       })
       .catch((e) => {
         if (my !== reqId.current) return;
-        setError(e instanceof Error ? e.message : "加载失败");
+        setError(e instanceof Error ? e.message : tt("加载失败"));
       })
       .finally(() => {
         if (my === reqId.current) setLoading(false);
@@ -117,7 +119,7 @@ export function OpenZone() {
         else next.delete(a.id);
         return next;
       });
-      setError(e instanceof Error ? e.message : "收藏失败，请先登录");
+      setError(e instanceof Error ? e.message : tt("收藏失败，请先登录"));
     });
   }
 
@@ -129,10 +131,9 @@ export function OpenZone() {
   return (
     <div className="mx-auto max-w-6xl px-5 py-6 sm:py-8">
       <header className="mb-4">
-        <h1 className="text-2xl font-semibold text-zinc-900">开源专区</h1>
+        <h1 className="text-2xl font-semibold text-zinc-900">{tt("开源专区")}</h1>
         <p className="mt-1 text-sm text-zinc-500">
-          实时检索全网开源可商用素材（Openverse / Pexels / Pixabay / Poly Haven /
-          Freesound / Jamendo 等），默认只展示可商用授权。这里的素材来自开源社区，不在平台自有素材库中。
+          {tt("实时检索全网开源可商用素材（Openverse / Pexels / Pixabay / Poly Haven / Freesound / Jamendo 等），默认只展示可商用授权。这里的素材来自开源社区，不在平台自有素材库中。")}
         </p>
       </header>
 
@@ -152,7 +153,7 @@ export function OpenZone() {
                 : "bg-white text-zinc-600 ring-1 ring-zinc-200 hover:bg-zinc-50 hover:text-zinc-900"
             }`}
           >
-            {OPEN_SOURCE_TYPE_LABELS[t] || t}
+            {OPEN_SOURCE_TYPE_LABELS[t] ? tt(OPEN_SOURCE_TYPE_LABELS[t]) : t}
           </button>
         ))}
       </nav>
@@ -162,14 +163,14 @@ export function OpenZone() {
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder={`搜索开源「${OPEN_SOURCE_TYPE_LABELS[type] || type}」…`}
+          placeholder={tt("搜索开源「{type}」…", { type: OPEN_SOURCE_TYPE_LABELS[type] ? tt(OPEN_SOURCE_TYPE_LABELS[type]) : type })}
           className="flex-1 rounded-lg border border-zinc-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
         />
         <button
           type="submit"
           className="rounded-lg bg-sky-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-sky-600"
         >
-          搜索
+          {tt("搜索")}
         </button>
         {query && (
           <button
@@ -180,7 +181,7 @@ export function OpenZone() {
             }}
             className="rounded-lg border border-zinc-300 px-4 py-2.5 text-sm text-zinc-600 hover:bg-zinc-50"
           >
-            清空
+            {tt("清空")}
           </button>
         )}
       </form>
@@ -208,7 +209,7 @@ export function OpenZone() {
         </div>
       ) : items.length === 0 && !error ? (
         <div className="rounded-xl border border-dashed border-zinc-300 py-16 text-center text-sm text-zinc-400">
-          没有找到匹配的开源素材，换个关键词或类型试试。
+          {tt("没有找到匹配的开源素材，换个关键词或类型试试。")}
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
@@ -225,7 +226,7 @@ export function OpenZone() {
       )}
 
       {loading && items.length > 0 && (
-        <div className="py-8 text-center text-sm text-zinc-400">加载中…</div>
+        <div className="py-8 text-center text-sm text-zinc-400">{tt("加载中…")}</div>
       )}
 
       {!loading && hasMore && items.length > 0 && (
@@ -234,7 +235,7 @@ export function OpenZone() {
             onClick={loadMore}
             className="rounded-lg border border-zinc-300 px-6 py-2.5 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
           >
-            加载更多
+            {tt("加载更多")}
           </button>
         </div>
       )}

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { useUI } from "@oceanleo/ui/i18n";
 import { Asset, assetDetail, downloadHref, pptPageUrls } from "@/lib/assets";
 import { LicenseFlags } from "@/components/LicenseBadge";
 import { ModelViewer } from "@/components/ModelViewer";
@@ -12,9 +13,16 @@ function is3dModel(asset: Asset): boolean {
   return u.endsWith(".gltf") || u.endsWith(".glb");
 }
 
+// 交互式图表（pyecharts 生成的 HTML，type="chart" / format="html"）。full_url 是
+// 可交互 HTML 的 OSS 直链，直接塞进 iframe 就能在弹窗里悬停/缩放。
+function isChartAsset(asset: Asset): boolean {
+  return asset.type === "chart" && !!asset.full_url;
+}
+
 // 放大图：先用已加载好的缩略图秒显占位，原始大图后台加载完再淡入替换。
 // 解决「点开后白屏 / 转圈很久」——尤其是 preview_url 对部分源是几 MB 的大图。
 function ZoomImage({ thumb, full, alt }: { thumb: string; full: string; alt: string }) {
+  const tt = useUI();
   const [loaded, setLoaded] = useState(false);
   const src = full || thumb;
   return (
@@ -39,7 +47,7 @@ function ZoomImage({ thumb, full, alt }: { thumb: string; full: string; alt: str
       />
       {thumb && !loaded && (
         <span className="absolute bottom-2 right-2 rounded bg-black/55 px-2 py-0.5 text-[11px] text-white">
-          高清加载中…
+          {tt("高清加载中…")}
         </span>
       )}
     </div>
@@ -50,7 +58,7 @@ function ZoomImage({ thumb, full, alt }: { thumb: string; full: string; alt: str
 // shares SSO + the gateway), so no per-pair integration is needed.
 const USE_TARGETS: Record<string, { label: string; site: string }[]> = {
   image: [
-    { label: "PPT 里使用", site: "https://ppt.oceanleo.com" },
+    { label: "PPT 里使用", site: "https://slide.oceanleo.com" },
     { label: "图片编辑", site: "https://image.oceanleo.com" },
     { label: "在线设计", site: "https://design.oceanleo.com" },
   ],
@@ -61,7 +69,7 @@ const USE_TARGETS: Record<string, { label: string; site: string }[]> = {
   ],
   font: [{ label: "在线设计", site: "https://design.oceanleo.com" }],
   ppt: [
-    { label: "PPT 里使用", site: "https://ppt.oceanleo.com" },
+    { label: "PPT 里使用", site: "https://slide.oceanleo.com" },
     { label: "在线设计", site: "https://design.oceanleo.com" },
   ],
   video: [{ label: "视频工作室", site: "https://studio.oceanleo.com" }],
@@ -75,6 +83,7 @@ const USE_TARGETS: Record<string, { label: string; site: string }[]> = {
 
 // PPT 模板专用预览：整页大图 + 底部页缩略条翻阅（p01..pN 命名约定，见 lib/assets.ts）。
 function PptPager({ asset }: { asset: Asset }) {
+  const tt = useUI();
   const pages = pptPageUrls(asset);
   const [idx, setIdx] = useState(0);
   if (pages.length === 0) {
@@ -84,7 +93,7 @@ function PptPager({ asset }: { asset: Asset }) {
     <div className="flex flex-col gap-2 p-3">
       <div className="relative w-full overflow-hidden rounded-lg border border-zinc-200 bg-white">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={pages[idx]} alt={`${asset.title} 第 ${idx + 1} 页`} className="aspect-video w-full object-contain" />
+        <img src={pages[idx]} alt={tt("{title} 第 {n} 页", { title: asset.title, n: idx + 1 })} className="aspect-video w-full object-contain" />
         <span className="absolute bottom-2 right-2 rounded bg-black/55 px-2 py-0.5 text-[11px] text-white">
           {idx + 1} / {pages.length}
         </span>
@@ -107,7 +116,44 @@ function PptPager({ asset }: { asset: Asset }) {
   );
 }
 
+// 图表专用预览：在 iframe 里加载可交互 HTML，未加载完先用静态封面兜底（避免白屏）。
+// sandbox 只放行脚本（图表要跑 echarts JS）——不给同源，隔离掉对宿主页面的访问。
+function ChartFrame({ asset }: { asset: Asset }) {
+  const tt = useUI();
+  const [loaded, setLoaded] = useState(false);
+  const cover = asset.preview_url || asset.thumb_url;
+  return (
+    <div className="relative w-full bg-white">
+      {cover && !loaded && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={cover}
+          alt=""
+          aria-hidden
+          className="absolute inset-0 h-full w-full object-contain"
+        />
+      )}
+      <iframe
+        src={asset.full_url}
+        title={asset.title}
+        loading="lazy"
+        onLoad={() => setLoaded(true)}
+        sandbox="allow-scripts allow-same-origin allow-popups"
+        className={`h-[600px] w-full border-0 transition-opacity duration-300 ${
+          loaded ? "opacity-100" : "opacity-0"
+        }`}
+      />
+      {cover && !loaded && (
+        <span className="absolute bottom-2 right-2 rounded bg-black/55 px-2 py-0.5 text-[11px] text-white">
+          {tt("图表加载中…")}
+        </span>
+      )}
+    </div>
+  );
+}
+
 function CopyButton({ text }: { text: string }) {
+  const tt = useUI();
   const [done, setDone] = useState(false);
   return (
     <button
@@ -119,7 +165,7 @@ function CopyButton({ text }: { text: string }) {
       }}
       className="rounded-md border border-zinc-300 px-2 py-1 text-xs text-zinc-600 hover:bg-zinc-50"
     >
-      {done ? "已复制" : "复制署名"}
+      {done ? tt("已复制") : tt("复制署名")}
     </button>
   );
 }
@@ -135,6 +181,7 @@ export function AssetDetail({
   saved?: boolean;
   onToggleSave?: (a: Asset) => void;
 }) {
+  const tt = useUI();
   const [files, setFiles] = useState<{ format: string; url: string }[] | null>(null);
   const [mounted, setMounted] = useState(false);
 
@@ -162,6 +209,7 @@ export function AssetDetail({
   const isAudio = asset.type === "audio" || asset.type === "music";
   const isVideo = asset.type === "video";
   const is3d = is3dModel(asset);
+  const isChart = isChartAsset(asset);
   const isPpt = asset.type === "ppt" && asset.id.startsWith("library:");
   // PPT 模板的 source_url 按落库约定指向网页版 deck.html。
   const pptHtmlUrl =
@@ -204,7 +252,9 @@ export function AssetDetail({
 
         <div className="flex-1 overflow-y-auto p-5">
           <div className="overflow-hidden rounded-xl bg-zinc-100">
-            {isPpt ? (
+            {isChart ? (
+              <ChartFrame asset={asset} />
+            ) : isPpt ? (
               <PptPager asset={asset} />
             ) : is3d ? (
               <ModelViewer src={asset.full_url} poster={asset.thumb_url} alt={asset.title} />
@@ -225,20 +275,24 @@ export function AssetDetail({
 
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <div>
-              <p className="text-xs uppercase tracking-wide text-zinc-400">作者 / 来源</p>
+              <p className="text-xs uppercase tracking-wide text-zinc-400">{tt("作者 / 来源")}</p>
               <p className="mt-1 text-sm text-zinc-800">{asset.author}</p>
               {pptHtmlUrl ? (
                 <a href={pptHtmlUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-sky-600 hover:underline">
-                  打开网页版（HTML）↗
+                  {tt("打开网页版（HTML）")} ↗
+                </a>
+              ) : isChart ? (
+                <a href={asset.source_url || asset.full_url} target="_blank" rel="noopener noreferrer" className="text-xs text-sky-600 hover:underline">
+                  {tt("打开网页版（HTML）")} ↗
                 </a>
               ) : (
                 <a href={asset.source_url} target="_blank" rel="noopener noreferrer" className="text-xs text-sky-600 hover:underline">
-                  在 {asset.source} 查看原始页面 ↗
+                  {tt("在 {source} 查看原始页面", { source: asset.source })} ↗
                 </a>
               )}
             </div>
             <div>
-              <p className="text-xs uppercase tracking-wide text-zinc-400">授权</p>
+              <p className="text-xs uppercase tracking-wide text-zinc-400">{tt("授权")}</p>
               <a href={asset.license.url} target="_blank" rel="noopener noreferrer" className="mt-1 block text-sm font-medium text-zinc-800 hover:underline">
                 {asset.license.name}
               </a>
@@ -251,7 +305,7 @@ export function AssetDetail({
           {asset.license.attribution_required && (
             <div className="mt-4 flex items-start justify-between gap-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
               <div className="min-w-0">
-                <p className="text-xs font-medium text-amber-800">此素材需署名，使用时请保留：</p>
+                <p className="text-xs font-medium text-amber-800">{tt("此素材需署名，使用时请保留：")}</p>
                 <p className="mt-0.5 truncate text-xs text-amber-700">{asset.license.attribution_text}</p>
               </div>
               <CopyButton text={asset.license.attribution_text} />
@@ -260,12 +314,12 @@ export function AssetDetail({
 
           {asset.source === "polyhaven" && files && files.length > 0 && (
             <div className="mt-4">
-              <p className="text-xs uppercase tracking-wide text-zinc-400">可下载文件</p>
+              <p className="text-xs uppercase tracking-wide text-zinc-400">{tt("可下载文件")}</p>
               <div className="mt-1 flex flex-wrap gap-2">
                 {files.slice(0, 8).map((f, i) => (
                   <a key={i} href={f.url} target="_blank" rel="noopener noreferrer"
                      className="rounded-md border border-zinc-300 px-2 py-1 text-xs text-zinc-700 hover:bg-zinc-50">
-                    {f.format || "文件"} ↓
+                    {f.format || tt("文件")} ↓
                   </a>
                 ))}
               </div>
@@ -281,8 +335,18 @@ export function AssetDetail({
             download
             className="rounded-lg bg-sky-500 px-4 py-2 text-sm font-medium text-white hover:bg-sky-600"
           >
-            {isPpt ? "下载 .pptx" : "下载"}
+            {isPpt ? tt("下载 .pptx") : isChart ? tt("下载 HTML") : tt("下载")}
           </a>
+          {isChart && (
+            <a
+              href={asset.source_url || asset.full_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-lg border border-sky-300 bg-white px-4 py-2 text-sm font-medium text-sky-700 hover:bg-sky-50"
+            >
+              {tt("在新窗口打开")} ↗
+            </a>
+          )}
           {pptHtmlUrl && (
             <a
               href={pptHtmlUrl}
@@ -290,7 +354,7 @@ export function AssetDetail({
               rel="noopener noreferrer"
               className="rounded-lg border border-sky-300 bg-white px-4 py-2 text-sm font-medium text-sky-700 hover:bg-sky-50"
             >
-              网页版预览（HTML）
+              {tt("网页版预览（HTML）")}
             </a>
           )}
           {onToggleSave && (
@@ -306,7 +370,7 @@ export function AssetDetail({
               <svg className="h-4 w-4" viewBox="0 0 24 24" fill={saved ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.8">
                 <path d="M6 4h12v16l-6-4-6 4z" strokeLinejoin="round" />
               </svg>
-              {saved ? "已收藏" : "收藏到我的素材库"}
+              {saved ? tt("已收藏") : tt("收藏到我的素材库")}
             </button>
           )}
           {targets.map((t) => (
@@ -315,7 +379,7 @@ export function AssetDetail({
               onClick={() => useIn(t.site)}
               className="rounded-lg border border-sky-300 bg-sky-50 px-3 py-2 text-sm font-medium text-sky-700 hover:bg-sky-100"
             >
-              {t.label} →
+              {tt(t.label)} →
             </button>
           ))}
         </div>

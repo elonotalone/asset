@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useUI } from "@oceanleo/ui/i18n";
 import {
   COLOR_SYSTEMS,
   ColorKey,
@@ -16,6 +17,7 @@ import { TemplateThumb } from "@/components/TemplateThumb";
 type Sort = "new" | "hot";
 
 export function TemplateGallery({ total, subs }: { total: number; subs: number }) {
+  const tt = useUI();
   const router = useRouter();
   const search = useSearchParams();
 
@@ -82,10 +84,10 @@ export function TemplateGallery({ total, subs }: { total: number; subs: number }
       {/* Hero */}
       <section className="overflow-hidden rounded-3xl bg-gradient-to-br from-sky-500 via-indigo-500 to-violet-500 px-6 py-12 text-center text-white sm:py-16">
         <h1 className="text-2xl font-extrabold sm:text-4xl">
-          OceanLeo 模板库 · 建站无需从零开始
+          {tt("OceanLeo 模板库 · 建站无需从零开始")}
         </h1>
         <p className="mt-3 text-sm text-white/85 sm:text-base">
-          内置 {total.toLocaleString()} 套模板，覆盖 {INDUSTRIES.length} 大行业 {subs} 个细分类目，每月持续更新，任意选用、自由更换
+          {tt("内置 {total} 套模板，覆盖 {industries} 大行业 {subs} 个细分类目，每月持续更新，任意选用、自由更换", { total: total.toLocaleString(), industries: INDUSTRIES.length, subs })}
         </p>
         <form
           className="mx-auto mt-7 flex max-w-xl items-center gap-2 rounded-full bg-white p-1.5 shadow-lg"
@@ -99,11 +101,11 @@ export function TemplateGallery({ total, subs }: { total: number; subs: number }
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="请输入搜索关键词，如「火锅」「律师」「珠宝」"
+            placeholder={tt("请输入搜索关键词，如「火锅」「律师」「珠宝」")}
             className="flex-1 bg-transparent px-1 py-2 text-sm text-zinc-800 outline-none"
           />
           <button type="submit" className="rounded-full bg-sky-500 px-6 py-2 text-sm font-semibold text-white hover:bg-sky-600">
-            搜索
+            {tt("搜索")}
           </button>
         </form>
       </section>
@@ -112,10 +114,10 @@ export function TemplateGallery({ total, subs }: { total: number; subs: number }
       <section className="mt-6 rounded-2xl bg-white p-5 shadow-sm">
         {/* 行业 */}
         <div className="flex flex-wrap items-start gap-x-3 gap-y-2">
-          <span className="mt-1.5 shrink-0 text-sm font-semibold text-zinc-800">行业</span>
+          <span className="mt-1.5 shrink-0 text-sm font-semibold text-zinc-800">{tt("行业")}</span>
           <div className="flex flex-wrap gap-2">
             <Chip active={indKey === "all" && !subKey} onClick={() => { setShown(PAGE); setParam({ ind: null, sub: null }); }}>
-              全部
+              {tt("全部")}
             </Chip>
             {INDUSTRIES.map((ind) => (
               <Chip
@@ -123,7 +125,7 @@ export function TemplateGallery({ total, subs }: { total: number; subs: number }
                 active={indKey === ind.key}
                 onClick={() => { setShown(PAGE); setParam({ ind: ind.key, sub: null }); }}
               >
-                {ind.label}
+                {tt(ind.label)}
               </Chip>
             ))}
           </div>
@@ -132,10 +134,10 @@ export function TemplateGallery({ total, subs }: { total: number; subs: number }
         {/* 子类（选中行业后出现） */}
         {activeIndustry && (
           <div className="mt-3 flex flex-wrap items-start gap-x-3 gap-y-2 border-t border-zinc-100 pt-3">
-            <span className="mt-1.5 shrink-0 text-sm font-semibold text-zinc-800">细分</span>
+            <span className="mt-1.5 shrink-0 text-sm font-semibold text-zinc-800">{tt("细分")}</span>
             <div className="flex flex-wrap gap-2">
               <Chip active={!subKey} onClick={() => { setShown(PAGE); setParam({ sub: null }); }} small>
-                全部{activeIndustry.label.split("/")[0]}
+                {tt("全部{name}", { name: activeIndustry.label.split("/")[0] })}
               </Chip>
               {activeIndustry.subs.map((sub) => (
                 <Chip
@@ -144,7 +146,7 @@ export function TemplateGallery({ total, subs }: { total: number; subs: number }
                   onClick={() => { setShown(PAGE); setParam({ sub: sub.key }); }}
                   small
                 >
-                  {sub.label}
+                  {tt(sub.label)}
                 </Chip>
               ))}
             </div>
@@ -153,18 +155,18 @@ export function TemplateGallery({ total, subs }: { total: number; subs: number }
 
         {/* 色系 */}
         <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-zinc-100 pt-3">
-          <span className="shrink-0 text-sm font-semibold text-zinc-800">色系</span>
+          <span className="shrink-0 text-sm font-semibold text-zinc-800">{tt("色系")}</span>
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => { setShown(PAGE); setParam({ color: null }); }}
               className={`rounded-full px-3 py-1 text-xs ${color === "all" ? "bg-zinc-900 text-white" : "text-zinc-500 hover:bg-zinc-100"}`}
             >
-              全部
+              {tt("全部")}
             </button>
             {COLOR_SYSTEMS.map((cs) => (
               <button
                 key={cs.key}
-                title={cs.label}
+                title={tt(cs.label)}
                 onClick={() => { setShown(PAGE); setParam({ color: cs.key }); }}
                 className={`h-6 w-6 rounded-full border-2 transition ${color === cs.key ? "border-zinc-900 scale-110" : "border-white shadow"}`}
                 style={
@@ -179,10 +181,10 @@ export function TemplateGallery({ total, subs }: { total: number; subs: number }
 
         {/* 排序 */}
         <div className="mt-3 flex items-center gap-3 border-t border-zinc-100 pt-3">
-          <span className="shrink-0 text-sm font-semibold text-zinc-800">排序</span>
-          <button onClick={() => setParam({ sort: "new" })} className={`text-sm ${sort === "new" ? "font-semibold text-sky-600" : "text-zinc-500"}`}>最新</button>
-          <button onClick={() => setParam({ sort: "hot" })} className={`text-sm ${sort === "hot" ? "font-semibold text-sky-600" : "text-zinc-500"}`}>最热</button>
-          <span className="ml-auto text-xs text-zinc-400">共 {results.length.toLocaleString()} 套模板</span>
+          <span className="shrink-0 text-sm font-semibold text-zinc-800">{tt("排序")}</span>
+          <button onClick={() => setParam({ sort: "new" })} className={`text-sm ${sort === "new" ? "font-semibold text-sky-600" : "text-zinc-500"}`}>{tt("最新")}</button>
+          <button onClick={() => setParam({ sort: "hot" })} className={`text-sm ${sort === "hot" ? "font-semibold text-sky-600" : "text-zinc-500"}`}>{tt("最热")}</button>
+          <span className="ml-auto text-xs text-zinc-400">{tt("共 {n} 套模板", { n: results.length.toLocaleString() })}</span>
         </div>
       </section>
 
@@ -199,13 +201,13 @@ export function TemplateGallery({ total, subs }: { total: number; subs: number }
             onClick={() => setShown((s) => s + PAGE)}
             className="rounded-full border border-zinc-300 bg-white px-8 py-2.5 text-sm font-medium text-zinc-700 hover:border-sky-400 hover:text-sky-600"
           >
-            加载更多（还有 {results.length - shown} 套）
+            {tt("加载更多（还有 {n} 套）", { n: results.length - shown })}
           </button>
         </div>
       )}
 
       {results.length === 0 && (
-        <div className="py-20 text-center text-sm text-zinc-400">没有匹配的模板，换个关键词或筛选试试。</div>
+        <div className="py-20 text-center text-sm text-zinc-400">{tt("没有匹配的模板，换个关键词或筛选试试。")}</div>
       )}
     </div>
   );

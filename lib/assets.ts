@@ -17,7 +17,8 @@ export type AssetType =
   | "music"
   | "3d"
   | "font"
-  | "ppt";
+  | "ppt"
+  | "chart";
 export type LicenseFilter = "commercial" | "modify" | "any";
 
 export interface AssetLicense {
@@ -272,14 +273,16 @@ export const TYPE_LABELS: Record<AssetType, string> = {
   "3d": "3D 模型",
   font: "字体",
   ppt: "PPT 模板",
+  chart: "图表",
 };
 
 // 左侧栏「素材类型」分区——**只列我们真正囤到 OSS 的类型**。用户在这些栏目里只能看到
 // 我们自有素材（platform_assets），OSS 里没有的类型不出现（例如 music 目前 OSS 无
 // 数据就不放进侧栏，避免出现「点进去永远空」的死栏目）。想找开源素材去「开源专区」。
-// 顺序对齐首页图片优先。DB 实有类型：image/vector/sticker/video/3d/audio/font/ppt。
+// 顺序对齐首页图片优先。DB 实有类型：image/chart/vector/sticker/video/3d/audio/font/ppt。
 export const TYPE_ORDER: AssetType[] = [
   "image",
+  "chart",
   "vector",
   "sticker",
   "ppt",
@@ -703,6 +706,15 @@ const CATEGORY_LABELS: Record<string, string> = {
   guofeng: "国风水墨",
   // font
   "art-text": "艺术字",
+  // chart（交互图表大类；category = pyecharts 图表族，见 type="chart" 约定）
+  pie: "饼图",
+  bar: "柱状图",
+  line: "折线图",
+  area: "面积图",
+  scatter: "散点图",
+  radar: "雷达图",
+  funnel: "漏斗图",
+  gauge: "仪表盘",
   // ppt（风格族目录；slug = OSS deck 目录名 = platform_assets.category）
   etching: "蚀刻编辑风",
   editorial: "杂志编辑风",

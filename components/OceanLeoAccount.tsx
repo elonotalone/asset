@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { User } from "@supabase/supabase-js";
+import { useUI } from "@oceanleo/ui/i18n";
 import {
   browserClient,
   signOutEverywhere,
@@ -17,6 +18,7 @@ import {
 // 不含技能 / 连接器 / MCP 服务器 / BYOK 密钥（那是 venus 才有的能力）。
 
 export function OceanLeoAccount() {
+  const tt = useUI();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -41,7 +43,7 @@ export function OceanLeoAccount() {
   if (!oceanleoConfigured()) {
     return (
       <div className="mx-auto max-w-md rounded-xl border border-amber-200 bg-amber-50 p-6 text-sm text-amber-800">
-        登录服务尚未配置（缺少 Supabase 环境变量）。
+        {tt("登录服务尚未配置（缺少 Supabase 环境变量）。")}
       </div>
     );
   }
@@ -63,6 +65,7 @@ export function OceanLeoAccount() {
 }
 
 function SignedOut({ onDone }: { onDone: () => void }) {
+  const tt = useUI();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -82,7 +85,7 @@ function SignedOut({ onDone }: { onDone: () => void }) {
         const { error } = await c.auth.signUp({ email: email.trim(), password });
         if (error) setErr(error.message);
         else {
-          setMsg("注册成功！已自动登录并赠送 token。");
+          setMsg(tt("注册成功！已自动登录并赠送 token。"));
           onDone();
         }
       } else {
@@ -104,10 +107,10 @@ function SignedOut({ onDone }: { onDone: () => void }) {
         👤
       </div>
       <h2 className="mt-5 text-[17px] font-semibold text-neutral-900">
-        {mode === "signin" ? "登录 OceanLeo" : "注册 OceanLeo"}
+        {mode === "signin" ? tt("登录 OceanLeo") : tt("注册 OceanLeo")}
       </h2>
       <p className="mt-2 text-[13px] leading-relaxed text-neutral-500">
-        一次登录，全家桶所有 AI 工具通用。
+        {tt("一次登录，全家桶所有 AI 工具通用。")}
       </p>
       <form onSubmit={submit} className="mt-6 space-y-3 text-left">
         <input
@@ -115,7 +118,7 @@ function SignedOut({ onDone }: { onDone: () => void }) {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          placeholder="邮箱"
+          placeholder={tt("邮箱")}
           className="w-full rounded-lg border border-neutral-200 px-3 py-2.5 text-sm outline-none transition focus:border-neutral-400"
         />
         <input
@@ -124,7 +127,7 @@ function SignedOut({ onDone }: { onDone: () => void }) {
           onChange={(e) => setPassword(e.target.value)}
           required
           minLength={6}
-          placeholder="密码（至少 6 位）"
+          placeholder={tt("密码（至少 6 位）")}
           className="w-full rounded-lg border border-neutral-200 px-3 py-2.5 text-sm outline-none transition focus:border-neutral-400"
         />
         {err && <p className="rounded-lg bg-rose-50 px-3 py-2 text-xs text-rose-600">{err}</p>}
@@ -134,7 +137,7 @@ function SignedOut({ onDone }: { onDone: () => void }) {
           disabled={busy}
           className="w-full rounded-xl bg-neutral-900 py-2.5 text-[14px] font-medium text-white transition hover:bg-neutral-800 active:scale-[0.99] disabled:opacity-50"
         >
-          {busy ? "处理中…" : mode === "signin" ? "登录" : "注册"}
+          {busy ? tt("处理中…") : mode === "signin" ? tt("登录") : tt("注册")}
         </button>
       </form>
       <button
@@ -145,13 +148,14 @@ function SignedOut({ onDone }: { onDone: () => void }) {
         }}
         className="mt-4 text-xs text-neutral-500 transition hover:text-neutral-800"
       >
-        {mode === "signin" ? "还没有账号？去注册" : "已有账号？去登录"}
+        {mode === "signin" ? tt("还没有账号？去注册") : tt("已有账号？去登录")}
       </button>
     </div>
   );
 }
 
 function SignedIn({ user }: { user: User }) {
+  const tt = useUI();
   const [credits, setCredits] = useState<number | null>(null);
   const [monthSpend, setMonthSpend] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
@@ -193,10 +197,10 @@ function SignedIn({ user }: { user: User }) {
         </div>
         <div className="min-w-0">
           <p className="truncate text-[16px] font-semibold text-neutral-900">
-            {user.email ? user.email.split("@")[0] : "未登录"}
+            {user.email ? user.email.split("@")[0] : tt("未登录")}
           </p>
           <p className="truncate text-[13px] text-neutral-500">{user.email || "—"}</p>
-          <p className="mt-1 text-[12px] text-neutral-400">免费计划</p>
+          <p className="mt-1 text-[12px] text-neutral-400">{tt("免费计划")}</p>
         </div>
       </div>
 
@@ -205,13 +209,13 @@ function SignedIn({ user }: { user: User }) {
           <p className="text-[18px] font-semibold tabular-nums text-neutral-900">
             {credits !== null ? `¥${credits.toFixed(2)}` : "…"}
           </p>
-          <p className="text-[11px] text-neutral-500">token 余额</p>
+          <p className="text-[11px] text-neutral-500">{tt("token 余额")}</p>
         </div>
         <div className="rounded-xl border border-neutral-200 p-3 text-center">
           <p className="text-[18px] font-semibold tabular-nums text-neutral-900">
             {monthSpend !== null ? `¥${monthSpend.toFixed(2)}` : "—"}
           </p>
-          <p className="text-[11px] text-neutral-500">本月消耗</p>
+          <p className="text-[11px] text-neutral-500">{tt("本月消耗")}</p>
         </div>
       </div>
 
@@ -221,7 +225,7 @@ function SignedIn({ user }: { user: User }) {
         disabled={busy}
         className="mt-6 w-full rounded-xl border border-neutral-200 py-2.5 text-[13px] text-red-600 transition hover:border-red-200 hover:bg-red-50 active:scale-[0.99] disabled:opacity-50"
       >
-        {busy ? "退出中…" : "退出登录（全部站点）"}
+        {busy ? tt("退出中…") : tt("退出登录（全部站点）")}
       </button>
     </div>
   );

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { useUI } from "@oceanleo/ui/i18n";
 import {
   Asset,
   AssetType,
@@ -32,6 +33,7 @@ function normType(t: string | null): AssetType {
 const PREVIEW_PER_ROW = 6;
 
 export function AssetLibrary() {
+  const tt = useUI();
   const search = useSearchParams();
   const urlType = normType(search.get("type"));
   const urlCat = search.get("cat");
@@ -187,7 +189,7 @@ export function AssetLibrary() {
       })
       .catch((e) => {
         if (my !== reqId.current) return;
-        setError(e instanceof Error ? e.message : "加载失败");
+        setError(e instanceof Error ? e.message : tt("加载失败"));
         setItems([]);
       })
       .finally(() => {
@@ -216,7 +218,7 @@ export function AssetLibrary() {
       })
       .catch((e) => {
         if (my !== reqId.current) return;
-        setError(e instanceof Error ? e.message : "加载失败");
+        setError(e instanceof Error ? e.message : tt("加载失败"));
       })
       .finally(() => {
         if (my === reqId.current) setLoading(false);
@@ -245,8 +247,10 @@ export function AssetLibrary() {
     setQuery(input.trim());
   }
 
-  const panelLabel = (key: string) =>
-    panels.find((p) => p.key === key)?.label || key;
+  const panelLabel = (key: string) => {
+    const label = panels.find((p) => p.key === key)?.label;
+    return label ? tt(label) : key;
+  };
 
   function toggleSave(a: Asset) {
     const isSaved = savedIds.has(a.id);
@@ -264,7 +268,7 @@ export function AssetLibrary() {
         else next.delete(a.id);
         return next;
       });
-      setError(e instanceof Error ? e.message : "收藏失败，请先登录");
+      setError(e instanceof Error ? e.message : tt("收藏失败，请先登录"));
     });
   }
 
@@ -277,9 +281,9 @@ export function AssetLibrary() {
   return (
     <div className="mx-auto max-w-6xl px-5 py-6 sm:py-8">
       <header className="mb-4">
-        <h1 className="text-2xl font-semibold text-zinc-900">{TYPE_LABELS[type]}</h1>
+        <h1 className="text-2xl font-semibold text-zinc-900">{tt(TYPE_LABELS[type])}</h1>
         <p className="mt-1 text-sm text-zinc-500">
-          平台自有素材（已囤到 OSS）· 免费可商用，按目录浏览或搜索。想找更多开源素材可去左侧「开源专区」。
+          {tt("平台自有素材（已囤到 OSS）· 免费可商用，按目录浏览或搜索。想找更多开源素材可去左侧「开源专区」。")}
         </p>
       </header>
 
@@ -288,14 +292,14 @@ export function AssetLibrary() {
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder={`在「${TYPE_LABELS[type]}」里搜索…`}
+          placeholder={tt("在「{type}」里搜索…", { type: tt(TYPE_LABELS[type]) })}
           className="flex-1 rounded-lg border border-zinc-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
         />
         <button
           type="submit"
           className="rounded-lg bg-sky-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-sky-600"
         >
-          搜索
+          {tt("搜索")}
         </button>
         {query && (
           <button
@@ -303,7 +307,7 @@ export function AssetLibrary() {
             onClick={backToBrowse}
             className="rounded-lg border border-zinc-300 px-4 py-2.5 text-sm text-zinc-600 hover:bg-zinc-50"
           >
-            返回
+            {tt("返回")}
           </button>
         )}
       </form>
@@ -318,7 +322,7 @@ export function AssetLibrary() {
               className="flex items-center gap-1 rounded-full bg-white px-3.5 py-1.5 text-sm font-medium text-zinc-700 ring-1 ring-zinc-200 transition hover:bg-sky-50 hover:text-sky-700 hover:ring-sky-200"
             >
               {p.icon && <span aria-hidden>{p.icon}</span>}
-              {p.label}
+              {tt(p.label)}
             </button>
           ))}
         </nav>
@@ -327,7 +331,7 @@ export function AssetLibrary() {
       {/* PPT 行业筛选条（第二分类轴，搜索态隐藏；与风格目录可叠加） */}
       {type === "ppt" && mode !== "search" && (
         <div className="mb-6 flex flex-wrap items-center gap-1.5">
-          <span className="mr-1 text-xs font-medium text-zinc-400">行业</span>
+          <span className="mr-1 text-xs font-medium text-zinc-400">{tt("行业")}</span>
           {[{ key: "", label: "全部行业" }, ...PPT_INDUSTRIES].map((it) => (
             <button
               key={it.key || "all"}
@@ -338,7 +342,7 @@ export function AssetLibrary() {
                   : "bg-white text-zinc-500 ring-1 ring-zinc-200 hover:bg-zinc-100 hover:text-zinc-800"
               }`}
             >
-              {it.label}
+              {tt(it.label)}
             </button>
           ))}
         </div>
@@ -370,11 +374,11 @@ export function AssetLibrary() {
           </div>
         ) : previews.length === 0 ? (
           <div className="rounded-xl border border-dashed border-zinc-300 py-16 text-center text-sm text-zinc-400">
-            平台自有素材里暂时没有该类型的内容。去左侧
+            {tt("平台自有素材里暂时没有该类型的内容。去左侧")}
             <a href="/open" className="mx-1 text-sky-600 hover:underline">
-              开源专区
+              {tt("开源专区")}
             </a>
-            搜索更多开源素材。
+            {tt("搜索更多开源素材。")}
           </div>
         ) : (
           <div className="space-y-8">
@@ -391,7 +395,7 @@ export function AssetLibrary() {
                       onClick={() => openPanel(pv.key)}
                       className="text-sm font-medium text-zinc-400 transition hover:text-sky-600"
                     >
-                      查看全部 →
+                      {tt("查看全部")} →
                     </button>
                   </div>
                   <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-6">
@@ -422,7 +426,7 @@ export function AssetLibrary() {
                   onClick={backToBrowse}
                   className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm text-zinc-600 hover:bg-zinc-50"
                 >
-                  ← 全部目录
+                  {tt("← 全部目录")}
                 </button>
                 <h2 className="flex items-center gap-1.5 text-lg font-semibold text-zinc-900">
                   {panel?.icon && <span aria-hidden>{panel.icon}</span>}
@@ -441,7 +445,7 @@ export function AssetLibrary() {
                           : "text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800"
                       }`}
                     >
-                      {s.label}
+                      {tt(s.label)}
                     </button>
                   ))}
                 </div>
@@ -466,11 +470,11 @@ export function AssetLibrary() {
             </div>
           ) : items.length === 0 && !error ? (
             <div className="rounded-xl border border-dashed border-zinc-300 py-16 text-center text-sm text-zinc-400">
-              没有匹配内容。换个目录试试，或去左侧
+              {tt("没有匹配内容。换个目录试试，或去左侧")}
               <a href="/open" className="mx-1 text-sky-600 hover:underline">
-                开源专区
+                {tt("开源专区")}
               </a>
-              搜索更多开源素材。
+              {tt("搜索更多开源素材。")}
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
@@ -487,7 +491,7 @@ export function AssetLibrary() {
           )}
 
           {loading && items.length > 0 && (
-            <div className="py-8 text-center text-sm text-zinc-400">加载中…</div>
+            <div className="py-8 text-center text-sm text-zinc-400">{tt("加载中…")}</div>
           )}
 
           {!loading && hasMore && items.length > 0 && (
@@ -496,7 +500,7 @@ export function AssetLibrary() {
                 onClick={loadMore}
                 className="rounded-lg border border-zinc-300 px-6 py-2.5 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
               >
-                加载更多
+                {tt("加载更多")}
               </button>
             </div>
           )}

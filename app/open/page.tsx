@@ -1,9 +1,11 @@
 import { SiteShell } from "@/components/SiteShell";
 import { OpenZone } from "@/components/OpenZone";
+import { ttServer } from "@oceanleo/ui/i18n/server";
 
-export const metadata = {
-  title: "开源专区 | LeoAsset",
-};
+export async function generateMetadata() {
+  const tt = await ttServer();
+  return { title: tt("开源专区 | LeoAsset") };
+}
 
 export default function OpenPage() {
   return (

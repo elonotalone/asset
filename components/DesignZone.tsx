@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useUI } from "@oceanleo/ui/i18n";
 import { DESIGN_FILTER_GROUPS } from "@/lib/assets";
 import { DESIGN_TEMPLATES, editUrl, filterTemplates, type DesignTemplate } from "@/lib/design-templates";
 
@@ -19,9 +20,10 @@ function FilterColumn({
   value: string;
   onChange: (v: string) => void;
 }) {
+  const tt = useUI();
   return (
     <div className="min-w-0">
-      <div className="mb-2 text-xs font-semibold tracking-wide text-zinc-400">{label}</div>
+      <div className="mb-2 text-xs font-semibold tracking-wide text-zinc-400">{tt(label)}</div>
       <div className="flex flex-wrap gap-1.5">
         {options.map((opt) => {
           const active = opt === value;
@@ -34,7 +36,7 @@ function FilterColumn({
                 active ? "bg-zinc-900 text-white" : "text-zinc-600 hover:bg-zinc-100"
               }`}
             >
-              {opt}
+              {tt(opt)}
             </button>
           );
         })}
@@ -72,6 +74,7 @@ function TemplateCard({ t, onOpen }: { t: DesignTemplate; onOpen: (t: DesignTemp
 }
 
 function DetailModal({ t, onClose }: { t: DesignTemplate; onClose: () => void }) {
+  const tt = useUI();
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
@@ -101,18 +104,18 @@ function DetailModal({ t, onClose }: { t: DesignTemplate; onClose: () => void })
             rel="noopener noreferrer"
             className="rounded-lg bg-sky-500 px-4 py-2.5 text-center text-sm font-medium text-white transition hover:bg-sky-600"
           >
-            拿去编辑
+            {tt("拿去编辑")}
           </a>
           <a
             href={t.preview}
             download={`${t.id}.png`}
             className="rounded-lg border border-zinc-300 px-4 py-2.5 text-center text-sm font-medium text-zinc-700 transition hover:bg-zinc-50"
           >
-            下载预览图
+            {tt("下载预览图")}
           </a>
           {t.attributions.length > 0 && (
             <div className="mt-1 border-t border-zinc-100 pt-3 text-[11px] leading-relaxed text-zinc-400">
-              <div className="mb-1 font-medium text-zinc-500">配图来源（可商用）</div>
+              <div className="mb-1 font-medium text-zinc-500">{tt("配图来源（可商用）")}</div>
               {t.attributions.slice(0, 3).map((a, i) => (
                 <div key={i} className="truncate">
                   {a}
@@ -125,7 +128,7 @@ function DetailModal({ t, onClose }: { t: DesignTemplate; onClose: () => void })
             onClick={onClose}
             className="mt-auto text-sm text-zinc-400 underline-offset-2 hover:text-zinc-600 hover:underline"
           >
-            关闭
+            {tt("关闭")}
           </button>
         </div>
       </div>
@@ -134,6 +137,7 @@ function DetailModal({ t, onClose }: { t: DesignTemplate; onClose: () => void })
 }
 
 export function DesignZone() {
+  const tt = useUI();
   const [sel, setSel] = useState<Record<string, string>>(
     Object.fromEntries(DESIGN_FILTER_GROUPS.map((g) => [g.key, g.options[0]])),
   );
@@ -158,9 +162,9 @@ export function DesignZone() {
   return (
     <div className="mx-auto max-w-6xl px-5 py-6 sm:py-8">
       <header className="mb-5">
-        <h1 className="text-2xl font-semibold text-zinc-900">设计模板</h1>
+        <h1 className="text-2xl font-semibold text-zinc-900">{tt("设计模板")}</h1>
         <p className="mt-1 text-sm text-zinc-500">
-          AI 自动拼版生成的成品海报。按渠道、物料、行业筛选，点「拿去编辑」即可在 OceanLeo 设计器里继续修改。
+          {tt("AI 自动拼版生成的成品海报。按渠道、物料、行业筛选，点「拿去编辑」即可在 OceanLeo 设计器里继续修改。")}
         </p>
       </header>
 
@@ -168,7 +172,7 @@ export function DesignZone() {
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="搜索设计模板…"
+          placeholder={tt("搜索设计模板…")}
           className="flex-1 rounded-lg border border-zinc-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
         />
       </form>
@@ -185,13 +189,13 @@ export function DesignZone() {
         ))}
         {activeChips.length > 0 && (
           <div className="flex flex-wrap items-center gap-2 border-t border-zinc-100 pt-3 text-xs text-zinc-500">
-            <span>已选：</span>
+            <span>{tt("已选：")}</span>
             {activeChips.map((c) => (
               <span
                 key={c.key}
                 className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2 py-0.5 text-sky-700"
               >
-                {c.value}
+                {tt(c.value)}
                 <button
                   type="button"
                   onClick={() =>
@@ -201,7 +205,7 @@ export function DesignZone() {
                     }))
                   }
                   className="text-sky-400 hover:text-sky-600"
-                  aria-label="清除"
+                  aria-label={tt("清除")}
                 >
                   ×
                 </button>
@@ -212,13 +216,13 @@ export function DesignZone() {
               onClick={() => setSel(Object.fromEntries(DESIGN_FILTER_GROUPS.map((g) => [g.key, g.options[0]])))}
               className="ml-1 text-zinc-400 underline-offset-2 hover:text-zinc-600 hover:underline"
             >
-              清空
+              {tt("清空")}
             </button>
           </div>
         )}
       </div>
 
-      <div className="mb-3 text-xs text-zinc-400">共 {results.length} 个模板</div>
+      <div className="mb-3 text-xs text-zinc-400">{tt("共 {n} 个模板", { n: results.length })}</div>
 
       {results.length > 0 ? (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
@@ -228,8 +232,8 @@ export function DesignZone() {
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-zinc-300 py-20 text-center">
-          <div className="text-sm font-medium text-zinc-500">没有符合筛选的模板</div>
-          <p className="mt-1 max-w-sm text-xs text-zinc-400">试试调整或清空筛选条件。</p>
+          <div className="text-sm font-medium text-zinc-500">{tt("没有符合筛选的模板")}</div>
+          <p className="mt-1 max-w-sm text-xs text-zinc-400">{tt("试试调整或清空筛选条件。")}</p>
         </div>
       )}
 
