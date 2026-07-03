@@ -1,550 +1,808 @@
 [
   {
-    "id": "baby-class",
-    "title": "亲子早教课",
-    "industry": "母婴亲子",
-    "channel": "线下门店",
-    "material": "海报",
-    "width": 1242,
-    "height": 1656,
-    "preview": "/design-templates/preview/baby-class.png",
-    "doc": "/design-templates/doc/baby-class.json",
-    "attributions": [
-      "Image by neildodhia on Pixabay"
-    ]
-  },
-  {
-    "id": "baby-promo",
-    "title": "母婴优选促销",
-    "industry": "母婴亲子",
-    "channel": "电商平台",
-    "material": "海报",
-    "width": 1242,
-    "height": 1656,
-    "preview": "/design-templates/preview/baby-promo.png",
-    "doc": "/design-templates/doc/baby-promo.json",
-    "attributions": [
-      "Image by ddimitrova on Pixabay",
-      "Image by Couleur on Pixabay"
-    ]
-  },
-  {
-    "id": "beauty-salon",
-    "title": "美容院开业活动",
-    "industry": "美容美妆",
-    "channel": "线下门店",
-    "material": "海报",
-    "width": 1242,
-    "height": 1656,
-    "preview": "/design-templates/preview/beauty-salon.png",
-    "doc": "/design-templates/doc/beauty-salon.json",
-    "attributions": [
-      "Image by OlyaLole on Pixabay"
-    ]
-  },
-  {
-    "id": "beauty-skincare",
-    "title": "护肤新品种草",
-    "industry": "美容美妆",
-    "channel": "小红书",
-    "material": "小红书封面",
-    "width": 1080,
-    "height": 1440,
-    "preview": "/design-templates/preview/beauty-skincare.png",
-    "doc": "/design-templates/doc/beauty-skincare.json",
-    "attributions": [
-      "Image by Gromovataya on Pixabay"
-    ]
-  },
-  {
-    "id": "corp-anniversary",
-    "title": "周年庆典",
-    "industry": "企业行政",
-    "channel": "线下门店",
-    "material": "海报",
-    "width": 1242,
-    "height": 1656,
-    "preview": "/design-templates/preview/corp-anniversary.png",
-    "doc": "/design-templates/doc/corp-anniversary.json",
-    "attributions": [
-      "Photo by Pavel Danilyuk on Pexels"
-    ]
-  },
-  {
-    "id": "corp-meeting",
-    "title": "企业峰会",
-    "industry": "企业行政",
-    "channel": "微信公众号",
-    "material": "横版海报",
-    "width": 1920,
-    "height": 1080,
-    "preview": "/design-templates/preview/corp-meeting.png",
-    "doc": "/design-templates/doc/corp-meeting.json",
-    "attributions": []
-  },
-  {
-    "id": "edu-kaoyan-camp",
-    "title": "考研集训营招生海报",
+    "id": "edu-xhs-study-abroad",
+    "title": "留学申请少走3年弯路",
     "industry": "教育培训",
     "channel": "小红书",
-    "material": "海报",
-    "width": 1242,
-    "height": 1656,
-    "preview": "/design-templates/preview/edu-kaoyan-camp.png",
-    "doc": "/design-templates/doc/edu-kaoyan-camp.json",
-    "attributions": [
-      "Photo by RDNE Stock project on Pexels"
-    ]
-  },
-  {
-    "id": "edu-summer-class",
-    "title": "暑期培训班招生",
-    "industry": "教育培训",
-    "channel": "微信公众号",
-    "material": "横版海报",
-    "width": 1920,
-    "height": 1080,
-    "preview": "/design-templates/preview/edu-summer-class.png",
-    "doc": "/design-templates/doc/edu-summer-class.json",
-    "attributions": [
-      "Image by kalyanayahaluwo on Pixabay"
-    ]
-  },
-  {
-    "id": "ent-concert",
-    "title": "演出活动",
-    "industry": "文体娱乐",
-    "channel": "短视频平台",
-    "material": "海报",
-    "width": 1242,
-    "height": 1656,
-    "preview": "/design-templates/preview/ent-concert.png",
-    "doc": "/design-templates/doc/ent-concert.json",
-    "attributions": [
-      "Image by Pexels on Pixabay"
-    ]
-  },
-  {
-    "id": "ent-fitness",
-    "title": "健身房招募",
-    "industry": "文体娱乐",
-    "channel": "社群朋友圈",
-    "material": "方形海报",
-    "width": 1080,
-    "height": 1080,
-    "preview": "/design-templates/preview/ent-fitness.png",
-    "doc": "/design-templates/doc/ent-fitness.json",
-    "attributions": [
-      "Photo by Andrea Piacquadio on Pexels"
-    ]
-  },
-  {
-    "id": "fashion-bag",
-    "title": "包袋种草",
-    "industry": "服饰箱包",
-    "channel": "小红书",
-    "material": "方形海报",
-    "width": 1080,
-    "height": 1080,
-    "preview": "/design-templates/preview/fashion-bag.png",
-    "doc": "/design-templates/doc/fashion-bag.json",
-    "attributions": [
-      "Image by SplitShire on Pixabay"
-    ]
-  },
-  {
-    "id": "fashion-season",
-    "title": "新季上新",
-    "industry": "服饰箱包",
-    "channel": "电商平台",
-    "material": "海报",
-    "width": 1242,
-    "height": 1656,
-    "preview": "/design-templates/preview/fashion-season.png",
-    "doc": "/design-templates/doc/fashion-season.json",
-    "attributions": [
-      "Image by Pexels on Pixabay"
-    ]
-  },
-  {
-    "id": "finance-insurance",
-    "title": "保险方案",
-    "industry": "金融保险",
-    "channel": "线下印刷",
-    "material": "海报",
-    "width": 1242,
-    "height": 1656,
-    "preview": "/design-templates/preview/finance-insurance.png",
-    "doc": "/design-templates/doc/finance-insurance.json",
-    "attributions": []
-  },
-  {
-    "id": "finance-wealth",
-    "title": "理财产品推广",
-    "industry": "金融保险",
-    "channel": "微信公众号",
-    "material": "横版海报",
-    "width": 1920,
-    "height": 1080,
-    "preview": "/design-templates/preview/finance-wealth.png",
-    "doc": "/design-templates/doc/finance-wealth.json",
-    "attributions": [
-      "Image by Goumbik on Pixabay"
-    ]
-  },
-  {
-    "id": "food-coffee-promo",
-    "title": "咖啡饮品促销",
-    "industry": "餐饮美食",
-    "channel": "电商平台",
-    "material": "方形海报",
-    "width": 1080,
-    "height": 1080,
-    "preview": "/design-templates/preview/food-coffee-promo.png",
-    "doc": "/design-templates/doc/food-coffee-promo.json",
-    "attributions": [
-      "Image by Engin_Akyurt on Pixabay"
-    ]
-  },
-  {
-    "id": "food-new-dish",
-    "title": "餐厅新品上市",
-    "industry": "餐饮美食",
-    "channel": "线下门店",
-    "material": "海报",
-    "width": 1242,
-    "height": 1656,
-    "preview": "/design-templates/preview/food-new-dish.png",
-    "doc": "/design-templates/doc/food-new-dish.json",
-    "attributions": [
-      "Image by Pexels on Pixabay"
-    ]
-  },
-  {
-    "id": "game-launch",
-    "title": "游戏上线预约",
-    "industry": "电竞游戏",
-    "channel": "短视频平台",
-    "material": "海报",
-    "width": 1242,
-    "height": 1656,
-    "preview": "/design-templates/preview/game-launch.png",
-    "doc": "/design-templates/doc/game-launch.json",
-    "attributions": [
-      "Image by Sunriseforever on Pixabay"
-    ]
-  },
-  {
-    "id": "game-tournament",
-    "title": "电竞赛事",
-    "industry": "电竞游戏",
-    "channel": "社群朋友圈",
-    "material": "横版海报",
-    "width": 1920,
-    "height": 1080,
-    "preview": "/design-templates/preview/game-tournament.png",
-    "doc": "/design-templates/doc/game-tournament.json",
-    "attributions": []
-  },
-  {
-    "id": "general-promo",
-    "title": "通用促销海报",
-    "industry": "通用",
-    "channel": "社群朋友圈",
-    "material": "方形海报",
-    "width": 1080,
-    "height": 1080,
-    "preview": "/design-templates/preview/general-promo.png",
-    "doc": "/design-templates/doc/general-promo.json",
-    "attributions": [
-      "Image by AS_Photography on Pixabay"
-    ]
-  },
-  {
-    "id": "general-quote",
-    "title": "金句语录海报",
-    "industry": "通用",
-    "channel": "小红书",
-    "material": "海报",
-    "width": 1242,
-    "height": 1656,
-    "preview": "/design-templates/preview/general-quote.png",
-    "doc": "/design-templates/doc/general-quote.json",
-    "attributions": []
-  },
-  {
-    "id": "gov-event",
-    "title": "活动通知",
-    "industry": "政务媒体",
-    "channel": "微信公众号",
-    "material": "横版海报",
-    "width": 1920,
-    "height": 1080,
-    "preview": "/design-templates/preview/gov-event.png",
-    "doc": "/design-templates/doc/gov-event.json",
-    "attributions": [
-      "Photo by Ambam Gorilla on Pexels"
-    ]
-  },
-  {
-    "id": "gov-notice",
-    "title": "公益宣传",
-    "industry": "政务媒体",
-    "channel": "线下印刷",
-    "material": "海报",
-    "width": 1242,
-    "height": 1656,
-    "preview": "/design-templates/preview/gov-notice.png",
-    "doc": "/design-templates/doc/gov-notice.json",
-    "attributions": []
-  },
-  {
-    "id": "grocery-fresh",
-    "title": "生鲜到家促销",
-    "industry": "食品生鲜",
-    "channel": "电商平台",
-    "material": "海报",
-    "width": 1242,
-    "height": 1656,
-    "preview": "/design-templates/preview/grocery-fresh.png",
-    "doc": "/design-templates/doc/grocery-fresh.json",
-    "attributions": [
-      "Image by PublicDomainPictures on Pixabay"
-    ]
-  },
-  {
-    "id": "grocery-snack",
-    "title": "零食礼盒",
-    "industry": "食品生鲜",
-    "channel": "小红书",
-    "material": "方形海报",
-    "width": 1080,
-    "height": 1080,
-    "preview": "/design-templates/preview/grocery-snack.png",
-    "doc": "/design-templates/doc/grocery-snack.json",
-    "attributions": [
-      "Image by image4you on Pixabay"
-    ]
-  },
-  {
-    "id": "home-decor",
-    "title": "家居好物种草",
-    "industry": "家居百货",
-    "channel": "小红书",
     "material": "小红书封面",
+    "style": "xhs-figure",
     "width": 1080,
     "height": 1440,
-    "preview": "/design-templates/preview/home-decor.png",
-    "doc": "/design-templates/doc/home-decor.json",
-    "attributions": [
-      "Photo by Ioana Motoc on Pexels"
-    ]
-  },
-  {
-    "id": "home-furniture",
-    "title": "家居焕新季",
-    "industry": "家居百货",
-    "channel": "电商平台",
-    "material": "横版海报",
-    "width": 1920,
-    "height": 1080,
-    "preview": "/design-templates/preview/home-furniture.png",
-    "doc": "/design-templates/doc/home-furniture.json",
-    "attributions": [
-      "Photo by Sandeep Lasar on Pexels"
-    ]
-  },
-  {
-    "id": "it-recruit",
-    "title": "技术招聘",
-    "industry": "IT互联网",
-    "channel": "社群朋友圈",
-    "material": "海报",
-    "width": 1242,
-    "height": 1656,
-    "preview": "/design-templates/preview/it-recruit.png",
-    "doc": "/design-templates/doc/it-recruit.json",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-xhs-study-abroad.webp",
+    "doc": "/design-templates/doc/edu-xhs-study-abroad.json",
     "attributions": []
   },
   {
-    "id": "it-saas",
-    "title": "SaaS产品发布",
-    "industry": "IT互联网",
+    "id": "edu-bigword-quit-study",
+    "title": "排雷",
+    "industry": "教育培训",
+    "channel": "小红书",
+    "material": "小红书封面",
+    "style": "big-word",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-bigword-quit-study.webp",
+    "doc": "/design-templates/doc/edu-bigword-quit-study.json",
+    "attributions": []
+  },
+  {
+    "id": "edu-section-choose-school",
+    "title": "考研择校看这篇就够了",
+    "industry": "教育培训",
+    "channel": "小红书",
+    "material": "小红书封面",
+    "style": "section-cover",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-section-choose-school.webp",
+    "doc": "/design-templates/doc/edu-section-choose-school.json",
+    "attributions": []
+  },
+  {
+    "id": "edu-knowledge-english",
+    "title": "四六级稳稳过",
+    "industry": "教育培训",
+    "channel": "小红书",
+    "material": "小红书封面",
+    "style": "xhs-knowledge",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-knowledge-english.webp",
+    "doc": "/design-templates/doc/edu-knowledge-english.json",
+    "attributions": []
+  },
+  {
+    "id": "edu-recruit-teacher",
+    "title": "教师招募",
+    "industry": "教育培训",
     "channel": "微信公众号",
-    "material": "横版海报",
-    "width": 1920,
-    "height": 1080,
-    "preview": "/design-templates/preview/it-saas.png",
-    "doc": "/design-templates/doc/it-saas.json",
-    "attributions": [
-      "Image by Innovalabs on Pixabay"
-    ]
-  },
-  {
-    "id": "life-cleaning",
-    "title": "家政保洁服务",
-    "industry": "生活服务",
-    "channel": "社群朋友圈",
     "material": "方形海报",
+    "style": "recruit",
     "width": 1080,
     "height": 1080,
-    "preview": "/design-templates/preview/life-cleaning.png",
-    "doc": "/design-templates/doc/life-cleaning.json",
-    "attributions": [
-      "Image by 4787421 on Pixabay"
-    ]
-  },
-  {
-    "id": "life-moving",
-    "title": "搬家服务",
-    "industry": "生活服务",
-    "channel": "线下印刷",
-    "material": "海报",
-    "width": 1242,
-    "height": 1656,
-    "preview": "/design-templates/preview/life-moving.png",
-    "doc": "/design-templates/doc/life-moving.json",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-recruit-teacher.webp",
+    "doc": "/design-templates/doc/edu-recruit-teacher.json",
     "attributions": []
   },
   {
-    "id": "medical-checkup",
-    "title": "健康体检套餐",
-    "industry": "医疗保健",
-    "channel": "线下印刷",
-    "material": "海报",
-    "width": 1242,
-    "height": 1656,
-    "preview": "/design-templates/preview/medical-checkup.png",
-    "doc": "/design-templates/doc/medical-checkup.json",
-    "attributions": [
-      "Image by Parentingupstream on Pixabay"
-    ]
-  },
-  {
-    "id": "medical-dental",
-    "title": "口腔护理活动",
-    "industry": "医疗保健",
+    "id": "edu-promo-class",
+    "title": "暑期班抢先报名",
+    "industry": "教育培训",
     "channel": "社群朋友圈",
     "material": "方形海报",
+    "style": "promo-price",
     "width": 1080,
     "height": 1080,
-    "preview": "/design-templates/preview/medical-dental.png",
-    "doc": "/design-templates/doc/medical-dental.json",
-    "attributions": [
-      "Image by drshohmelian on Pixabay"
-    ]
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-promo-class.webp",
+    "doc": "/design-templates/doc/edu-promo-class.json",
+    "attributions": []
   },
   {
-    "id": "realestate-open",
-    "title": "楼盘开盘",
-    "industry": "房地产",
-    "channel": "线下印刷",
-    "material": "海报",
-    "width": 1242,
-    "height": 1656,
-    "preview": "/design-templates/preview/realestate-open.png",
-    "doc": "/design-templates/doc/realestate-open.json",
-    "attributions": [
-      "Image by wal_172619 on Pixabay"
-    ]
+    "id": "edu-poster-graduation",
+    "title": "青春不散场未来皆可期",
+    "industry": "教育培训",
+    "channel": "小红书",
+    "material": "小红书封面",
+    "style": "poster-scene",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-poster-graduation.webp",
+    "doc": "/design-templates/doc/edu-poster-graduation.json",
+    "attributions": []
   },
   {
-    "id": "realestate-rent",
-    "title": "精装房出租",
-    "industry": "房地产",
+    "id": "edu-quote-study",
+    "title": "今天的努力是明天的底气",
+    "industry": "教育培训",
     "channel": "社群朋友圈",
     "material": "方形海报",
+    "style": "quote-daily",
     "width": 1080,
     "height": 1080,
-    "preview": "/design-templates/preview/realestate-rent.png",
-    "doc": "/design-templates/doc/realestate-rent.json",
-    "attributions": [
-      "Image by ErikaWittlieb on Pixabay"
-    ]
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-quote-study.webp",
+    "doc": "/design-templates/doc/edu-quote-study.json",
+    "attributions": []
   },
   {
-    "id": "retail-618",
-    "title": "618年中大促",
-    "industry": "电商零售",
-    "channel": "电商平台",
-    "material": "海报",
-    "width": 1242,
-    "height": 1656,
-    "preview": "/design-templates/preview/retail-618.png",
-    "doc": "/design-templates/doc/retail-618.json",
-    "attributions": [
-      "Image by image4you on Pixabay"
-    ]
+    "id": "edu-tech-online",
+    "title": "智能教育因材施教",
+    "industry": "教育培训",
+    "channel": "微信公众号",
+    "material": "小红书封面",
+    "style": "tech-corp",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-tech-online.webp",
+    "doc": "/design-templates/doc/edu-tech-online.json",
+    "attributions": []
   },
   {
-    "id": "retail-newstore",
-    "title": "新店开业",
+    "id": "edu-figure-interview",
+    "title": "关于面试那些事",
+    "industry": "教育培训",
+    "channel": "小红书",
+    "material": "小红书封面",
+    "style": "xhs-figure",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-figure-interview.webp",
+    "doc": "/design-templates/doc/edu-figure-interview.json",
+    "attributions": []
+  },
+  {
+    "id": "edu-section-public-exam",
+    "title": "行测应该先学哪个模块",
+    "industry": "教育培训",
+    "channel": "小红书",
+    "material": "小红书封面",
+    "style": "section-cover",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-section-public-exam.webp",
+    "doc": "/design-templates/doc/edu-section-public-exam.json",
+    "attributions": []
+  },
+  {
+    "id": "edu-knowledge-kids-math",
+    "title": "口算提速秘籍",
+    "industry": "教育培训",
+    "channel": "小红书",
+    "material": "小红书封面",
+    "style": "xhs-knowledge",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-knowledge-kids-math.webp",
+    "doc": "/design-templates/doc/edu-knowledge-kids-math.json",
+    "attributions": []
+  },
+  {
+    "id": "retail-promo-midyear",
+    "title": "年中大促全场狂欢",
     "industry": "电商零售",
     "channel": "社群朋友圈",
     "material": "方形海报",
+    "style": "promo-price",
     "width": 1080,
     "height": 1080,
-    "preview": "/design-templates/preview/retail-newstore.png",
-    "doc": "/design-templates/doc/retail-newstore.json",
-    "attributions": [
-      "Image by stevepb on Pixabay",
-      "Image by kaboompics on Pixabay"
-    ]
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/retail-promo-midyear.webp",
+    "doc": "/design-templates/doc/retail-promo-midyear.json",
+    "attributions": []
   },
   {
-    "id": "tech-appliance",
-    "title": "家电以旧换新",
-    "industry": "数码家电",
-    "channel": "线下门店",
-    "material": "横版海报",
-    "width": 1920,
+    "id": "retail-coupon-newstore",
+    "title": "满199减50",
+    "industry": "电商零售",
+    "channel": "社群朋友圈",
+    "material": "方形海报",
+    "style": "coupon-deal",
+    "width": 1080,
     "height": 1080,
-    "preview": "/design-templates/preview/tech-appliance.png",
-    "doc": "/design-templates/doc/tech-appliance.json",
-    "attributions": [
-      "Image by justinedgecreative on Pixabay"
-    ]
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/retail-coupon-newstore.webp",
+    "doc": "/design-templates/doc/retail-coupon-newstore.json",
+    "attributions": []
   },
   {
-    "id": "tech-newphone",
-    "title": "数码新品发布",
+    "id": "retail-xhs-sneaker",
+    "title": "这双球鞋真的绝了",
+    "industry": "服饰箱包",
+    "channel": "小红书",
+    "material": "小红书封面",
+    "style": "xhs-figure",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/retail-xhs-sneaker.webp",
+    "doc": "/design-templates/doc/retail-xhs-sneaker.json",
+    "attributions": []
+  },
+  {
+    "id": "retail-promo-digital",
+    "title": "无线耳机降噪来袭",
     "industry": "数码家电",
-    "channel": "电商平台",
-    "material": "海报",
-    "width": 1242,
-    "height": 1656,
-    "preview": "/design-templates/preview/tech-newphone.png",
-    "doc": "/design-templates/doc/tech-newphone.json",
-    "attributions": [
-      "Image by JESHOOTS-com on Pixabay"
-    ]
-  },
-  {
-    "id": "travel-hotel",
-    "title": "酒店预订",
-    "industry": "旅游出行",
     "channel": "电商平台",
     "material": "方形海报",
+    "style": "promo-price",
     "width": 1080,
     "height": 1080,
-    "preview": "/design-templates/preview/travel-hotel.png",
-    "doc": "/design-templates/doc/travel-hotel.json",
-    "attributions": [
-      "Image by MagicDesk on Pixabay"
-    ]
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/retail-promo-digital.webp",
+    "doc": "/design-templates/doc/retail-promo-digital.json",
+    "attributions": []
   },
   {
-    "id": "travel-route",
-    "title": "旅行线路推荐",
+    "id": "retail-poster-watch",
+    "title": "腕上智能尽在掌握",
+    "industry": "数码家电",
+    "channel": "小红书",
+    "material": "小红书封面",
+    "style": "poster-scene",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/retail-poster-watch.webp",
+    "doc": "/design-templates/doc/retail-poster-watch.json",
+    "attributions": []
+  },
+  {
+    "id": "retail-coupon-phone",
+    "title": "至高补贴800",
+    "industry": "数码家电",
+    "channel": "社群朋友圈",
+    "material": "方形海报",
+    "style": "coupon-deal",
+    "width": 1080,
+    "height": 1080,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/retail-coupon-phone.webp",
+    "doc": "/design-templates/doc/retail-coupon-phone.json",
+    "attributions": []
+  },
+  {
+    "id": "retail-festive-sales",
+    "title": "开门红再创佳绩",
+    "industry": "电商零售",
+    "channel": "微信公众号",
+    "material": "方形海报",
+    "style": "festive-report",
+    "width": 1080,
+    "height": 1080,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/retail-festive-sales.webp",
+    "doc": "/design-templates/doc/retail-festive-sales.json",
+    "attributions": []
+  },
+  {
+    "id": "retail-bigword-lastday",
+    "title": "清仓",
+    "industry": "电商零售",
+    "channel": "社群朋友圈",
+    "material": "方形海报",
+    "style": "big-word",
+    "width": 1080,
+    "height": 1080,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/retail-bigword-lastday.webp",
+    "doc": "/design-templates/doc/retail-bigword-lastday.json",
+    "attributions": []
+  },
+  {
+    "id": "retail-xhs-handbag",
+    "title": "通勤包闭眼入",
+    "industry": "服饰箱包",
+    "channel": "小红书",
+    "material": "小红书封面",
+    "style": "xhs-figure",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/retail-xhs-handbag.webp",
+    "doc": "/design-templates/doc/retail-xhs-handbag.json",
+    "attributions": []
+  },
+  {
+    "id": "retail-promo-laptop",
+    "title": "轻薄本学生首选",
+    "industry": "数码家电",
+    "channel": "电商平台",
+    "material": "横版海报",
+    "style": "promo-price",
+    "width": 1920,
+    "height": 1080,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/retail-promo-laptop.webp",
+    "doc": "/design-templates/doc/retail-promo-laptop.json",
+    "attributions": []
+  },
+  {
+    "id": "food-coupon-open",
+    "title": "满50减20",
+    "industry": "餐饮美食",
+    "channel": "社群朋友圈",
+    "material": "方形海报",
+    "style": "coupon-deal",
+    "width": 1080,
+    "height": 1080,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/food-coupon-open.webp",
+    "doc": "/design-templates/doc/food-coupon-open.json",
+    "attributions": []
+  },
+  {
+    "id": "food-promo-milktea",
+    "title": "夏日限定鲜果茶",
+    "industry": "餐饮美食",
+    "channel": "社群朋友圈",
+    "material": "方形海报",
+    "style": "promo-price",
+    "width": 1080,
+    "height": 1080,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/food-promo-milktea.webp",
+    "doc": "/design-templates/doc/food-promo-milktea.json",
+    "attributions": []
+  },
+  {
+    "id": "food-xhs-cafe",
+    "title": "这家咖啡太出片",
+    "industry": "餐饮美食",
+    "channel": "小红书",
+    "material": "小红书封面",
+    "style": "xhs-figure",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/food-xhs-cafe.webp",
+    "doc": "/design-templates/doc/food-xhs-cafe.json",
+    "attributions": []
+  },
+  {
+    "id": "food-poster-cafe-scene",
+    "title": "一杯咖啡一段慢时光",
+    "industry": "餐饮美食",
+    "channel": "小红书",
+    "material": "小红书封面",
+    "style": "poster-scene",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/food-poster-cafe-scene.webp",
+    "doc": "/design-templates/doc/food-poster-cafe-scene.json",
+    "attributions": []
+  },
+  {
+    "id": "food-event-open",
+    "title": "盛大开业好礼相送",
+    "industry": "餐饮美食",
+    "channel": "微信公众号",
+    "material": "小红书封面",
+    "style": "event-schedule",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/food-event-open.webp",
+    "doc": "/design-templates/doc/food-event-open.json",
+    "attributions": []
+  },
+  {
+    "id": "food-bigword-yummy",
+    "title": "绝了",
+    "industry": "餐饮美食",
+    "channel": "小红书",
+    "material": "小红书封面",
+    "style": "big-word",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/food-bigword-yummy.webp",
+    "doc": "/design-templates/doc/food-bigword-yummy.json",
+    "attributions": []
+  },
+  {
+    "id": "food-coupon-cake",
+    "title": "生日蛋糕7折",
+    "industry": "餐饮美食",
+    "channel": "社群朋友圈",
+    "material": "方形海报",
+    "style": "coupon-deal",
+    "width": 1080,
+    "height": 1080,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/food-coupon-cake.webp",
+    "doc": "/design-templates/doc/food-coupon-cake.json",
+    "attributions": []
+  },
+  {
+    "id": "food-xhs-healthy",
+    "title": "低卡沙拉一周不重样",
+    "industry": "食品生鲜",
+    "channel": "小红书",
+    "material": "小红书封面",
+    "style": "xhs-knowledge",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/food-xhs-healthy.webp",
+    "doc": "/design-templates/doc/food-xhs-healthy.json",
+    "attributions": []
+  },
+  {
+    "id": "food-promo-juice",
+    "title": "鲜榨果汁0添加",
+    "industry": "食品生鲜",
+    "channel": "电商平台",
+    "material": "方形海报",
+    "style": "promo-price",
+    "width": 1080,
+    "height": 1080,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/food-promo-juice.webp",
+    "doc": "/design-templates/doc/food-promo-juice.json",
+    "attributions": []
+  },
+  {
+    "id": "beauty-xhs-skincare",
+    "title": "换季护肤不踩雷",
+    "industry": "美容美妆",
+    "channel": "小红书",
+    "material": "小红书封面",
+    "style": "xhs-figure",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/beauty-xhs-skincare.webp",
+    "doc": "/design-templates/doc/beauty-xhs-skincare.json",
+    "attributions": []
+  },
+  {
+    "id": "beauty-promo-lipstick",
+    "title": "唇釉显白神器",
+    "industry": "美容美妆",
+    "channel": "社群朋友圈",
+    "material": "方形海报",
+    "style": "promo-price",
+    "width": 1080,
+    "height": 1080,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/beauty-promo-lipstick.webp",
+    "doc": "/design-templates/doc/beauty-promo-lipstick.json",
+    "attributions": []
+  },
+  {
+    "id": "beauty-poster-salon",
+    "title": "焕活肌肤由内而外",
+    "industry": "美容美妆",
+    "channel": "小红书",
+    "material": "小红书封面",
+    "style": "poster-scene",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/beauty-poster-salon.webp",
+    "doc": "/design-templates/doc/beauty-poster-salon.json",
+    "attributions": []
+  },
+  {
+    "id": "beauty-coupon-perfume",
+    "title": "香水满300减80",
+    "industry": "美容美妆",
+    "channel": "社群朋友圈",
+    "material": "方形海报",
+    "style": "coupon-deal",
+    "width": 1080,
+    "height": 1080,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/beauty-coupon-perfume.webp",
+    "doc": "/design-templates/doc/beauty-coupon-perfume.json",
+    "attributions": []
+  },
+  {
+    "id": "health-knowledge-sleep",
+    "title": "早睡早起7个变化",
+    "industry": "医疗保健",
+    "channel": "小红书",
+    "material": "小红书封面",
+    "style": "xhs-knowledge",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/health-knowledge-sleep.webp",
+    "doc": "/design-templates/doc/health-knowledge-sleep.json",
+    "attributions": []
+  },
+  {
+    "id": "health-figure-checkup",
+    "title": "体检报告这样看",
+    "industry": "医疗保健",
+    "channel": "微信公众号",
+    "material": "小红书封面",
+    "style": "xhs-figure",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/health-figure-checkup.webp",
+    "doc": "/design-templates/doc/health-figure-checkup.json",
+    "attributions": []
+  },
+  {
+    "id": "health-poster-gym",
+    "title": "自律才能自由",
+    "industry": "文体娱乐",
+    "channel": "小红书",
+    "material": "小红书封面",
+    "style": "poster-scene",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/health-poster-gym.webp",
+    "doc": "/design-templates/doc/health-poster-gym.json",
+    "attributions": []
+  },
+  {
+    "id": "health-figure-fitness",
+    "title": "练起来",
+    "industry": "文体娱乐",
+    "channel": "小红书",
+    "material": "小红书封面",
+    "style": "big-word",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/health-figure-fitness.webp",
+    "doc": "/design-templates/doc/health-figure-fitness.json",
+    "attributions": []
+  },
+  {
+    "id": "health-event-clinic",
+    "title": "免费义诊健康同行",
+    "industry": "医疗保健",
+    "channel": "微信公众号",
+    "material": "小红书封面",
+    "style": "event-schedule",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/health-event-clinic.webp",
+    "doc": "/design-templates/doc/health-event-clinic.json",
+    "attributions": []
+  },
+  {
+    "id": "biz-festive-report",
+    "title": "热烈祝贺",
+    "industry": "企业行政",
+    "channel": "微信公众号",
+    "material": "方形海报",
+    "style": "festive-report",
+    "width": 1080,
+    "height": 1080,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/biz-festive-report.webp",
+    "doc": "/design-templates/doc/biz-festive-report.json",
+    "attributions": []
+  },
+  {
+    "id": "biz-festive-honor",
+    "title": "销售风云榜",
+    "industry": "企业行政",
+    "channel": "微信公众号",
+    "material": "小红书封面",
+    "style": "festive-report",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/biz-festive-honor.webp",
+    "doc": "/design-templates/doc/biz-festive-honor.json",
+    "attributions": []
+  },
+  {
+    "id": "biz-recruit-it",
+    "title": "诚聘英才",
+    "industry": "IT互联网",
+    "channel": "微信公众号",
+    "material": "方形海报",
+    "style": "recruit",
+    "width": 1080,
+    "height": 1080,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/biz-recruit-it.webp",
+    "doc": "/design-templates/doc/biz-recruit-it.json",
+    "attributions": []
+  },
+  {
+    "id": "biz-tech-ai-summit",
+    "title": "智算未来重构生产力",
+    "industry": "IT互联网",
+    "channel": "微信公众号",
+    "material": "小红书封面",
+    "style": "tech-corp",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/biz-tech-ai-summit.webp",
+    "doc": "/design-templates/doc/biz-tech-ai-summit.json",
+    "attributions": []
+  },
+  {
+    "id": "biz-tech-digital",
+    "title": "智创未来信筑基石",
+    "industry": "企业行政",
+    "channel": "微信公众号",
+    "material": "小红书封面",
+    "style": "tech-corp",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/biz-tech-digital.webp",
+    "doc": "/design-templates/doc/biz-tech-digital.json",
+    "attributions": []
+  },
+  {
+    "id": "biz-quote-team",
+    "title": "所有的努力都不会被辜负",
+    "industry": "企业行政",
+    "channel": "社群朋友圈",
+    "material": "方形海报",
+    "style": "quote-daily",
+    "width": 1080,
+    "height": 1080,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/biz-quote-team.webp",
+    "doc": "/design-templates/doc/biz-quote-team.json",
+    "attributions": []
+  },
+  {
+    "id": "biz-figure-recruit-hr",
+    "title": "急招",
+    "industry": "IT互联网",
+    "channel": "小红书",
+    "material": "小红书封面",
+    "style": "big-word",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/biz-figure-recruit-hr.webp",
+    "doc": "/design-templates/doc/biz-figure-recruit-hr.json",
+    "attributions": []
+  },
+  {
+    "id": "finance-tech-wealth",
+    "title": "重构资产配置逻辑",
+    "industry": "金融保险",
+    "channel": "微信公众号",
+    "material": "方形海报",
+    "style": "tech-corp",
+    "width": 1080,
+    "height": 1080,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/finance-tech-wealth.webp",
+    "doc": "/design-templates/doc/finance-tech-wealth.json",
+    "attributions": []
+  },
+  {
+    "id": "realestate-poster",
+    "title": "择一城安一生",
+    "industry": "房地产",
+    "channel": "微信公众号",
+    "material": "小红书封面",
+    "style": "poster-scene",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/realestate-poster.webp",
+    "doc": "/design-templates/doc/realestate-poster.json",
+    "attributions": []
+  },
+  {
+    "id": "biz-event-launch",
+    "title": "焕新启程见证时刻",
+    "industry": "企业行政",
+    "channel": "微信公众号",
+    "material": "小红书封面",
+    "style": "event-schedule",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/biz-event-launch.webp",
+    "doc": "/design-templates/doc/biz-event-launch.json",
+    "attributions": []
+  },
+  {
+    "id": "gov-festive-notice",
+    "title": "再获殊荣",
+    "industry": "政务媒体",
+    "channel": "微信公众号",
+    "material": "方形海报",
+    "style": "festive-report",
+    "width": 1080,
+    "height": 1080,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/gov-festive-notice.webp",
+    "doc": "/design-templates/doc/gov-festive-notice.json",
+    "attributions": []
+  },
+  {
+    "id": "travel-poster-beach",
+    "title": "海边度假收藏级攻略",
     "industry": "旅游出行",
     "channel": "小红书",
-    "material": "海报",
-    "width": 1242,
-    "height": 1656,
-    "preview": "/design-templates/preview/travel-route.png",
-    "doc": "/design-templates/doc/travel-route.json",
-    "attributions": [
-      "Image by GiuseppeDio on Pixabay"
-    ]
+    "material": "小红书封面",
+    "style": "poster-scene",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/travel-poster-beach.webp",
+    "doc": "/design-templates/doc/travel-poster-beach.json",
+    "attributions": []
+  },
+  {
+    "id": "travel-xhs-route",
+    "title": "周末去哪不踩坑",
+    "industry": "旅游出行",
+    "channel": "小红书",
+    "material": "小红书封面",
+    "style": "xhs-knowledge",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/travel-xhs-route.webp",
+    "doc": "/design-templates/doc/travel-xhs-route.json",
+    "attributions": []
+  },
+  {
+    "id": "travel-poster-mountain",
+    "title": "山野入怀治愈疲惫",
+    "industry": "旅游出行",
+    "channel": "小红书",
+    "material": "小红书封面",
+    "style": "poster-scene",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/travel-poster-mountain.webp",
+    "doc": "/design-templates/doc/travel-poster-mountain.json",
+    "attributions": []
+  },
+  {
+    "id": "home-xhs-plant",
+    "title": "懒人绿植超好养",
+    "industry": "家居百货",
+    "channel": "小红书",
+    "material": "小红书封面",
+    "style": "xhs-figure",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/home-xhs-plant.webp",
+    "doc": "/design-templates/doc/home-xhs-plant.json",
+    "attributions": []
+  },
+  {
+    "id": "home-promo-livingroom",
+    "title": "把生活过成诗",
+    "industry": "家居百货",
+    "channel": "微信公众号",
+    "material": "小红书封面",
+    "style": "poster-scene",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/home-promo-livingroom.webp",
+    "doc": "/design-templates/doc/home-promo-livingroom.json",
+    "attributions": []
+  },
+  {
+    "id": "baby-xhs-kid",
+    "title": "早教启蒙这样做",
+    "industry": "母婴亲子",
+    "channel": "小红书",
+    "material": "小红书封面",
+    "style": "xhs-figure",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/baby-xhs-kid.webp",
+    "doc": "/design-templates/doc/baby-xhs-kid.json",
+    "attributions": []
+  },
+  {
+    "id": "baby-event-class",
+    "title": "亲子嘉年华欢乐一夏",
+    "industry": "母婴亲子",
+    "channel": "微信公众号",
+    "material": "小红书封面",
+    "style": "event-schedule",
+    "width": 1080,
+    "height": 1440,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/baby-event-class.webp",
+    "doc": "/design-templates/doc/baby-event-class.json",
+    "attributions": []
+  },
+  {
+    "id": "life-quote-daily",
+    "title": "慢慢来比较快",
+    "industry": "通用",
+    "channel": "社群朋友圈",
+    "material": "方形海报",
+    "style": "quote-daily",
+    "width": 1080,
+    "height": 1080,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/life-quote-daily.webp",
+    "doc": "/design-templates/doc/life-quote-daily.json",
+    "attributions": []
+  },
+  {
+    "id": "life-quote-morning",
+    "title": "愿你眼里有光有暖",
+    "industry": "通用",
+    "channel": "社群朋友圈",
+    "material": "方形海报",
+    "style": "quote-daily",
+    "width": 1080,
+    "height": 1080,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/life-quote-morning.webp",
+    "doc": "/design-templates/doc/life-quote-morning.json",
+    "attributions": []
+  },
+  {
+    "id": "life-quote-night",
+    "title": "放下今天拥抱明天",
+    "industry": "通用",
+    "channel": "社群朋友圈",
+    "material": "方形海报",
+    "style": "quote-daily",
+    "width": 1080,
+    "height": 1080,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/life-quote-night.webp",
+    "doc": "/design-templates/doc/life-quote-night.json",
+    "attributions": []
+  },
+  {
+    "id": "life-service-cleaning",
+    "title": "焕新",
+    "industry": "生活服务",
+    "channel": "社群朋友圈",
+    "material": "方形海报",
+    "style": "big-word",
+    "width": 1080,
+    "height": 1080,
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/life-service-cleaning.webp",
+    "doc": "/design-templates/doc/life-service-cleaning.json",
+    "attributions": []
   }
 ]

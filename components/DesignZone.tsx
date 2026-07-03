@@ -108,7 +108,9 @@ function DetailModal({ t, onClose }: { t: DesignTemplate; onClose: () => void })
           </a>
           <a
             href={t.preview}
-            download={`${t.id}.png`}
+            target="_blank"
+            rel="noopener noreferrer"
+            download={`${t.id}.webp`}
             className="rounded-lg border border-zinc-300 px-4 py-2.5 text-center text-sm font-medium text-zinc-700 transition hover:bg-zinc-50"
           >
             {tt("下载预览图")}
