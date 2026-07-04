@@ -56,6 +56,9 @@ export interface Ctx {
   fx: AccentFx;
   R: ReturnType<typeof radiusTokens>;
   D: ReturnType<typeof densityTokens>;
+  /** 表面色令牌（浅/深两态）——见 surfaceTokens()。通用渲染器用它取代写死的
+   *  `#fff / bg-white / 黑色描边`，这样 forceDark 深色底下正文/卡片也可读。 */
+  S: SurfaceTokens;
   /** 当前正在渲染的页面 key（renderTemplate 循环里逐页赋值）。 */
   pageKey: string;
   /** 当前渲染语言（引擎为 zh / en 各渲染一遍）。 */
@@ -73,6 +76,55 @@ function radiusTokens(dna: TemplateDNA) {
 }
 function densityTokens(dna: TemplateDNA) {
   return DENSITY_TOKENS[dna.density];
+}
+
+// ————————————————————————————————————————————————————————————
+// 表面色令牌（浅 / 深两态）
+// ————————————————————————————————————————————————————————————
+//
+// 背景：通用章节渲染器（renderContact / renderCases / renderFaq / …）历史上把
+// 「白底 + 黑色描边卡片」写死，只在浅色配色下成立。当模板落到 forceDark 的深色
+// 霓虹配色（neon-tech 家族）时，palette 的 `ink/sub` 变成近白文字，压在写死的
+// 白底上就完全不可读（asset.oceanleo.com/templates「字看不清」的第二类根因）。
+//
+// 修法：把「表面色」抽成随 forceDark 翻转的令牌。浅色态与旧值等价（观感不变）；
+// 深色态用**半透明白叠加**——它叠在任何深色 palette 的近黑底上都得到协调的、
+// 逐级抬升的表面，且与 neon-tech 既有的 `.leo-glass` 玻璃拟态语言一致，无需为
+// 每个 palette 手算深色 hex。
+export interface SurfaceTokens {
+  /** 原本 `bg-white / #fff` 的整幅章节底。深色态：base 之上的一层微抬升。 */
+  page: string;
+  /** 原本 `#fff` 的卡片/面板底。深色态：比 page 再抬升一档（玻璃感）。 */
+  card: string;
+  /** 卡片/分隔线描边。浅色态统一为一档黑色 alpha；深色态白色 alpha。 */
+  border: string;
+  /** 略重的描边（原本 `#00000022` 点线/分隔）。 */
+  borderStrong: string;
+  /** 表单控件底。 */
+  inputBg: string;
+  /** 表单控件描边。 */
+  inputBorder: string;
+}
+
+export function surfaceTokens(dna: TemplateDNA): SurfaceTokens {
+  if (dna.forceDark) {
+    return {
+      page: "rgba(255,255,255,.04)",
+      card: "rgba(255,255,255,.06)",
+      border: "rgba(255,255,255,.12)",
+      borderStrong: "rgba(255,255,255,.22)",
+      inputBg: "rgba(255,255,255,.05)",
+      inputBorder: "rgba(255,255,255,.2)",
+    };
+  }
+  return {
+    page: "#fff",
+    card: "#fff",
+    border: "#0000000f",
+    borderStrong: "#00000022",
+    inputBg: "#fff",
+    inputBorder: "#0000001f",
+  };
 }
 
 // ————————————————————————————————————————————————————————————
@@ -320,7 +372,7 @@ function renderHero(ctx: Ctx): string {
   }
   if (v === 2) {
     return `
-    <section class="relative bg-white text-center overflow-hidden" style="color:${p.ink}">
+    <section class="relative text-center overflow-hidden" style="background:${ctx.S.page};color:${p.ink}">
       <div class="max-w-4xl mx-auto px-6" style="${sectionPad(ctx)}">
         ${copy}
         <div class="leo-reveal leo-in leo-scale" style="transition-delay:.15s">${img(ctx, 0, 1200, 600, "mt-12 w-full object-cover shadow-xl leo-card", `border-radius:${R.img};height:26rem`)}</div>
@@ -339,12 +391,13 @@ function renderHero(ctx: Ctx): string {
   }
   if (v === 5) {
     // 全出血图 + 底部浮层卡片（文案落在卡上）
+    const cardBg = dna.forceDark ? `${p.soft}e6` : "#ffffffef";
     return `
     <section class="relative overflow-hidden" style="min-height:74vh">
       ${img(ctx, 0, 1600, 1000, "absolute inset-0 h-full w-full object-cover leo-kenburns")}
       <div class="absolute inset-0" style="background:linear-gradient(to top,#000a 0%,#0003 55%,transparent)"></div>
       <div class="relative max-w-6xl mx-auto px-6 flex items-end" style="min-height:74vh;padding-bottom:3.5rem">
-        <div class="leo-reveal leo-in max-w-xl p-8 shadow-2xl" style="background:#ffffffef;border-radius:${R.card};backdrop-filter:blur(6px);color:${p.ink}">
+        <div class="leo-reveal leo-in max-w-xl p-8 shadow-2xl" style="background:${cardBg};border:1px solid ${ctx.S.border};border-radius:${R.card};backdrop-filter:blur(6px);color:${p.ink}">
           ${badge}<div class="mt-4">${title}</div>${subt}${ctas}
         </div>
       </div>
@@ -372,7 +425,7 @@ function renderStats(ctx: Ctx): string {
     )
     .join("");
   if (v === 0) {
-    return `<section class="bg-white"><div class="max-w-6xl mx-auto px-6 py-12 grid grid-cols-2 md:grid-cols-4 gap-8">${items}</div></section>`;
+    return `<section style="background:${ctx.S.page}"><div class="max-w-6xl mx-auto px-6 py-12 grid grid-cols-2 md:grid-cols-4 gap-8">${items}</div></section>`;
   }
   if (v === 2) {
     // 深色渐变横幅数字（白字 + 分隔线）
@@ -383,7 +436,7 @@ function renderStats(ctx: Ctx): string {
       .join("");
     return `<section class="leo-grad-anim" style="background:linear-gradient(120deg,${p.gradFrom},${p.gradTo})"><div class="max-w-6xl mx-auto px-6 py-14 grid grid-cols-2 md:grid-cols-4 gap-8">${darkItems}</div></section>`;
   }
-  return `<section style="background:${p.soft}"><div class="max-w-6xl mx-auto px-6 py-12"><div class="grid grid-cols-2 md:grid-cols-4 gap-6" style="background:#fff;border-radius:${R.card};padding:2rem;box-shadow:0 10px 30px #0000000d">${items}</div></div></section>`;
+  return `<section style="background:${p.soft}"><div class="max-w-6xl mx-auto px-6 py-12"><div class="grid grid-cols-2 md:grid-cols-4 gap-6" style="background:${ctx.S.card};border:1px solid ${ctx.S.border};border-radius:${R.card};padding:2rem;box-shadow:0 10px 30px #0000000d">${items}</div></div></section>`;
 }
 
 function renderAbout(ctx: Ctx): string {
@@ -408,9 +461,9 @@ function renderAbout(ctx: Ctx): string {
     </div>`;
   if (v === 2) {
     // 纯文字双栏（无图）
-    return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6 grid md:grid-cols-5 gap-10 items-start"><div class="md:col-span-2"><span class="inline-block px-3 py-1 text-xs font-medium" style="background:${p.soft};color:${p.primary};border-radius:${R.pill}">${esc(c.aboutTitle)}</span><h2 class="mt-4" style="font-size:${ctx.D.h2};font-weight:800;color:${p.ink}">${esc(c.heroTitle)}</h2></div><div class="md:col-span-3">${c.aboutBody.map((t) => `<p class="mb-4 leading-relaxed" style="color:${p.sub}">${esc(t)}</p>`).join("")}<ul class="mt-2 grid sm:grid-cols-2 gap-2">${checks}</ul></div></div></section>`;
+    return `<section style="background:${ctx.S.page};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6 grid md:grid-cols-5 gap-10 items-start"><div class="md:col-span-2"><span class="inline-block px-3 py-1 text-xs font-medium" style="background:${p.soft};color:${p.primary};border-radius:${R.pill}">${esc(c.aboutTitle)}</span><h2 class="mt-4" style="font-size:${ctx.D.h2};font-weight:800;color:${p.ink}">${esc(c.heroTitle)}</h2></div><div class="md:col-span-3">${c.aboutBody.map((t) => `<p class="mb-4 leading-relaxed" style="color:${p.sub}">${esc(t)}</p>`).join("")}<ul class="mt-2 grid sm:grid-cols-2 gap-2">${checks}</ul></div></div></section>`;
   }
-  return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">${v === 1 ? pic + text : text + pic}</div></section>`;
+  return `<section style="background:${ctx.S.page};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">${v === 1 ? pic + text : text + pic}</div></section>`;
 }
 
 const FEATURE_ICONS = [
@@ -423,34 +476,36 @@ const FEATURE_ICONS = [
 ];
 
 function renderFeatures(ctx: Ctx): string {
-  const { c, p, R } = ctx;
+  const { c, p, R, S } = ctx;
   const v = ctx.variantOf("features", 4);
   const feats = c.features.slice(0, 6);
+  // v3「深色卡片」原本用 p.ink 当卡底 + 白字——深色配色时 p.ink 近白，会白底白字。
+  const darkCardBg = ctx.dna.forceDark ? p.primaryDark : p.ink;
   const cards = feats
     .map((f, i) => {
       const icon = svgIcon(f.icon || FEATURE_ICONS[i % FEATURE_ICONS.length], p.primary, 24);
       if (v === 1) {
         // 左图标右文（行式）
-        return `<div class="flex gap-4 p-5" style="background:#fff;border-radius:${R.card};box-shadow:0 6px 20px #0000000a"><div class="shrink-0 h-11 w-11 flex items-center justify-center" style="background:${p.soft};border-radius:${R.btn}">${icon}</div><div><h3 class="font-semibold" style="color:${p.ink}">${esc(f.title)}</h3><p class="mt-1 text-sm" style="color:${p.sub}">${esc(f.desc)}</p></div></div>`;
+        return `<div class="flex gap-4 p-5" style="background:${S.card};border:1px solid ${S.border};border-radius:${R.card};box-shadow:0 6px 20px #0000000a"><div class="shrink-0 h-11 w-11 flex items-center justify-center" style="background:${p.soft};border-radius:${R.btn}">${icon}</div><div><h3 class="font-semibold" style="color:${p.ink}">${esc(f.title)}</h3><p class="mt-1 text-sm" style="color:${p.sub}">${esc(f.desc)}</p></div></div>`;
       }
       if (v === 2) {
         // 极简描边 · 顶部数字
-        return `<div class="p-6" style="border:1px solid #0000000f;border-radius:${R.card}"><div class="text-3xl font-extrabold" style="color:${p.primary}">${String(i + 1).padStart(2, "0")}</div><h3 class="mt-3 font-semibold" style="color:${p.ink}">${esc(f.title)}</h3><p class="mt-2 text-sm" style="color:${p.sub}">${esc(f.desc)}</p></div>`;
+        return `<div class="p-6" style="border:1px solid ${S.border};border-radius:${R.card}"><div class="text-3xl font-extrabold" style="color:${p.primary}">${String(i + 1).padStart(2, "0")}</div><h3 class="mt-3 font-semibold" style="color:${p.ink}">${esc(f.title)}</h3><p class="mt-2 text-sm" style="color:${p.sub}">${esc(f.desc)}</p></div>`;
       }
       if (v === 3) {
         // 深色卡片
-        return `<div class="p-6 text-white" style="background:${p.ink};border-radius:${R.card}"><div class="h-11 w-11 flex items-center justify-center" style="background:${p.primary};border-radius:${R.btn}">${svgIcon(f.icon || FEATURE_ICONS[i % FEATURE_ICONS.length], "#fff", 22)}</div><h3 class="mt-4 font-semibold">${esc(f.title)}</h3><p class="mt-2 text-sm text-white/70">${esc(f.desc)}</p></div>`;
+        return `<div class="p-6 text-white" style="background:${darkCardBg};border-radius:${R.card}"><div class="h-11 w-11 flex items-center justify-center" style="background:${p.primary};border-radius:${R.btn}">${svgIcon(f.icon || FEATURE_ICONS[i % FEATURE_ICONS.length], "#fff", 22)}</div><h3 class="mt-4 font-semibold">${esc(f.title)}</h3><p class="mt-2 text-sm text-white/70">${esc(f.desc)}</p></div>`;
       }
       // v0 默认卡片
-      return `<div class="leo-card p-6 transition hover:-translate-y-1" style="background:#fff;border:1px solid #0000000a;border-radius:${R.card};box-shadow:0 6px 20px #0000000a"><div class="h-12 w-12 flex items-center justify-center" style="background:${p.soft};border-radius:${R.btn}">${icon}</div><h3 class="mt-4 font-semibold text-lg" style="color:${p.ink}">${esc(f.title)}</h3><p class="mt-2 text-sm leading-relaxed" style="color:${p.sub}">${esc(f.desc)}</p></div>`;
+      return `<div class="leo-card p-6 transition hover:-translate-y-1" style="background:${S.card};border:1px solid ${S.border};border-radius:${R.card};box-shadow:0 6px 20px #0000000a"><div class="h-12 w-12 flex items-center justify-center" style="background:${p.soft};border-radius:${R.btn}">${icon}</div><h3 class="mt-4 font-semibold text-lg" style="color:${p.ink}">${esc(f.title)}</h3><p class="mt-2 text-sm leading-relaxed" style="color:${p.sub}">${esc(f.desc)}</p></div>`;
     })
     .join("");
-  const bg = v === 3 ? "background:#fff" : `background:${p.soft}`;
+  const bg = v === 3 ? `background:${S.page}` : `background:${p.soft}`;
   return `<section style="${bg};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, c.featuresTitle, c.featuresSubtitle)}<div class="mt-12 grid md:grid-cols-3 gap-6" style="gap:${ctx.D.gap}">${cards}</div></div></section>`;
 }
 
 function renderServices(ctx: Ctx): string {
-  const { c, p, R } = ctx;
+  const { c, p, R, S } = ctx;
   const v = ctx.variantOf("services", 4);
   const svc = c.services;
   if (v === 1) {
@@ -460,13 +515,13 @@ function renderServices(ctx: Ctx): string {
         (s, i) => `<div class="group relative overflow-hidden" style="border-radius:${R.img}">${img(ctx, 20 + i, 600, 440, "h-56 w-full object-cover transition duration-500 group-hover:scale-105")}<div class="absolute inset-0" style="background:linear-gradient(to top,#000c,transparent)"></div><div class="absolute bottom-0 p-5 text-white"><h3 class="text-lg font-semibold">${esc(s.name)}</h3><p class="mt-1 text-sm text-white/80">${esc(s.desc)}</p></div></div>`,
       )
       .join("");
-    return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, c.servicesTitle, c.servicesSubtitle)}<div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">${cards}</div></div></section>`;
+    return `<section style="background:${S.page};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, c.servicesTitle, c.servicesSubtitle)}<div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">${cards}</div></div></section>`;
   }
   if (v === 2) {
     // 编号列表（无图）
     const rows = svc
       .map(
-        (s, i) => `<div class="flex gap-5 py-6" style="border-bottom:1px solid #0000000d"><div class="text-2xl font-extrabold w-12 shrink-0" style="color:${p.primary}">${String(i + 1).padStart(2, "0")}</div><div><h3 class="font-semibold text-lg" style="color:${p.ink}">${esc(s.name)}</h3><p class="mt-1 text-sm" style="color:${p.sub}">${esc(s.desc)}</p></div></div>`,
+        (s, i) => `<div class="flex gap-5 py-6" style="border-bottom:1px solid ${S.border}"><div class="text-2xl font-extrabold w-12 shrink-0" style="color:${p.primary}">${String(i + 1).padStart(2, "0")}</div><div><h3 class="font-semibold text-lg" style="color:${p.ink}">${esc(s.name)}</h3><p class="mt-1 text-sm" style="color:${p.sub}">${esc(s.desc)}</p></div></div>`,
       )
       .join("");
     return `<section style="background:${p.soft};${sectionPad(ctx)}"><div class="max-w-4xl mx-auto px-6">${heading(ctx, c.servicesTitle, c.servicesSubtitle, "left")}<div class="mt-8">${rows}</div></div></section>`;
@@ -475,7 +530,7 @@ function renderServices(ctx: Ctx): string {
     // 图标卡 + 浅底
     const cards = svc
       .map(
-        (s, i) => `<div class="p-6 text-center" style="background:#fff;border-radius:${R.card};box-shadow:0 6px 20px #0000000a"><div class="mx-auto h-14 w-14 flex items-center justify-center" style="background:${p.soft};border-radius:9999px">${svgIcon(FEATURE_ICONS[i % FEATURE_ICONS.length], p.primary, 26)}</div><h3 class="mt-4 font-semibold" style="color:${p.ink}">${esc(s.name)}</h3><p class="mt-2 text-sm" style="color:${p.sub}">${esc(s.desc)}</p></div>`,
+        (s, i) => `<div class="p-6 text-center" style="background:${S.card};border:1px solid ${S.border};border-radius:${R.card};box-shadow:0 6px 20px #0000000a"><div class="mx-auto h-14 w-14 flex items-center justify-center" style="background:${p.soft};border-radius:9999px">${svgIcon(FEATURE_ICONS[i % FEATURE_ICONS.length], p.primary, 26)}</div><h3 class="mt-4 font-semibold" style="color:${p.ink}">${esc(s.name)}</h3><p class="mt-2 text-sm" style="color:${p.sub}">${esc(s.desc)}</p></div>`,
       )
       .join("");
     return `<section style="background:${p.soft};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, c.servicesTitle, c.servicesSubtitle)}<div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">${cards}</div></div></section>`;
@@ -483,23 +538,25 @@ function renderServices(ctx: Ctx): string {
   // v0 卡片 + 小图
   const cards = svc
     .map(
-      (s, i) => `<div class="overflow-hidden" style="background:#fff;border:1px solid #0000000a;border-radius:${R.card}">${img(ctx, 20 + i, 600, 360, "h-40 w-full object-cover")}<div class="p-5"><h3 class="font-semibold" style="color:${p.ink}">${esc(s.name)}</h3><p class="mt-1 text-sm" style="color:${p.sub}">${esc(s.desc)}</p></div></div>`,
+      (s, i) => `<div class="overflow-hidden" style="background:${S.card};border:1px solid ${S.border};border-radius:${R.card}">${img(ctx, 20 + i, 600, 360, "h-40 w-full object-cover")}<div class="p-5"><h3 class="font-semibold" style="color:${p.ink}">${esc(s.name)}</h3><p class="mt-1 text-sm" style="color:${p.sub}">${esc(s.desc)}</p></div></div>`,
     )
     .join("");
-  return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, c.servicesTitle, c.servicesSubtitle)}<div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">${cards}</div></div></section>`;
+  return `<section style="background:${S.page};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, c.servicesTitle, c.servicesSubtitle)}<div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">${cards}</div></div></section>`;
 }
 
 function renderProducts(ctx: Ctx): string {
-  const { ext, p, R } = ctx;
+  const { ext, p, R, S } = ctx;
   const v = ctx.variantOf("products", 3);
   const st = ctx.st("products");
+  // 加购按钮原本用 p.ink 当底 + 白字——深色配色时 p.ink 近白，会白底白字。
+  const cartBtnBg = ctx.dna.forceDark ? p.primary : p.ink;
   if (v === 1) {
     // 首件焦点大图 + 其余小卡
     const [first, ...rest] = ext.products;
     const small = rest
       .slice(0, 4)
       .map(
-        (pr, i) => `<div class="flex items-center gap-4 p-3" style="background:#fff;border:1px solid #0000000d;border-radius:${R.card}"><div class="shrink-0 w-20 h-20 overflow-hidden" style="border-radius:${R.btn}">${img(ctx, 41 + i, 240, 240, "h-full w-full object-cover")}</div><div class="min-w-0"><h3 class="font-medium truncate" style="color:${ctx.p.ink}">${esc(pr.name)}</h3><div class="mt-1 font-extrabold" style="color:${p.primary}">${esc(pr.price)}</div></div></div>`,
+        (pr, i) => `<div class="flex items-center gap-4 p-3" style="background:${S.card};border:1px solid ${S.border};border-radius:${R.card}"><div class="shrink-0 w-20 h-20 overflow-hidden" style="border-radius:${R.btn}">${img(ctx, 41 + i, 240, 240, "h-full w-full object-cover")}</div><div class="min-w-0"><h3 class="font-medium truncate" style="color:${ctx.p.ink}">${esc(pr.name)}</h3><div class="mt-1 font-extrabold" style="color:${p.primary}">${esc(pr.price)}</div></div></div>`,
       )
       .join("");
     return `<section style="background:${p.soft};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, st.title, st.sub)}<div class="mt-12 grid md:grid-cols-2 gap-6"><div class="relative overflow-hidden" style="border-radius:${R.img}">${img(ctx, 40, 900, 900, "h-full w-full object-cover", "min-height:22rem")}<div class="absolute bottom-0 inset-x-0 p-6 text-white" style="background:linear-gradient(to top,#000c,transparent)"><span class="px-2 py-1 text-xs font-semibold" style="background:${p.primary};border-radius:${R.pill}">${esc(first?.note ?? "")}</span><h3 class="mt-2 text-xl font-bold">${esc(first?.name ?? "")}</h3><div class="mt-1 text-lg font-extrabold">${esc(first?.price ?? "")}</div></div></div><div class="grid content-start gap-4">${small}</div></div></div></section>`;
@@ -508,17 +565,17 @@ function renderProducts(ctx: Ctx): string {
     // 横滚商品条
     const cards = ext.products
       .map(
-        (pr, i) => `<div class="shrink-0 w-60 snap-start overflow-hidden" style="background:#fff;border:1px solid #0000000d;border-radius:${R.card}">${img(ctx, 40 + i, 480, 480, "aspect-square w-full object-cover")}<div class="p-4"><h3 class="font-medium truncate" style="color:${ctx.p.ink}">${esc(pr.name)}</h3><div class="mt-1.5 flex items-center justify-between"><span class="font-extrabold" style="color:${p.primary}">${esc(pr.price)}</span><span class="text-xs" style="color:${p.sub}">${esc(pr.note)}</span></div></div></div>`,
+        (pr, i) => `<div class="shrink-0 w-60 snap-start overflow-hidden" style="background:${S.card};border:1px solid ${S.border};border-radius:${R.card}">${img(ctx, 40 + i, 480, 480, "aspect-square w-full object-cover")}<div class="p-4"><h3 class="font-medium truncate" style="color:${ctx.p.ink}">${esc(pr.name)}</h3><div class="mt-1.5 flex items-center justify-between"><span class="font-extrabold" style="color:${p.primary}">${esc(pr.price)}</span><span class="text-xs" style="color:${p.sub}">${esc(pr.note)}</span></div></div></div>`,
       )
       .join("");
-    return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, st.title, st.sub, "left")}</div><div class="mt-10 flex gap-4 overflow-x-auto px-6 pb-4 snap-x" style="scrollbar-width:thin">${cards}</div></section>`;
+    return `<section style="background:${S.page};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, st.title, st.sub, "left")}</div><div class="mt-10 flex gap-4 overflow-x-auto px-6 pb-4 snap-x" style="scrollbar-width:thin">${cards}</div></section>`;
   }
   const cards = ext.products
     .map(
-      (pr, i) => `<div class="group overflow-hidden" style="background:#fff;border:1px solid #0000000a;border-radius:${R.card}"><div class="relative">${img(ctx, 40 + i, 500, 500, "aspect-square w-full object-cover transition group-hover:scale-105")}<span class="absolute top-3 left-3 px-2 py-1 text-xs font-semibold text-white" style="background:${p.primary};border-radius:${R.pill}">${esc(pr.note)}</span></div><div class="p-4"><h3 class="font-medium truncate" style="color:${ctx.p.ink}">${esc(pr.name)}</h3><div class="mt-2 flex items-center justify-between"><span class="font-extrabold" style="color:${p.primary}">${esc(pr.price)}</span><button class="px-3 py-1.5 text-xs font-semibold text-white" style="background:${p.ink};border-radius:${R.btn}">${ctx.u("addToCart")}</button></div></div></div>`,
+      (pr, i) => `<div class="group overflow-hidden" style="background:${S.card};border:1px solid ${S.border};border-radius:${R.card}"><div class="relative">${img(ctx, 40 + i, 500, 500, "aspect-square w-full object-cover transition group-hover:scale-105")}<span class="absolute top-3 left-3 px-2 py-1 text-xs font-semibold text-white" style="background:${p.primary};border-radius:${R.pill}">${esc(pr.note)}</span></div><div class="p-4"><h3 class="font-medium truncate" style="color:${ctx.p.ink}">${esc(pr.name)}</h3><div class="mt-2 flex items-center justify-between"><span class="font-extrabold" style="color:${p.primary}">${esc(pr.price)}</span><button class="px-3 py-1.5 text-xs font-semibold text-white" style="background:${cartBtnBg};border-radius:${R.btn}">${ctx.u("addToCart")}</button></div></div></div>`,
     )
     .join("");
-  return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, st.title, st.sub)}<div class="mt-12 grid grid-cols-2 lg:grid-cols-4 gap-5">${cards}</div></div></section>`;
+  return `<section style="background:${S.page};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, st.title, st.sub)}<div class="mt-12 grid grid-cols-2 lg:grid-cols-4 gap-5">${cards}</div></div></section>`;
 }
 
 function renderMenu(ctx: Ctx): string {
@@ -527,7 +584,7 @@ function renderMenu(ctx: Ctx): string {
     .map(
       (g) => `<div><h3 class="text-lg font-bold mb-4 inline-block pb-1" style="color:${p.ink};border-bottom:3px solid ${p.primary}">${esc(g.group)}</h3><div class="space-y-3">${g.items
         .map(
-          (it) => `<div class="flex items-baseline gap-3"><span style="color:${ctx.p.ink};font-weight:500">${esc(it.name)}</span><span class="flex-1" style="border-bottom:1px dotted #00000022"></span><span style="color:${p.primary};font-weight:700">${esc(it.price)}</span></div>`,
+          (it) => `<div class="flex items-baseline gap-3"><span style="color:${ctx.p.ink};font-weight:500">${esc(it.name)}</span><span class="flex-1" style="border-bottom:1px dotted ${ctx.S.borderStrong}"></span><span style="color:${p.primary};font-weight:700">${esc(it.price)}</span></div>`,
         )
         .join("")}</div></div>`,
     )
@@ -542,7 +599,7 @@ function renderGallery(ctx: Ctx): string {
   if (v === 1) {
     // 不等高拼贴（首图大跨两行）
     const rest = Array.from({ length: 4 }, (_, i) => `<div class="overflow-hidden" style="border-radius:${R.img}">${img(ctx, 61 + i, 600, 460, "h-full w-full object-cover transition hover:scale-105 duration-500", "min-height:11rem")}</div>`).join("");
-    return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, st.title, st.sub)}<div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-4"><div class="sm:col-span-2 sm:row-span-2 overflow-hidden" style="border-radius:${R.img}">${img(ctx, 60, 1000, 940, "h-full w-full object-cover transition hover:scale-105 duration-500", "min-height:23rem")}</div>${rest}</div></div></section>`;
+    return `<section style="background:${ctx.S.page};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, st.title, st.sub)}<div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-4"><div class="sm:col-span-2 sm:row-span-2 overflow-hidden" style="border-radius:${R.img}">${img(ctx, 60, 1000, 940, "h-full w-full object-cover transition hover:scale-105 duration-500", "min-height:23rem")}</div>${rest}</div></div></section>`;
   }
   if (v === 2) {
     // 横向滚动条带
@@ -550,7 +607,7 @@ function renderGallery(ctx: Ctx): string {
     return `<section style="background:${p.soft};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, st.title, st.sub, "left")}</div><div class="mt-10 flex gap-4 overflow-x-auto px-6 pb-4 snap-x" style="scrollbar-width:thin">${cells}</div></section>`;
   }
   const cells = Array.from({ length: 6 }, (_, i) => `<div class="overflow-hidden" style="border-radius:${R.img}">${img(ctx, 60 + i, 700, 520, "aspect-[4/3] w-full object-cover transition hover:scale-105 duration-500")}</div>`).join("");
-  return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, st.title, st.sub)}<div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">${cells}</div></div></section>`;
+  return `<section style="background:${ctx.S.page};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, st.title, st.sub)}<div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">${cells}</div></div></section>`;
 }
 
 function renderCases(ctx: Ctx): string {
@@ -565,7 +622,7 @@ function renderCases(ctx: Ctx): string {
         (cs, i) => `<div class="grid md:grid-cols-2 gap-8 items-center"><div class="${i % 2 ? "md:order-2" : ""} overflow-hidden" style="border-radius:${R.img}">${img(ctx, 80 + i, 800, 520, "w-full object-cover", "height:16rem")}</div><div class="${i % 2 ? "md:order-1" : ""}"><span class="inline-block px-2 py-0.5 text-xs font-medium" style="background:${p.soft};color:${p.primary};border-radius:${R.pill}">${esc(cs.tag)}</span><h3 class="mt-3 text-xl font-bold" style="color:${ctx.p.ink}">${esc(cs.title)}</h3><p class="mt-3 leading-relaxed text-sm" style="color:${p.sub}">${esc(cs.desc)}</p><a href="#" class="mt-4 inline-block text-sm font-semibold" style="color:${p.primary}">${ctx.u("viewDetail")} →</a></div></div>`,
       )
       .join(`<div class="my-12"></div>`);
-    return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-5xl mx-auto px-6">${heading(ctx, st.title, st.sub)}<div class="mt-12">${rows}</div></div></section>`;
+    return `<section style="background:${ctx.S.page};${sectionPad(ctx)}"><div class="max-w-5xl mx-auto px-6">${heading(ctx, st.title, st.sub)}<div class="mt-12">${rows}</div></div></section>`;
   }
   if (v === 2) {
     // 大图叠字卡（横向 2 列）
@@ -579,21 +636,21 @@ function renderCases(ctx: Ctx): string {
   }
   const cards = ext.cases
     .map(
-      (cs, i) => `<div class="leo-card overflow-hidden" style="background:#fff;border:1px solid #0000000a;border-radius:${R.card}">${img(ctx, 80 + i, 700, 440, "h-44 w-full object-cover")}<div class="p-5"><span class="inline-block px-2 py-0.5 text-xs font-medium" style="background:${p.soft};color:${p.primary};border-radius:${R.pill}">${esc(cs.tag)}</span><h3 class="mt-3 font-semibold" style="color:${ctx.p.ink}">${esc(cs.title)}</h3><p class="mt-2 text-sm" style="color:${p.sub}">${esc(cs.desc)}</p></div></div>`,
+      (cs, i) => `<div class="leo-card overflow-hidden" style="background:${ctx.S.card};border:1px solid ${ctx.S.border};border-radius:${R.card}">${img(ctx, 80 + i, 700, 440, "h-44 w-full object-cover")}<div class="p-5"><span class="inline-block px-2 py-0.5 text-xs font-medium" style="background:${p.soft};color:${p.primary};border-radius:${R.pill}">${esc(cs.tag)}</span><h3 class="mt-3 font-semibold" style="color:${ctx.p.ink}">${esc(cs.title)}</h3><p class="mt-2 text-sm" style="color:${p.sub}">${esc(cs.desc)}</p></div></div>`,
     )
     .join("");
   return `<section style="background:${p.soft};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, st.title, st.sub)}<div class="mt-12 grid md:grid-cols-3 gap-6">${cards}</div></div></section>`;
 }
 
 function renderTeam(ctx: Ctx): string {
-  const { ext, p, R } = ctx;
+  const { ext, p, R, S } = ctx;
   const v = ctx.variantOf("team", 3);
   const st = ctx.st("team");
   if (v === 1) {
     // 竖版人像卡（图上文下、hover 上浮）
     const cards = ext.team
       .map(
-        (m, i) => `<div class="leo-card overflow-hidden transition hover:-translate-y-1" style="background:#fff;border:1px solid #0000000a;border-radius:${R.card}">${img(ctx, 100 + i, 480, 560, "aspect-[6/7] w-full object-cover")}<div class="p-4 text-center"><h3 class="font-semibold" style="color:${ctx.p.ink}">${esc(m.name)}</h3><p class="mt-0.5 text-sm" style="color:${p.primary}">${esc(m.role)}</p></div></div>`,
+        (m, i) => `<div class="leo-card overflow-hidden transition hover:-translate-y-1" style="background:${S.card};border:1px solid ${S.border};border-radius:${R.card}">${img(ctx, 100 + i, 480, 560, "aspect-[6/7] w-full object-cover")}<div class="p-4 text-center"><h3 class="font-semibold" style="color:${ctx.p.ink}">${esc(m.name)}</h3><p class="mt-0.5 text-sm" style="color:${p.primary}">${esc(m.role)}</p></div></div>`,
       )
       .join("");
     return `<section style="background:${p.soft};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, st.title, st.sub)}<div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6">${cards}</div></div></section>`;
@@ -605,46 +662,48 @@ function renderTeam(ctx: Ctx): string {
       : `深耕${esc(ctx.meta.subLabel)}多年，实战经验丰富。`;
     const rows = ext.team
       .map(
-        (m, i) => `<div class="flex items-center gap-4 p-5" style="background:#fff;border:1px solid #0000000d;border-radius:${R.card}"><div class="shrink-0" style="width:4.5rem;height:4.5rem">${img(ctx, 100 + i, 300, 300, "h-full w-full object-cover", "border-radius:9999px")}</div><div><h3 class="font-semibold" style="color:${ctx.p.ink}">${esc(m.name)}</h3><p class="text-sm" style="color:${p.primary}">${esc(m.role)}</p><p class="mt-1 text-xs" style="color:${p.sub}">${blurb}</p></div></div>`,
+        (m, i) => `<div class="flex items-center gap-4 p-5" style="background:${S.card};border:1px solid ${S.border};border-radius:${R.card}"><div class="shrink-0" style="width:4.5rem;height:4.5rem">${img(ctx, 100 + i, 300, 300, "h-full w-full object-cover", "border-radius:9999px")}</div><div><h3 class="font-semibold" style="color:${ctx.p.ink}">${esc(m.name)}</h3><p class="text-sm" style="color:${p.primary}">${esc(m.role)}</p><p class="mt-1 text-xs" style="color:${p.sub}">${blurb}</p></div></div>`,
       )
       .join("");
-    return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-5xl mx-auto px-6">${heading(ctx, st.title, st.sub)}<div class="mt-12 grid md:grid-cols-2 gap-5">${rows}</div></div></section>`;
+    return `<section style="background:${S.page};${sectionPad(ctx)}"><div class="max-w-5xl mx-auto px-6">${heading(ctx, st.title, st.sub)}<div class="mt-12 grid md:grid-cols-2 gap-5">${rows}</div></div></section>`;
   }
   const cards = ext.team
     .map(
       (m, i) => `<div class="text-center"><div class="relative mx-auto" style="width:11rem;height:11rem">${img(ctx, 100 + i, 400, 400, "h-full w-full object-cover", `border-radius:${R.img}`)}</div><h3 class="mt-4 font-semibold" style="color:${ctx.p.ink}">${esc(m.name)}</h3><p class="text-sm" style="color:${p.primary}">${esc(m.role)}</p></div>`,
     )
     .join("");
-  return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, st.title, st.sub)}<div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-8">${cards}</div></div></section>`;
+  return `<section style="background:${S.page};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, st.title, st.sub)}<div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-8">${cards}</div></div></section>`;
 }
 
 function renderPricing(ctx: Ctx): string {
-  const { ext, p, R } = ctx;
+  const { ext, p, R, S } = ctx;
   const v = ctx.variantOf("pricing", 3);
+  // 高亮卡原本用 p.ink 当底 + 白字——深色配色时 p.ink 近白，会白底白字。
+  const featuredCardBg = ctx.dna.forceDark ? p.primaryDark : p.ink;
   if (v === 1) {
     // 横排价目行（表格感）
     const rows = ext.pricing
       .map(
-        (pl) => `<div class="flex flex-col sm:flex-row sm:items-center gap-4 p-6 ${pl.featured ? "text-white" : ""}" style="${pl.featured ? `background:linear-gradient(120deg,${p.gradFrom},${p.gradTo})` : "background:#fff"};border:1px solid #0000000d;border-radius:${R.card}"><div class="sm:w-40"><h3 class="font-bold text-lg">${esc(pl.name)}</h3>${pl.featured ? `<span class="inline-block mt-1 px-2 py-0.5 text-xs bg-white/20" style="border-radius:${R.pill}">${ctx.u("recommended")}</span>` : ""}</div><div class="flex-1 flex flex-wrap gap-x-5 gap-y-1 text-sm ${pl.featured ? "text-white/85" : ""}" style="${pl.featured ? "" : `color:${p.sub}`}">${pl.features.map((f) => `<span>· ${esc(f)}</span>`).join("")}</div><div class="sm:text-right"><div class="text-2xl font-extrabold" style="${pl.featured ? "" : `color:${p.primary}`}">${esc(pl.price)}<span class="text-xs font-normal opacity-75">${esc(pl.unit)}</span></div><a href="#" data-go="contact" class="mt-2 inline-block px-5 py-2 text-sm font-semibold" style="${pl.featured ? `background:#fff;color:${p.primaryDark}` : `background:${p.soft};color:${p.primary}`};border-radius:${R.btn}">${ctx.u("consultNow")}</a></div></div>`,
+        (pl) => `<div class="flex flex-col sm:flex-row sm:items-center gap-4 p-6 ${pl.featured ? "text-white" : ""}" style="${pl.featured ? `background:linear-gradient(120deg,${p.gradFrom},${p.gradTo})` : `background:${S.card}`};border:1px solid ${S.border};border-radius:${R.card}"><div class="sm:w-40"><h3 class="font-bold text-lg">${esc(pl.name)}</h3>${pl.featured ? `<span class="inline-block mt-1 px-2 py-0.5 text-xs bg-white/20" style="border-radius:${R.pill}">${ctx.u("recommended")}</span>` : ""}</div><div class="flex-1 flex flex-wrap gap-x-5 gap-y-1 text-sm ${pl.featured ? "text-white/85" : ""}" style="${pl.featured ? "" : `color:${p.sub}`}">${pl.features.map((f) => `<span>· ${esc(f)}</span>`).join("")}</div><div class="sm:text-right"><div class="text-2xl font-extrabold" style="${pl.featured ? "" : `color:${p.primary}`}">${esc(pl.price)}<span class="text-xs font-normal opacity-75">${esc(pl.unit)}</span></div><a href="#" data-go="contact" class="mt-2 inline-block px-5 py-2 text-sm font-semibold" style="${pl.featured ? `background:#fff;color:${p.primaryDark}` : `background:${p.soft};color:${p.primary}`};border-radius:${R.btn}">${ctx.u("consultNow")}</a></div></div>`,
       )
       .join("");
-    return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-5xl mx-auto px-6">${heading(ctx, ctx.u("secPricing"), ctx.u("secPricingSub"))}<div class="mt-12 space-y-4">${rows}</div></div></section>`;
+    return `<section style="background:${S.page};${sectionPad(ctx)}"><div class="max-w-5xl mx-auto px-6">${heading(ctx, ctx.u("secPricing"), ctx.u("secPricingSub"))}<div class="mt-12 space-y-4">${rows}</div></div></section>`;
   }
   if (v === 2) {
     // 简洁双卡对比（首卡浅底、次卡描边）
     const two = ext.pricing.slice(0, 2);
     const cards2 = two
       .map(
-        (pl, i) => `<div class="p-8 flex flex-col" style="${i === 0 ? `background:${p.soft}` : `background:#fff;border:2px solid ${p.primary}`};border-radius:${R.card}"><h3 class="font-bold text-lg" style="color:${ctx.p.ink}">${esc(pl.name)}</h3><div class="mt-3"><span class="text-4xl font-extrabold" style="color:${p.primary}">${esc(pl.price)}</span><span class="text-sm" style="color:${p.sub}">${esc(pl.unit)}</span></div><ul class="mt-6 space-y-3 flex-1">${pl.features.map((f) => `<li class="flex items-center gap-2 text-sm" style="color:${ctx.p.sub}">${svgIcon("M20 6L9 17l-5-5", p.primary, 18)}${esc(f)}</li>`).join("")}</ul><a href="#" data-go="contact" class="mt-8 text-center px-5 py-3 font-semibold text-white" style="background:${p.primary};border-radius:${R.btn}">${ctx.u("consultNow")}</a></div>`,
+        (pl, i) => `<div class="p-8 flex flex-col" style="${i === 0 ? `background:${p.soft};border:1px solid ${S.border}` : `background:${S.card};border:2px solid ${p.primary}`};border-radius:${R.card}"><h3 class="font-bold text-lg" style="color:${ctx.p.ink}">${esc(pl.name)}</h3><div class="mt-3"><span class="text-4xl font-extrabold" style="color:${p.primary}">${esc(pl.price)}</span><span class="text-sm" style="color:${p.sub}">${esc(pl.unit)}</span></div><ul class="mt-6 space-y-3 flex-1">${pl.features.map((f) => `<li class="flex items-center gap-2 text-sm" style="color:${ctx.p.sub}">${svgIcon("M20 6L9 17l-5-5", p.primary, 18)}${esc(f)}</li>`).join("")}</ul><a href="#" data-go="contact" class="mt-8 text-center px-5 py-3 font-semibold text-white" style="background:${p.primary};border-radius:${R.btn}">${ctx.u("consultNow")}</a></div>`,
       )
       .join("");
-    return `<section style="background:#fff;${sectionPad(ctx)}"><div class="max-w-4xl mx-auto px-6">${heading(ctx, ctx.u("secPricing"), ctx.u("secPricingSub"))}<div class="mt-12 grid md:grid-cols-2 gap-6">${cards2}</div></div></section>`;
+    return `<section style="background:${S.page};${sectionPad(ctx)}"><div class="max-w-4xl mx-auto px-6">${heading(ctx, ctx.u("secPricing"), ctx.u("secPricingSub"))}<div class="mt-12 grid md:grid-cols-2 gap-6">${cards2}</div></div></section>`;
   }
   const cards = ext.pricing
     .map((pl) => {
       const feats = pl.features.map((f) => `<li class="flex items-center gap-2 text-sm" style="color:${pl.featured ? "#fff" : ctx.p.sub}">${svgIcon("M20 6L9 17l-5-5", pl.featured ? "#fff" : p.primary, 18)}${esc(f)}</li>`).join("");
       const featured = pl.featured;
-      return `<div class="p-7 flex flex-col" style="${featured ? `background:${p.ink};color:#fff;transform:scale(1.03)` : "background:#fff;color:" + ctx.p.ink};border:1px solid #0000000f;border-radius:${R.card};box-shadow:0 10px 30px #0000000f">
+      return `<div class="p-7 flex flex-col" style="${featured ? `background:${featuredCardBg};color:#fff;transform:scale(1.03)` : `background:${S.card};color:` + ctx.p.ink};border:1px solid ${featured ? "transparent" : S.border};border-radius:${R.card};box-shadow:0 10px 30px #0000000f">
         <h3 class="font-bold text-lg">${esc(pl.name)}</h3>
         <div class="mt-3"><span class="text-3xl font-extrabold" style="color:${featured ? "#fff" : p.primary}">${esc(pl.price)}</span><span class="text-sm opacity-70">${esc(pl.unit)}</span></div>
         <ul class="mt-6 space-y-3 flex-1">${feats}</ul>
@@ -656,14 +715,14 @@ function renderPricing(ctx: Ctx): string {
 }
 
 function renderProcess(ctx: Ctx): string {
-  const { ext, p, R } = ctx;
+  const { ext, p, R, S } = ctx;
   const v = ctx.variantOf("process", 3);
   const st = ctx.st("process");
   if (v === 1) {
     // 箭头连贯卡片
     const steps = ext.process
       .map(
-        (s, i) => `<div class="relative flex-1 p-6" style="background:#fff;border:1px solid #0000000d;border-radius:${R.card}"><div class="flex h-10 w-10 items-center justify-center font-bold text-white" style="background:${p.primary};border-radius:${R.btn}">${i + 1}</div><h3 class="mt-4 font-semibold" style="color:${ctx.p.ink}">${esc(s.title)}</h3><p class="mt-2 text-sm" style="color:${p.sub}">${esc(s.desc)}</p>${i < ext.process.length - 1 ? `<div class="hidden lg:flex absolute top-1/2 -right-5 z-10 h-8 w-8 items-center justify-center" style="color:${p.primary}">${svgIcon("M5 12h14M13 6l6 6-6 6", p.primary, 22)}</div>` : ""}</div>`,
+        (s, i) => `<div class="relative flex-1 p-6" style="background:${S.card};border:1px solid ${S.border};border-radius:${R.card}"><div class="flex h-10 w-10 items-center justify-center font-bold text-white" style="background:${p.primary};border-radius:${R.btn}">${i + 1}</div><h3 class="mt-4 font-semibold" style="color:${ctx.p.ink}">${esc(s.title)}</h3><p class="mt-2 text-sm" style="color:${p.sub}">${esc(s.desc)}</p>${i < ext.process.length - 1 ? `<div class="hidden lg:flex absolute top-1/2 -right-5 z-10 h-8 w-8 items-center justify-center" style="color:${p.primary}">${svgIcon("M5 12h14M13 6l6 6-6 6", p.primary, 22)}</div>` : ""}</div>`,
       )
       .join("");
     return `<section style="background:${p.soft};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, st.title, st.sub)}<div class="mt-12 flex flex-col lg:flex-row gap-6">${steps}</div></div></section>`;
@@ -674,26 +733,26 @@ function renderProcess(ctx: Ctx): string {
       .map(
         (s, i) => `<div class="grid md:grid-cols-2 gap-6 items-center ${i % 2 ? "md:text-right" : ""}"><div class="${i % 2 ? "md:order-2 md:text-left" : ""}"><div class="text-5xl font-extrabold" style="color:${p.primary};opacity:.18">${esc(s.step)}</div></div><div class="${i % 2 ? "md:order-1" : ""}"><h3 class="font-semibold text-lg" style="color:${ctx.p.ink}">${esc(s.title)}</h3><p class="mt-2 text-sm leading-relaxed" style="color:${p.sub}">${esc(s.desc)}</p></div></div>`,
       )
-      .join(`<div class="my-6" style="height:1px;background:#0000000d"></div>`);
-    return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-4xl mx-auto px-6">${heading(ctx, st.title, st.sub)}<div class="mt-12">${rows}</div></div></section>`;
+      .join(`<div class="my-6" style="height:1px;background:${S.border}"></div>`);
+    return `<section style="background:${S.page};${sectionPad(ctx)}"><div class="max-w-4xl mx-auto px-6">${heading(ctx, st.title, st.sub)}<div class="mt-12">${rows}</div></div></section>`;
   }
   const steps = ext.process
     .map(
       (s) => `<div class="relative"><div class="text-4xl font-extrabold" style="color:${p.primary};opacity:.25">${esc(s.step)}</div><h3 class="mt-2 font-semibold" style="color:${ctx.p.ink}">${esc(s.title)}</h3><p class="mt-2 text-sm" style="color:${p.sub}">${esc(s.desc)}</p></div>`,
     )
     .join("");
-  return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, st.title, st.sub)}<div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-8">${steps}</div></div></section>`;
+  return `<section style="background:${S.page};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, st.title, st.sub)}<div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-8">${steps}</div></div></section>`;
 }
 
 function renderTestimonials(ctx: Ctx): string {
-  const { c, p, R } = ctx;
+  const { c, p, R, S } = ctx;
   const v = ctx.variantOf("testimonials", 3);
   if (v === 1) {
     // 大引号单条焦点 + 侧边其余
     const [first, ...rest] = c.testimonials;
     const side = rest
       .map(
-        (t) => `<div class="p-5" style="background:#fff;border:1px solid #0000000d;border-radius:${R.card}"><p class="text-sm leading-relaxed" style="color:${p.sub}">“${esc(t.text)}”</p><div class="mt-3 text-xs font-semibold" style="color:${ctx.p.ink}">${esc(t.name)} · <span style="color:${p.sub};font-weight:400">${esc(t.role)}</span></div></div>`,
+        (t) => `<div class="p-5" style="background:${S.card};border:1px solid ${S.border};border-radius:${R.card}"><p class="text-sm leading-relaxed" style="color:${p.sub}">“${esc(t.text)}”</p><div class="mt-3 text-xs font-semibold" style="color:${ctx.p.ink}">${esc(t.name)} · <span style="color:${p.sub};font-weight:400">${esc(t.role)}</span></div></div>`,
       )
       .join("");
     return `<section style="background:${p.soft};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, c.testimonialsTitle, undefined, "left")}<div class="mt-10 grid md:grid-cols-2 gap-8 items-start"><div class="p-8 text-white leo-grad-anim" style="background:linear-gradient(135deg,${p.gradFrom},${p.gradTo});border-radius:${R.card}"><div style="font-size:4rem;line-height:1;opacity:.35;font-weight:800">“</div><p class="text-lg leading-relaxed">${esc(first?.text ?? "")}</p><div class="mt-6 flex items-center gap-3"><div class="h-11 w-11 flex items-center justify-center bg-white font-bold" style="color:${p.primary};border-radius:9999px">${esc((first?.name ?? "客").slice(0, 1))}</div><div><div class="font-semibold">${esc(first?.name ?? "")}</div><div class="text-xs text-white/75">${esc(first?.role ?? "")}</div></div></div></div><div class="space-y-4">${side}</div></div></div></section>`;
@@ -702,25 +761,25 @@ function renderTestimonials(ctx: Ctx): string {
     // 简洁分栏（无卡片、竖线分隔）
     const cols = c.testimonials
       .map(
-        (t, i) => `<div class="px-6 ${i > 0 ? "md:border-l" : ""}" style="border-color:#0000000f"><div class="text-lg" style="color:${p.primary}">★★★★★</div><p class="mt-3 text-sm leading-relaxed" style="color:${ctx.p.ink}">“${esc(t.text)}”</p><div class="mt-4 text-xs font-semibold" style="color:${p.sub}">${esc(t.name)} · ${esc(t.role)}</div></div>`,
+        (t, i) => `<div class="px-6 ${i > 0 ? "md:border-l" : ""}" style="border-color:${S.border}"><div class="text-lg" style="color:${p.primary}">★★★★★</div><p class="mt-3 text-sm leading-relaxed" style="color:${ctx.p.ink}">“${esc(t.text)}”</p><div class="mt-4 text-xs font-semibold" style="color:${p.sub}">${esc(t.name)} · ${esc(t.role)}</div></div>`,
       )
       .join("");
-    return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, c.testimonialsTitle)}<div class="mt-12 grid md:grid-cols-3 gap-y-8">${cols}</div></div></section>`;
+    return `<section style="background:${S.page};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, c.testimonialsTitle)}<div class="mt-12 grid md:grid-cols-3 gap-y-8">${cols}</div></div></section>`;
   }
   const cards = c.testimonials
     .map(
-      (t) => `<div class="p-6" style="background:#fff;border:1px solid #0000000a;border-radius:${R.card};box-shadow:0 6px 20px #0000000a"><div class="flex gap-1 mb-3" style="color:${p.primary}">★★★★★</div><p class="text-sm leading-relaxed" style="color:${p.sub}">“${esc(t.text)}”</p><div class="mt-4 flex items-center gap-3"><div class="h-10 w-10 flex items-center justify-center text-white font-semibold" style="background:${p.primary};border-radius:9999px">${esc(t.name.slice(0, 1))}</div><div><div class="text-sm font-semibold" style="color:${ctx.p.ink}">${esc(t.name)}</div><div class="text-xs" style="color:${p.sub};opacity:.8">${esc(t.role)}</div></div></div></div>`,
+      (t) => `<div class="p-6" style="background:${S.card};border:1px solid ${S.border};border-radius:${R.card};box-shadow:0 6px 20px #0000000a"><div class="flex gap-1 mb-3" style="color:${p.primary}">★★★★★</div><p class="text-sm leading-relaxed" style="color:${p.sub}">“${esc(t.text)}”</p><div class="mt-4 flex items-center gap-3"><div class="h-10 w-10 flex items-center justify-center text-white font-semibold" style="background:${p.primary};border-radius:9999px">${esc(t.name.slice(0, 1))}</div><div><div class="text-sm font-semibold" style="color:${ctx.p.ink}">${esc(t.name)}</div><div class="text-xs" style="color:${p.sub};opacity:.8">${esc(t.role)}</div></div></div></div>`,
     )
     .join("");
   return `<section style="background:${p.soft};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, c.testimonialsTitle)}<div class="mt-12 grid md:grid-cols-3 gap-6">${cards}</div></div></section>`;
 }
 
 function renderFaq(ctx: Ctx): string {
-  const { ext, p, R } = ctx;
+  const { ext, p, R, S } = ctx;
   const v = ctx.variantOf("faq", 3);
   const rows = ext.faq
     .map(
-      (f) => `<details class="group p-5" style="background:#fff;border:1px solid #0000000f;border-radius:${R.card}"><summary class="flex items-center justify-between cursor-pointer font-semibold list-none" style="color:${ctx.p.ink}">${esc(f.q)}<span style="color:${p.primary}">＋</span></summary><p class="mt-3 text-sm leading-relaxed" style="color:${p.sub}">${esc(f.a)}</p></details>`,
+      (f) => `<details class="group p-5" style="background:${S.card};border:1px solid ${S.border};border-radius:${R.card}"><summary class="flex items-center justify-between cursor-pointer font-semibold list-none" style="color:${ctx.p.ink}">${esc(f.q)}<span style="color:${p.primary}">＋</span></summary><p class="mt-3 text-sm leading-relaxed" style="color:${p.sub}">${esc(f.a)}</p></details>`,
     )
     .join("");
   if (v === 1) {
@@ -731,47 +790,47 @@ function renderFaq(ctx: Ctx): string {
     // 双列问答平铺（非折叠）
     const cells = ext.faq
       .map(
-        (f, i) => `<div class="p-6" style="background:#fff;border:1px solid #0000000d;border-radius:${R.card}"><div class="flex items-start gap-3"><span class="shrink-0 flex h-7 w-7 items-center justify-center text-xs font-bold text-white" style="background:${p.primary};border-radius:9999px">Q${i + 1}</span><h3 class="font-semibold" style="color:${ctx.p.ink}">${esc(f.q)}</h3></div><p class="mt-3 text-sm leading-relaxed" style="color:${p.sub}">${esc(f.a)}</p></div>`,
+        (f, i) => `<div class="p-6" style="background:${S.card};border:1px solid ${S.border};border-radius:${R.card}"><div class="flex items-start gap-3"><span class="shrink-0 flex h-7 w-7 items-center justify-center text-xs font-bold text-white" style="background:${p.primary};border-radius:9999px">Q${i + 1}</span><h3 class="font-semibold" style="color:${ctx.p.ink}">${esc(f.q)}</h3></div><p class="mt-3 text-sm leading-relaxed" style="color:${p.sub}">${esc(f.a)}</p></div>`,
       )
       .join("");
-    return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-5xl mx-auto px-6">${heading(ctx, ctx.u("secFaq"), ctx.u("secFaqSub"))}<div class="mt-10 grid md:grid-cols-2 gap-5">${cells}</div></div></section>`;
+    return `<section style="background:${S.page};${sectionPad(ctx)}"><div class="max-w-5xl mx-auto px-6">${heading(ctx, ctx.u("secFaq"), ctx.u("secFaqSub"))}<div class="mt-10 grid md:grid-cols-2 gap-5">${cells}</div></div></section>`;
   }
-  return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-3xl mx-auto px-6">${heading(ctx, ctx.u("secFaq"), ctx.u("secFaqSub"))}<div class="mt-10 space-y-3">${rows}</div></div></section>`;
+  return `<section style="background:${S.page};${sectionPad(ctx)}"><div class="max-w-3xl mx-auto px-6">${heading(ctx, ctx.u("secFaq"), ctx.u("secFaqSub"))}<div class="mt-10 space-y-3">${rows}</div></div></section>`;
 }
 
 function renderLogos(ctx: Ctx): string {
   const { ext, p } = ctx;
   const item = (l: string) => `<div class="shrink-0 px-8 text-center text-lg font-bold tracking-wide" style="color:${p.sub};opacity:.55">${esc(l)}</div>`;
   const row = ext.logos.map(item).join("");
-  return `<section class="bg-white border-y overflow-hidden" style="border-color:#0000000a"><div class="max-w-6xl mx-auto px-6 py-8"><p class="text-center text-xs mb-5" style="color:${p.sub};opacity:.7">${ctx.u("trustedBy")}</p><div class="relative"><div class="leo-marquee gap-0">${row}${row}</div></div></div></section>`;
+  return `<section class="border-y overflow-hidden" style="background:${ctx.S.page};border-color:${ctx.S.border}"><div class="max-w-6xl mx-auto px-6 py-8"><p class="text-center text-xs mb-5" style="color:${p.sub};opacity:.7">${ctx.u("trustedBy")}</p><div class="relative"><div class="leo-marquee gap-0">${row}${row}</div></div></div></section>`;
 }
 
 function renderNews(ctx: Ctx): string {
-  const { ext, p, R } = ctx;
+  const { ext, p, R, S } = ctx;
   const v = ctx.variantOf("news", 3);
   const st = ctx.st("news");
   if (v === 1) {
     // 列表式（左日期块右文，无图）
     const rows = ext.news
       .map(
-        (n) => `<div class="flex gap-5 p-5 transition hover:-translate-y-0.5" style="background:#fff;border:1px solid #0000000d;border-radius:${R.card}"><div class="shrink-0 w-16 text-center"><div class="text-2xl font-extrabold" style="color:${p.primary}">${esc(n.date.split("-").pop() ?? "")}</div><div class="text-xs" style="color:${p.sub}">${esc(n.date.split("-").slice(0, 2).join("-"))}</div></div><div class="min-w-0"><div class="text-xs font-medium" style="color:${p.primary}">${esc(n.cat)}</div><h3 class="mt-1 font-semibold leading-snug" style="color:${ctx.p.ink}">${esc(n.title)}</h3><p class="mt-1 text-sm truncate" style="color:${p.sub}">${esc(n.excerpt)}</p></div></div>`,
+        (n) => `<div class="flex gap-5 p-5 transition hover:-translate-y-0.5" style="background:${S.card};border:1px solid ${S.border};border-radius:${R.card}"><div class="shrink-0 w-16 text-center"><div class="text-2xl font-extrabold" style="color:${p.primary}">${esc(n.date.split("-").pop() ?? "")}</div><div class="text-xs" style="color:${p.sub}">${esc(n.date.split("-").slice(0, 2).join("-"))}</div></div><div class="min-w-0"><div class="text-xs font-medium" style="color:${p.primary}">${esc(n.cat)}</div><h3 class="mt-1 font-semibold leading-snug" style="color:${ctx.p.ink}">${esc(n.title)}</h3><p class="mt-1 text-sm truncate" style="color:${p.sub}">${esc(n.excerpt)}</p></div></div>`,
       )
       .join("");
-    return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-4xl mx-auto px-6">${heading(ctx, st.title, st.sub)}<div class="mt-10 space-y-4">${rows}</div></div></section>`;
+    return `<section style="background:${S.page};${sectionPad(ctx)}"><div class="max-w-4xl mx-auto px-6">${heading(ctx, st.title, st.sub)}<div class="mt-10 space-y-4">${rows}</div></div></section>`;
   }
   if (v === 2) {
     // 首条头条大卡 + 右侧列表
     const [first, ...rest] = ext.news;
     const side = rest
       .map(
-        (n, i) => `<div class="flex gap-4 items-start ${i > 0 ? "pt-4 mt-4" : ""}" style="${i > 0 ? "border-top:1px solid #0000000d" : ""}"><div class="shrink-0 w-24 h-16 overflow-hidden" style="border-radius:${R.btn}">${img(ctx, 121 + i, 300, 200, "h-full w-full object-cover")}</div><div class="min-w-0"><div class="text-xs" style="color:${p.primary}">${esc(n.cat)} · <span style="color:${p.sub}">${esc(n.date)}</span></div><h3 class="mt-1 text-sm font-semibold leading-snug" style="color:${ctx.p.ink}">${esc(n.title)}</h3></div></div>`,
+        (n, i) => `<div class="flex gap-4 items-start ${i > 0 ? "pt-4 mt-4" : ""}" style="${i > 0 ? `border-top:1px solid ${S.border}` : ""}"><div class="shrink-0 w-24 h-16 overflow-hidden" style="border-radius:${R.btn}">${img(ctx, 121 + i, 300, 200, "h-full w-full object-cover")}</div><div class="min-w-0"><div class="text-xs" style="color:${p.primary}">${esc(n.cat)} · <span style="color:${p.sub}">${esc(n.date)}</span></div><h3 class="mt-1 text-sm font-semibold leading-snug" style="color:${ctx.p.ink}">${esc(n.title)}</h3></div></div>`,
       )
       .join("");
-    return `<section style="background:${p.soft};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, st.title, st.sub)}<div class="mt-12 grid md:grid-cols-2 gap-8"><div class="overflow-hidden" style="background:#fff;border-radius:${R.card};border:1px solid #0000000d">${img(ctx, 120, 900, 540, "h-56 w-full object-cover")}<div class="p-6"><div class="text-xs" style="color:${p.primary}">${esc(first?.cat ?? "")} · <span style="color:${p.sub}">${esc(first?.date ?? "")}</span></div><h3 class="mt-2 text-lg font-bold leading-snug" style="color:${ctx.p.ink}">${esc(first?.title ?? "")}</h3><p class="mt-2 text-sm" style="color:${p.sub}">${esc(first?.excerpt ?? "")}</p></div></div><div class="p-6" style="background:#fff;border-radius:${R.card};border:1px solid #0000000d">${side}</div></div></div></section>`;
+    return `<section style="background:${p.soft};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, st.title, st.sub)}<div class="mt-12 grid md:grid-cols-2 gap-8"><div class="overflow-hidden" style="background:${S.card};border-radius:${R.card};border:1px solid ${S.border}">${img(ctx, 120, 900, 540, "h-56 w-full object-cover")}<div class="p-6"><div class="text-xs" style="color:${p.primary}">${esc(first?.cat ?? "")} · <span style="color:${p.sub}">${esc(first?.date ?? "")}</span></div><h3 class="mt-2 text-lg font-bold leading-snug" style="color:${ctx.p.ink}">${esc(first?.title ?? "")}</h3><p class="mt-2 text-sm" style="color:${p.sub}">${esc(first?.excerpt ?? "")}</p></div></div><div class="p-6" style="background:${S.card};border-radius:${R.card};border:1px solid ${S.border}">${side}</div></div></div></section>`;
   }
   const cards = ext.news
     .map(
-      (n, i) => `<div class="leo-card overflow-hidden" style="background:#fff;border:1px solid #0000000a;border-radius:${R.card}">${img(ctx, 120 + i, 700, 420, "h-40 w-full object-cover")}<div class="p-5"><div class="flex items-center gap-2 text-xs" style="color:${p.primary}"><span class="font-medium">${esc(n.cat)}</span><span style="color:${p.sub};opacity:.6">${esc(n.date)}</span></div><h3 class="mt-2 font-semibold leading-snug" style="color:${ctx.p.ink}">${esc(n.title)}</h3><p class="mt-2 text-sm" style="color:${p.sub}">${esc(n.excerpt)}</p></div></div>`,
+      (n, i) => `<div class="leo-card overflow-hidden" style="background:${S.card};border:1px solid ${S.border};border-radius:${R.card}">${img(ctx, 120 + i, 700, 420, "h-40 w-full object-cover")}<div class="p-5"><div class="flex items-center gap-2 text-xs" style="color:${p.primary}"><span class="font-medium">${esc(n.cat)}</span><span style="color:${p.sub};opacity:.6">${esc(n.date)}</span></div><h3 class="mt-2 font-semibold leading-snug" style="color:${ctx.p.ink}">${esc(n.title)}</h3><p class="mt-2 text-sm" style="color:${p.sub}">${esc(n.excerpt)}</p></div></div>`,
     )
     .join("");
   return `<section style="background:${p.soft};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, st.title, st.sub)}<div class="mt-12 grid md:grid-cols-3 gap-6">${cards}</div></div></section>`;
@@ -787,15 +846,16 @@ function renderCta(ctx: Ctx): string {
   }
   if (v === 2) {
     // 白底极简：细边框卡 + 电话大字
-    return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-4xl mx-auto px-6"><div class="text-center px-8 py-12" style="border:2px solid ${p.primary}22;border-radius:${R.card}"><span class="inline-block px-3 py-1 text-xs font-semibold" style="background:${p.soft};color:${p.primary};border-radius:${R.pill}">${ctx.u("actNow")}</span><h2 class="mt-4" style="font-size:${ctx.D.h2};font-weight:800;color:${p.ink}">${esc(c.ctaTitle)}</h2><p class="mt-3" style="color:${p.sub}">${esc(c.ctaSubtitle)}</p><a href="tel:${esc(c.contactPhone)}" class="mt-6 inline-block text-3xl font-extrabold" style="color:${p.primary}">${esc(c.contactPhone)}</a><div class="mt-6">${btnPrimary(ctx, c.ctaButton)}</div></div></div></section>`;
+    return `<section style="background:${ctx.S.page};${sectionPad(ctx)}"><div class="max-w-4xl mx-auto px-6"><div class="text-center px-8 py-12" style="border:2px solid ${p.primary}22;border-radius:${R.card}"><span class="inline-block px-3 py-1 text-xs font-semibold" style="background:${p.soft};color:${p.primary};border-radius:${R.pill}">${ctx.u("actNow")}</span><h2 class="mt-4" style="font-size:${ctx.D.h2};font-weight:800;color:${p.ink}">${esc(c.ctaTitle)}</h2><p class="mt-3" style="color:${p.sub}">${esc(c.ctaSubtitle)}</p><a href="tel:${esc(c.contactPhone)}" class="mt-6 inline-block text-3xl font-extrabold" style="color:${p.primary}">${esc(c.contactPhone)}</a><div class="mt-6">${btnPrimary(ctx, c.ctaButton)}</div></div></div></section>`;
   }
   return `<section style="${sectionPad(ctx)}"><div class="max-w-5xl mx-auto px-6"><div class="relative overflow-hidden text-center text-white px-8 py-14 leo-grad-anim" style="background:linear-gradient(135deg,${p.gradFrom},${p.gradTo});border-radius:${R.card}">${deco}<div class="relative"><h2 style="font-size:${ctx.D.h2};font-weight:800">${esc(c.ctaTitle)}</h2><p class="mt-3 text-white/85">${esc(c.ctaSubtitle)}</p><a href="tel:${esc(c.contactPhone)}" class="leo-btn-shine mt-8 inline-block bg-white px-8 py-3 font-semibold transition hover:scale-[1.02]" style="color:${p.primaryDark};border-radius:${R.btn}">${esc(c.ctaButton)} · ${esc(c.contactPhone)}</a></div></div></div></section>`;
 }
 
 function renderContact(ctx: Ctx): string {
-  const { c, p, R } = ctx;
-  const field = (label: string, type = "text") => `<div><label class="block text-sm mb-1" style="color:${ctx.p.ink}">${esc(label)}</label><input type="${type}" class="w-full px-4 py-2.5 text-sm" style="border:1px solid #0000001f;border-radius:${R.btn};outline:none"/></div>`;
-  return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12">
+  const { c, p, R, S } = ctx;
+  const inputStyle = `background:${S.inputBg};color:${p.ink};border:1px solid ${S.inputBorder};border-radius:${R.btn};outline:none`;
+  const field = (label: string, type = "text") => `<div><label class="block text-sm mb-1" style="color:${ctx.p.ink}">${esc(label)}</label><input type="${type}" class="w-full px-4 py-2.5 text-sm" style="${inputStyle}"/></div>`;
+  return `<section style="background:${S.page};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12">
     <div>${heading(ctx, ctx.u("contactUs"), ctx.u("contactLead"), "left")}
       <div class="mt-8 space-y-4 text-sm">
         <div class="flex items-center gap-3" style="color:${ctx.p.ink}">${svgIcon("M5 4h4l2 5-3 2a14 14 0 006 6l2-3 5 2v4a2 2 0 01-2 2A18 18 0 013 6a2 2 0 012-2z", p.primary, 20)}${ctx.u("phone")}：${esc(c.contactPhone)}</div>
@@ -803,10 +863,10 @@ function renderContact(ctx: Ctx): string {
         <div class="flex items-center gap-3" style="color:${ctx.p.ink}">${svgIcon("M12 21s-7-6-7-11a7 7 0 1114 0c0 5-7 11-7 11zM12 12a2 2 0 100-4 2 2 0 000 4z", p.primary, 20)}${ctx.u("address")}：${esc(c.contactAddress)}</div>
       </div>
     </div>
-    <div class="p-6" style="background:${p.soft};border-radius:${R.card}">
+    <div class="p-6" style="background:${p.soft};border:1px solid ${S.border};border-radius:${R.card}">
       <div class="grid sm:grid-cols-2 gap-4">${field(ctx.u("yourName"))}${field(ctx.u("yourPhone"), "tel")}</div>
       <div class="mt-4">${field(ctx.u("yourEmail"), "email")}</div>
-      <div class="mt-4"><label class="block text-sm mb-1" style="color:${ctx.p.ink}">${ctx.u("yourNeed")}</label><textarea rows="4" class="w-full px-4 py-2.5 text-sm" style="border:1px solid #0000001f;border-radius:${R.btn};outline:none"></textarea></div>
+      <div class="mt-4"><label class="block text-sm mb-1" style="color:${ctx.p.ink}">${ctx.u("yourNeed")}</label><textarea rows="4" class="w-full px-4 py-2.5 text-sm" style="${inputStyle}"></textarea></div>
       <button class="mt-5 w-full px-6 py-3 font-semibold text-white" style="background:${p.primary};border-radius:${R.btn}">${ctx.u("submit")}</button>
     </div>
   </div></section>`;
@@ -822,7 +882,7 @@ function renderPageHeader(ctx: Ctx, label: string): string {
   }
   if (v === 2) {
     // 白底居中 + 下划短线
-    return `<section class="bg-white border-b" style="border-color:#0000000d"><div class="max-w-6xl mx-auto px-6 py-14 text-center"><h1 style="font-size:${ctx.D.h2};font-weight:800;color:${p.ink}">${esc(label)}</h1><div class="mx-auto mt-4" style="width:56px;height:4px;background:${p.primary};border-radius:2px"></div><p class="mt-3 text-sm" style="color:${p.sub}">${esc(ctx.c.brand)} · ${esc(label)}</p></div></section>`;
+    return `<section class="border-b" style="background:${ctx.S.page};border-color:${ctx.S.border}"><div class="max-w-6xl mx-auto px-6 py-14 text-center"><h1 style="font-size:${ctx.D.h2};font-weight:800;color:${p.ink}">${esc(label)}</h1><div class="mx-auto mt-4" style="width:56px;height:4px;background:${p.primary};border-radius:2px"></div><p class="mt-3 text-sm" style="color:${p.sub}">${esc(ctx.c.brand)} · ${esc(label)}</p></div></section>`;
   }
   return `<section class="relative overflow-hidden text-white leo-grad-anim" style="background:linear-gradient(135deg,${p.gradFrom},${p.gradTo})">${deco}<div class="relative max-w-6xl mx-auto px-6 py-16"><h1 style="font-size:${ctx.D.h2};font-weight:800">${esc(label)}</h1><p class="mt-2 text-white/80 text-sm">${esc(ctx.c.brand)} · ${esc(label)}</p></div></section>`;
 }
@@ -881,7 +941,7 @@ function renderChart(ctx: Ctx): string {
         <text x="${(x + bw / 2).toFixed(1)}" y="${(y - 10).toFixed(1)}" text-anchor="middle" font-size="15" font-weight="700" fill="${p.ink}">${d.values[i]}</text>
         <text x="${(x + bw / 2).toFixed(1)}" y="${H - PADY + 24}" text-anchor="middle" font-size="13" fill="${p.sub}">${d.labels[i]}</text>`;
     }).join("");
-    svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto"><line x1="${PADX}" y1="${H - PADY}" x2="${W - PADX}" y2="${H - PADY}" stroke="#00000022" stroke-width="1.5"/>${bars}</svg>`;
+    svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto"><line x1="${PADX}" y1="${H - PADY}" x2="${W - PADX}" y2="${H - PADY}" stroke="${ctx.S.borderStrong}" stroke-width="1.5"/>${bars}</svg>`;
   } else if (v === 1) {
     // 折线 + 渐变面积
     const n = d.values.length;
@@ -892,7 +952,7 @@ function renderChart(ctx: Ctx): string {
     const dots = pts.map((pt, i) => `<circle cx="${pt[0]}" cy="${pt[1]}" r="6" fill="#fff" stroke="${p.primary}" stroke-width="3"/>
       <text x="${pt[0]}" y="${pt[1] - 14}" text-anchor="middle" font-size="15" font-weight="700" fill="${p.ink}">${d.values[i]}</text>
       <text x="${pt[0]}" y="${H - PADY + 24}" text-anchor="middle" font-size="13" fill="${p.sub}">${d.labels[i]}</text>`).join("");
-    svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto"><defs><linearGradient id="lg-${hashStr(ctx.meta.slug) % 9999}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${p.primary}" stop-opacity=".28"/><stop offset="1" stop-color="${p.primary}" stop-opacity="0"/></linearGradient></defs><line x1="${PADX}" y1="${H - PADY}" x2="${W - PADX}" y2="${H - PADY}" stroke="#00000022" stroke-width="1.5"/><polygon points="${area}" fill="url(#lg-${hashStr(ctx.meta.slug) % 9999})"/><polyline points="${line}" fill="none" stroke="${p.primary}" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>${dots}</svg>`;
+    svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto"><defs><linearGradient id="lg-${hashStr(ctx.meta.slug) % 9999}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${p.primary}" stop-opacity=".28"/><stop offset="1" stop-color="${p.primary}" stop-opacity="0"/></linearGradient></defs><line x1="${PADX}" y1="${H - PADY}" x2="${W - PADX}" y2="${H - PADY}" stroke="${ctx.S.borderStrong}" stroke-width="1.5"/><polygon points="${area}" fill="url(#lg-${hashStr(ctx.meta.slug) % 9999})"/><polyline points="${line}" fill="none" stroke="${p.primary}" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>${dots}</svg>`;
   } else {
     // 环形占比
     const total = d.values.reduce((a, b) => a + b, 0);
@@ -911,7 +971,7 @@ function renderChart(ctx: Ctx): string {
     const legend = d.labels.map((lb, i) => `<g transform="translate(340,${86 + i * 44})"><rect width="16" height="16" rx="4" fill="${cols[i % 4]}"/><text x="26" y="13" font-size="14" fill="${p.ink}">${lb} · ${Math.round((d.values[i] / total) * 100)}%</text></g>`).join("");
     svg = `<svg viewBox="0 0 ${W} 320" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">${arcs}<text x="${cx}" y="${cy + 6}" text-anchor="middle" font-size="22" font-weight="800" fill="${p.ink}">${total}${d.unit}</text>${legend}</svg>`;
   }
-  return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, d.title, `${ctx.u("chartUnit")}：${d.unit} · ${ctx.u("chartNote")}`)}<div class="mt-10 grid md:grid-cols-3 gap-10 items-center"><div class="md:col-span-2 p-6" style="background:${p.soft};border-radius:${R.card}">${svg}</div><div><div style="width:40px;height:4px;background:${p.primary};border-radius:2px"></div><p class="mt-4 leading-relaxed" style="color:${p.ink};font-weight:600">${d.insight}</p><p class="mt-3 text-sm leading-relaxed" style="color:${p.sub}">${ctx.u("chartFootnote")}</p></div></div></div></section>`;
+  return `<section style="background:${ctx.S.page};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, d.title, `${ctx.u("chartUnit")}：${d.unit} · ${ctx.u("chartNote")}`)}<div class="mt-10 grid md:grid-cols-3 gap-10 items-center"><div class="md:col-span-2 p-6" style="background:${p.soft};border:1px solid ${ctx.S.border};border-radius:${R.card}">${svg}</div><div><div style="width:40px;height:4px;background:${p.primary};border-radius:2px"></div><p class="mt-4 leading-relaxed" style="color:${p.ink};font-weight:600">${d.insight}</p><p class="mt-3 text-sm leading-relaxed" style="color:${p.sub}">${ctx.u("chartFootnote")}</p></div></div></div></section>`;
 }
 
 function renderTimeline(ctx: Ctx): string {
@@ -958,13 +1018,13 @@ function renderTimeline(ctx: Ctx): string {
       <h3 class="mt-1 font-semibold" style="color:${p.ink}">${esc(t)}</h3>
       <p class="mt-1 text-sm leading-relaxed" style="color:${p.sub}">${esc(dd)}</p>
     </div>`).join("");
-  return `<section class="bg-white" style="${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, ctx.u("secMilestone"), ctx.u("secMilestoneSub"))}<div class="mt-12 flex flex-col md:flex-row gap-8 text-center md:text-left" style="border-radius:${R.card}">${cols}</div></div></section>`;
+  return `<section style="background:${ctx.S.page};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, ctx.u("secMilestone"), ctx.u("secMilestoneSub"))}<div class="mt-12 flex flex-col md:flex-row gap-8 text-center md:text-left" style="border-radius:${R.card}">${cols}</div></div></section>`;
 }
 
 function renderMarquee(ctx: Ctx): string {
   const { ext, p, R } = ctx;
   const cols = [p.primary, p.gradTo, p.gradFrom];
-  const cell = (l: string, i: number) => `<div class="shrink-0 mx-3 flex items-center gap-3 px-5 py-3" style="background:#fff;border:1px solid #0000000d;border-radius:${R.card};box-shadow:0 4px 14px #00000008"><span class="flex h-9 w-9 items-center justify-center text-sm font-bold text-white" style="background:${cols[i % 3]};border-radius:${R.btn}">${esc(l.slice(0, 1))}</span><span class="text-sm font-semibold whitespace-nowrap" style="color:${p.ink}">${esc(l)}</span></div>`;
+  const cell = (l: string, i: number) => `<div class="shrink-0 mx-3 flex items-center gap-3 px-5 py-3" style="background:${ctx.S.card};border:1px solid ${ctx.S.border};border-radius:${R.card};box-shadow:0 4px 14px #00000008"><span class="flex h-9 w-9 items-center justify-center text-sm font-bold text-white" style="background:${cols[i % 3]};border-radius:${R.btn}">${esc(l.slice(0, 1))}</span><span class="text-sm font-semibold whitespace-nowrap" style="color:${p.ink}">${esc(l)}</span></div>`;
   const row = ext.logos.map(cell).join("");
   return `<section style="background:${p.soft}"><style>@keyframes leoMq{from{transform:translateX(0)}to{transform:translateX(-50%)}}.leo-mq-track{display:flex;width:max-content;animation:leoMq 26s linear infinite}.leo-mq-track:hover{animation-play-state:paused}</style><div class="py-12 overflow-hidden"><p class="text-center text-sm font-medium mb-6" style="color:${p.sub}">${ctx.u("chosenBy")} ${esc(ctx.c.brand)}</p><div class="leo-mq-track">${row}${row}</div></div></section>`;
 }
@@ -1029,6 +1089,7 @@ function makeCtx(
     fx: dna.accentFx,
     R: radiusTokens(dna),
     D: densityTokens(dna),
+    S: surfaceTokens(dna),
     pageKey: "home",
     lang,
     variantOf: (kind, count) =>

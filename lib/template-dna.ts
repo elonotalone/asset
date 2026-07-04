@@ -60,6 +60,20 @@ export const PALETTES_V2: PaletteV2[] = [
 /** v3：整站深色底的配色 key（signature 家族与引擎据此切换背景/文字策略）。 */
 export const DARK_PALETTE_KEYS = new Set(["neon-cyan", "neon-violet", "neon-magenta"]);
 
+/**
+ * 非特色家族可用的配色池（= 全部配色，剔除整站深色霓虹三色）。
+ *
+ * 为什么剔除：深色霓虹配色（forceDark）的 `ink/sub` 是**近白**文字、`soft` 是
+ * **近黑**底，只有配合 neon-tech 家族那套「深色感知」的 `sig*` 渲染器才成立。
+ * 普通家族的通用渲染器写死了 `bg-white / #fff` 浅底，一旦随机轮换抽到深色配色，
+ * 近白文字压在白底上 = 直接不可读（asset.oceanleo.com/templates 上大量模板正文/
+ * 标题「看不清」的根因，2026-07-04 修）。因此深色霓虹三色**只**由 neon-tech 家族
+ * 通过 `signature.palettePool` 显式选用，绝不进入普通家族的随机色池。
+ */
+export const LIGHT_PALETTES_V2: PaletteV2[] = PALETTES_V2.filter(
+  (p) => !DARK_PALETTE_KEYS.has(p.key),
+);
+
 export function paletteByKey(key: string): PaletteV2 {
   return PALETTES_V2.find((p) => p.key === key) ?? PALETTES_V2[0];
 }
@@ -584,18 +598,23 @@ export function dnaFor(
 
   // 第 1 个变体倾向行业默认色系，其余在全色里确定性轮换。
   // 特色家族：若声明了 palettePool，则只在池内确定性选取（钉死风格）。
+  // 普通家族一律从 LIGHT_PALETTES_V2 里选（剔除深色霓虹三色，见其定义处注释）——
+  // 深色配色只有 neon-tech 家族的深色感知渲染器 hold 得住，普通家族抽到会「看不清」。
   let palette: PaletteV2;
   if (sig?.palettePool && sig.palettePool.length) {
     const pool = PALETTES_V2.filter((p) => sig.palettePool!.includes(p.key));
     const usePool = pool.length ? pool : PALETTES_V2;
     palette = usePool[(hashStr(slug + ":pal") + variant) % usePool.length];
   } else if (variant === 1 && defaultPaletteFamily) {
-    const inFamily = PALETTES_V2.filter((p) => p.family === defaultPaletteFamily);
+    const inFamily = LIGHT_PALETTES_V2.filter((p) => p.family === defaultPaletteFamily);
     palette = inFamily.length
       ? inFamily[hashStr(slug + ":pal") % inFamily.length]
-      : pick(PALETTES_V2, slug, "pal");
+      : pick(LIGHT_PALETTES_V2, slug, "pal");
   } else {
-    palette = PALETTES_V2[(hashStr(slug + ":pal") + variant * 5) % PALETTES_V2.length];
+    palette =
+      LIGHT_PALETTES_V2[
+        (hashStr(slug + ":pal") + variant * 5) % LIGHT_PALETTES_V2.length
+      ];
   }
 
   const radius = sig?.radius ?? pick(RADII, slug, "radius");
