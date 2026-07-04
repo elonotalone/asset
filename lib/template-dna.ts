@@ -51,7 +51,14 @@ export const PALETTES_V2: PaletteV2[] = [
   { key: "jade-gold", family: "green", label: "墨绿金", primary: "#065f46", primaryDark: "#064e3b", gradFrom: "#022c22", gradTo: "#0f766e", soft: "#ecfdf5", ink: "#062019", sub: "#4a635b", accent: "#fbbf24", heroDark: true, swatch: "#047857" },
   { key: "mauve", family: "purple", label: "藕荷", primary: "#9d5b8b", primaryDark: "#82486f", gradFrom: "#4a2545", gradTo: "#c084ac", soft: "#faf3f8", ink: "#2a1526", sub: "#6d5566", accent: "#e9c3dc", heroDark: true, swatch: "#b06fa0" },
   { key: "glacier", family: "light", label: "冰川灰蓝", primary: "#334155", primaryDark: "#1e293b", gradFrom: "#e0f2fe", gradTo: "#cbd5e1", soft: "#f0f9ff", ink: "#0f172a", sub: "#526074", accent: "#0369a1", heroDark: false, swatch: "#94a3b8" },
+  // v3 新增：整站深色霓虹配色（专供 neon-tech 特色家族；family 仍归 dark 以便色系筛选）。
+  { key: "neon-cyan", family: "dark", label: "霓虹青", primary: "#22d3ee", primaryDark: "#06b6d4", gradFrom: "#0e7490", gradTo: "#22d3ee", soft: "#0b1220", ink: "#e5f6ff", sub: "#7d9bb0", accent: "#67e8f9", heroDark: true, swatch: "#22d3ee" },
+  { key: "neon-violet", family: "dark", label: "霓虹紫", primary: "#a855f7", primaryDark: "#9333ea", gradFrom: "#6d28d9", gradTo: "#c084fc", soft: "#120b1f", ink: "#f0e7ff", sub: "#9b86b5", accent: "#d8b4fe", heroDark: true, swatch: "#a855f7" },
+  { key: "neon-magenta", family: "dark", label: "霓虹品红", primary: "#f472b6", primaryDark: "#ec4899", gradFrom: "#9d174d", gradTo: "#fb7185", soft: "#1a0b14", ink: "#ffe7f3", sub: "#b3859c", accent: "#f9a8d4", heroDark: true, swatch: "#f472b6" },
 ];
+
+/** v3：整站深色底的配色 key（signature 家族与引擎据此切换背景/文字策略）。 */
+export const DARK_PALETTE_KEYS = new Set(["neon-cyan", "neon-violet", "neon-magenta"]);
 
 export function paletteByKey(key: string): PaletteV2 {
   return PALETTES_V2.find((p) => p.key === key) ?? PALETTES_V2[0];
@@ -116,7 +123,29 @@ export type SectionKind =
   | "marquee"
   | "cta"
   | "contact"
-  | "pageHeader";
+  | "pageHeader"
+  // ————— v3 特色家族专属章节（sig 命名空间，不复用共享视觉语汇） —————
+  // editorial 杂志编辑风
+  | "sigEditorialHero"
+  | "sigEditorialFeature"
+  | "sigEditorialGallery"
+  | "sigPullQuote"
+  // neon-tech 深色霓虹科技风
+  | "sigNeonHero"
+  | "sigGlassGrid"
+  | "sigNeonStats"
+  | "sigCodeWindow"
+  // fullscreen-scroll 全屏叙事风
+  | "sigFsIntro"
+  | "sigFsPanel"
+  | "sigFsSplit"
+  // bento 便当格栅风
+  | "sigBentoHero"
+  | "sigBentoFeatures"
+  // brutalist 粗野主义风
+  | "sigBrutalHero"
+  | "sigBrutalCards"
+  | "sigStickerCta";
 
 export interface LayoutFamily {
   key: string;
@@ -127,6 +156,21 @@ export interface LayoutFamily {
   sections: Record<string, SectionKind[]>;
   /** 这个家族适配哪些一级行业（用于把家族分配给子类）。空 = 通用。 */
   industries?: string[];
+  /**
+   * v3 特色家族：钉死主题维度，覆盖 slug 随机 DNA，形成「一眼可辨」的统一强风格。
+   * 只有特色家族设它；普通家族不设，仍走全维度随机 DNA。未指定的维度仍随机，
+   * 保留家族内部微多样。
+   */
+  signature?: {
+    /** 只在这些配色 key 里选（如 neon 只用深色霓虹三色）。 */
+    palettePool?: string[];
+    radius?: Radius;
+    density?: Density;
+    font?: FontKind;
+    fx?: AccentFx;
+    /** 整站深色底（引擎据此切换 body 背景 / 章节底色策略）。 */
+    forceDark?: boolean;
+  };
 }
 
 // 16 个布局家族（v2.2：8 经典 + 8 行业气质款）。多样性三原则：
@@ -353,6 +397,87 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
       contact: ["pageHeader", "contact"],
     },
   },
+
+  // ═══════════════════════════════════════════════════════════════════
+  // v3 特色家族（signature）—— 每个自带专属渲染器 + 钉死主题，一眼可辨。
+  // 详见 docs/architecture/oceanleo-template-gallery-v3-signature-families.md
+  // ═══════════════════════════════════════════════════════════════════
+  {
+    // F1 杂志编辑风：衬线大标题、非对称栅格、去卡片化、极多留白。
+    key: "editorial",
+    label: "杂志编辑",
+    industries: ["fashion", "media", "life", "grocery"],
+    pages: ["home", "works", "about", "contact"],
+    sections: {
+      home: ["sigEditorialHero", "sigEditorialFeature", "sigEditorialGallery", "sigPullQuote", "cta"],
+      works: ["pageHeader", "sigEditorialGallery", "cases", "cta"],
+      about: ["pageHeader", "about", "sigPullQuote", "team", "cta"],
+      contact: ["pageHeader", "contact"],
+    },
+    signature: { font: "serif", radius: "sharp", density: "airy", fx: "dots" },
+  },
+  {
+    // F2 深色霓虹科技风：整站深黑底 + 荧光辉光 + 玻璃拟态 + 网格。
+    key: "neon-tech",
+    label: "霓虹科技",
+    industries: ["tech", "logistics"],
+    pages: ["home", "services", "cases", "contact"],
+    sections: {
+      home: ["sigNeonHero", "sigNeonStats", "sigGlassGrid", "sigCodeWindow", "cta"],
+      services: ["pageHeader", "sigGlassGrid", "process", "faq", "cta"],
+      cases: ["pageHeader", "cases", "sigNeonStats", "testimonials", "cta"],
+      contact: ["pageHeader", "contact"],
+    },
+    signature: {
+      palettePool: ["neon-cyan", "neon-violet", "neon-magenta"],
+      radius: "soft",
+      density: "regular",
+      font: "geometric",
+      fx: "neon-grid",
+      forceDark: true,
+    },
+  },
+  {
+    // F3 全屏叙事风：每屏 100vh 满屏大图 + 翻页式滚动 + 右侧圆点导航。
+    key: "fullscreen-scroll",
+    label: "全屏叙事",
+    industries: ["food", "life", "industry"],
+    pages: ["home", "about", "contact"],
+    sections: {
+      home: ["sigFsIntro", "sigFsPanel", "sigFsSplit", "sigFsPanel", "cta"],
+      about: ["pageHeader", "about", "gallery", "team", "cta"],
+      contact: ["pageHeader", "contact"],
+    },
+    signature: { density: "airy", radius: "soft", fx: "spotlight" },
+  },
+  {
+    // F4 便当格栅风：不规则大小圆角块拼成「面板墙」（Apple/Notion 那种）。
+    key: "bento",
+    label: "便当格栅",
+    industries: ["tech", "general", "home", "media"],
+    pages: ["home", "services", "about", "contact"],
+    sections: {
+      home: ["sigBentoHero", "sigBentoFeatures", "stats", "cases", "cta"],
+      services: ["pageHeader", "sigBentoFeatures", "services", "faq", "cta"],
+      about: ["pageHeader", "about", "team", "marquee", "cta"],
+      contact: ["pageHeader", "contact"],
+    },
+    signature: { radius: "round", density: "regular", fx: "orbs" },
+  },
+  {
+    // F5 粗野主义风：粗黑描边 + 硬阴影 + 高对比撞色 + 直角。
+    key: "brutalist",
+    label: "粗野主义",
+    industries: ["media", "general", "fashion"],
+    pages: ["home", "works", "services", "contact"],
+    sections: {
+      home: ["sigBrutalHero", "sigBrutalCards", "gallery", "sigStickerCta"],
+      works: ["pageHeader", "gallery", "cases", "sigStickerCta"],
+      services: ["pageHeader", "sigBrutalCards", "process", "sigStickerCta"],
+      contact: ["pageHeader", "contact"],
+    },
+    signature: { radius: "sharp", font: "geometric", density: "regular", fx: "noise" },
+  },
 ];
 
 export function layoutByKey(key: string): LayoutFamily {
@@ -419,6 +544,10 @@ export interface TemplateDNA {
   imgSeed: number;
   /** 装饰/动效风格（渐变光斑 / 网格 / 光束…）。 */
   accentFx: AccentFx;
+  /** v3：是否特色家族（引擎据此走专属渲染分支）。 */
+  isSignature: boolean;
+  /** v3：整站深色底（signature.forceDark 或深色配色时为真）。 */
+  forceDark: boolean;
 }
 
 // 用不同盐值从 slug 派生互相独立的 hash，保证各维度不耦合。
@@ -451,9 +580,16 @@ export function dnaFor(
   const stride = strides.length ? strides[hashStr(base + ":stride") % strides.length] : 1;
   const layout = families[(hashStr(base + ":layout") + variant * stride) % n];
 
-  // 第 1 个变体倾向行业默认色系，其余在全 16 色里确定性轮换（5 与 16 互质）。
+  const sig = layout.signature;
+
+  // 第 1 个变体倾向行业默认色系，其余在全色里确定性轮换。
+  // 特色家族：若声明了 palettePool，则只在池内确定性选取（钉死风格）。
   let palette: PaletteV2;
-  if (variant === 1 && defaultPaletteFamily) {
+  if (sig?.palettePool && sig.palettePool.length) {
+    const pool = PALETTES_V2.filter((p) => sig.palettePool!.includes(p.key));
+    const usePool = pool.length ? pool : PALETTES_V2;
+    palette = usePool[(hashStr(slug + ":pal") + variant) % usePool.length];
+  } else if (variant === 1 && defaultPaletteFamily) {
     const inFamily = PALETTES_V2.filter((p) => p.family === defaultPaletteFamily);
     palette = inFamily.length
       ? inFamily[hashStr(slug + ":pal") % inFamily.length]
@@ -462,14 +598,22 @@ export function dnaFor(
     palette = PALETTES_V2[(hashStr(slug + ":pal") + variant * 5) % PALETTES_V2.length];
   }
 
+  const radius = sig?.radius ?? pick(RADII, slug, "radius");
+  const density = sig?.density ?? pick(DENSITIES, slug, "density");
+  const font = sig?.font ?? pick(FONTS, slug, "font");
+  const accentFx = sig?.fx ?? accentFxFor(slug, layout.key);
+  const forceDark = sig?.forceDark ?? DARK_PALETTE_KEYS.has(palette.key);
+
   return {
     layout,
     palette,
-    radius: pick(RADII, slug, "radius"),
-    density: pick(DENSITIES, slug, "density"),
-    font: pick(FONTS, slug, "font"),
+    radius,
+    density,
+    font,
     styleSeed: hashStr(slug + ":style"),
     imgSeed: 100 + (hashStr(slug + ":img") % 90000),
-    accentFx: accentFxFor(slug, layout.key),
+    accentFx,
+    isSignature: !!sig,
+    forceDark,
   };
 }

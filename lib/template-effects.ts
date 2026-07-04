@@ -4,7 +4,19 @@
 import type { PaletteV2, TemplateDNA } from "./template-dna";
 import { hashStr } from "./hash";
 
-export type AccentFx = "orbs" | "mesh" | "grid" | "beams" | "waves" | "dots" | "rings";
+export type AccentFx =
+  | "orbs"
+  | "mesh"
+  | "grid"
+  | "beams"
+  | "waves"
+  | "dots"
+  | "rings"
+  // v3 特色家族专属特效
+  | "neon-grid"
+  | "noise"
+  | "spotlight"
+  | "none";
 
 const FX_LIST: AccentFx[] = ["orbs", "mesh", "grid", "beams", "waves", "dots", "rings"];
 
@@ -121,8 +133,52 @@ export function effectsStyles(p: PaletteV2): string {
   .leo-kenburns{animation:leoKen 22s ease-in-out infinite alternate}
   @keyframes leoKen{from{transform:scale(1)}to{transform:scale(1.08)}}
 
+  /* —— v3 霓虹网格（neon-tech 家族深色底专用） —— */
+  .leo-neon-grid{
+    position:absolute;inset:0;pointer-events:none;
+    background-image:linear-gradient(${p.primary}22 1px,transparent 1px),linear-gradient(90deg,${p.primary}22 1px,transparent 1px);
+    background-size:44px 44px;
+    mask-image:radial-gradient(ellipse 90% 80% at 50% 30%,#000 10%,transparent 78%);
+    animation:leoGridPan 20s linear infinite;
+  }
+  @keyframes leoGridPan{from{background-position:0 0}to{background-position:44px 44px}}
+  .leo-neon-glow{
+    text-shadow:0 0 6px ${p.primary}88,0 0 20px ${p.primary}55;
+  }
+  .leo-neon-edge{
+    border:1px solid ${p.primary}55;
+    box-shadow:0 0 0 1px ${p.primary}22,0 0 24px ${p.primary}22,inset 0 0 22px ${p.primary}10;
+  }
+  .leo-glass{
+    background:rgba(255,255,255,.06);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    border:1px solid rgba(255,255,255,.12);
+  }
+
+  /* —— v3 颗粒噪点（editorial / brutalist 质感） —— */
+  .leo-noise::before{
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.05;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* —— v3 聚光（fullscreen-scroll 家族） —— */
+  .leo-spotlight{
+    position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(circle 60% at 50% 0%,${p.primary}22,transparent 60%);
+  }
+
+  /* —— v3 硬阴影（brutalist 家族） —— */
+  .leo-hard-shadow{box-shadow:6px 6px 0 ${p.ink}}
+  .leo-hard-shadow-primary{box-shadow:6px 6px 0 ${p.primary}}
+
+  /* —— v3 满屏叙事：右侧滚动圆点 + snap —— */
+  .leo-fs-dots{position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:40;display:flex;flex-direction:column;gap:12px}
+  .leo-fs-dot{width:9px;height:9px;border-radius:9999px;background:currentColor;opacity:.3;transition:opacity .3s,transform .3s;cursor:pointer}
+  .leo-fs-dot.active{opacity:1;transform:scale(1.4)}
+
   @media (prefers-reduced-motion:reduce){
-    .leo-grad-anim,.leo-orb,.leo-beam,.leo-wave,.leo-marquee,.leo-kenburns,.leo-btn-shine::after{animation:none!important}
+    .leo-grad-anim,.leo-orb,.leo-beam,.leo-wave,.leo-marquee,.leo-kenburns,.leo-btn-shine::after,.leo-neon-grid{animation:none!important}
     .leo-reveal{opacity:1;transform:none}
   }`;
 }
@@ -154,6 +210,17 @@ export function decorLayer(p: PaletteV2, fx: AccentFx, seed: number): string {
       return `
       <div style="position:absolute;top:12%;right:8%;width:180px;height:180px;border:2px solid ${a}33;border-radius:9999px;animation:leoFloat 14s ease-in-out infinite"></div>
       <div style="position:absolute;bottom:18%;left:6%;width:120px;height:120px;border:2px solid ${b}44;border-radius:9999px;animation:leoFloat 11s ease-in-out infinite;animation-delay:-3s"></div>`;
+    case "neon-grid":
+      return `
+      <div class="leo-neon-grid"></div>
+      <div class="leo-orb" style="width:340px;height:340px;top:-80px;right:8%;background:radial-gradient(circle,${a}44,transparent 70%);filter:blur(60px)"></div>
+      <div class="leo-orb leo-orb-2" style="width:260px;height:260px;bottom:-60px;left:10%;background:radial-gradient(circle,${b}33,transparent 70%);filter:blur(60px)"></div>`;
+    case "spotlight":
+      return `<div class="leo-spotlight"></div>`;
+    case "noise":
+      return `<div class="leo-noise" style="position:absolute;inset:0"></div>`;
+    case "none":
+      return "";
     default:
       return "";
   }
