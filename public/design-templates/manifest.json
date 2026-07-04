@@ -8,7 +8,7 @@
     "style": "forge-person",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/forge-xhs-quit-job.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/forge-xhs-quit-job.webp?v=202607040734",
     "doc": "/design-templates/doc/forge-xhs-quit-job.json",
     "attributions": []
   },
@@ -21,7 +21,7 @@
     "style": "forge-illust",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/forge-xhs-campus.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/forge-xhs-campus.webp?v=202607040734",
     "doc": "/design-templates/doc/forge-xhs-campus.json",
     "attributions": []
   },
@@ -34,7 +34,7 @@
     "style": "forge-product",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/forge-xhs-home.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/forge-xhs-home.webp?v=202607040734",
     "doc": "/design-templates/doc/forge-xhs-home.json",
     "attributions": []
   },
@@ -47,7 +47,7 @@
     "style": "forge-pure",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/forge-xhs-reno.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/forge-xhs-reno.webp?v=202607040734",
     "doc": "/design-templates/doc/forge-xhs-reno.json",
     "attributions": []
   },
@@ -60,7 +60,7 @@
     "style": "forge-scene",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/forge-gzh-corp.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/forge-gzh-corp.webp?v=202607040734",
     "doc": "/design-templates/doc/forge-gzh-corp.json",
     "attributions": []
   },
@@ -73,7 +73,7 @@
     "style": "xhs-figure",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-xhs-study-abroad.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-xhs-study-abroad.webp?v=202607040734",
     "doc": "/design-templates/doc/edu-xhs-study-abroad.json",
     "attributions": []
   },
@@ -86,7 +86,7 @@
     "style": "big-word",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-bigword-quit-study.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-bigword-quit-study.webp?v=202607040734",
     "doc": "/design-templates/doc/edu-bigword-quit-study.json",
     "attributions": []
   },
@@ -99,7 +99,7 @@
     "style": "section-cover",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-section-choose-school.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-section-choose-school.webp?v=202607040734",
     "doc": "/design-templates/doc/edu-section-choose-school.json",
     "attributions": []
   },
@@ -112,7 +112,7 @@
     "style": "xhs-knowledge",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-knowledge-english.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-knowledge-english.webp?v=202607040734",
     "doc": "/design-templates/doc/edu-knowledge-english.json",
     "attributions": []
   },
@@ -125,7 +125,7 @@
     "style": "recruit",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-recruit-teacher.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-recruit-teacher.webp?v=202607040734",
     "doc": "/design-templates/doc/edu-recruit-teacher.json",
     "attributions": []
   },
@@ -138,7 +138,7 @@
     "style": "promo-price",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-promo-class.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-promo-class.webp?v=202607040734",
     "doc": "/design-templates/doc/edu-promo-class.json",
     "attributions": []
   },
@@ -151,7 +151,7 @@
     "style": "poster-scene",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-poster-graduation.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-poster-graduation.webp?v=202607040734",
     "doc": "/design-templates/doc/edu-poster-graduation.json",
     "attributions": []
   },
@@ -164,7 +164,7 @@
     "style": "quote-daily",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-quote-study.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-quote-study.webp?v=202607040734",
     "doc": "/design-templates/doc/edu-quote-study.json",
     "attributions": []
   },
@@ -177,7 +177,7 @@
     "style": "tech-corp",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-tech-online.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-tech-online.webp?v=202607040734",
     "doc": "/design-templates/doc/edu-tech-online.json",
     "attributions": []
   },
@@ -190,7 +190,7 @@
     "style": "xhs-figure",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-figure-interview.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-figure-interview.webp?v=202607040734",
     "doc": "/design-templates/doc/edu-figure-interview.json",
     "attributions": []
   },
@@ -203,7 +203,7 @@
     "style": "section-cover",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-section-public-exam.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-section-public-exam.webp?v=202607040734",
     "doc": "/design-templates/doc/edu-section-public-exam.json",
     "attributions": []
   },
@@ -216,7 +216,7 @@
     "style": "xhs-knowledge",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-knowledge-kids-math.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/edu-knowledge-kids-math.webp?v=202607040734",
     "doc": "/design-templates/doc/edu-knowledge-kids-math.json",
     "attributions": []
   },
@@ -229,7 +229,7 @@
     "style": "promo-price",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/retail-promo-midyear.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/retail-promo-midyear.webp?v=202607040734",
     "doc": "/design-templates/doc/retail-promo-midyear.json",
     "attributions": []
   },
@@ -242,7 +242,7 @@
     "style": "coupon-deal",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/retail-coupon-newstore.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/retail-coupon-newstore.webp?v=202607040734",
     "doc": "/design-templates/doc/retail-coupon-newstore.json",
     "attributions": []
   },
@@ -255,7 +255,7 @@
     "style": "xhs-figure",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/retail-xhs-sneaker.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/retail-xhs-sneaker.webp?v=202607040734",
     "doc": "/design-templates/doc/retail-xhs-sneaker.json",
     "attributions": []
   },
@@ -268,7 +268,7 @@
     "style": "promo-price",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/retail-promo-digital.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/retail-promo-digital.webp?v=202607040734",
     "doc": "/design-templates/doc/retail-promo-digital.json",
     "attributions": []
   },
@@ -281,7 +281,7 @@
     "style": "poster-scene",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/retail-poster-watch.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/retail-poster-watch.webp?v=202607040734",
     "doc": "/design-templates/doc/retail-poster-watch.json",
     "attributions": []
   },
@@ -294,7 +294,7 @@
     "style": "coupon-deal",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/retail-coupon-phone.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/retail-coupon-phone.webp?v=202607040734",
     "doc": "/design-templates/doc/retail-coupon-phone.json",
     "attributions": []
   },
@@ -307,7 +307,7 @@
     "style": "festive-report",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/retail-festive-sales.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/retail-festive-sales.webp?v=202607040734",
     "doc": "/design-templates/doc/retail-festive-sales.json",
     "attributions": []
   },
@@ -320,7 +320,7 @@
     "style": "big-word",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/retail-bigword-lastday.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/retail-bigword-lastday.webp?v=202607040734",
     "doc": "/design-templates/doc/retail-bigword-lastday.json",
     "attributions": []
   },
@@ -333,7 +333,7 @@
     "style": "xhs-figure",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/retail-xhs-handbag.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/retail-xhs-handbag.webp?v=202607040734",
     "doc": "/design-templates/doc/retail-xhs-handbag.json",
     "attributions": []
   },
@@ -346,7 +346,7 @@
     "style": "promo-price",
     "width": 1920,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/retail-promo-laptop.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/retail-promo-laptop.webp?v=202607040734",
     "doc": "/design-templates/doc/retail-promo-laptop.json",
     "attributions": []
   },
@@ -359,7 +359,7 @@
     "style": "coupon-deal",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/food-coupon-open.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/food-coupon-open.webp?v=202607040734",
     "doc": "/design-templates/doc/food-coupon-open.json",
     "attributions": []
   },
@@ -372,7 +372,7 @@
     "style": "promo-price",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/food-promo-milktea.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/food-promo-milktea.webp?v=202607040734",
     "doc": "/design-templates/doc/food-promo-milktea.json",
     "attributions": []
   },
@@ -385,7 +385,7 @@
     "style": "xhs-figure",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/food-xhs-cafe.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/food-xhs-cafe.webp?v=202607040734",
     "doc": "/design-templates/doc/food-xhs-cafe.json",
     "attributions": []
   },
@@ -398,7 +398,7 @@
     "style": "poster-scene",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/food-poster-cafe-scene.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/food-poster-cafe-scene.webp?v=202607040734",
     "doc": "/design-templates/doc/food-poster-cafe-scene.json",
     "attributions": []
   },
@@ -411,7 +411,7 @@
     "style": "event-schedule",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/food-event-open.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/food-event-open.webp?v=202607040734",
     "doc": "/design-templates/doc/food-event-open.json",
     "attributions": []
   },
@@ -424,7 +424,7 @@
     "style": "big-word",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/food-bigword-yummy.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/food-bigword-yummy.webp?v=202607040734",
     "doc": "/design-templates/doc/food-bigword-yummy.json",
     "attributions": []
   },
@@ -437,7 +437,7 @@
     "style": "coupon-deal",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/food-coupon-cake.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/food-coupon-cake.webp?v=202607040734",
     "doc": "/design-templates/doc/food-coupon-cake.json",
     "attributions": []
   },
@@ -450,7 +450,7 @@
     "style": "xhs-knowledge",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/food-xhs-healthy.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/food-xhs-healthy.webp?v=202607040734",
     "doc": "/design-templates/doc/food-xhs-healthy.json",
     "attributions": []
   },
@@ -463,7 +463,7 @@
     "style": "promo-price",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/food-promo-juice.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/food-promo-juice.webp?v=202607040734",
     "doc": "/design-templates/doc/food-promo-juice.json",
     "attributions": []
   },
@@ -476,7 +476,7 @@
     "style": "xhs-figure",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/beauty-xhs-skincare.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/beauty-xhs-skincare.webp?v=202607040734",
     "doc": "/design-templates/doc/beauty-xhs-skincare.json",
     "attributions": []
   },
@@ -489,7 +489,7 @@
     "style": "promo-price",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/beauty-promo-lipstick.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/beauty-promo-lipstick.webp?v=202607040734",
     "doc": "/design-templates/doc/beauty-promo-lipstick.json",
     "attributions": []
   },
@@ -502,7 +502,7 @@
     "style": "poster-scene",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/beauty-poster-salon.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/beauty-poster-salon.webp?v=202607040734",
     "doc": "/design-templates/doc/beauty-poster-salon.json",
     "attributions": []
   },
@@ -515,7 +515,7 @@
     "style": "coupon-deal",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/beauty-coupon-perfume.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/beauty-coupon-perfume.webp?v=202607040734",
     "doc": "/design-templates/doc/beauty-coupon-perfume.json",
     "attributions": []
   },
@@ -528,7 +528,7 @@
     "style": "xhs-knowledge",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/health-knowledge-sleep.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/health-knowledge-sleep.webp?v=202607040734",
     "doc": "/design-templates/doc/health-knowledge-sleep.json",
     "attributions": []
   },
@@ -541,7 +541,7 @@
     "style": "xhs-figure",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/health-figure-checkup.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/health-figure-checkup.webp?v=202607040734",
     "doc": "/design-templates/doc/health-figure-checkup.json",
     "attributions": []
   },
@@ -554,7 +554,7 @@
     "style": "poster-scene",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/health-poster-gym.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/health-poster-gym.webp?v=202607040734",
     "doc": "/design-templates/doc/health-poster-gym.json",
     "attributions": []
   },
@@ -567,7 +567,7 @@
     "style": "big-word",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/health-figure-fitness.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/health-figure-fitness.webp?v=202607040734",
     "doc": "/design-templates/doc/health-figure-fitness.json",
     "attributions": []
   },
@@ -580,7 +580,7 @@
     "style": "event-schedule",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/health-event-clinic.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/health-event-clinic.webp?v=202607040734",
     "doc": "/design-templates/doc/health-event-clinic.json",
     "attributions": []
   },
@@ -593,7 +593,7 @@
     "style": "festive-report",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/biz-festive-report.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/biz-festive-report.webp?v=202607040734",
     "doc": "/design-templates/doc/biz-festive-report.json",
     "attributions": []
   },
@@ -606,7 +606,7 @@
     "style": "festive-report",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/biz-festive-honor.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/biz-festive-honor.webp?v=202607040734",
     "doc": "/design-templates/doc/biz-festive-honor.json",
     "attributions": []
   },
@@ -619,7 +619,7 @@
     "style": "recruit",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/biz-recruit-it.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/biz-recruit-it.webp?v=202607040734",
     "doc": "/design-templates/doc/biz-recruit-it.json",
     "attributions": []
   },
@@ -632,7 +632,7 @@
     "style": "tech-corp",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/biz-tech-ai-summit.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/biz-tech-ai-summit.webp?v=202607040734",
     "doc": "/design-templates/doc/biz-tech-ai-summit.json",
     "attributions": []
   },
@@ -645,7 +645,7 @@
     "style": "tech-corp",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/biz-tech-digital.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/biz-tech-digital.webp?v=202607040734",
     "doc": "/design-templates/doc/biz-tech-digital.json",
     "attributions": []
   },
@@ -658,7 +658,7 @@
     "style": "quote-daily",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/biz-quote-team.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/biz-quote-team.webp?v=202607040734",
     "doc": "/design-templates/doc/biz-quote-team.json",
     "attributions": []
   },
@@ -671,7 +671,7 @@
     "style": "big-word",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/biz-figure-recruit-hr.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/biz-figure-recruit-hr.webp?v=202607040734",
     "doc": "/design-templates/doc/biz-figure-recruit-hr.json",
     "attributions": []
   },
@@ -684,7 +684,7 @@
     "style": "tech-corp",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/finance-tech-wealth.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/finance-tech-wealth.webp?v=202607040734",
     "doc": "/design-templates/doc/finance-tech-wealth.json",
     "attributions": []
   },
@@ -697,7 +697,7 @@
     "style": "poster-scene",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/realestate-poster.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/realestate-poster.webp?v=202607040734",
     "doc": "/design-templates/doc/realestate-poster.json",
     "attributions": []
   },
@@ -710,7 +710,7 @@
     "style": "event-schedule",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/biz-event-launch.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/biz-event-launch.webp?v=202607040734",
     "doc": "/design-templates/doc/biz-event-launch.json",
     "attributions": []
   },
@@ -723,7 +723,7 @@
     "style": "festive-report",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/gov-festive-notice.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/gov-festive-notice.webp?v=202607040734",
     "doc": "/design-templates/doc/gov-festive-notice.json",
     "attributions": []
   },
@@ -736,7 +736,7 @@
     "style": "poster-scene",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/travel-poster-beach.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/travel-poster-beach.webp?v=202607040734",
     "doc": "/design-templates/doc/travel-poster-beach.json",
     "attributions": []
   },
@@ -749,7 +749,7 @@
     "style": "xhs-knowledge",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/travel-xhs-route.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/travel-xhs-route.webp?v=202607040734",
     "doc": "/design-templates/doc/travel-xhs-route.json",
     "attributions": []
   },
@@ -762,7 +762,7 @@
     "style": "poster-scene",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/travel-poster-mountain.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/travel-poster-mountain.webp?v=202607040734",
     "doc": "/design-templates/doc/travel-poster-mountain.json",
     "attributions": []
   },
@@ -775,7 +775,7 @@
     "style": "xhs-figure",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/home-xhs-plant.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/home-xhs-plant.webp?v=202607040734",
     "doc": "/design-templates/doc/home-xhs-plant.json",
     "attributions": []
   },
@@ -788,7 +788,7 @@
     "style": "poster-scene",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/home-promo-livingroom.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/home-promo-livingroom.webp?v=202607040734",
     "doc": "/design-templates/doc/home-promo-livingroom.json",
     "attributions": []
   },
@@ -801,7 +801,7 @@
     "style": "xhs-figure",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/baby-xhs-kid.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/baby-xhs-kid.webp?v=202607040734",
     "doc": "/design-templates/doc/baby-xhs-kid.json",
     "attributions": []
   },
@@ -814,7 +814,7 @@
     "style": "event-schedule",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/baby-event-class.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/baby-event-class.webp?v=202607040734",
     "doc": "/design-templates/doc/baby-event-class.json",
     "attributions": []
   },
@@ -827,7 +827,7 @@
     "style": "quote-daily",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/life-quote-daily.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/life-quote-daily.webp?v=202607040734",
     "doc": "/design-templates/doc/life-quote-daily.json",
     "attributions": []
   },
@@ -840,7 +840,7 @@
     "style": "quote-daily",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/life-quote-morning.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/life-quote-morning.webp?v=202607040734",
     "doc": "/design-templates/doc/life-quote-morning.json",
     "attributions": []
   },
@@ -853,7 +853,7 @@
     "style": "quote-daily",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/life-quote-night.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/life-quote-night.webp?v=202607040734",
     "doc": "/design-templates/doc/life-quote-night.json",
     "attributions": []
   },
@@ -866,7 +866,7 @@
     "style": "big-word",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/life-service-cleaning.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/life-service-cleaning.webp?v=202607040734",
     "doc": "/design-templates/doc/life-service-cleaning.json",
     "attributions": []
   },
@@ -879,7 +879,7 @@
     "style": "poster-scene",
     "width": 1242,
     "height": 1656,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/re-poster-opening.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/re-poster-opening.webp?v=202607040734",
     "doc": "/design-templates/doc/re-poster-opening.json",
     "attributions": []
   },
@@ -892,7 +892,7 @@
     "style": "xhs-figure",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/re-xhs-agent.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/re-xhs-agent.webp?v=202607040734",
     "doc": "/design-templates/doc/re-xhs-agent.json",
     "attributions": []
   },
@@ -905,7 +905,7 @@
     "style": "big-word",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/re-bigword-discount.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/re-bigword-discount.webp?v=202607040734",
     "doc": "/design-templates/doc/re-bigword-discount.json",
     "attributions": []
   },
@@ -918,7 +918,7 @@
     "style": "event-schedule",
     "width": 1242,
     "height": 1656,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/re-schedule-openhouse.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/re-schedule-openhouse.webp?v=202607040734",
     "doc": "/design-templates/doc/re-schedule-openhouse.json",
     "attributions": []
   },
@@ -931,7 +931,7 @@
     "style": "promo-price",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/re-car-festival.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/re-car-festival.webp?v=202607040734",
     "doc": "/design-templates/doc/re-car-festival.json",
     "attributions": []
   },
@@ -944,7 +944,7 @@
     "style": "coupon-deal",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/re-coupon-car.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/re-coupon-car.webp?v=202607040734",
     "doc": "/design-templates/doc/re-coupon-car.json",
     "attributions": []
   },
@@ -957,7 +957,7 @@
     "style": "section-cover",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/re-section-home.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/re-section-home.webp?v=202607040734",
     "doc": "/design-templates/doc/re-section-home.json",
     "attributions": []
   },
@@ -970,7 +970,7 @@
     "style": "poster-scene",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/re-poster-livingroom.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/re-poster-livingroom.webp?v=202607040734",
     "doc": "/design-templates/doc/re-poster-livingroom.json",
     "attributions": []
   },
@@ -983,7 +983,7 @@
     "style": "xhs-figure",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/re-xhs-plant.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/re-xhs-plant.webp?v=202607040734",
     "doc": "/design-templates/doc/re-xhs-plant.json",
     "attributions": []
   },
@@ -996,7 +996,7 @@
     "style": "tech-corp",
     "width": 1920,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/re-tech-property.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/re-tech-property.webp?v=202607040734",
     "doc": "/design-templates/doc/re-tech-property.json",
     "attributions": []
   },
@@ -1009,7 +1009,7 @@
     "style": "poster-scene",
     "width": 1242,
     "height": 1656,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/we-poster-wedding.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/we-poster-wedding.webp?v=202607040734",
     "doc": "/design-templates/doc/we-poster-wedding.json",
     "attributions": []
   },
@@ -1022,7 +1022,7 @@
     "style": "xhs-figure",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/we-xhs-couple.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/we-xhs-couple.webp?v=202607040734",
     "doc": "/design-templates/doc/we-xhs-couple.json",
     "attributions": []
   },
@@ -1035,7 +1035,7 @@
     "style": "big-word",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/we-bigword-anniversary.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/we-bigword-anniversary.webp?v=202607040734",
     "doc": "/design-templates/doc/we-bigword-anniversary.json",
     "attributions": []
   },
@@ -1048,7 +1048,7 @@
     "style": "festive-report",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/we-festive-opening.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/we-festive-opening.webp?v=202607040734",
     "doc": "/design-templates/doc/we-festive-opening.json",
     "attributions": []
   },
@@ -1061,7 +1061,7 @@
     "style": "poster-scene",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/we-poster-birthday.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/we-poster-birthday.webp?v=202607040734",
     "doc": "/design-templates/doc/we-poster-birthday.json",
     "attributions": []
   },
@@ -1074,7 +1074,7 @@
     "style": "event-schedule",
     "width": 1242,
     "height": 1656,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/we-schedule-party.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/we-schedule-party.webp?v=202607040734",
     "doc": "/design-templates/doc/we-schedule-party.json",
     "attributions": []
   },
@@ -1087,7 +1087,7 @@
     "style": "quote-daily",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/we-quote-blessing.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/we-quote-blessing.webp?v=202607040734",
     "doc": "/design-templates/doc/we-quote-blessing.json",
     "attributions": []
   },
@@ -1100,7 +1100,7 @@
     "style": "xhs-figure",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/we-xhs-champagne.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/we-xhs-champagne.webp?v=202607040734",
     "doc": "/design-templates/doc/we-xhs-champagne.json",
     "attributions": []
   },
@@ -1113,7 +1113,7 @@
     "style": "coupon-deal",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/we-coupon-flower.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/we-coupon-flower.webp?v=202607040734",
     "doc": "/design-templates/doc/we-coupon-flower.json",
     "attributions": []
   },
@@ -1126,7 +1126,7 @@
     "style": "section-cover",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/we-section-love.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/we-section-love.webp?v=202607040734",
     "doc": "/design-templates/doc/we-section-love.json",
     "attributions": []
   },
@@ -1139,7 +1139,7 @@
     "style": "poster-scene",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/tr-poster-beach.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/tr-poster-beach.webp?v=202607040734",
     "doc": "/design-templates/doc/tr-poster-beach.json",
     "attributions": []
   },
@@ -1152,7 +1152,7 @@
     "style": "poster-scene",
     "width": 1242,
     "height": 1656,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/tr-poster-mountain.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/tr-poster-mountain.webp?v=202607040734",
     "doc": "/design-templates/doc/tr-poster-mountain.json",
     "attributions": []
   },
@@ -1165,7 +1165,7 @@
     "style": "poster-scene",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/tr-poster-autumn.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/tr-poster-autumn.webp?v=202607040734",
     "doc": "/design-templates/doc/tr-poster-autumn.json",
     "attributions": []
   },
@@ -1178,7 +1178,7 @@
     "style": "xhs-figure",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/tr-xhs-camera.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/tr-xhs-camera.webp?v=202607040734",
     "doc": "/design-templates/doc/tr-xhs-camera.json",
     "attributions": []
   },
@@ -1191,7 +1191,7 @@
     "style": "promo-price",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/tr-promo-ticket.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/tr-promo-ticket.webp?v=202607040734",
     "doc": "/design-templates/doc/tr-promo-ticket.json",
     "attributions": []
   },
@@ -1204,7 +1204,7 @@
     "style": "event-schedule",
     "width": 1242,
     "height": 1656,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/tr-schedule-trip.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/tr-schedule-trip.webp?v=202607040734",
     "doc": "/design-templates/doc/tr-schedule-trip.json",
     "attributions": []
   },
@@ -1217,7 +1217,7 @@
     "style": "big-word",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/tr-bigword-getaway.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/tr-bigword-getaway.webp?v=202607040734",
     "doc": "/design-templates/doc/tr-bigword-getaway.json",
     "attributions": []
   },
@@ -1230,7 +1230,7 @@
     "style": "quote-daily",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/tr-quote-travel.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/tr-quote-travel.webp?v=202607040734",
     "doc": "/design-templates/doc/tr-quote-travel.json",
     "attributions": []
   },
@@ -1243,7 +1243,7 @@
     "style": "coupon-deal",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/tr-coupon-hotel.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/tr-coupon-hotel.webp?v=202607040734",
     "doc": "/design-templates/doc/tr-coupon-hotel.json",
     "attributions": []
   },
@@ -1256,7 +1256,7 @@
     "style": "section-cover",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/tr-section-journey.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/tr-section-journey.webp?v=202607040734",
     "doc": "/design-templates/doc/tr-section-journey.json",
     "attributions": []
   },
@@ -1269,7 +1269,7 @@
     "style": "tech-corp",
     "width": 1920,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fs-tech-finance.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fs-tech-finance.webp?v=202607040734",
     "doc": "/design-templates/doc/fs-tech-finance.json",
     "attributions": []
   },
@@ -1282,7 +1282,7 @@
     "style": "recruit",
     "width": 1242,
     "height": 1656,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fs-recruit-sales.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fs-recruit-sales.webp?v=202607040734",
     "doc": "/design-templates/doc/fs-recruit-sales.json",
     "attributions": []
   },
@@ -1295,7 +1295,7 @@
     "style": "xhs-figure",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fs-xhs-service.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fs-xhs-service.webp?v=202607040734",
     "doc": "/design-templates/doc/fs-xhs-service.json",
     "attributions": []
   },
@@ -1308,7 +1308,7 @@
     "style": "big-word",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fs-bigword-insurance.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fs-bigword-insurance.webp?v=202607040734",
     "doc": "/design-templates/doc/fs-bigword-insurance.json",
     "attributions": []
   },
@@ -1321,7 +1321,7 @@
     "style": "coupon-deal",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fs-coupon-member.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fs-coupon-member.webp?v=202607040734",
     "doc": "/design-templates/doc/fs-coupon-member.json",
     "attributions": []
   },
@@ -1334,7 +1334,7 @@
     "style": "poster-scene",
     "width": 1920,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fs-poster-office.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fs-poster-office.webp?v=202607040734",
     "doc": "/design-templates/doc/fs-poster-office.json",
     "attributions": []
   },
@@ -1347,7 +1347,7 @@
     "style": "event-schedule",
     "width": 1242,
     "height": 1656,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fs-schedule-salon.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fs-schedule-salon.webp?v=202607040734",
     "doc": "/design-templates/doc/fs-schedule-salon.json",
     "attributions": []
   },
@@ -1360,7 +1360,7 @@
     "style": "tech-corp",
     "width": 1920,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fs-tech-fintech.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fs-tech-fintech.webp?v=202607040734",
     "doc": "/design-templates/doc/fs-tech-fintech.json",
     "attributions": []
   },
@@ -1373,7 +1373,7 @@
     "style": "xhs-figure",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fs-xhs-money.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fs-xhs-money.webp?v=202607040734",
     "doc": "/design-templates/doc/fs-xhs-money.json",
     "attributions": []
   },
@@ -1386,7 +1386,7 @@
     "style": "quote-daily",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fs-quote-work.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fs-quote-work.webp?v=202607040734",
     "doc": "/design-templates/doc/fs-quote-work.json",
     "attributions": []
   },
@@ -1399,7 +1399,7 @@
     "style": "promo-price",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fd2-promo-milktea.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fd2-promo-milktea.webp?v=202607040734",
     "doc": "/design-templates/doc/fd2-promo-milktea.json",
     "attributions": []
   },
@@ -1412,7 +1412,7 @@
     "style": "xhs-figure",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fd2-xhs-macaron.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fd2-xhs-macaron.webp?v=202607040734",
     "doc": "/design-templates/doc/fd2-xhs-macaron.json",
     "attributions": []
   },
@@ -1425,7 +1425,7 @@
     "style": "poster-scene",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fd2-poster-cafe.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fd2-poster-cafe.webp?v=202607040734",
     "doc": "/design-templates/doc/fd2-poster-cafe.json",
     "attributions": []
   },
@@ -1438,7 +1438,7 @@
     "style": "coupon-deal",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fd2-coupon-salad.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fd2-coupon-salad.webp?v=202607040734",
     "doc": "/design-templates/doc/fd2-coupon-salad.json",
     "attributions": []
   },
@@ -1451,7 +1451,7 @@
     "style": "big-word",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fd2-bigword-juice.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fd2-bigword-juice.webp?v=202607040734",
     "doc": "/design-templates/doc/fd2-bigword-juice.json",
     "attributions": []
   },
@@ -1464,7 +1464,7 @@
     "style": "festive-report",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fd2-festive-anniversary.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fd2-festive-anniversary.webp?v=202607040734",
     "doc": "/design-templates/doc/fd2-festive-anniversary.json",
     "attributions": []
   },
@@ -1477,7 +1477,7 @@
     "style": "xhs-figure",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fd2-xhs-coffee.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fd2-xhs-coffee.webp?v=202607040734",
     "doc": "/design-templates/doc/fd2-xhs-coffee.json",
     "attributions": []
   },
@@ -1490,7 +1490,7 @@
     "style": "event-schedule",
     "width": 1242,
     "height": 1656,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fd2-schedule-foodfest.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fd2-schedule-foodfest.webp?v=202607040734",
     "doc": "/design-templates/doc/fd2-schedule-foodfest.json",
     "attributions": []
   },
@@ -1503,7 +1503,7 @@
     "style": "promo-price",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fd2-promo-cake.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fd2-promo-cake.webp?v=202607040734",
     "doc": "/design-templates/doc/fd2-promo-cake.json",
     "attributions": []
   },
@@ -1516,7 +1516,7 @@
     "style": "section-cover",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fd2-section-taste.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fd2-section-taste.webp?v=202607040734",
     "doc": "/design-templates/doc/fd2-section-taste.json",
     "attributions": []
   },
@@ -1529,7 +1529,7 @@
     "style": "xhs-figure",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ke2-xhs-kid.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ke2-xhs-kid.webp?v=202607040734",
     "doc": "/design-templates/doc/ke2-xhs-kid.json",
     "attributions": []
   },
@@ -1542,7 +1542,7 @@
     "style": "recruit",
     "width": 1242,
     "height": 1656,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ke2-recruit-interest.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ke2-recruit-interest.webp?v=202607040734",
     "doc": "/design-templates/doc/ke2-recruit-interest.json",
     "attributions": []
   },
@@ -1555,7 +1555,7 @@
     "style": "poster-scene",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ke2-poster-graduate.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ke2-poster-graduate.webp?v=202607040734",
     "doc": "/design-templates/doc/ke2-poster-graduate.json",
     "attributions": []
   },
@@ -1568,7 +1568,7 @@
     "style": "xhs-figure",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ke2-xhs-graduate.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ke2-xhs-graduate.webp?v=202607040734",
     "doc": "/design-templates/doc/ke2-xhs-graduate.json",
     "attributions": []
   },
@@ -1581,7 +1581,7 @@
     "style": "big-word",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ke2-bigword-openschool.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ke2-bigword-openschool.webp?v=202607040734",
     "doc": "/design-templates/doc/ke2-bigword-openschool.json",
     "attributions": []
   },
@@ -1594,7 +1594,7 @@
     "style": "event-schedule",
     "width": 1242,
     "height": 1656,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ke2-schedule-camp.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ke2-schedule-camp.webp?v=202607040734",
     "doc": "/design-templates/doc/ke2-schedule-camp.json",
     "attributions": []
   },
@@ -1607,7 +1607,7 @@
     "style": "xhs-knowledge",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ke2-knowledge-study.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ke2-knowledge-study.webp?v=202607040734",
     "doc": "/design-templates/doc/ke2-knowledge-study.json",
     "attributions": []
   },
@@ -1620,7 +1620,7 @@
     "style": "poster-scene",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ke2-poster-parentchild.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ke2-poster-parentchild.webp?v=202607040734",
     "doc": "/design-templates/doc/ke2-poster-parentchild.json",
     "attributions": []
   },
@@ -1633,7 +1633,7 @@
     "style": "coupon-deal",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ke2-coupon-course.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ke2-coupon-course.webp?v=202607040734",
     "doc": "/design-templates/doc/ke2-coupon-course.json",
     "attributions": []
   },
@@ -1646,7 +1646,7 @@
     "style": "section-cover",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ke2-section-grow.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ke2-section-grow.webp?v=202607040734",
     "doc": "/design-templates/doc/ke2-section-grow.json",
     "attributions": []
   },
@@ -1659,7 +1659,7 @@
     "style": "xhs-figure",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/pet-xhs-dog.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/pet-xhs-dog.webp?v=202607040734",
     "doc": "/design-templates/doc/pet-xhs-dog.json",
     "attributions": []
   },
@@ -1672,7 +1672,7 @@
     "style": "xhs-figure",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/pet-xhs-cat.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/pet-xhs-cat.webp?v=202607040734",
     "doc": "/design-templates/doc/pet-xhs-cat.json",
     "attributions": []
   },
@@ -1685,7 +1685,7 @@
     "style": "promo-price",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/pet-promo-grooming.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/pet-promo-grooming.webp?v=202607040734",
     "doc": "/design-templates/doc/pet-promo-grooming.json",
     "attributions": []
   },
@@ -1698,7 +1698,7 @@
     "style": "coupon-deal",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/pet-coupon-shop.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/pet-coupon-shop.webp?v=202607040734",
     "doc": "/design-templates/doc/pet-coupon-shop.json",
     "attributions": []
   },
@@ -1711,7 +1711,7 @@
     "style": "poster-scene",
     "width": 1242,
     "height": 1656,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/pet-poster-adopt.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/pet-poster-adopt.webp?v=202607040734",
     "doc": "/design-templates/doc/pet-poster-adopt.json",
     "attributions": []
   },
@@ -1724,7 +1724,7 @@
     "style": "big-word",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/pet-bigword-sale.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/pet-bigword-sale.webp?v=202607040734",
     "doc": "/design-templates/doc/pet-bigword-sale.json",
     "attributions": []
   },
@@ -1737,7 +1737,7 @@
     "style": "section-cover",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/pet-section-love.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/pet-section-love.webp?v=202607040734",
     "doc": "/design-templates/doc/pet-section-love.json",
     "attributions": []
   },
@@ -1750,7 +1750,7 @@
     "style": "event-schedule",
     "width": 1242,
     "height": 1656,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/pet-schedule-clinic.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/pet-schedule-clinic.webp?v=202607040734",
     "doc": "/design-templates/doc/pet-schedule-clinic.json",
     "attributions": []
   },
@@ -1763,7 +1763,7 @@
     "style": "quote-daily",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/pet-quote-companion.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/pet-quote-companion.webp?v=202607040734",
     "doc": "/design-templates/doc/pet-quote-companion.json",
     "attributions": []
   },
@@ -1776,7 +1776,7 @@
     "style": "xhs-knowledge",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/pet-knowledge-feed.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/pet-knowledge-feed.webp?v=202607040734",
     "doc": "/design-templates/doc/pet-knowledge-feed.json",
     "attributions": []
   },
@@ -1789,7 +1789,7 @@
     "style": "xhs-figure",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ft-xhs-run.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ft-xhs-run.webp?v=202607040734",
     "doc": "/design-templates/doc/ft-xhs-run.json",
     "attributions": []
   },
@@ -1802,7 +1802,7 @@
     "style": "recruit",
     "width": 1242,
     "height": 1656,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ft-recruit-coach.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ft-recruit-coach.webp?v=202607040734",
     "doc": "/design-templates/doc/ft-recruit-coach.json",
     "attributions": []
   },
@@ -1815,7 +1815,7 @@
     "style": "promo-price",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ft-promo-gymcard.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ft-promo-gymcard.webp?v=202607040734",
     "doc": "/design-templates/doc/ft-promo-gymcard.json",
     "attributions": []
   },
@@ -1828,7 +1828,7 @@
     "style": "poster-scene",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ft-poster-gym.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ft-poster-gym.webp?v=202607040734",
     "doc": "/design-templates/doc/ft-poster-gym.json",
     "attributions": []
   },
@@ -1841,7 +1841,7 @@
     "style": "big-word",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ft-bigword-shape.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ft-bigword-shape.webp?v=202607040734",
     "doc": "/design-templates/doc/ft-bigword-shape.json",
     "attributions": []
   },
@@ -1854,7 +1854,7 @@
     "style": "coupon-deal",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ft-coupon-yoga.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ft-coupon-yoga.webp?v=202607040734",
     "doc": "/design-templates/doc/ft-coupon-yoga.json",
     "attributions": []
   },
@@ -1867,7 +1867,7 @@
     "style": "event-schedule",
     "width": 1242,
     "height": 1656,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ft-schedule-class.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ft-schedule-class.webp?v=202607040734",
     "doc": "/design-templates/doc/ft-schedule-class.json",
     "attributions": []
   },
@@ -1880,7 +1880,7 @@
     "style": "quote-daily",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ft-quote-sweat.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ft-quote-sweat.webp?v=202607040734",
     "doc": "/design-templates/doc/ft-quote-sweat.json",
     "attributions": []
   },
@@ -1893,7 +1893,7 @@
     "style": "tech-corp",
     "width": 1920,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ft-tech-app.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ft-tech-app.webp?v=202607040734",
     "doc": "/design-templates/doc/ft-tech-app.json",
     "attributions": []
   },
@@ -1906,7 +1906,7 @@
     "style": "section-cover",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ft-section-strong.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/ft-section-strong.webp?v=202607040734",
     "doc": "/design-templates/doc/ft-section-strong.json",
     "attributions": []
   },
@@ -1919,7 +1919,7 @@
     "style": "poster-scene",
     "width": 1242,
     "height": 1656,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/gt-poster-tournament.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/gt-poster-tournament.webp?v=202607040734",
     "doc": "/design-templates/doc/gt-poster-tournament.json",
     "attributions": []
   },
@@ -1932,7 +1932,7 @@
     "style": "xhs-figure",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/gt-xhs-gamer.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/gt-xhs-gamer.webp?v=202607040734",
     "doc": "/design-templates/doc/gt-xhs-gamer.json",
     "attributions": []
   },
@@ -1945,7 +1945,7 @@
     "style": "promo-price",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/gt-promo-gamepad.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/gt-promo-gamepad.webp?v=202607040734",
     "doc": "/design-templates/doc/gt-promo-gamepad.json",
     "attributions": []
   },
@@ -1958,7 +1958,7 @@
     "style": "big-word",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/gt-bigword-newgame.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/gt-bigword-newgame.webp?v=202607040734",
     "doc": "/design-templates/doc/gt-bigword-newgame.json",
     "attributions": []
   },
@@ -1971,7 +1971,7 @@
     "style": "tech-corp",
     "width": 1920,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/gt-tech-launch.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/gt-tech-launch.webp?v=202607040734",
     "doc": "/design-templates/doc/gt-tech-launch.json",
     "attributions": []
   },
@@ -1984,7 +1984,7 @@
     "style": "event-schedule",
     "width": 1242,
     "height": 1656,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/gt-schedule-live.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/gt-schedule-live.webp?v=202607040734",
     "doc": "/design-templates/doc/gt-schedule-live.json",
     "attributions": []
   },
@@ -1997,7 +1997,7 @@
     "style": "coupon-deal",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/gt-coupon-digital.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/gt-coupon-digital.webp?v=202607040734",
     "doc": "/design-templates/doc/gt-coupon-digital.json",
     "attributions": []
   },
@@ -2010,7 +2010,7 @@
     "style": "section-cover",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/gt-section-esports.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/gt-section-esports.webp?v=202607040734",
     "doc": "/design-templates/doc/gt-section-esports.json",
     "attributions": []
   },
@@ -2023,7 +2023,7 @@
     "style": "quote-daily",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/gt-quote-game.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/gt-quote-game.webp?v=202607040734",
     "doc": "/design-templates/doc/gt-quote-game.json",
     "attributions": []
   },
@@ -2036,7 +2036,7 @@
     "style": "poster-scene",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/gt-poster-stream.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/gt-poster-stream.webp?v=202607040734",
     "doc": "/design-templates/doc/gt-poster-stream.json",
     "attributions": []
   },
@@ -2049,7 +2049,7 @@
     "style": "poster-scene",
     "width": 1242,
     "height": 1656,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fe-poster-midautumn.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fe-poster-midautumn.webp?v=202607040734",
     "doc": "/design-templates/doc/fe-poster-midautumn.json",
     "attributions": []
   },
@@ -2062,7 +2062,7 @@
     "style": "promo-price",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fe-promo-mooncake.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fe-promo-mooncake.webp?v=202607040734",
     "doc": "/design-templates/doc/fe-promo-mooncake.json",
     "attributions": []
   },
@@ -2075,7 +2075,7 @@
     "style": "coupon-deal",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fe-coupon-mooncake.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fe-coupon-mooncake.webp?v=202607040734",
     "doc": "/design-templates/doc/fe-coupon-mooncake.json",
     "attributions": []
   },
@@ -2088,7 +2088,7 @@
     "style": "poster-scene",
     "width": 1242,
     "height": 1656,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fe-poster-cny.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fe-poster-cny.webp?v=202607040734",
     "doc": "/design-templates/doc/fe-poster-cny.json",
     "attributions": []
   },
@@ -2101,7 +2101,7 @@
     "style": "big-word",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fe-bigword-cny.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fe-bigword-cny.webp?v=202607040734",
     "doc": "/design-templates/doc/fe-bigword-cny.json",
     "attributions": []
   },
@@ -2114,7 +2114,7 @@
     "style": "festive-report",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fe-festive-cny.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fe-festive-cny.webp?v=202607040734",
     "doc": "/design-templates/doc/fe-festive-cny.json",
     "attributions": []
   },
@@ -2127,7 +2127,7 @@
     "style": "poster-scene",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fe-poster-lantern.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fe-poster-lantern.webp?v=202607040734",
     "doc": "/design-templates/doc/fe-poster-lantern.json",
     "attributions": []
   },
@@ -2140,7 +2140,7 @@
     "style": "quote-daily",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fe-quote-blessing.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fe-quote-blessing.webp?v=202607040734",
     "doc": "/design-templates/doc/fe-quote-blessing.json",
     "attributions": []
   },
@@ -2153,7 +2153,7 @@
     "style": "big-word",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fe-bigword-national.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fe-bigword-national.webp?v=202607040734",
     "doc": "/design-templates/doc/fe-bigword-national.json",
     "attributions": []
   },
@@ -2166,7 +2166,7 @@
     "style": "section-cover",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fe-section-reunion.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/fe-section-reunion.webp?v=202607040734",
     "doc": "/design-templates/doc/fe-section-reunion.json",
     "attributions": []
   },
@@ -2179,7 +2179,7 @@
     "style": "poster-scene",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sw-poster-spa.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sw-poster-spa.webp?v=202607040734",
     "doc": "/design-templates/doc/sw-poster-spa.json",
     "attributions": []
   },
@@ -2192,7 +2192,7 @@
     "style": "promo-price",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sw-promo-facial.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sw-promo-facial.webp?v=202607040734",
     "doc": "/design-templates/doc/sw-promo-facial.json",
     "attributions": []
   },
@@ -2205,7 +2205,7 @@
     "style": "coupon-deal",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sw-coupon-massage.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sw-coupon-massage.webp?v=202607040734",
     "doc": "/design-templates/doc/sw-coupon-massage.json",
     "attributions": []
   },
@@ -2218,7 +2218,7 @@
     "style": "xhs-figure",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sw-xhs-skincare.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sw-xhs-skincare.webp?v=202607040734",
     "doc": "/design-templates/doc/sw-xhs-skincare.json",
     "attributions": []
   },
@@ -2231,7 +2231,7 @@
     "style": "big-word",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sw-bigword-relax.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sw-bigword-relax.webp?v=202607040734",
     "doc": "/design-templates/doc/sw-bigword-relax.json",
     "attributions": []
   },
@@ -2244,7 +2244,7 @@
     "style": "section-cover",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sw-section-beauty.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sw-section-beauty.webp?v=202607040734",
     "doc": "/design-templates/doc/sw-section-beauty.json",
     "attributions": []
   },
@@ -2257,7 +2257,7 @@
     "style": "event-schedule",
     "width": 1242,
     "height": 1656,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sw-schedule-open.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sw-schedule-open.webp?v=202607040734",
     "doc": "/design-templates/doc/sw-schedule-open.json",
     "attributions": []
   },
@@ -2270,7 +2270,7 @@
     "style": "quote-daily",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sw-quote-selfcare.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sw-quote-selfcare.webp?v=202607040734",
     "doc": "/design-templates/doc/sw-quote-selfcare.json",
     "attributions": []
   },
@@ -2283,7 +2283,7 @@
     "style": "promo-price",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sw-promo-perfume.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sw-promo-perfume.webp?v=202607040734",
     "doc": "/design-templates/doc/sw-promo-perfume.json",
     "attributions": []
   },
@@ -2296,7 +2296,7 @@
     "style": "poster-scene",
     "width": 1920,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sw-poster-wellness.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sw-poster-wellness.webp?v=202607040734",
     "doc": "/design-templates/doc/sw-poster-wellness.json",
     "attributions": []
   },
@@ -2309,7 +2309,7 @@
     "style": "promo-price",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sr-promo-double11.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sr-promo-double11.webp?v=202607040734",
     "doc": "/design-templates/doc/sr-promo-double11.json",
     "attributions": []
   },
@@ -2322,7 +2322,7 @@
     "style": "big-word",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sr-bigword-618.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sr-bigword-618.webp?v=202607040734",
     "doc": "/design-templates/doc/sr-bigword-618.json",
     "attributions": []
   },
@@ -2335,7 +2335,7 @@
     "style": "coupon-deal",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sr-coupon-vip.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sr-coupon-vip.webp?v=202607040734",
     "doc": "/design-templates/doc/sr-coupon-vip.json",
     "attributions": []
   },
@@ -2348,7 +2348,7 @@
     "style": "festive-report",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sr-festive-liveshow.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sr-festive-liveshow.webp?v=202607040734",
     "doc": "/design-templates/doc/sr-festive-liveshow.json",
     "attributions": []
   },
@@ -2361,7 +2361,7 @@
     "style": "promo-price",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sr-promo-newyear-goods.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sr-promo-newyear-goods.webp?v=202607040734",
     "doc": "/design-templates/doc/sr-promo-newyear-goods.json",
     "attributions": []
   },
@@ -2374,7 +2374,7 @@
     "style": "coupon-deal",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sr-coupon-clearance.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sr-coupon-clearance.webp?v=202607040734",
     "doc": "/design-templates/doc/sr-coupon-clearance.json",
     "attributions": []
   },
@@ -2387,7 +2387,7 @@
     "style": "poster-scene",
     "width": 1080,
     "height": 1440,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sr-poster-liveshow.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sr-poster-liveshow.webp?v=202607040734",
     "doc": "/design-templates/doc/sr-poster-liveshow.json",
     "attributions": []
   },
@@ -2400,7 +2400,7 @@
     "style": "big-word",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sr-bigword-lastcall.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sr-bigword-lastcall.webp?v=202607040734",
     "doc": "/design-templates/doc/sr-bigword-lastcall.json",
     "attributions": []
   },
@@ -2413,7 +2413,7 @@
     "style": "section-cover",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sr-section-shopping.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sr-section-shopping.webp?v=202607040734",
     "doc": "/design-templates/doc/sr-section-shopping.json",
     "attributions": []
   },
@@ -2426,7 +2426,7 @@
     "style": "quote-daily",
     "width": 1080,
     "height": 1080,
-    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sr-quote-thanks.webp",
+    "preview": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/sr-quote-thanks.webp?v=202607040734",
     "doc": "/design-templates/doc/sr-quote-thanks.json",
     "attributions": []
   }
