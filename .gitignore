@@ -33,3 +33,6 @@ next-env.d.ts
 
 # coding-assistant attachment upload scratch
 .agent-uploads/
+
+# 模板缩略图管线本地产物（真身在 OSS assets/template-thumb/）
+scripts/.thumb-out/

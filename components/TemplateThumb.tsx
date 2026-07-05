@@ -1,12 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useUI } from "@oceanleo/ui/i18n";
 import type { TemplateMeta } from "@/lib/template-taxonomy";
 import { paletteFor, photo, photoFallback, skeletonIndexFor } from "@/lib/template-engine";
+import { templateThumbUrl } from "@/lib/template-thumb-url";
 
-// 轻量缩略图：用「迷你浏览器框 + 行业配图 + 与该模板同色系的迷你版式」表现
-// 每个模板的真实观感，而不是在网格里塞 525 个重量级 iframe。点开才渲染整页。
+// 缩略图 = 每个模板整页 HTML 的**真实首屏截图**（离线渲染 → OSS webp，见
+// lib/template-thumb-url.ts）。模板库唯一的吸引力来自「让用户直接看到模板长什么样」
+// （对标稿定 / 云·速成美站）。截图缺失 / 加载失败时，回退到旧的合成迷你版式
+// （下方 MiniSignature / MiniLayout），保证网格永不破图。
 export function TemplateThumb({
   meta,
   href,
@@ -17,8 +20,22 @@ export function TemplateThumb({
   const tt = useUI();
   const p = paletteFor(meta.paletteKey);
   const [loaded, setLoaded] = useState(false);
+  const [shotLoaded, setShotLoaded] = useState(false);
+  const [shotFailed, setShotFailed] = useState(false);
   const skel = skeletonIndexFor(meta);
   const img = photo(meta.photo, meta.hot, 600, 400);
+  const shot = templateThumbUrl(meta.slug);
+
+  // ref 回调：img 从缓存瞬时加载时，onLoad 可能在 React 绑定前就已触发，
+  // 导致 shotLoaded 永远为 false、图片卡在 opacity-0（灰占位）。挂载时直接
+  // 查 complete/naturalWidth 兜底，覆盖这个经典 race。
+  const shotRef = useCallback((el: HTMLImageElement | null) => {
+    if (!el) return;
+    if (el.complete) {
+      if (el.naturalWidth > 0) setShotLoaded(true);
+      else setShotFailed(true);
+    }
+  }, []);
 
   return (
     // 真链接 + target=_blank：点开后浏览器整页加载这个模板网站本身（route.ts
@@ -32,18 +49,41 @@ export function TemplateThumb({
       {/* 迷你浏览器预览 */}
       <div className="relative aspect-[4/3] overflow-hidden bg-zinc-50">
         {/* 顶部地址栏 */}
-        <div className="flex items-center gap-1.5 bg-white px-3 py-2 border-b border-zinc-100">
+        <div className="relative z-10 flex items-center gap-1.5 bg-white px-3 py-2 border-b border-zinc-100">
           <span className="h-2 w-2 rounded-full bg-red-400" />
           <span className="h-2 w-2 rounded-full bg-amber-400" />
           <span className="h-2 w-2 rounded-full bg-green-400" />
           <span className="ml-2 h-3 flex-1 rounded bg-zinc-100" />
         </div>
 
-        {/* 迷你站点内容：特色家族走专属迷你版式（一眼可辨），其余走通用骨架。 */}
-        {SIGNATURE_KEYS.has(meta.layoutKey) ? (
-          <MiniSignature meta={meta} p={p} img={img} loaded={loaded} onLoad={() => setLoaded(true)} />
+        {shotFailed ? (
+          // 回退：截图不可用 → 旧的合成迷你版式（特色家族专属 / 通用骨架）。
+          SIGNATURE_KEYS.has(meta.layoutKey) ? (
+            <MiniSignature meta={meta} p={p} img={img} loaded={loaded} onLoad={() => setLoaded(true)} />
+          ) : (
+            <MiniLayout meta={meta} skel={skel} p={p} img={img} loaded={loaded} onLoad={() => setLoaded(true)} />
+          )
         ) : (
-          <MiniLayout meta={meta} skel={skel} p={p} img={img} loaded={loaded} onLoad={() => setLoaded(true)} />
+          // 主路径：真实整页首屏截图，填满地址栏下方区域。
+          <div className="absolute inset-0 top-[33px]">
+            {/* 加载前的占位骨架（避免闪白） */}
+            {!shotLoaded && (
+              <div
+                className="absolute inset-0 animate-pulse"
+                style={{ background: `linear-gradient(135deg, ${p.gradFrom}, ${p.gradTo})`, opacity: 0.25 }}
+              />
+            )}
+            <img
+              ref={shotRef}
+              src={shot}
+              alt={meta.subLabel}
+              loading="lazy"
+              decoding="async"
+              onLoad={() => setShotLoaded(true)}
+              onError={() => setShotFailed(true)}
+              className={`h-full w-full object-cover object-top transition-opacity duration-500 ${shotLoaded ? "opacity-100" : "opacity-0"}`}
+            />
+          </div>
         )}
 
         {/* 多页徽标 */}
@@ -52,7 +92,7 @@ export function TemplateThumb({
         </span>
 
         {/* 悬停遮罩 */}
-        <div className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition group-hover:bg-black/30 group-hover:opacity-100">
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/0 opacity-0 transition group-hover:bg-black/30 group-hover:opacity-100">
           <span className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-zinc-900 shadow-lg">{tt("预览模板")}</span>
         </div>
       </div>
