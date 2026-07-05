@@ -23,7 +23,7 @@ export function TemplateThumb({
   const [shotLoaded, setShotLoaded] = useState(false);
   const [shotFailed, setShotFailed] = useState(false);
   const skel = skeletonIndexFor(meta);
-  const img = photo(meta.photo, meta.hot, 600, 400);
+  const img = photo(meta.subKey, meta.hot, 600, 400);
   const shot = templateThumbUrl(meta.slug);
 
   // ref 回调：img 从缓存瞬时加载时，onLoad 可能在 React 绑定前就已触发，

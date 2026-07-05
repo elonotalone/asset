@@ -26,6 +26,7 @@ import {
   dnaFor,
 } from "./template-dna";
 import { hashStr } from "./hash";
+import { poolPhoto, poolFallbackPhoto } from "./template-photo-pool";
 import {
   decorLayer,
   effectsScript,
@@ -139,21 +140,30 @@ export function esc(s: string): string {
     .replace(/"/g, "&quot;");
 }
 
-// 配图（确定性，按行业关键词 + seed）。loremflickr 走 Flickr CC 标签，License 友好。
-export function photo(query: string, seed: number, w = 1200, h = 800): string {
-  const tags = encodeURIComponent(query);
-  return `https://loremflickr.com/${w}/${h}/${tags}?lock=${seed}`;
+// 配图（确定性，按子类 + seed，从 OSS 自托管行业图片池取图）。旧实现指向
+// loremflickr/picsum（大陆慢、常空白、与行业无关）——已弃用，见 template-photo-pool.ts。
+//
+// 兼容签名：photo(query, seed) 的第一参数历史上是「行业关键词」，现改用它作为
+// 【子类 key】（img() 传 ctx.meta.subKey；老调用点若传关键词会走全局 fallback 池，
+// 不炸）。w/h 参数保留但不再进 URL（OSS 图是固定尺寸原图，浏览器按 CSS 缩放）。
+export function photo(subKey: string, seed: number, _w = 1200, _h = 800): string {
+  return poolPhoto(subKey, seed) || poolFallbackPhoto(seed);
 }
-export function photoFallback(seed: number, w = 1200, h = 800): string {
-  return `https://picsum.photos/seed/leo${seed}/${w}/${h}`;
+// 兼容垫片：旧「随机兜底图」接口，现返回 OSS fallback 池里的确定性一张。
+export function photoFallback(seed: number, _w = 1200, _h = 800): string {
+  return poolFallbackPhoto(seed);
 }
-function imgFallbackAttr(seed: number, w: number, h: number): string {
-  const fb = photoFallback(seed, w, h);
-  return ` onerror="if(this.dataset.fb){this.style.visibility='hidden'}else{this.dataset.fb=1;this.src='${fb}'}"`;
+// <img> 的 onerror：OSS 主图偶发拉不到时，换成 fallback 池的另一张 OSS 图；
+// 再失败才隐藏。全程只在自家 CDN 内兜底，绝不回退到第三方随机图。
+function imgFallbackAttr(seed: number): string {
+  const fb = poolFallbackPhoto(seed + 7);
+  const esc = fb.replace(/'/g, "&#39;");
+  return ` onerror="if(this.dataset.fb){this.style.visibility='hidden'}else{this.dataset.fb=1;this.src='${esc}'}"`;
 }
 export function img(ctx: Ctx, i: number, w: number, h: number, cls = "", extra = ""): string {
   const seed = ctx.dna.imgSeed + i * 13;
-  return `<img src="${photo(ctx.meta.photo, seed, w, h)}"${imgFallbackAttr(seed, w, h)} alt="" loading="lazy" class="${cls}" style="${extra}"/>`;
+  const src = poolPhoto(ctx.meta.subKey, seed) || poolFallbackPhoto(seed);
+  return `<img src="${src}"${imgFallbackAttr(seed)} alt="" loading="lazy" class="${cls}" style="${extra}"/>`;
 }
 
 // ————————————————————————————————————————————————————————————

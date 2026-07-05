@@ -14,7 +14,7 @@ const OSS_BASE =
 // 缩略图批次版本：每次重跑截图管线（引擎改版 / 换图源后）都 +1，用作 ?v= 缓存
 // 击穿参数。OSS 对象 Cache-Control 是 1 年长缓存，改版后必须靠这个参数让 CDN /
 // 浏览器取到新图。批量脚本与本文件必须用同一个值——脚本从这里读。
-export const THUMB_VERSION = "1";
+export const THUMB_VERSION = "2";
 
 /** slug → OSS 缩略图 webp 直链（带版本缓存击穿参数）。 */
 export function templateThumbUrl(slug: string): string {
