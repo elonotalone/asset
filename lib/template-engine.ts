@@ -350,32 +350,73 @@ function footer(ctx: Ctx, pages: PageKey[]): string {
 // 章节渲染器：每类章节多个样式变体
 // ————————————————————————————————————————————————————————————
 
+/**
+ * 全出血大图上的「可读性遮罩」——专业做法：方向性暗角为主（压住文字区、保住照片
+ * 本体的真实色彩与层次），品牌色只做极低不透明度点缀。绝不用 60–80% 不透明的
+ * 单一色相把整张照片糊成一坨色（那是 asset.oceanleo.com/templates 配图「诡异
+ * 配色」的根因，2026-07-05 修）。
+ *
+ * - 底→顶的暗角：文字落在底部/中部时清晰，顶部照片透亮。
+ * - 品牌色斜向叠加只有 ~14–22% alpha，够统一色调、不吃掉照片。
+ * - align="center"：文字居中型 hero 用径向压暗（中心稍压、四周更透）。
+ */
+function heroScrim(p: PaletteV2, align: "center" | "bottom" = "bottom"): string {
+  if (align === "center") {
+    return `<div class="absolute inset-0" style="background:radial-gradient(ellipse 90% 80% at 50% 50%,#00000073,#0000003d 45%,#00000026);pointer-events:none"></div>
+      <div class="absolute inset-0" style="background:linear-gradient(135deg,${p.gradFrom}2b,${p.gradTo}1f);mix-blend-mode:multiply;pointer-events:none"></div>`;
+  }
+  return `<div class="absolute inset-0" style="background:linear-gradient(to top,#000000c2 0%,#0000008f 32%,#0000002e 62%,transparent 88%);pointer-events:none"></div>
+    <div class="absolute inset-0" style="background:linear-gradient(120deg,${p.gradFrom}24,transparent 55%,${p.gradTo}14);mix-blend-mode:multiply;pointer-events:none"></div>`;
+}
+
+// 仅本地开发预览用：强制 hero 使用某个变体（review 各版式用）。生产恒为 null。
+let _heroVOverride: number | null = null;
+
 function renderHero(ctx: Ctx): string {
   const { c, p, R, D, fx, dna } = ctx;
   const deco = decorLayer(p, fx, dna.styleSeed);
-  const v = ctx.variantOf("hero", 6);
+  const v = _heroVOverride !== null ? _heroVOverride : ctx.variantOf("hero", 6);
   const subName = ctx.lang === "en" ? subEnFor(ctx) : ctx.meta.subLabel;
-  const badge = `<span class="inline-block px-3 py-1 text-xs font-medium" style="background:${p.soft};color:${p.primary};border-radius:${R.pill}">${esc(subName)} · ${ctx.u("proSolution")}</span>`;
+
+  // 渐变型 hero（v0/v6）的文字颜色必须随 palette.heroDark 走：深底渐变用白字，
+  // 浅底渐变（paper/glacier 等 heroDark:false）用墨色 ink——否则白字压浅底完全看不清
+  // （asset.oceanleo.com/templates 出现整屏空白/文字消失的第二类根因，2026-07-05 修）。
+  // 图片型 hero（v1/v5）有 heroScrim 暗角兜底，恒用白字。
+  const gradInk = p.heroDark ? "#ffffff" : p.ink;
+  const gradSubInk = p.heroDark ? "#ffffff" : p.sub;
+  // 浅底渐变上的 badge / ghost 按钮改用实心描边，保证在浅底也清晰。
+  const badgeFor = (onDark: boolean) =>
+    onDark
+      ? `<span class="inline-block px-3 py-1 text-xs font-medium" style="background:#ffffff26;color:#fff;border-radius:${R.pill};backdrop-filter:blur(4px)">${esc(subName)} · ${ctx.u("proSolution")}</span>`
+      : `<span class="inline-block px-3 py-1 text-xs font-medium" style="background:${p.soft};color:${p.primary};border-radius:${R.pill}">${esc(subName)} · ${ctx.u("proSolution")}</span>`;
+  // 默认（浅底/图上）badge 用品牌浅底；深底渐变用玻璃白。
+  const badge = badgeFor(false);
   const title = `<h1 style="font-size:${D.h1};font-weight:800;line-height:1.12">${esc(c.heroTitle)}</h1>`;
   const subt = `<p class="mt-5 text-lg" style="opacity:.9">${esc(c.heroSubtitle)}</p>`;
   const ctas = `<div class="mt-8 flex flex-wrap gap-4">${btnPrimary(ctx, c.heroCta)}${btnGhost(ctx, c.heroCtaAlt, "#services")}</div>`;
   const copy = `<div class="leo-reveal leo-in">${badge}<div class="mt-5">${title}</div>${subt}${ctas}</div>`;
 
+  // 渐变型 hero 专用 copy：按 heroDark 决定字色（v0/v6）。
+  const gradCtas = p.heroDark
+    ? ctas
+    : `<div class="mt-8 flex flex-wrap gap-4">${btnPrimary(ctx, c.heroCta)}${btnGhost(ctx, c.heroCtaAlt, "#services")}</div>`;
+  const gradCopy = `<div class="leo-reveal leo-in" style="color:${gradInk}">${badgeFor(p.heroDark)}<div class="mt-5">${title}</div><p class="mt-5 text-lg" style="color:${gradSubInk};opacity:${p.heroDark ? ".9" : "1"}">${esc(c.heroSubtitle)}</p>${gradCtas}</div>`;
+
   if (v === 0) {
     return `
-    <section class="relative overflow-hidden text-white leo-grad-anim" style="background:linear-gradient(135deg,${p.gradFrom},${p.gradTo})">
+    <section class="relative overflow-hidden leo-grad-anim" style="background:linear-gradient(135deg,${p.gradFrom},${p.gradTo});color:${gradInk}">
       ${deco}
       <div class="relative max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center" style="${sectionPad(ctx)}">
-        ${copy}
+        ${gradCopy}
         <div class="leo-reveal leo-in leo-from-right" style="transition-delay:.12s">${img(ctx, 0, 900, 700, "w-full object-cover shadow-2xl leo-card", `border-radius:${R.img};height:24rem`)}</div>
       </div>
     </section>`;
   }
   if (v === 1) {
     return `
-    <section class="relative flex items-center justify-center text-center text-white overflow-hidden" style="min-height:78vh">
+    <section class="relative flex items-center justify-center text-center text-white overflow-hidden" style="min-height:78vh;text-shadow:0 1px 24px #00000059">
       ${img(ctx, 0, 1600, 1000, "absolute inset-0 h-full w-full object-cover leo-kenburns")}
-      <div class="absolute inset-0 leo-grad-anim" style="background:linear-gradient(135deg,${p.gradFrom}cc,${p.gradTo}99)"></div>
+      ${heroScrim(p, "center")}
       ${deco}
       <div class="relative max-w-3xl px-6">${copy}</div>
     </section>`;
@@ -405,7 +446,7 @@ function renderHero(ctx: Ctx): string {
     return `
     <section class="relative overflow-hidden" style="min-height:74vh">
       ${img(ctx, 0, 1600, 1000, "absolute inset-0 h-full w-full object-cover leo-kenburns")}
-      <div class="absolute inset-0" style="background:linear-gradient(to top,#000a 0%,#0003 55%,transparent)"></div>
+      ${heroScrim(p, "bottom")}
       <div class="relative max-w-6xl mx-auto px-6 flex items-end" style="min-height:74vh;padding-bottom:3.5rem">
         <div class="leo-reveal leo-in max-w-xl p-8 shadow-2xl" style="background:${cardBg};border:1px solid ${ctx.S.border};border-radius:${R.card};backdrop-filter:blur(6px);color:${p.ink}">
           ${badge}<div class="mt-4">${title}</div>${subt}${ctas}
@@ -414,10 +455,10 @@ function renderHero(ctx: Ctx): string {
     </section>`;
   }
   return `
-    <section class="relative overflow-hidden text-white leo-grad-anim" style="background:linear-gradient(160deg,${p.gradFrom},${p.gradTo})">
+    <section class="relative overflow-hidden leo-grad-anim" style="background:linear-gradient(160deg,${p.gradFrom},${p.gradTo});color:${gradInk}">
       ${deco}
       <div class="relative max-w-4xl mx-auto px-6 text-center" style="${sectionPad(ctx)}">
-        ${copy}
+        ${gradCopy}
       </div>
     </section>`;
 }
@@ -1246,8 +1287,14 @@ export function renderTemplateBilingual(
   industry: Industry,
   sub: SubCategory,
   defaultLang: Lang = "zh",
+  devOverride?: { fx?: AccentFx; heroV?: number },
 ): RenderResult {
-  const dna = dnaFor(meta.slug, meta.industryKey, meta.variant);
+  let dna = dnaFor(meta.slug, meta.industryKey, meta.variant);
+  // 仅供本地开发预览：覆盖装饰特效 / hero 变体，用于逐一 review v4 新特效与 hero 版式。
+  // 生产不传 devOverride，行为完全不变。
+  if (devOverride?.fx) dna = { ...dna, accentFx: devOverride.fx };
+  if (typeof devOverride?.heroV === "number") _heroVOverride = devOverride.heroV;
+  else _heroVOverride = null;
   const biContent = buildBiContent(meta, industry, sub);
   const biExt = buildBiExt(meta, meta.industryKey, meta.subLabel, meta.subKey);
   return renderTemplate(meta, biContent, biExt, dna, defaultLang);

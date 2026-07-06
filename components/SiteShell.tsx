@@ -56,6 +56,15 @@ function IconDesign() {
   );
 }
 
+function IconSparkle() {
+  return (
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 3l1.9 5.6L19.5 10l-5.6 1.4L12 17l-1.9-5.6L4.5 10l5.6-1.4z" />
+      <path d="M18.5 3.5l.6 1.7 1.7.6-1.7.6-.6 1.7-.6-1.7-1.7-.6 1.7-.6z" />
+    </svg>
+  );
+}
+
 function IconOpenSource() {
   return (
     <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
@@ -169,6 +178,12 @@ function SiteShellInner({ children }: { children: ReactNode }) {
           icon: <IconTemplates />,
           href: "/templates",
           match: (p) => p.startsWith("/templates"),
+        },
+        {
+          label: tt("风格元素"),
+          icon: <IconSparkle />,
+          href: "/elements",
+          match: (p) => p.startsWith("/elements"),
         },
         {
           label: tt("我的素材库"),

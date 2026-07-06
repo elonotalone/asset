@@ -164,8 +164,15 @@ function MiniLayout({
           }}
           className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${loaded ? "opacity-100" : "opacity-0"}`}
         />
-        {!heroImage && <div className="absolute inset-0 thumb-grad-anim" style={{ background: grad, opacity: 0.88 }} />}
-        {heroImage && <div className="absolute inset-0 thumb-grad-anim" style={{ background: grad, opacity: 0.5 }} />}
+        {/* 无图骨架：渐变主导（本就没照片可保）。有图骨架：方向性暗角保住照片本体，
+            只压文字区——对齐整页 hero 的可读性遮罩做法，杜绝「照片被糊成一坨色」。 */}
+        {!heroImage && <div className="absolute inset-0 thumb-grad-anim" style={{ background: grad, opacity: 0.82 }} />}
+        {heroImage && (
+          <div
+            className="absolute inset-0"
+            style={{ background: "radial-gradient(ellipse 92% 82% at 50% 50%,rgba(0,0,0,.42),rgba(0,0,0,.2) 48%,rgba(0,0,0,.08))" }}
+          />
+        )}
         <div className={`absolute inset-0 flex flex-col justify-center gap-1 px-3 ${skel === 3 ? "items-start" : "items-center text-center"}`}>
           <div className="text-[9px] font-extrabold leading-tight text-white drop-shadow">{shortTitle(meta.subLabel)}</div>
           <div className="h-1 w-16 rounded-full bg-white/70" />

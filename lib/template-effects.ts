@@ -12,13 +12,27 @@ export type AccentFx =
   | "waves"
   | "dots"
   | "rings"
+  // v4 潮流通用特效（灵感来源：react-bits / arc-animations / magic-ui，均为纯 CSS
+  // 移植——不引第三方运行时依赖，避开 animate.css(Hippocratic)/Hover.css(商用付费)
+  // 的许可证坑。分三种气质：华丽 / 极简 / 卡通可爱）
+  | "aurora" // 极光流动网格渐变（华丽·极简皆宜）
+  | "blobs" // 有机形态缓慢变形的大色块（现代·柔和）
+  | "constellation" // 星座连线点阵（科技·极简）
+  | "shimmer" // 斜向光泽扫过（精致微交互）
+  | "confetti" // 五彩纸屑漂浮（卡通可爱·活动/庆典）
+  | "sparkle" // 星光点点闪烁（可爱·灵动）
+  | "stripes" // 斜纹动态条带（波普·活泼）
   // v3 特色家族专属特效
   | "neon-grid"
   | "noise"
   | "spotlight"
   | "none";
 
-const FX_LIST: AccentFx[] = ["orbs", "mesh", "grid", "beams", "waves", "dots", "rings"];
+// 普通家族随机轮换池（v4：把 7 个潮流特效并入，让每个模板一眼更「潮」）。
+const FX_LIST: AccentFx[] = [
+  "orbs", "mesh", "grid", "beams", "waves", "dots", "rings",
+  "aurora", "blobs", "constellation", "shimmer", "confetti", "sparkle", "stripes",
+];
 
 export function accentFxFor(slug: string, layoutKey: string): AccentFx {
   const layoutBias: Record<string, AccentFx> = {
@@ -172,13 +186,81 @@ export function effectsStyles(p: PaletteV2): string {
   .leo-hard-shadow{box-shadow:6px 6px 0 ${p.ink}}
   .leo-hard-shadow-primary{box-shadow:6px 6px 0 ${p.primary}}
 
+  /* ═══ v4 潮流通用特效（纯 CSS，移植自 react-bits / arc-animations 观感） ═══ */
+
+  /* 极光：多层大径向渐变缓慢漂移 + 混合，营造流动光幕 */
+  .leo-aurora{position:absolute;inset:0;pointer-events:none;overflow:hidden;filter:blur(10px)}
+  .leo-aurora::before,.leo-aurora::after{content:"";position:absolute;inset:-40%;
+    background:
+      radial-gradient(40% 55% at 25% 30%,${p.primary}66,transparent 60%),
+      radial-gradient(45% 60% at 75% 35%,${p.gradTo}59,transparent 62%),
+      radial-gradient(50% 55% at 55% 78%,${p.accent}4d,transparent 60%);
+    animation:leoAurora 18s ease-in-out infinite;mix-blend-mode:screen}
+  .leo-aurora::after{animation-duration:26s;animation-direction:reverse;opacity:.7}
+  @keyframes leoAurora{
+    0%,100%{transform:translate3d(0,0,0) rotate(0deg) scale(1)}
+    33%{transform:translate3d(3%,-4%,0) rotate(6deg) scale(1.08)}
+    66%{transform:translate3d(-4%,3%,0) rotate(-5deg) scale(1.04)}
+  }
+
+  /* 有机变形色块：border-radius 动画的柔和大 blob */
+  .leo-blob{position:absolute;pointer-events:none;filter:blur(26px);opacity:.5;
+    animation:leoBlobMorph 16s ease-in-out infinite,leoFloat 18s ease-in-out infinite}
+  @keyframes leoBlobMorph{
+    0%,100%{border-radius:42% 58% 63% 37%/45% 42% 58% 55%}
+    50%{border-radius:58% 42% 38% 62%/58% 55% 45% 42%}
+  }
+
+  /* 星座连线：点阵 + 斜向缓移（连线用一层细网格暗示） */
+  .leo-constellation{position:absolute;inset:0;pointer-events:none;opacity:.5;
+    background-image:radial-gradient(${p.accent}cc 1.4px,transparent 1.6px),radial-gradient(${p.primary}99 1px,transparent 1.4px);
+    background-size:52px 52px,88px 88px;background-position:0 0,26px 26px;
+    animation:leoConstel 40s linear infinite;
+    mask-image:radial-gradient(ellipse 85% 75% at 50% 40%,#000 30%,transparent 80%)}
+  @keyframes leoConstel{from{background-position:0 0,26px 26px}to{background-position:52px 52px,114px 114px}}
+
+  /* 斜向光泽扫过整块（hero 上叠一层 sheen） */
+  .leo-sheen{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+  .leo-sheen::after{content:"";position:absolute;top:-50%;left:-60%;width:50%;height:200%;
+    background:linear-gradient(105deg,transparent,rgba(255,255,255,.22),transparent);
+    transform:rotate(8deg);animation:leoSheen 6.5s ease-in-out infinite}
+  @keyframes leoSheen{0%,60%{left:-60%}100%{left:130%}}
+
+  /* 五彩纸屑：多个小方片缓慢下落漂浮（卡通/庆典） */
+  .leo-confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+  .leo-confetti i{position:absolute;top:-12%;width:9px;height:14px;opacity:.85;border-radius:2px;
+    animation:leoConfFall linear infinite}
+  @keyframes leoConfFall{
+    0%{transform:translateY(-20%) rotate(0deg)}
+    100%{transform:translateY(120vh) rotate(540deg)}
+  }
+
+  /* 星光闪烁：小四角星随机呼吸 */
+  .leo-sparkle{position:absolute;inset:0;pointer-events:none}
+  .leo-sparkle i{position:absolute;width:14px;height:14px;
+    background:radial-gradient(${p.accent},transparent 62%);
+    animation:leoTwinkle 3.2s ease-in-out infinite}
+  .leo-sparkle i::before{content:"";position:absolute;inset:0;
+    background:conic-gradient(from 0deg,transparent,${p.accent},transparent,${p.accent},transparent);
+    clip-path:polygon(50% 0,58% 42%,100% 50%,58% 58%,50% 100%,42% 58%,0 50%,42% 42%)}
+  @keyframes leoTwinkle{0%,100%{opacity:.15;transform:scale(.6)}50%{opacity:1;transform:scale(1)}}
+
+  /* 斜纹动态条带（波普·活泼），低透明度不抢内容 */
+  .leo-stripes{position:absolute;inset:0;pointer-events:none;opacity:.12;
+    background:repeating-linear-gradient(45deg,${p.primary} 0 18px,transparent 18px 40px);
+    animation:leoStripes 3s linear infinite;
+    mask-image:linear-gradient(180deg,#000,transparent 85%)}
+  @keyframes leoStripes{from{background-position:0 0}to{background-position:57px 0}}
+
   /* —— v3 满屏叙事：右侧滚动圆点 + snap —— */
   .leo-fs-dots{position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:40;display:flex;flex-direction:column;gap:12px}
   .leo-fs-dot{width:9px;height:9px;border-radius:9999px;background:currentColor;opacity:.3;transition:opacity .3s,transform .3s;cursor:pointer}
   .leo-fs-dot.active{opacity:1;transform:scale(1.4)}
 
   @media (prefers-reduced-motion:reduce){
-    .leo-grad-anim,.leo-orb,.leo-beam,.leo-wave,.leo-marquee,.leo-kenburns,.leo-btn-shine::after,.leo-neon-grid{animation:none!important}
+    .leo-grad-anim,.leo-orb,.leo-beam,.leo-wave,.leo-marquee,.leo-kenburns,.leo-btn-shine::after,.leo-neon-grid,
+    .leo-aurora::before,.leo-aurora::after,.leo-blob,.leo-constellation,.leo-sheen::after,
+    .leo-confetti i,.leo-sparkle i,.leo-stripes{animation:none!important}
     .leo-reveal{opacity:1;transform:none}
   }`;
 }
@@ -219,6 +301,41 @@ export function decorLayer(p: PaletteV2, fx: AccentFx, seed: number): string {
       return `<div class="leo-spotlight"></div>`;
     case "noise":
       return `<div class="leo-noise" style="position:absolute;inset:0"></div>`;
+    // ————— v4 潮流通用特效 —————
+    case "aurora":
+      return `<div class="leo-aurora"></div>`;
+    case "blobs":
+      return `
+      <div class="leo-blob" style="width:340px;height:340px;top:-70px;right:-40px;background:${a}"></div>
+      <div class="leo-blob leo-orb-2" style="width:260px;height:260px;bottom:-60px;left:-30px;background:${c};animation-delay:-6s"></div>
+      <div class="leo-blob leo-orb-3" style="width:190px;height:190px;top:38%;right:22%;background:${b};animation-delay:-10s"></div>`;
+    case "constellation":
+      return `<div class="leo-constellation"></div>`;
+    case "shimmer":
+      return `<div class="leo-sheen"></div>`;
+    case "confetti": {
+      const cols = [a, b, c, "#fff"];
+      const pieces = Array.from({ length: 16 }, (_, i) => {
+        const left = ((hashStr("conf" + seed + i) % 100));
+        const dur = 6 + (hashStr("cd" + seed + i) % 8);
+        const delay = -(hashStr("cdl" + seed + i) % 10);
+        const col = cols[i % cols.length];
+        return `<i style="left:${left}%;background:${col};animation-duration:${dur}s;animation-delay:${delay}s"></i>`;
+      }).join("");
+      return `<div class="leo-confetti">${pieces}</div>`;
+    }
+    case "sparkle": {
+      const stars = Array.from({ length: 12 }, (_, i) => {
+        const left = hashStr("spx" + seed + i) % 100;
+        const top = hashStr("spy" + seed + i) % 100;
+        const delay = -(hashStr("spd" + seed + i) % 32) / 10;
+        const scale = 0.6 + (hashStr("sps" + seed + i) % 10) / 10;
+        return `<i style="left:${left}%;top:${top}%;transform:scale(${scale.toFixed(2)});animation-delay:${delay}s"></i>`;
+      }).join("");
+      return `<div class="leo-sparkle">${stars}</div>`;
+    }
+    case "stripes":
+      return `<div class="leo-stripes"></div>`;
     case "none":
       return "";
     default:

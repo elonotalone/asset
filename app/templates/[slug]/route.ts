@@ -63,7 +63,19 @@ export async function GET(
   const defaultLang: Lang = langParam === "en" ? "en" : "zh";
   const download = url.searchParams.get("download") === "1";
 
-  const { html } = renderTemplateBilingual(meta, found.ind, found.sub, defaultLang);
+  // 本地开发预览覆盖（?fx= / ?herov=），仅在非生产环境生效，用于逐一 review
+  // v4 新特效与 hero 版式；生产忽略，行为不变。
+  const devOverride =
+    process.env.NODE_ENV !== "production"
+      ? {
+          fx: (url.searchParams.get("fx") as never) || undefined,
+          heroV: url.searchParams.has("herov")
+            ? Number(url.searchParams.get("herov"))
+            : undefined,
+        }
+      : undefined;
+
+  const { html } = renderTemplateBilingual(meta, found.ind, found.sub, defaultLang, devOverride);
 
   const headers: Record<string, string> = {
     "content-type": "text/html; charset=utf-8",
