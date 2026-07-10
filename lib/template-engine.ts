@@ -147,10 +147,14 @@ export function esc(s: string): string {
 // 【子类 key】（img() 传 ctx.meta.subKey；老调用点若传关键词会走全局 fallback 池，
 // 不炸）。w/h 参数保留但不再进 URL（OSS 图是固定尺寸原图，浏览器按 CSS 缩放）。
 export function photo(subKey: string, seed: number, _w = 1200, _h = 800): string {
+  void _w;
+  void _h;
   return poolPhoto(subKey, seed) || poolFallbackPhoto(seed);
 }
 // 兼容垫片：旧「随机兜底图」接口，现返回 OSS fallback 池里的确定性一张。
 export function photoFallback(seed: number, _w = 1200, _h = 800): string {
+  void _w;
+  void _h;
   return poolFallbackPhoto(seed);
 }
 // <img> 的 onerror：OSS 主图偶发拉不到时，换成 fallback 池的另一张 OSS 图；

@@ -443,7 +443,7 @@ export const INDUSTRY_FALLBACK: Record<string, IndustryFallback> = {
       `作为专业的${s}，我们秉持服务为本的宗旨，致力于为公众创造价值。`,
       `规范、透明、高效，是我们一贯的工作准则。`,
     ],
-    services: (s) => [
+    services: () => [
       { name: "服务事项", desc: "规范流程,高效办理。" },
       { name: "信息公开", desc: "公开透明,接受监督。" },
       { name: "在线办事", desc: "一网通办,便民利民。" },
@@ -456,7 +456,7 @@ export const INDUSTRY_FALLBACK: Record<string, IndustryFallback> = {
       `我们是一家专注${s}的创新企业,以技术为核心驱动力。`,
       `用前沿技术与极致产品,为客户与行业创造长期价值。`,
     ],
-    services: (s) => [
+    services: () => [
       { name: "技术研发", desc: "持续投入,自主创新。" },
       { name: "产品方案", desc: "贴合场景,落地见效。" },
       { name: "系统集成", desc: "端到端交付,稳定可靠。" },
@@ -469,7 +469,7 @@ export const INDUSTRY_FALLBACK: Record<string, IndustryFallback> = {
       `我们专注${s}多年,把每一次服务都做到细致入微。`,
       `用专业与真诚,让你的生活更美好、更省心。`,
     ],
-    services: (s) => [
+    services: () => [
       { name: "专业服务", desc: "经验丰富,值得托付。" },
       { name: "贴心定制", desc: "按需定制,满足所需。" },
       { name: "品质保障", desc: "标准化作业,品质如一。" },
@@ -482,7 +482,7 @@ export const INDUSTRY_FALLBACK: Record<string, IndustryFallback> = {
       `我们专注${s},坚持选用新鲜优质食材,只为那一口地道好味道。`,
       `干净、卫生、用心,是我们对每一位顾客的承诺。`,
     ],
-    services: (s) => [
+    services: () => [
       { name: "招牌出品", desc: "匠心烹制,口口惊艳。" },
       { name: "新鲜食材", desc: "每日采购,品质看得见。" },
       { name: "舒适环境", desc: "用心布置,聚会首选。" },
@@ -495,7 +495,7 @@ export const INDUSTRY_FALLBACK: Record<string, IndustryFallback> = {
       `我们深耕${s}领域,以稳定的品质与可靠的供应赢得客户信赖。`,
       `坚持绿色生产、规范经营,与客户携手共赢、长期发展。`,
     ],
-    services: (s) => [
+    services: () => [
       { name: "产品供应", desc: "稳定供货,品质可靠。" },
       { name: "定制生产", desc: "按需定制,灵活交付。" },
       { name: "质量管控", desc: "全程检测,达标交付。" },
@@ -508,7 +508,7 @@ export const INDUSTRY_FALLBACK: Record<string, IndustryFallback> = {
       `我们专注${s},甄选优质产品,让品质生活触手可及。`,
       `正品保障、贴心服务,做你信赖的生活好物专家。`,
     ],
-    services: (s) => [
+    services: () => [
       { name: "精选好物", desc: "严选品质,正品保障。" },
       { name: "丰富品类", desc: "一站购齐,省心省力。" },
       { name: "送装服务", desc: "配送安装,一步到位。" },
@@ -521,7 +521,7 @@ export const INDUSTRY_FALLBACK: Record<string, IndustryFallback> = {
       `我们专注${s},严把质量关,把健康与安心送到每个家庭。`,
       `源头直采、规范经营,让你买得放心、用得安心。`,
     ],
-    services: (s) => [
+    services: () => [
       { name: "源头直采", desc: "产地直供,新鲜实惠。" },
       { name: "品质保障", desc: "层层把关,安全可靠。" },
       { name: "礼盒定制", desc: "精美礼盒,送礼体面。" },
@@ -534,7 +534,7 @@ export const INDUSTRY_FALLBACK: Record<string, IndustryFallback> = {
       `我们专注${s}领域,以精工品质与可靠性能赢得市场口碑。`,
       `严控每一道工序,为客户提供可靠耐用的产品与服务。`,
     ],
-    services: (s) => [
+    services: () => [
       { name: "产品供应", desc: "品类齐全,品质可靠。" },
       { name: "工程配套", desc: "项目配套,一站采购。" },
       { name: "安装服务", desc: "专业安装,规范施工。" },
@@ -547,7 +547,7 @@ export const INDUSTRY_FALLBACK: Record<string, IndustryFallback> = {
       `我们专注${s},以高效的网络与规范的管理,保障每一单准时安全。`,
       `诚信经营、服务至上,做客户最可靠的合作伙伴。`,
     ],
-    services: (s) => [
+    services: () => [
       { name: "核心业务", desc: "专业高效,准时可靠。" },
       { name: "全程跟踪", desc: "信息透明,全程可查。" },
       { name: "灵活方案", desc: "按需定制,降本增效。" },
@@ -560,7 +560,7 @@ export const INDUSTRY_FALLBACK: Record<string, IndustryFallback> = {
       `我们专注${s},以专业与诚信服务每一位客户。`,
       `不断精进、持续创新,致力于为客户创造更大价值。`,
     ],
-    services: (s) => [
+    services: () => [
       { name: "核心服务", desc: "专注专业,精益求精。" },
       { name: "品质保障", desc: "严格把控,值得信赖。" },
       { name: "贴心体验", desc: "用心服务,全程跟进。" },

@@ -1,6 +1,6 @@
 "use client";
 
-import { AssetLicense } from "@/lib/assets";
+import type { AssetLicense } from "@/lib/assets";
 
 // Compact, color-coded license badge. Green = safest (CC0/platform license),
 // amber = usable-but-with-conditions (attribution / share-alike / no-deriv),
@@ -23,18 +23,21 @@ export function LicenseBadge({ license, size = "sm" }: { license: AssetLicense; 
   );
 }
 
-export function LicenseFlags({ license }: { license: AssetLicense }) {
-  const Flag = ({ ok, yes, no }: { ok: boolean; yes: string; no: string }) => (
+function LicenseFlag({ ok, yes, no }: { ok: boolean; yes: string; no: string }) {
+  return (
     <span className={`inline-flex items-center gap-1 ${ok ? "text-emerald-600" : "text-rose-500"}`}>
       <span aria-hidden>{ok ? "✓" : "✕"}</span>
       {ok ? yes : no}
     </span>
   );
+}
+
+export function LicenseFlags({ license }: { license: AssetLicense }) {
   return (
     <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs">
-      <Flag ok={license.commercial_ok} yes="可商用" no="仅非商用" />
-      <Flag ok={license.modify_ok} yes="可修改" no="禁止改编" />
-      <Flag ok={!license.attribution_required} yes="免署名" no="需署名" />
+      <LicenseFlag ok={license.commercial_ok} yes="可商用" no="仅非商用" />
+      <LicenseFlag ok={license.modify_ok} yes="可修改" no="禁止改编" />
+      <LicenseFlag ok={!license.attribution_required} yes="免署名" no="需署名" />
     </div>
   );
 }

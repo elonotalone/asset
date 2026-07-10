@@ -31,20 +31,57 @@ function normType(t: string | null): AssetType {
 
 // 分区首页每个目录预览多少张（一行铺满，稿定/Foco 风格）。
 const PREVIEW_PER_ROW = 6;
+const COMMERCIAL_LICENSE = "commercial" as const;
+
+function allPanelFor(type: AssetType): CategoryPanel {
+  return {
+    key: "",
+    label: "全部",
+    icon: "",
+    type,
+    subs: [{ key: "", label: "全部" }],
+  };
+}
+
+type PreviewResult = {
+  key: string;
+  previews: CategoryPreview[];
+};
+
+type LibrarySearchResult = {
+  key: string;
+  items: Asset[];
+  page: number;
+  hasMore: boolean;
+  error: string;
+  loadingMore: boolean;
+};
 
 export function AssetLibrary() {
-  const tt = useUI();
   const search = useSearchParams();
   const urlType = normType(search.get("type"));
   const urlCat = search.get("cat");
 
-  const allPanelFor = (t: AssetType): CategoryPanel => ({
-    key: "",
-    label: "全部",
-    icon: "",
-    type: t,
-    subs: [{ key: "", label: "全部" }],
-  });
+  // URL 里的类型/目录代表一个全新的浏览上下文；用 key 重建本地交互状态，
+  // 避免在 effect 里同步串行 reset，且不会短暂混用上一类型的筛选或结果。
+  return (
+    <AssetLibraryContent
+      key={`${urlType}\u0000${urlCat ?? ""}`}
+      urlType={urlType}
+      urlCat={urlCat}
+    />
+  );
+}
+
+function AssetLibraryContent({
+  urlType,
+  urlCat,
+}: {
+  urlType: AssetType;
+  urlCat: string | null;
+}) {
+  const tt = useUI();
+  const loadFailedText = tt("加载失败");
 
   // 该类型真实拥有的一级目录面板（首项恒为「全部」占位，仅用于兜底）。
   const [panels, setPanels] = useState<CategoryPanel[]>(() => [allPanelFor(urlType)]);
@@ -58,21 +95,18 @@ export function AssetLibrary() {
   const [input, setInput] = useState("");
 
   // 分区首页数据：每个目录一行预览。
-  const [previews, setPreviews] = useState<CategoryPreview[]>([]);
-  const [previewLoading, setPreviewLoading] = useState(true);
+  const [previewResult, setPreviewResult] = useState<PreviewResult | null>(null);
 
   // 目录网格 / 搜索网格共用的列表状态。
-  const [items, setItems] = useState<Asset[]>([]);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [searchResult, setSearchResult] = useState<LibrarySearchResult | null>(null);
+  const [actionError, setActionError] = useState<{
+    key: string | null;
+    message: string;
+  } | null>(null);
   const [active, setActive] = useState<Asset | null>(null);
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
   const reqId = useRef(0);
-  const previewReqId = useRef(0);
 
-  const LICENSE = "commercial" as const;
   const type = urlType;
 
   // 三态：分区首页 / 目录网格 / 搜索网格。
@@ -88,16 +122,10 @@ export function AssetLibrary() {
     [panels, panelKey],
   );
 
-  // 切类型（?type=）时：拉该类型真实目录 → 复位子状态。
+  // URL 上下文变化会由外层 key 重建组件；这里仅异步拉取真实目录。
   useEffect(() => {
     let alive = true;
     const allPanel = allPanelFor(urlType);
-    setQuery("");
-    setInput("");
-    setSubtab("");
-    setIndustry("");
-    setPanels([allPanel]);
-    setPanelKey(urlCat || "");
     listLibraryCategories(urlType)
       .then((r) => {
         if (!alive) return;
@@ -134,46 +162,59 @@ export function AssetLibrary() {
     () => panels.filter((p) => p.key).map((p) => p.key),
     [panels],
   );
+  const previewKey =
+    mode === "browse" && browseCategoryKeys.length > 0
+      ? JSON.stringify([type, ...browseCategoryKeys])
+      : null;
+  const currentPreview =
+    previewKey && previewResult?.key === previewKey ? previewResult : null;
+  const previews = currentPreview?.previews ?? [];
+  const previewLoading = previewKey !== null && !currentPreview;
+
+  const searchKey =
+    mode === "browse"
+      ? null
+      : JSON.stringify([type, panelKey, subtab, industry, query]);
+  const currentSearch =
+    searchKey && searchResult?.key === searchKey ? searchResult : null;
+  const items = currentSearch?.items ?? [];
+  const page = currentSearch?.page ?? 1;
+  const hasMore = currentSearch?.hasMore ?? false;
+  const loading = searchKey !== null && (!currentSearch || currentSearch.loadingMore);
+  const error =
+    actionError?.key === searchKey
+      ? actionError.message
+      : currentSearch?.error ?? "";
+
   useEffect(() => {
-    if (mode !== "browse" || browseCategoryKeys.length === 0) {
-      setPreviewLoading(false);
-      return;
-    }
-    const my = ++previewReqId.current;
-    setPreviewLoading(true);
+    if (!previewKey) return;
+    let alive = true;
     previewCategories({
       type,
       categories: browseCategoryKeys,
-      license: LICENSE,
+      license: COMMERCIAL_LICENSE,
       perCategory: PREVIEW_PER_ROW,
     })
       .then((r) => {
-        if (my !== previewReqId.current) return;
-        setPreviews(r);
+        if (alive) setPreviewResult({ key: previewKey, previews: r });
       })
       .catch(() => {
-        if (my !== previewReqId.current) return;
-        setPreviews([]);
-      })
-      .finally(() => {
-        if (my === previewReqId.current) setPreviewLoading(false);
+        if (alive) setPreviewResult({ key: previewKey, previews: [] });
       });
-  }, [type, mode, browseCategoryKeys]);
+    return () => {
+      alive = false;
+    };
+  }, [type, browseCategoryKeys, previewKey]);
 
   // 目录网格 / 搜索网格取数（browse 态不取，用预览代替）。
   useEffect(() => {
-    if (mode === "browse") {
-      setItems([]);
-      return;
-    }
     const my = ++reqId.current;
-    setLoading(true);
-    setError("");
-    setItems([]);
+    if (!searchKey) return;
+    let alive = true;
     searchAssets({
       q: query,
       type,
-      license: LICENSE,
+      license: COMMERCIAL_LICENSE,
       category: query ? undefined : panelKey || undefined,
       // ppt 的行业键优先（目录二级 tab 与行业互斥使用：ppt 目录都是单
       // 「全部」子 tab，subtab 恒空，行业键借道同一个后端参数）。
@@ -182,29 +223,43 @@ export function AssetLibrary() {
       pageSize: 30,
     })
       .then((r) => {
-        if (my !== reqId.current) return;
-        setItems(r.items);
-        setHasMore(r.has_more);
-        setPage(1);
+        if (!alive || my !== reqId.current) return;
+        setSearchResult({
+          key: searchKey,
+          items: r.items,
+          page: 1,
+          hasMore: r.has_more,
+          error: "",
+          loadingMore: false,
+        });
       })
       .catch((e) => {
-        if (my !== reqId.current) return;
-        setError(e instanceof Error ? e.message : tt("加载失败"));
-        setItems([]);
-      })
-      .finally(() => {
-        if (my === reqId.current) setLoading(false);
+        if (!alive || my !== reqId.current) return;
+        setSearchResult({
+          key: searchKey,
+          items: [],
+          page: 1,
+          hasMore: false,
+          error: e instanceof Error ? e.message : loadFailedText,
+          loadingMore: false,
+        });
       });
-  }, [type, panelKey, subtab, industry, query, mode]);
+    return () => {
+      alive = false;
+    };
+  }, [type, panelKey, subtab, industry, query, searchKey, loadFailedText]);
 
   function loadMore() {
+    if (!currentSearch || currentSearch.loadingMore || !searchKey) return;
     const my = ++reqId.current;
     const next = page + 1;
-    setLoading(true);
+    setSearchResult((prev) =>
+      prev?.key === searchKey ? { ...prev, error: "", loadingMore: true } : prev,
+    );
     searchAssets({
       q: query,
       type,
-      license: LICENSE,
+      license: COMMERCIAL_LICENSE,
       category: query ? undefined : panelKey || undefined,
       subtab: query ? undefined : industry || subtab || undefined,
       page: next,
@@ -212,16 +267,29 @@ export function AssetLibrary() {
     })
       .then((r) => {
         if (my !== reqId.current) return;
-        setItems((prev) => [...prev, ...r.items]);
-        setHasMore(r.has_more);
-        setPage(next);
+        setSearchResult((prev) =>
+          prev?.key === searchKey
+            ? {
+                ...prev,
+                items: [...prev.items, ...r.items],
+                page: next,
+                hasMore: r.has_more,
+                loadingMore: false,
+              }
+            : prev,
+        );
       })
       .catch((e) => {
         if (my !== reqId.current) return;
-        setError(e instanceof Error ? e.message : tt("加载失败"));
-      })
-      .finally(() => {
-        if (my === reqId.current) setLoading(false);
+        setSearchResult((prev) =>
+          prev?.key === searchKey
+            ? {
+                ...prev,
+                error: e instanceof Error ? e.message : loadFailedText,
+                loadingMore: false,
+              }
+            : prev,
+        );
       });
   }
 
@@ -254,6 +322,7 @@ export function AssetLibrary() {
 
   function toggleSave(a: Asset) {
     const isSaved = savedIds.has(a.id);
+    setActionError(null);
     setSavedIds((prev) => {
       const next = new Set(prev);
       if (isSaved) next.delete(a.id);
@@ -268,7 +337,10 @@ export function AssetLibrary() {
         else next.delete(a.id);
         return next;
       });
-      setError(e instanceof Error ? e.message : tt("收藏失败，请先登录"));
+      setActionError({
+        key: searchKey,
+        message: e instanceof Error ? e.message : tt("收藏失败，请先登录"),
+      });
     });
   }
 

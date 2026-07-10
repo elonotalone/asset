@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { useUI } from "@oceanleo/ui/i18n";
 import { Asset, assetDetail, downloadHref, pptPageUrls } from "@/lib/assets";
 import { LicenseFlags } from "@/components/LicenseBadge";
 import { ModelViewer } from "@/components/ModelViewer";
+
+const subscribeToHydration = () => () => {};
 
 function is3dModel(asset: Asset): boolean {
   if (asset.type !== "3d") return false;
@@ -183,9 +185,9 @@ export function AssetDetail({
 }) {
   const tt = useUI();
   const [files, setFiles] = useState<{ format: string; url: string }[] | null>(null);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
+  // getServerSnapshot=false keeps SSR and the hydration pass identical; once
+  // hydrated, React re-reads getSnapshot and the portal can safely target body.
+  const mounted = useSyncExternalStore(subscribeToHydration, () => true, () => false);
 
   useEffect(() => {
     // Only realtime-upstream polyhaven assets need the second files lookup; our
@@ -216,7 +218,7 @@ export function AssetDetail({
     isPpt && asset.source_url.endsWith(".html") ? asset.source_url : "";
   const targets = USE_TARGETS[asset.type] || [];
 
-  function useIn(site: string) {
+  function openInSite(site: string) {
     const url = new URL(site);
     url.searchParams.set("asset_url", asset.full_url);
     url.searchParams.set("asset_type", asset.type);
@@ -376,7 +378,7 @@ export function AssetDetail({
           {targets.map((t) => (
             <button
               key={t.site}
-              onClick={() => useIn(t.site)}
+              onClick={() => openInSite(t.site)}
               className="rounded-lg border border-sky-300 bg-sky-50 px-3 py-2 text-sm font-medium text-sky-700 hover:bg-sky-100"
             >
               {tt(t.label)} →

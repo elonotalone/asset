@@ -36,6 +36,7 @@ export const MATERIALS: MaterialItem[] = [
 ];
 
 /** 某成品 app 的素材（默认全量；站点可按 app.id 细分后覆写本函数）。 */
-export function materialsForApp(_id: string): MaterialItem[] {
+export function materialsForApp(appId: string): MaterialItem[] {
+  void appId; // 保留按 app 细分的兼容签名；当前所有 app 共用同一素材全集。
   return MATERIALS;
 }

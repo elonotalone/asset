@@ -65,7 +65,6 @@ for (const { category, urls } of cats) {
   run.push([category, urls]);
 }
 for (const [cat, urls] of run) {
-  // eslint-disable-next-line no-await-in-loop
   await doCat(cat, urls);
 }
 writeFileSync(join(OUT, "_index.json"), JSON.stringify(indexMap));

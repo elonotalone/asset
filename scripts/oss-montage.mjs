@@ -7,7 +7,7 @@
 // urls.json: ["https://...webp", ...]  (order preserved; index label drawn on each)
 // Output: <out>/<tag>-N.png (grids of up to --per cells). Prints index->url map.
 import sharp from "sharp";
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 const args = Object.fromEntries(

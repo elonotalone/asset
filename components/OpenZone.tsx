@@ -27,22 +27,37 @@ function normOpenType(t: string | null): AssetType {
     : "image";
 }
 
+const COMMERCIAL_LICENSE = "commercial" as const;
+
+type OpenSearchResult = {
+  key: string;
+  items: Asset[];
+  page: number;
+  hasMore: boolean;
+  error: string;
+  loadingMore: boolean;
+};
+
 export function OpenZone() {
   const tt = useUI();
+  const loadFailedText = tt("加载失败");
   const search = useSearchParams();
   const [type, setType] = useState<AssetType>(() => normOpenType(search.get("type")));
   const [query, setQuery] = useState("");
   const [input, setInput] = useState("");
-  const [items, setItems] = useState<Asset[]>([]);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [result, setResult] = useState<OpenSearchResult | null>(null);
+  const [actionError, setActionError] = useState<{ key: string; message: string } | null>(null);
   const [active, setActive] = useState<Asset | null>(null);
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
   const reqId = useRef(0);
-
-  const LICENSE = "commercial" as const;
+  const searchKey = `${type}\u0000${query}`;
+  const currentResult = result?.key === searchKey ? result : null;
+  const items = currentResult?.items ?? [];
+  const page = currentResult?.page ?? 1;
+  const hasMore = currentResult?.hasMore ?? false;
+  const loading = !currentResult || currentResult.loadingMore;
+  const error =
+    actionError?.key === searchKey ? actionError.message : currentResult?.error ?? "";
 
   useEffect(() => {
     let alive = true;
@@ -61,50 +76,87 @@ export function OpenZone() {
   // 切类型或提交搜索时重新拉取上游。开源专区默认不预搜——空 query 时后端返回该类型的
   // 热门/精选，让用户一进来也有内容看。
   useEffect(() => {
+    let alive = true;
     const my = ++reqId.current;
-    setLoading(true);
-    setError("");
-    setItems([]);
-    searchOpenSource({ q: query, type, license: LICENSE, page: 1, pageSize: 30 })
+    searchOpenSource({
+      q: query,
+      type,
+      license: COMMERCIAL_LICENSE,
+      page: 1,
+      pageSize: 30,
+    })
       .then((r) => {
-        if (my !== reqId.current) return;
-        setItems(r.items);
-        setHasMore(r.has_more);
-        setPage(1);
+        if (!alive || my !== reqId.current) return;
+        setResult({
+          key: searchKey,
+          items: r.items,
+          page: 1,
+          hasMore: r.has_more,
+          error: "",
+          loadingMore: false,
+        });
       })
       .catch((e) => {
-        if (my !== reqId.current) return;
-        setError(e instanceof Error ? e.message : tt("加载失败"));
-        setItems([]);
-      })
-      .finally(() => {
-        if (my === reqId.current) setLoading(false);
+        if (!alive || my !== reqId.current) return;
+        setResult({
+          key: searchKey,
+          items: [],
+          page: 1,
+          hasMore: false,
+          error: e instanceof Error ? e.message : loadFailedText,
+          loadingMore: false,
+        });
       });
-  }, [type, query]);
+    return () => {
+      alive = false;
+    };
+  }, [type, query, searchKey, loadFailedText]);
 
   function loadMore() {
+    if (!currentResult || currentResult.loadingMore) return;
     const my = ++reqId.current;
-    setLoading(true);
-    setError("");
     const next = page + 1;
-    searchOpenSource({ q: query, type, license: LICENSE, page: next, pageSize: 30 })
+    setResult((prev) =>
+      prev?.key === searchKey ? { ...prev, error: "", loadingMore: true } : prev,
+    );
+    searchOpenSource({
+      q: query,
+      type,
+      license: COMMERCIAL_LICENSE,
+      page: next,
+      pageSize: 30,
+    })
       .then((r) => {
         if (my !== reqId.current) return;
-        setItems((prev) => [...prev, ...r.items]);
-        setHasMore(r.has_more);
-        setPage(next);
+        setResult((prev) =>
+          prev?.key === searchKey
+            ? {
+                ...prev,
+                items: [...prev.items, ...r.items],
+                page: next,
+                hasMore: r.has_more,
+                loadingMore: false,
+              }
+            : prev,
+        );
       })
       .catch((e) => {
         if (my !== reqId.current) return;
-        setError(e instanceof Error ? e.message : tt("加载失败"));
-      })
-      .finally(() => {
-        if (my === reqId.current) setLoading(false);
+        setResult((prev) =>
+          prev?.key === searchKey
+            ? {
+                ...prev,
+                error: e instanceof Error ? e.message : loadFailedText,
+                loadingMore: false,
+              }
+            : prev,
+        );
       });
   }
 
   function toggleSave(a: Asset) {
     const isSaved = savedIds.has(a.id);
+    setActionError(null);
     setSavedIds((prev) => {
       const next = new Set(prev);
       if (isSaved) next.delete(a.id);
@@ -119,7 +171,10 @@ export function OpenZone() {
         else next.delete(a.id);
         return next;
       });
-      setError(e instanceof Error ? e.message : tt("收藏失败，请先登录"));
+      setActionError({
+        key: searchKey,
+        message: e instanceof Error ? e.message : tt("收藏失败，请先登录"),
+      });
     });
   }
 

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useCallback, useState } from "react";
 import { useUI } from "@oceanleo/ui/i18n";
 import type { TemplateMeta } from "@/lib/template-taxonomy";
@@ -73,10 +74,13 @@ export function TemplateThumb({
                 style={{ background: `linear-gradient(135deg, ${p.gradFrom}, ${p.gradTo})`, opacity: 0.25 }}
               />
             )}
-            <img
+            <Image
               ref={shotRef}
               src={shot}
               alt={meta.subLabel}
+              width={960}
+              height={720}
+              unoptimized
               loading="lazy"
               decoding="async"
               onLoad={() => setShotLoaded(true)}
@@ -148,9 +152,12 @@ function MiniLayout({
 
       {/* hero */}
       <div className="relative flex-1">
-        <img
+        <Image
           src={img}
           alt={meta.subLabel}
+          width={600}
+          height={400}
+          unoptimized
           loading="lazy"
           onLoad={onLoad}
           onError={(e) => {
@@ -217,9 +224,12 @@ function MiniSignature({
   const tt = useUI();
   const grad = `linear-gradient(135deg, ${p.gradFrom}, ${p.gradTo})`;
   const Img = (
-    <img
+    <Image
       src={img}
       alt={meta.subLabel}
+      width={600}
+      height={400}
+      unoptimized
       loading="lazy"
       onLoad={onLoad}
       onError={(e) => {

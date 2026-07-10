@@ -24,21 +24,31 @@ export function OceanLeoAccount() {
 
   const refreshUser = useCallback(async () => {
     const c = browserClient();
-    if (!c) {
-      setLoading(false);
-      return;
-    }
+    if (!c) return;
     const { data } = await c.auth.getSession();
     setUser(data.session?.user ?? null);
     setLoading(false);
   }, []);
 
   useEffect(() => {
-    void refreshUser();
     const c = browserClient();
-    const sub = c?.auth.onAuthStateChange(() => void refreshUser());
-    return () => sub?.data.subscription.unsubscribe();
-  }, [refreshUser]);
+    if (!c) return;
+    let alive = true;
+    void c.auth.getSession().then(({ data }) => {
+      if (!alive) return;
+      setUser(data.session?.user ?? null);
+      setLoading(false);
+    });
+    const { data: sub } = c.auth.onAuthStateChange((_event, session) => {
+      if (!alive) return;
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
+    return () => {
+      alive = false;
+      sub.subscription.unsubscribe();
+    };
+  }, []);
 
   if (!oceanleoConfigured()) {
     return (

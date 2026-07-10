@@ -5,22 +5,27 @@ import { useUI } from "@oceanleo/ui/i18n";
 import { Asset, listCollection, removeFromCollection } from "@/lib/assets";
 import { AssetCard } from "@/components/AssetCard";
 import { AssetDetail } from "@/components/AssetDetail";
-import { browserClient } from "@/lib/oceanleo-auth";
+import { browserClient, oceanleoConfigured } from "@/lib/oceanleo-auth";
 
 export function MyCollection() {
   const tt = useUI();
   const [items, setItems] = useState<Asset[] | null>(null);
   const [error, setError] = useState("");
-  const [authed, setAuthed] = useState<boolean | null>(null);
+  const [authed, setAuthed] = useState<boolean | null>(() =>
+    oceanleoConfigured() ? null : false,
+  );
   const [active, setActive] = useState<Asset | null>(null);
 
   useEffect(() => {
     const c = browserClient();
-    if (!c) {
-      setAuthed(false);
-      return;
-    }
-    void c.auth.getSession().then(({ data }) => setAuthed(!!data.session?.user));
+    if (!c) return;
+    let alive = true;
+    void c.auth.getSession().then(({ data }) => {
+      if (alive) setAuthed(!!data.session?.user);
+    });
+    return () => {
+      alive = false;
+    };
   }, []);
 
   const reload = useCallback(() => {

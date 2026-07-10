@@ -1,7 +1,7 @@
 // 网站模板视觉特效层（v2.1）—— 对标微站类模板库的「渐变流动 / 滚动显现 / 装饰光斑」。
 // 由 slug + DNA 确定性选取，每个模板至少有一种专属动效组合。
 
-import type { PaletteV2, TemplateDNA } from "./template-dna";
+import type { PaletteV2 } from "./template-dna";
 import { hashStr } from "./hash";
 
 export type AccentFx =

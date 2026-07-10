@@ -43,6 +43,7 @@ function CoverCollage({ covers }: { covers: string[] }) {
 
 export function SeriesZone() {
   const tt = useUI();
+  const loadFailedText = tt("加载失败");
   const [series, setSeries] = useState<Series[]>([]);
   const [loadingList, setLoadingList] = useState(true);
   const [listError, setListError] = useState("");
@@ -64,7 +65,7 @@ export function SeriesZone() {
         if (alive) setSeries(r.series || []);
       })
       .catch((e) => {
-        if (alive) setListError(e instanceof Error ? e.message : tt("加载失败"));
+        if (alive) setListError(e instanceof Error ? e.message : loadFailedText);
       })
       .finally(() => {
         if (alive) setLoadingList(false);
@@ -77,7 +78,7 @@ export function SeriesZone() {
     return () => {
       alive = false;
     };
-  }, []);
+  }, [loadFailedText]);
 
   function openOne(s: Series) {
     setOpenSeries(s);

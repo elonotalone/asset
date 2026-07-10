@@ -9,7 +9,7 @@
 // Output: <out>/<tag>-montage-N.png (grids of up to --per images).
 import { chromium } from "playwright";
 import sharp from "sharp";
-import { mkdirSync, existsSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 const args = Object.fromEntries(
