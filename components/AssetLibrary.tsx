@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useUI } from "@oceanleo/ui/i18n";
+import { ResultCanvas, type CanvasTab } from "@oceanleo/ui/shell";
 import {
   Asset,
   AssetType,
@@ -19,6 +20,7 @@ import {
   TYPE_LABELS,
   TYPE_ORDER,
 } from "@/lib/assets";
+import { ARTIFACT_CONTEXTS, MATERIALS } from "@/lib/materials";
 import { AssetCard } from "@/components/AssetCard";
 import { AssetDetail } from "@/components/AssetDetail";
 
@@ -61,6 +63,7 @@ export function AssetLibrary() {
   const search = useSearchParams();
   const urlType = normType(search.get("type"));
   const urlCat = search.get("cat");
+  const showContextShelf = !search.has("type") && !search.has("cat");
 
   // URL 里的类型/目录代表一个全新的浏览上下文；用 key 重建本地交互状态，
   // 避免在 effect 里同步串行 reset，且不会短暂混用上一类型的筛选或结果。
@@ -69,6 +72,7 @@ export function AssetLibrary() {
       key={`${urlType}\u0000${urlCat ?? ""}`}
       urlType={urlType}
       urlCat={urlCat}
+      showContextShelf={showContextShelf}
     />
   );
 }
@@ -76,11 +80,14 @@ export function AssetLibrary() {
 function AssetLibraryContent({
   urlType,
   urlCat,
+  showContextShelf,
 }: {
   urlType: AssetType;
   urlCat: string | null;
+  showContextShelf: boolean;
 }) {
   const tt = useUI();
+  const [artifactView, setArtifactView] = useState("materials");
   const loadFailedText = tt("加载失败");
 
   // 该类型真实拥有的一级目录面板（首项恒为「全部」占位，仅用于兜底）。
@@ -352,6 +359,33 @@ function AssetLibraryContent({
 
   return (
     <div className="mx-auto max-w-6xl px-5 py-6 sm:py-8">
+      {showContextShelf && (
+        <section className="mb-8 rounded-2xl border border-sky-100 bg-sky-50/40 p-4">
+          <div className="mb-3">
+            <h2 className="text-base font-semibold text-zinc-900">
+              {tt("已接入耐久素材")}
+            </h2>
+            <p className="mt-1 text-xs text-zinc-500">
+              {tt("这里只展示已有 artifact/revision 身份且通过权限校验的素材；下方旧库存保持只读，等待迁移，不会伪造耐久身份。")}
+            </p>
+          </div>
+          <ResultCanvas
+            tabs={
+              [
+                { id: "materials", label: tt("素材库"), content: null },
+              ] as CanvasTab[]
+            }
+            active={artifactView}
+            onChange={setArtifactView}
+            materials={MATERIALS}
+            accent="#0ea5e9"
+            className="h-[32rem]"
+            siteId="asset"
+            materialContext={ARTIFACT_CONTEXTS[0]}
+            showTemplate={false}
+          />
+        </section>
+      )}
       <header className="mb-4">
         <h1 className="text-2xl font-semibold text-zinc-900">{tt(TYPE_LABELS[type])}</h1>
         <p className="mt-1 text-sm text-zinc-500">

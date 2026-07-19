@@ -1,6 +1,10 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import {
+  useEffect,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { createPortal } from "react-dom";
 import { useUI } from "@oceanleo/ui/i18n";
 import { Asset, assetDetail, downloadHref, pptPageUrls } from "@/lib/assets";
@@ -55,33 +59,6 @@ function ZoomImage({ thumb, full, alt }: { thumb: string; full: string; alt: str
     </div>
   );
 }
-
-// Where each asset type can be "used" downstream. URL hand-off only (every site
-// shares SSO + the gateway), so no per-pair integration is needed.
-const USE_TARGETS: Record<string, { label: string; site: string }[]> = {
-  image: [
-    { label: "PPT 里使用", site: "https://slide.oceanleo.com" },
-    { label: "图片编辑", site: "https://image.oceanleo.com" },
-    { label: "在线设计", site: "https://design.oceanleo.com" },
-  ],
-  vector: [{ label: "在线设计", site: "https://design.oceanleo.com" }],
-  sticker: [
-    { label: "在线设计", site: "https://design.oceanleo.com" },
-    { label: "图片编辑", site: "https://image.oceanleo.com" },
-  ],
-  font: [{ label: "在线设计", site: "https://design.oceanleo.com" }],
-  ppt: [
-    { label: "PPT 里使用", site: "https://slide.oceanleo.com" },
-    { label: "在线设计", site: "https://design.oceanleo.com" },
-  ],
-  video: [{ label: "视频工作室", site: "https://studio.oceanleo.com" }],
-  audio: [
-    { label: "视频工作室", site: "https://studio.oceanleo.com" },
-    { label: "会议助手", site: "https://meeting.oceanleo.com" },
-  ],
-  music: [{ label: "视频工作室", site: "https://studio.oceanleo.com" }],
-  "3d": [{ label: "3D 工作台", site: "https://3d.oceanleo.com" }],
-};
 
 // PPT 模板专用预览：整页大图 + 底部页缩略条翻阅（p01..pN 命名约定，见 lib/assets.ts）。
 function PptPager({ asset }: { asset: Asset }) {
@@ -216,18 +193,6 @@ export function AssetDetail({
   // PPT 模板的 source_url 按落库约定指向网页版 deck.html。
   const pptHtmlUrl =
     isPpt && asset.source_url.endsWith(".html") ? asset.source_url : "";
-  const targets = USE_TARGETS[asset.type] || [];
-
-  function openInSite(site: string) {
-    const url = new URL(site);
-    url.searchParams.set("asset_url", asset.full_url);
-    url.searchParams.set("asset_type", asset.type);
-    url.searchParams.set("asset_license", asset.license.code);
-    if (asset.license.attribution_required) {
-      url.searchParams.set("asset_credit", asset.license.attribution_text);
-    }
-    window.open(url.toString(), "_blank", "noopener");
-  }
 
   if (!mounted) return null;
 
@@ -375,15 +340,9 @@ export function AssetDetail({
               {saved ? tt("已收藏") : tt("收藏到我的素材库")}
             </button>
           )}
-          {targets.map((t) => (
-            <button
-              key={t.site}
-              onClick={() => openInSite(t.site)}
-              className="rounded-lg border border-sky-300 bg-sky-50 px-3 py-2 text-sm font-medium text-sky-700 hover:bg-sky-100"
-            >
-              {tt(t.label)} →
-            </button>
-          ))}
+          <span className="text-xs text-zinc-500">
+            {tt("预览、编辑、插入与替换统一由共享素材库按 artifact/revision、权限和目标证据判定；旧库存不会伪造耐久身份。")}
+          </span>
         </div>
       </div>
     </div>,
