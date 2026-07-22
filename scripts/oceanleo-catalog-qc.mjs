@@ -219,7 +219,10 @@ export function canonicalJson(value) {
   }
   if (record(value)) {
     return `{${Object.entries(value)
-      .sort(([left], [right]) => left.localeCompare(right))
+      // JSON canonical keys use deterministic UTF-16 code-unit order. Avoid
+      // localeCompare: its ICU locale ordering cannot be reproduced reliably
+      // by non-JavaScript catalog consumers.
+      .sort(([left], [right]) => (left < right ? -1 : left > right ? 1 : 0))
       .map(
         ([key, child]) =>
           `${JSON.stringify(key)}:${canonicalJson(child)}`,
