@@ -1,0 +1,327 @@
+{
+  "schema": "oceanleo.video.project.v2",
+  "schemaVersion": 2,
+  "projectId": "project_asset_social_brand_film_v1",
+  "title": "品牌短片 · 15 秒社交媒体工作流",
+  "headVersionId": "projectVersion_asset_social_brand_film_v1",
+  "versions": {
+    "projectVersion_asset_social_brand_film_v1": {
+      "versionId": "projectVersion_asset_social_brand_film_v1",
+      "revision": 1,
+      "createdAt": "2026-07-22T00:00:00.000Z",
+      "reason": "catalog.template.published",
+      "graph": {
+        "nodes": [
+          {
+            "nodeId": "node_script_hook",
+            "kind": "script",
+            "title": "15 秒脚本与节奏",
+            "position": {
+              "x": 40,
+              "y": 80
+            },
+            "prompt": "用三段式节奏完成品牌短片：0–3 秒提出情绪钩子，3–11 秒展示流动心形视觉与品牌主张，11–15 秒收束行动号召。",
+            "text": "让每一次连接，都被认真看见。以流动的光点建立情绪，在音乐高潮处呈现品牌主张，最后以清晰行动号召收束。",
+            "ratio": "16:9",
+            "durationSeconds": 15,
+            "sceneId": "scene_brand_film",
+            "shotId": "shot_brand_film",
+            "localEditRecipe": []
+          },
+          {
+            "nodeId": "node_storyboard",
+            "kind": "image",
+            "title": "开场情绪参考",
+            "position": {
+              "x": 410,
+              "y": 40
+            },
+            "assetId": "asset_coffee_illustration",
+            "prompt": "使用暖色图形作为标题构图参考；替换为品牌图形时保留中心留白。",
+            "ratio": "16:9",
+            "sceneId": "scene_brand_film",
+            "shotId": "shot_brand_film",
+            "localEditRecipe": []
+          },
+          {
+            "nodeId": "node_motion",
+            "kind": "video",
+            "title": "流动心形粒子主镜头",
+            "position": {
+              "x": 810,
+              "y": 40
+            },
+            "assetId": "asset_hearts_video",
+            "prompt": "保留 15 秒完整循环，在 3 秒和 11 秒设置标题节奏点。",
+            "ratio": "16:9",
+            "durationSeconds": 15,
+            "sceneId": "scene_brand_film",
+            "shotId": "shot_brand_film",
+            "localEditRecipe": []
+          },
+          {
+            "nodeId": "node_music",
+            "kind": "audio",
+            "title": "The Accident · 音乐床",
+            "position": {
+              "x": 810,
+              "y": 350
+            },
+            "assetId": "asset_music_the_accident",
+            "prompt": "截取前 15 秒，0.8 秒淡入，最后 1.2 秒淡出；发布时保留 CC-BY-SA 署名。",
+            "durationSeconds": 15,
+            "sceneId": "scene_brand_film",
+            "shotId": "shot_brand_film",
+            "localEditRecipe": []
+          },
+          {
+            "nodeId": "node_subtitles",
+            "kind": "subtitle",
+            "title": "品牌主张字幕",
+            "position": {
+              "x": 1170,
+              "y": 350
+            },
+            "text": "00:00 让每一次连接｜00:03 都被认真看见｜00:11 现在开始创作",
+            "ratio": "16:9",
+            "durationSeconds": 15,
+            "sceneId": "scene_brand_film",
+            "shotId": "shot_brand_film",
+            "localEditRecipe": []
+          },
+          {
+            "nodeId": "node_composite",
+            "kind": "composite",
+            "title": "16:9 品牌短片合成",
+            "position": {
+              "x": 1510,
+              "y": 100
+            },
+            "prompt": "主视频全幅；字幕使用安全区；音乐峰值不超过 -1 dB，旁白预留 -12 dB 空间。",
+            "ratio": "16:9",
+            "durationSeconds": 15,
+            "sceneId": "scene_brand_film",
+            "shotId": "shot_brand_film",
+            "localEditRecipe": []
+          },
+          {
+            "nodeId": "node_delivery",
+            "kind": "delivery",
+            "title": "1080p 社交媒体交付",
+            "position": {
+              "x": 1900,
+              "y": 100
+            },
+            "prompt": "导出 H.264 MP4，1920×1080，15 秒；片尾附音乐署名。",
+            "ratio": "16:9",
+            "durationSeconds": 15,
+            "sceneId": "scene_brand_film",
+            "shotId": "shot_brand_film",
+            "localEditRecipe": []
+          }
+        ],
+        "edges": [
+          {
+            "edgeId": "edge_script_storyboard",
+            "sourceNodeId": "node_script_hook",
+            "targetNodeId": "node_storyboard"
+          },
+          {
+            "edgeId": "edge_storyboard_motion",
+            "sourceNodeId": "node_storyboard",
+            "targetNodeId": "node_motion"
+          },
+          {
+            "edgeId": "edge_motion_composite",
+            "sourceNodeId": "node_motion",
+            "targetNodeId": "node_composite"
+          },
+          {
+            "edgeId": "edge_music_composite",
+            "sourceNodeId": "node_music",
+            "targetNodeId": "node_composite"
+          },
+          {
+            "edgeId": "edge_subtitles_composite",
+            "sourceNodeId": "node_subtitles",
+            "targetNodeId": "node_composite"
+          },
+          {
+            "edgeId": "edge_composite_delivery",
+            "sourceNodeId": "node_composite",
+            "targetNodeId": "node_delivery"
+          }
+        ],
+        "viewport": {
+          "x": 30,
+          "y": 70,
+          "zoom": 0.62
+        }
+      },
+      "scenes": [
+        {
+          "sceneId": "scene_brand_film",
+          "title": "品牌连接",
+          "shotIds": [
+            "shot_brand_film"
+          ]
+        }
+      ],
+      "shots": [
+        {
+          "shotId": "shot_brand_film",
+          "sceneId": "scene_brand_film",
+          "title": "15 秒流动心形主镜头",
+          "intendedDurationSeconds": 15,
+          "storyboardId": "storyboard_brand_film",
+          "takeIds": [
+            "take_hearts_video"
+          ],
+          "approvedTakeId": "take_hearts_video",
+          "cameraId": "camera_brand_film"
+        }
+      ],
+      "storyboards": [
+        {
+          "storyboardId": "storyboard_brand_film",
+          "shotId": "shot_brand_film",
+          "frameAssetIds": [
+            "asset_coffee_illustration"
+          ]
+        }
+      ],
+      "takes": [
+        {
+          "takeId": "take_hearts_video",
+          "shotId": "shot_brand_film",
+          "assetId": "asset_hearts_video",
+          "status": "approved"
+        }
+      ],
+      "timelines": [
+        {
+          "timelineId": "timeline_brand_film",
+          "title": "15 秒品牌短片主时间线",
+          "clipIds": [
+            "clip_hearts_video",
+            "clip_music_bed"
+          ]
+        }
+      ],
+      "clips": [
+        {
+          "clipId": "clip_hearts_video",
+          "timelineId": "timeline_brand_film",
+          "takeId": "take_hearts_video",
+          "assetId": "asset_hearts_video",
+          "startSeconds": 0,
+          "durationSeconds": 15
+        },
+        {
+          "clipId": "clip_music_bed",
+          "timelineId": "timeline_brand_film",
+          "assetId": "asset_music_the_accident",
+          "startSeconds": 0,
+          "durationSeconds": 15
+        }
+      ],
+      "cameras": [
+        {
+          "cameraId": "camera_brand_film",
+          "shotId": "shot_brand_film",
+          "lensMillimeters": 50,
+          "fieldOfViewDegrees": 39.6,
+          "position": [
+            0,
+            0,
+            5
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "focusTarget": [
+            0,
+            0,
+            0
+          ],
+          "safeArea": "16:9",
+          "pathKeyframes": [
+            {
+              "timeSeconds": 0,
+              "position": [
+                0,
+                0,
+                5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "timeSeconds": 15,
+              "position": [
+                0,
+                0,
+                4.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "assets": {
+    "asset_coffee_illustration": {
+      "assetId": "asset_coffee_illustration",
+      "kind": "image",
+      "origin": "import",
+      "immutable": true,
+      "title": "Coffee percolator illustration",
+      "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/image/coffee/pixabay-illustration-157876.webp",
+      "previewUrl": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/image/coffee/pixabay-illustration-157876.thumb.webp",
+      "mime": "image/webp",
+      "width": 543,
+      "height": 600,
+      "contentDigest": "sha256:0b873e092f7f73e079709f7a25f8be591d96fee93fb9c899f787d29b2f6127c7",
+      "createdAt": "2026-07-22T00:00:00.000Z"
+    },
+    "asset_hearts_video": {
+      "assetId": "asset_hearts_video",
+      "kind": "video",
+      "origin": "import",
+      "immutable": true,
+      "title": "Flowing hearts particles",
+      "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/video/abstract/pixabay-140667.mp4",
+      "previewUrl": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/video/abstract/pixabay-140667.poster.webp",
+      "mime": "video/mp4",
+      "width": 2560,
+      "height": 1440,
+      "durationSeconds": 15,
+      "contentDigest": "sha256:7dfab1379bf9093ebf05ca4bd63b198202233eb7920ebfb3f23835e732cacfc3",
+      "createdAt": "2026-07-22T00:00:00.000Z"
+    },
+    "asset_music_the_accident": {
+      "assetId": "asset_music_the_accident",
+      "kind": "audio",
+      "origin": "import",
+      "immutable": true,
+      "title": "The Accident",
+      "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/audio/music/jamendo-186949.mp3",
+      "mime": "audio/mpeg",
+      "durationSeconds": 83,
+      "contentDigest": "sha256:46aaa7d8a70f44f7b2993a872f30a949bcfb86a1a73699d2184000aff18827c8",
+      "createdAt": "2026-07-22T00:00:00.000Z"
+    }
+  },
+  "derivatives": {},
+  "lineage": []
+}

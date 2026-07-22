@@ -10,12 +10,8 @@ import type {
   ArtifactProjection,
   LibraryItem,
 } from "@oceanleo/ui/shell";
-import {
-  ASSET_CONTEXT_FIXTURES,
-  MATERIALS,
-} from "../lib/materials";
 
-const CONTEXT_ID = "olctx:v1:asset:site";
+const CONTEXT_ID = "olctx:v1:asset:app:asset";
 
 function durableItem(): LibraryItem {
   const artifact: ArtifactProjection = {
@@ -133,44 +129,51 @@ const targetEvidence = {
   reason: "",
 };
 
-test("legacy inventory stays view-only without fabricated durable identity", () => {
-  assert.ok(MATERIALS.length > 0);
-  for (const [index, material] of MATERIALS.entries()) {
-    const item = material.libraryItem;
-    assert.ok(item);
-    assert.equal(item.artifactId, undefined);
-    assert.equal(item.revisionId, undefined);
-    assert.equal(item.artifact, undefined);
-    assert.equal(item.meta.durable_artifact_id, null);
-    assert.equal(item.meta.revision_id, null);
-    assert.deepEqual(item.descriptor?.capabilities, ["load"]);
-    assert.equal(
-      ASSET_CONTEXT_FIXTURES[index]?.capability.sharedActions.insert,
-      false,
-    );
-  }
-
-  const legacy = MATERIALS[0].libraryItem;
-  assert.ok(legacy);
-  const matrix = artifactActionMatrix(legacy, {
-    canOpenPreview: true,
-    canOpenEdit: true,
-    insert: targetEvidence,
-    replace: targetEvidence,
-  });
-  assert.equal(matrix.preview.available, true);
-  assert.equal(matrix.edit.available, false);
-  assert.equal(matrix.insert.available, false);
-  assert.equal(matrix.replace.available, false);
-  assert.match(matrix.insert.reason, /durable artifactId\/revisionId/);
+test("asset consumer delegates More and My Library to the shared remote surfaces", () => {
   const caller = readFileSync("components/AssetLibrary.tsx", "utf8");
   const detail = readFileSync("components/AssetDetail.tsx", "utf8");
+  const resultCanvas = readFileSync(
+    "node_modules/@oceanleo/ui/src/shell/ResultCanvas.tsx",
+    "utf8",
+  );
+  const materialLibrary = readFileSync(
+    "node_modules/@oceanleo/ui/src/shell/material-library-view.tsx",
+    "utf8",
+  );
+  const workspaceLibrary = readFileSync(
+    "node_modules/@oceanleo/ui/src/shell/WorkspaceLibrary.tsx",
+    "utf8",
+  );
   assert.match(caller, /<ResultCanvas/);
-  assert.match(caller, /materialContext=\{ARTIFACT_CONTEXTS\[0\]\}/);
-  assert.doesNotMatch(caller, /<MaterialLibrary|typed-artifact|TypedArtifact/);
+  assert.match(caller, /siteId="asset"/);
+  assert.equal(CONTEXT_ID, "olctx:v1:asset:app:asset");
+  assert.doesNotMatch(
+    caller,
+    /@\/lib\/materials|ARTIFACT_CONTEXTS|materialContext=/,
+  );
+  assert.doesNotMatch(
+    caller,
+    /\bmaterials=\{|<MaterialLibrary|typed-artifact|TypedArtifact/,
+  );
+  assert.doesNotMatch(
+    caller,
+    /\b(?:curatedType|lockLevel|fetchMore|fetchCurated)=/,
+  );
   assert.doesNotMatch(
     detail,
     /artifactActionMatrix|ArtifactActionButtons|USE_TARGETS|openInSite/,
+  );
+  assert.match(
+    resultCanvas,
+    /materialContext\?\.contextId\s*\|\|\s*canonicalArtifactContextId\(materialSiteId, materialAppId\)/,
+  );
+  assert.match(
+    materialLibrary,
+    /onOpenEntry=\{\s*level === "primary"[\s\S]*?: undefined\s*\}/,
+  );
+  assert.match(
+    workspaceLibrary,
+    /if \(onOpenEntry\) \{[\s\S]*?return;\s*\}\s*setSelectedId\(entry.id\)/,
   );
 });
 
@@ -192,7 +195,6 @@ test("shared shell filters legacy rows and exposes canonical actions for durable
     <I18nProvider locale="zh" messages={{}}>
       <MaterialLibrary
         materials={[
-          MATERIALS[0],
           {
             id: "durable-asset",
             title: durable.title,
@@ -212,10 +214,22 @@ test("shared shell filters legacy rows and exposes canonical actions for durable
     </I18nProvider>,
   );
   assert.match(html, /Durable migrated asset/);
-  assert.doesNotMatch(html, new RegExp(MATERIALS[0].title));
-  assert.match(html, />预览</);
-  assert.match(html, />编辑</);
-  assert.match(html, />插入</);
-  assert.match(html, />替换</);
   assert.match(html, /aria-label="打开完整素材库"/);
+  for (const label of [
+    "单文件图片",
+    "复合图片",
+    "矢量图片",
+    "图表",
+    "文档",
+    "表格",
+    "幻灯片",
+    "PDF",
+    "网站",
+    "视频",
+    "音频",
+    "3D",
+    "工作流",
+  ]) {
+    assert.match(html, new RegExp(`>${label}<`));
+  }
 });

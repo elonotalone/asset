@@ -7,6 +7,18 @@ const TYPESCRIPT_EXTENSIONS = [".ts", ".tsx", ".mts", ".cts"];
 
 registerHooks({
   resolve(specifier, context, nextResolve) {
+    if (specifier.startsWith("@/")) {
+      const projectUrl = new URL(`../${specifier.slice(2)}`, import.meta.url);
+      if (existsSync(fileURLToPath(projectUrl))) {
+        return { url: projectUrl.href, shortCircuit: true };
+      }
+      for (const extension of [...TYPESCRIPT_EXTENSIONS, ".js", ".json"]) {
+        const sourceUrl = `${projectUrl.href}${extension}`;
+        if (existsSync(fileURLToPath(sourceUrl))) {
+          return { url: sourceUrl, shortCircuit: true };
+        }
+      }
+    }
     try {
       const resolved = nextResolve(specifier, context);
       if (
@@ -46,6 +58,14 @@ registerHooks({
     }
   },
   load(url, context, nextLoad) {
+    if (new URL(url).pathname.endsWith(".json")) {
+      const filename = fileURLToPath(url);
+      return {
+        format: "module",
+        source: `export default ${readFileSync(filename, "utf8")};`,
+        shortCircuit: true,
+      };
+    }
     const extension = TYPESCRIPT_EXTENSIONS.find((candidate) =>
       new URL(url).pathname.endsWith(candidate),
     );

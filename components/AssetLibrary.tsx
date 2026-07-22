@@ -20,7 +20,6 @@ import {
   TYPE_LABELS,
   TYPE_ORDER,
 } from "@/lib/assets";
-import { ARTIFACT_CONTEXTS, MATERIALS } from "@/lib/materials";
 import { AssetCard } from "@/components/AssetCard";
 import { AssetDetail } from "@/components/AssetDetail";
 
@@ -377,11 +376,9 @@ function AssetLibraryContent({
             }
             active={artifactView}
             onChange={setArtifactView}
-            materials={MATERIALS}
             accent="#0ea5e9"
             className="h-[32rem]"
             siteId="asset"
-            materialContext={ARTIFACT_CONTEXTS[0]}
             showTemplate={false}
           />
         </section>
