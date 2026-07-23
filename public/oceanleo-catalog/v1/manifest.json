@@ -3,7 +3,7 @@
   "version": 1,
   "publishedAt": "2026-07-22T00:00:00.000Z",
   "sourceSite": "asset",
-  "contentDigest": "sha256:2792ac3965c7a387f81e702721a91003d782c0f67e4107fad60d349d0b5c4df9",
+  "contentDigest": "sha256:568a08c9d90ec03030af64c8eb22af6d2d69f427f75127dacdc2a0432896668b",
   "requiredEditorClasses": [
     "video_editing",
     "website_finetuning",
@@ -19,6 +19,7 @@
     "model_3d"
   ],
   "qualityPolicy": {
+    "minimumItemsPerEditorClass": 1,
     "minimumThumbnailWidth": 240,
     "minimumThumbnailHeight": 240,
     "minimumVideoDurationMs": 10000,
@@ -371,7 +372,7 @@
       "editorClass": "presentation_editing",
       "artifactType": "deck",
       "sourceFormat": "pptx",
-      "editorCapability": "office-editor",
+      "editorCapability": "deck-editor",
       "contentFamilyId": "oceanleo-deck-housekeeping-terrazzo",
       "roles": [
         "template",
@@ -421,9 +422,9 @@
         "derivation": "deck-cover-render"
       },
       "editor": {
-        "capability": "office-editor",
-        "adapter": "office",
-        "projectSchema": "office-file@1",
+        "capability": "deck-editor",
+        "adapter": "deck",
+        "projectSchema": "oceanleo.deck.v1",
         "editability": "native",
         "roundTrip": [
           "load",
@@ -466,7 +467,7 @@
       "editorClass": "document_editing",
       "artifactType": "document",
       "sourceFormat": "docx",
-      "editorCapability": "office-editor",
+      "editorCapability": "richdoc-editor",
       "contentFamilyId": "oceanleo-document-employee-handbook",
       "roles": [
         "template",
@@ -516,9 +517,9 @@
         "derivation": "document-page-render"
       },
       "editor": {
-        "capability": "office-editor",
-        "adapter": "office",
-        "projectSchema": "office-file@1",
+        "capability": "richdoc-editor",
+        "adapter": "richdoc",
+        "projectSchema": "tiptap-json@1",
         "editability": "native",
         "roundTrip": [
           "load",
@@ -560,7 +561,7 @@
       "editorClass": "spreadsheet_editing",
       "artifactType": "grid",
       "sourceFormat": "xlsx",
-      "editorCapability": "office-editor",
+      "editorCapability": "grid-editor",
       "contentFamilyId": "oceanleo-grid-content-calendar",
       "roles": [
         "template",
@@ -610,9 +611,9 @@
         "derivation": "worksheet-render"
       },
       "editor": {
-        "capability": "office-editor",
-        "adapter": "office",
-        "projectSchema": "office-file@1",
+        "capability": "grid-editor",
+        "adapter": "grid",
+        "projectSchema": "oceanleo.grid.v1",
         "editability": "native",
         "roundTrip": [
           "load",

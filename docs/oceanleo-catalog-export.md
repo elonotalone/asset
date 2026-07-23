@@ -6,6 +6,8 @@
 surface one real, licensed, editable template for each of the 12 advanced editor
 classes. The export carries immutable source and rendition digests so the backend
 publisher can create durable artifact revisions without guessing from a card image.
+`qualityPolicy.minimumItemsPerEditorClass` pins the repository floor to one;
+increasing that floor requires adding reviewed sources rather than duplicating rows.
 
 The number 12 comes from `ADVANCED_FEATURES` in `@oceanleo/ui`, not from the
 13-value artifact taxonomy. `single_file_image` is the source taxonomy used for
@@ -46,9 +48,9 @@ uses the production editor's parser and real licensed source assets.
 | `video_editing` | `video` | `mp4` | `video-timeline` | `oceanleo.timeline.v1` |
 | `audio_editing` | `audio` | `mp3` | `audio-editor` | `oceanleo.audio-project.v1` |
 | `image_editing` | `single_file_image` | `webp` | `image-editor` | `oceanleo.fabric-image.v1` |
-| `document_editing` | `document` | `docx` | `office-editor` | `office-file@1` |
-| `spreadsheet_editing` | `grid` | `xlsx` | `office-editor` | `office-file@1` |
-| `presentation_editing` | `deck` | `pptx` | `office-editor` | `office-file@1` |
+| `document_editing` | `document` | `docx` | `richdoc-editor` | `tiptap-json@1` |
+| `spreadsheet_editing` | `grid` | `xlsx` | `grid-editor` | `oceanleo.grid.v1` |
+| `presentation_editing` | `deck` | `pptx` | `deck-editor` | `oceanleo.deck.v1` |
 | `pdf_editing` | `pdf` | `pdf` | `pdf-editor` | `pdf-binary@1` |
 | `chart_editing` | `chart` | `oceanleo.chart.v1` | `chart-editor` | `oceanleo.chart.v1` |
 | `website_finetuning` | `website` | `website-source@1` | `website-editor` | `website-source@1` |
@@ -59,6 +61,8 @@ uses the production editor's parser and real licensed source assets.
 Raw Office/media files are intentional bounded inputs: the corresponding editor
 loads the native file, mutates it, saves a project/checkpoint and reopens that
 checkpoint. Structured classes publish their real graph/document source directly.
+The lightweight Office capabilities above affect client dispatch only; the
+independent backend ONLYOFFICE service remains unchanged.
 
 ## Website editability and selection evidence
 

@@ -23,6 +23,7 @@ export const EDITOR_CLASSES = [
   "video_canvas",
   "model_3d",
 ];
+export const MINIMUM_ITEMS_PER_EDITOR_CLASS = 1;
 
 const CONTRACT_BY_CLASS = {
   video_editing: {
@@ -49,23 +50,23 @@ const CONTRACT_BY_CLASS = {
   presentation_editing: {
     artifactType: "deck",
     sourceFormat: "pptx",
-    editorCapability: "office-editor",
-    adapter: "office",
-    projectSchema: "office-file@1",
+    editorCapability: "deck-editor",
+    adapter: "deck",
+    projectSchema: "oceanleo.deck.v1",
   },
   document_editing: {
     artifactType: "document",
     sourceFormat: "docx",
-    editorCapability: "office-editor",
-    adapter: "office",
-    projectSchema: "office-file@1",
+    editorCapability: "richdoc-editor",
+    adapter: "richdoc",
+    projectSchema: "tiptap-json@1",
   },
   spreadsheet_editing: {
     artifactType: "grid",
     sourceFormat: "xlsx",
-    editorCapability: "office-editor",
-    adapter: "office",
-    projectSchema: "office-file@1",
+    editorCapability: "grid-editor",
+    adapter: "grid",
+    projectSchema: "oceanleo.grid.v1",
   },
   image_editing: {
     artifactType: "single_file_image",
@@ -548,6 +549,19 @@ function validateItem(issues, manifest, item, index) {
   }
   validateDigestResource(issues, item, item.source, "source");
   const previewMediaType = String(item.preview?.mediaType || "");
+  if (
+    !previewMediaType.startsWith("image/") &&
+    !previewMediaType.startsWith("audio/") &&
+    !previewMediaType.startsWith("video/") &&
+    previewMediaType !== "application/pdf"
+  ) {
+    issue(
+      issues,
+      "preview_not_displayable",
+      item.id,
+      "preview must use an inline-displayable media type",
+    );
+  }
   validateDigestResource(issues, item, item.preview, "preview", {
     requireDimensions:
       previewMediaType.startsWith("image/") ||
@@ -754,6 +768,17 @@ export function validateCatalogShape(manifest) {
       "coverage_count_mismatch",
       null,
       "catalog must contain exactly 12 items",
+    );
+  }
+  if (
+    manifest?.qualityPolicy?.minimumItemsPerEditorClass !==
+    MINIMUM_ITEMS_PER_EDITOR_CLASS
+  ) {
+    issue(
+      issues,
+      "invalid_editor_class_minimum",
+      null,
+      `minimumItemsPerEditorClass must be ${MINIMUM_ITEMS_PER_EDITOR_CLASS}`,
     );
   }
   const classes = new Set();

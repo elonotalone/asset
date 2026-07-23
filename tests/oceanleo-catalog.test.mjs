@@ -4,6 +4,7 @@ import test from "node:test";
 import { GET } from "../app/api/oceanleo-catalog/v1/route.ts";
 import {
   EDITOR_CLASSES,
+  MINIMUM_ITEMS_PER_EDITOR_CLASS,
   catalogContentDigest,
   readCatalog,
   validateCatalogShape,
@@ -18,6 +19,10 @@ test("static catalog is the exact, locally complete 12-class export", async () =
     EDITOR_CLASSES,
   );
   assert.equal(manifest.items.length, 12);
+  assert.equal(
+    manifest.qualityPolicy.minimumItemsPerEditorClass,
+    MINIMUM_ITEMS_PER_EDITOR_CLASS,
+  );
   assert.equal(catalogContentDigest(manifest), manifest.contentDigest);
   assert.deepEqual(validateCatalogShape(manifest), []);
   assert.deepEqual(await validateLocalCatalogFiles(manifest), []);
@@ -28,10 +33,48 @@ test("static catalog is the exact, locally complete 12-class export", async () =
     assert.ok(item.roles.includes("catalog_more"));
     assert.equal(item.preview.derivedFromSourceDigest, item.source.digest);
     assert.equal(item.thumbnail.derivedFromSourceDigest, item.source.digest);
+    assert.notEqual(item.editorCapability, "office-editor");
+    assert.equal(item.editorCapability, item.editor.capability);
+    assert.match(
+      item.preview.mediaType,
+      /^(image|audio|video)\/|^application\/pdf$/,
+    );
     assert.equal(sourceDigests.has(item.source.digest), false);
     assert.equal(thumbnailDigests.has(item.thumbnail.digest), false);
     sourceDigests.add(item.source.digest);
     thumbnailDigests.add(item.thumbnail.digest);
+  }
+  const lightweightOfficeDispatch = {
+    presentation_editing: [
+      "deck-editor",
+      "deck",
+      "oceanleo.deck.v1",
+    ],
+    document_editing: [
+      "richdoc-editor",
+      "richdoc",
+      "tiptap-json@1",
+    ],
+    spreadsheet_editing: [
+      "grid-editor",
+      "grid",
+      "oceanleo.grid.v1",
+    ],
+  };
+  for (const [editorClass, expected] of Object.entries(
+    lightweightOfficeDispatch,
+  )) {
+    const item = manifest.items.find(
+      (candidate) => candidate.editorClass === editorClass,
+    );
+    assert.deepEqual(
+      [
+        item.editorCapability,
+        item.editor.adapter,
+        item.editor.projectSchema,
+      ],
+      expected,
+    );
   }
 });
 
@@ -88,8 +131,10 @@ test("QC rejects placeholder copy and unlinked rendition evidence", async () => 
   invalid.items[0].title = "placeholder";
   invalid.items[0].thumbnail.derivedFromSourceDigest =
     invalid.items[1].source.digest;
+  invalid.items[0].preview.mediaType = "application/json";
   invalid.contentDigest = catalogContentDigest(invalid);
   const codes = new Set(validateCatalogShape(invalid).map((value) => value.code));
   assert.ok(codes.has("placeholder_title"));
+  assert.ok(codes.has("preview_not_displayable"));
   assert.ok(codes.has("rendition_source_mismatch"));
 });
