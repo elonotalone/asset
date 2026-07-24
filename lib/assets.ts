@@ -778,6 +778,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   noir: "黑色电影风",
   meridian: "古典航海图风",
   // prompt（DiffusionDB 等图+prompt 成对素材；按题材粗分）
+  // abstract 已在上方定义为「抽象」，勿重复键。
   portrait: "人像",
   landscape: "风景",
   fantasy: "奇幻",
@@ -785,7 +786,6 @@ const CATEGORY_LABELS: Record<string, string> = {
   architecture: "建筑",
   product: "静物产品",
   animal: "动物",
-  abstract: "抽象艺术",
   interior: "室内",
   vehicle: "载具",
 };
