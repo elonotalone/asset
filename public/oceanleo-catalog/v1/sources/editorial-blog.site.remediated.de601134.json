@@ -1,0 +1,335 @@
+{
+  "backgroundColor": "#fafaf9",
+  "encoding": "utf-8",
+  "navigation": [
+    {
+      "href": "#hero-home",
+      "label": "首页"
+    },
+    {
+      "href": "#features-home",
+      "label": "能力"
+    },
+    {
+      "href": "#contact-home",
+      "label": "联系"
+    }
+  ],
+  "pages": [
+    {
+      "description": "关于设计、城市与独立工作的观察，每周一封，不追热点。",
+      "id": "home",
+      "name": "首页",
+      "path": "/",
+      "sections": [
+        {
+          "content": {
+            "eyebrow": "博客内容站",
+            "image": {
+              "alt": "博客内容站范例主视觉",
+              "keyword": "博客内容站 博客内容站范例",
+              "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/image/design-scene/design-scene-autumn-01.webp"
+            },
+            "primaryCtaHref": "#features-home",
+            "primaryCtaLabel": "立即开始",
+            "secondaryCtaHref": "#stats-home",
+            "secondaryCtaLabel": "了解更多",
+            "subtitle": "关于设计、城市与独立工作的观察，每周一封，不追热点。",
+            "title": "记录那些值得慢一点理解的事"
+          },
+          "id": "hero-home",
+          "style": {
+            "alignment": "left",
+            "backgroundColor": "#fafaf9",
+            "borderWidth": 0,
+            "contentWidth": "wide",
+            "cornerRadius": 28,
+            "layout": "default",
+            "paddingBottom": 88,
+            "paddingTop": 88,
+            "textColor": "#292524"
+          },
+          "type": "hero"
+        },
+        {
+          "content": {
+            "image": {
+              "alt": "博客内容站范例数据趋势",
+              "keyword": "analytics dashboard",
+              "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/charts/area-gradient/cover.webp"
+            },
+            "items": [
+              {
+                "description": "博客内容站关键指标",
+                "label": "深度文章",
+                "value": "128"
+              },
+              {
+                "description": "博客内容站关键指标",
+                "label": "邮件读者",
+                "value": "24k"
+              },
+              {
+                "description": "博客内容站关键指标",
+                "label": "持续更新",
+                "value": "每周"
+              }
+            ],
+            "subtitle": "每个数字和文字都可以在画布中直接点选修改。",
+            "title": "用清楚的数字建立信任"
+          },
+          "id": "stats-home",
+          "style": {
+            "alignment": "center",
+            "backgroundColor": "#292524",
+            "borderWidth": 0,
+            "contentWidth": "wide",
+            "cornerRadius": 28,
+            "layout": "reverse",
+            "paddingBottom": 64,
+            "paddingTop": 64,
+            "textColor": "#ffffff"
+          },
+          "type": "stats"
+        },
+        {
+          "content": {
+            "features": [
+              {
+                "description": "在效率之外，重新理解一件作品如何获得时间。",
+                "icon": "读",
+                "title": "本周长文"
+              },
+              {
+                "description": "与不同领域的实践者谈方法、选择与长期主义。",
+                "icon": "访",
+                "title": "创作者访谈"
+              },
+              {
+                "description": "按城市、工作与审美重新组织过往内容。",
+                "icon": "集",
+                "title": "主题合辑"
+              }
+            ],
+            "image": {
+              "alt": "博客内容站范例主视觉",
+              "keyword": "博客内容站 博客内容站范例",
+              "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/image/design-scene/design-scene-autumn-01.webp"
+            },
+            "subtitle": "不是一张不可编辑的截图，而是一组有明确语义的真实网页区块。",
+            "title": "围绕用户目标组织内容"
+          },
+          "id": "features-home",
+          "style": {
+            "alignment": "left",
+            "backgroundColor": "#ffffff",
+            "borderWidth": 0,
+            "contentWidth": "wide",
+            "cornerRadius": 28,
+            "layout": "default",
+            "paddingBottom": 72,
+            "paddingTop": 72,
+            "textColor": "#292524"
+          },
+          "type": "feature-grid"
+        },
+        {
+          "content": {
+            "ctaHref": "#hero-home",
+            "ctaLabel": "立即开始",
+            "description": "博客内容站 · 一个来源同时驱动可视化编辑、Agent 修改和发布。",
+            "image": {
+              "alt": "博客内容站范例联系与协作",
+              "keyword": "team collaboration",
+              "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/image/design-scene/design-scene-office-01.webp"
+            },
+            "links": [
+              {
+                "href": "#features-home",
+                "label": "能力"
+              },
+              {
+                "href": "mailto:hello@example.com",
+                "label": "联系"
+              }
+            ],
+            "title": "博客内容站范例"
+          },
+          "id": "contact-home",
+          "style": {
+            "alignment": "left",
+            "backgroundColor": "#292524",
+            "borderWidth": 0,
+            "contentWidth": "wide",
+            "cornerRadius": 28,
+            "layout": "reverse",
+            "paddingBottom": 64,
+            "paddingTop": 64,
+            "textColor": "#ffffff"
+          },
+          "type": "footer"
+        }
+      ],
+      "title": "博客内容站范例"
+    }
+  ],
+  "schema": "website-source@1",
+  "sections": [
+    {
+      "content": {
+        "eyebrow": "博客内容站",
+        "image": {
+          "alt": "博客内容站范例主视觉",
+          "keyword": "博客内容站 博客内容站范例",
+          "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/image/design-scene/design-scene-autumn-01.webp"
+        },
+        "primaryCtaHref": "#features-home",
+        "primaryCtaLabel": "立即开始",
+        "secondaryCtaHref": "#stats-home",
+        "secondaryCtaLabel": "了解更多",
+        "subtitle": "关于设计、城市与独立工作的观察，每周一封，不追热点。",
+        "title": "记录那些值得慢一点理解的事"
+      },
+      "id": "hero-home",
+      "style": {
+        "alignment": "left",
+        "backgroundColor": "#fafaf9",
+        "borderWidth": 0,
+        "contentWidth": "wide",
+        "cornerRadius": 28,
+        "layout": "default",
+        "paddingBottom": 88,
+        "paddingTop": 88,
+        "textColor": "#292524"
+      },
+      "type": "hero"
+    },
+    {
+      "content": {
+        "image": {
+          "alt": "博客内容站范例数据趋势",
+          "keyword": "analytics dashboard",
+          "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/charts/area-gradient/cover.webp"
+        },
+        "items": [
+          {
+            "description": "博客内容站关键指标",
+            "label": "深度文章",
+            "value": "128"
+          },
+          {
+            "description": "博客内容站关键指标",
+            "label": "邮件读者",
+            "value": "24k"
+          },
+          {
+            "description": "博客内容站关键指标",
+            "label": "持续更新",
+            "value": "每周"
+          }
+        ],
+        "subtitle": "每个数字和文字都可以在画布中直接点选修改。",
+        "title": "用清楚的数字建立信任"
+      },
+      "id": "stats-home",
+      "style": {
+        "alignment": "center",
+        "backgroundColor": "#292524",
+        "borderWidth": 0,
+        "contentWidth": "wide",
+        "cornerRadius": 28,
+        "layout": "reverse",
+        "paddingBottom": 64,
+        "paddingTop": 64,
+        "textColor": "#ffffff"
+      },
+      "type": "stats"
+    },
+    {
+      "content": {
+        "features": [
+          {
+            "description": "在效率之外，重新理解一件作品如何获得时间。",
+            "icon": "读",
+            "title": "本周长文"
+          },
+          {
+            "description": "与不同领域的实践者谈方法、选择与长期主义。",
+            "icon": "访",
+            "title": "创作者访谈"
+          },
+          {
+            "description": "按城市、工作与审美重新组织过往内容。",
+            "icon": "集",
+            "title": "主题合辑"
+          }
+        ],
+        "image": {
+          "alt": "博客内容站范例主视觉",
+          "keyword": "博客内容站 博客内容站范例",
+          "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/image/design-scene/design-scene-autumn-01.webp"
+        },
+        "subtitle": "不是一张不可编辑的截图，而是一组有明确语义的真实网页区块。",
+        "title": "围绕用户目标组织内容"
+      },
+      "id": "features-home",
+      "style": {
+        "alignment": "left",
+        "backgroundColor": "#ffffff",
+        "borderWidth": 0,
+        "contentWidth": "wide",
+        "cornerRadius": 28,
+        "layout": "default",
+        "paddingBottom": 72,
+        "paddingTop": 72,
+        "textColor": "#292524"
+      },
+      "type": "feature-grid"
+    },
+    {
+      "content": {
+        "ctaHref": "#hero-home",
+        "ctaLabel": "立即开始",
+        "description": "博客内容站 · 一个来源同时驱动可视化编辑、Agent 修改和发布。",
+        "image": {
+          "alt": "博客内容站范例联系与协作",
+          "keyword": "team collaboration",
+          "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/image/design-scene/design-scene-office-01.webp"
+        },
+        "links": [
+          {
+            "href": "#features-home",
+            "label": "能力"
+          },
+          {
+            "href": "mailto:hello@example.com",
+            "label": "联系"
+          }
+        ],
+        "title": "博客内容站范例"
+      },
+      "id": "contact-home",
+      "style": {
+        "alignment": "left",
+        "backgroundColor": "#292524",
+        "borderWidth": 0,
+        "contentWidth": "wide",
+        "cornerRadius": 28,
+        "layout": "reverse",
+        "paddingBottom": 64,
+        "paddingTop": 64,
+        "textColor": "#ffffff"
+      },
+      "type": "footer"
+    }
+  ],
+  "siteName": "博客内容站范例",
+  "themeColor": "#7c2d12",
+  "typography": {
+    "baseSize": 16,
+    "bodyFont": "sans",
+    "headingFont": "serif",
+    "headingWeight": 750,
+    "lineHeight": 1.6
+  }
+}

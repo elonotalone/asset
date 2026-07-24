@@ -1,9 +1,1283 @@
 {
-  "schema": "oceanleo.catalog-export.v1",
-  "version": 1,
+  "contentDigest": "sha256:2ae80d85b9b5b1bf913517954a9d70b98bc95bdeac14589d47faf3c56caa5382",
+  "items": [
+    {
+      "artifactType": "video",
+      "contentFamilyId": "pixabay-video-140667",
+      "editor": {
+        "adapter": "video-timeline",
+        "capability": "video-timeline",
+        "editability": "bounded",
+        "evidence": "The production timeline imports the original MP4, edits tracks and saves a revisioned timeline project.",
+        "projectSchema": "oceanleo.timeline.v1",
+        "roundTrip": [
+          "load",
+          "mutate",
+          "save",
+          "reopen"
+        ]
+      },
+      "editorCapability": "video-timeline",
+      "editorClass": "video_editing",
+      "id": "asset-template:video-editing:flowing-hearts:v1",
+      "preview": {
+        "byteSize": 19966599,
+        "derivation": "source",
+        "derivedFromSourceDigest": "sha256:7dfab1379bf9093ebf05ca4bd63b198202233eb7920ebfb3f23835e732cacfc3",
+        "digest": "sha256:7dfab1379bf9093ebf05ca4bd63b198202233eb7920ebfb3f23835e732cacfc3",
+        "durationMs": 15000,
+        "height": 1440,
+        "mediaType": "video/mp4",
+        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/video/abstract/pixabay-140667.mp4",
+        "width": 2560
+      },
+      "provenance": {
+        "author": "31150642",
+        "inventoryId": "ae9251a2-570c-4d61-b45a-2922cc63bba6",
+        "license": {
+          "attributionRequired": false,
+          "attributionText": "",
+          "code": "PIXABAY",
+          "commercialOk": true,
+          "modifyOk": true,
+          "url": "https://pixabay.com/service/license/"
+        },
+        "providerAssetId": "140667",
+        "providerId": "pixabay",
+        "reviewedAt": "2026-07-22",
+        "sourcePage": "https://pixabay.com/videos/id-140667/"
+      },
+      "quality": {
+        "metrics": {
+          "durationMs": 15000,
+          "height": 1440,
+          "posterHeight": 405,
+          "posterWidth": 720,
+          "width": 2560
+        },
+        "status": "approved"
+      },
+      "revisionId": "catalog-r1-7dfab1379bf9",
+      "roles": [
+        "template",
+        "catalog_more"
+      ],
+      "source": {
+        "byteSize": 19966599,
+        "dependencies": [],
+        "digest": "sha256:7dfab1379bf9093ebf05ca4bd63b198202233eb7920ebfb3f23835e732cacfc3",
+        "format": "mp4",
+        "integrity": "content_addressed",
+        "mediaType": "video/mp4",
+        "openMode": "native-file",
+        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/video/abstract/pixabay-140667.mp4"
+      },
+      "sourceFormat": "mp4",
+      "taxonomy": {
+        "labels": [
+          "视频",
+          "横版片头",
+          "抽象粒子"
+        ],
+        "primary": "video",
+        "tags": [
+          "16:9",
+          "15s",
+          "hearts",
+          "motion-background"
+        ]
+      },
+      "thumbnail": {
+        "byteSize": 29404,
+        "derivation": "poster-frame",
+        "derivedFromSourceDigest": "sha256:7dfab1379bf9093ebf05ca4bd63b198202233eb7920ebfb3f23835e732cacfc3",
+        "digest": "sha256:4c351655f3e8a3572e3fadc174ab6ead27e3f79d23f3e96da3b1f4f5c39d6163",
+        "height": 405,
+        "mediaType": "image/webp",
+        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/video/abstract/pixabay-140667.poster.webp",
+        "width": 720
+      },
+      "title": "流动心形粒子 · 15 秒横版片头"
+    },
+    {
+      "artifactType": "website",
+      "contentFamilyId": "oceanleo-editorial-blog",
+      "editor": {
+        "adapter": "website",
+        "capability": "website-editor",
+        "editability": "native",
+        "evidence": "The source contains one page and four semantic sections consumed by the production website workbench.",
+        "projectSchema": "website-source@1",
+        "roundTrip": [
+          "load",
+          "mutate",
+          "save",
+          "reopen"
+        ]
+      },
+      "editorCapability": "website-editor",
+      "editorClass": "website_finetuning",
+      "id": "asset-template:website-finetuning:editorial-blog:v1",
+      "preview": {
+        "byteSize": 7984,
+        "derivation": "rendered-site",
+        "derivedFromSourceDigest": "sha256:de601134d2c481fa4b3d0ac18dd788f6afab223f2ea0957a74a331b7d7c7e830",
+        "digest": "sha256:97338a7407d5db25a15a678c103e0cfd085900ec08136412c35528864268e3dd",
+        "height": 675,
+        "mediaType": "image/png",
+        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/website/editorial-blog.png",
+        "width": 1200
+      },
+      "provenance": {
+        "author": "OceanLeo",
+        "inventoryId": "1ec1732f-a544-44ee-9821-6b72e70de9ac",
+        "license": {
+          "attributionRequired": false,
+          "attributionText": "",
+          "code": "LicenseRef-OceanLeo-First-Party",
+          "commercialOk": true,
+          "modifyOk": true,
+          "url": "https://asset.oceanleo.com/oceanleo-catalog/v1/RIGHTS.md#oceanleo-first-party-assets"
+        },
+        "providerAssetId": "editorial-blog",
+        "providerId": "oceanleo-curated",
+        "reviewedAt": "2026-07-22",
+        "sourcePage": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/website/remediations/editorial-blog.site.de601134d2c481fa4b3d0ac18dd788f6afab223f2ea0957a74a331b7d7c7e830.json"
+      },
+      "quality": {
+        "metrics": {
+          "dependencyCount": 3,
+          "encoding": "utf-8",
+          "pageCount": 1,
+          "schema": "website-source@1",
+          "sectionCount": 4
+        },
+        "status": "approved"
+      },
+      "revisionId": "catalog-r1-de601134d2c4",
+      "roles": [
+        "template",
+        "catalog_more"
+      ],
+      "source": {
+        "byteSize": 10886,
+        "dependencies": [
+          {
+            "byteSize": 717674,
+            "digest": "sha256:f314b52986affb923ce6e5f814e1f952defa988ec9710b5336bb636e21bd7056",
+            "mediaType": "image/webp",
+            "path": "design-scene-autumn-01.webp",
+            "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/image/design-scene/design-scene-autumn-01.webp"
+          },
+          {
+            "byteSize": 17794,
+            "digest": "sha256:3bda3fdaacbee2c9e903dd404f43e98408f109a2b51a0754a788628497a5aee9",
+            "mediaType": "image/webp",
+            "path": "area-gradient-cover.webp",
+            "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/charts/area-gradient/cover.webp"
+          },
+          {
+            "byteSize": 112512,
+            "digest": "sha256:ed798699d7acf38f601648fba49ca31dbbfdf1799a44025df28a8c6e0779963d",
+            "mediaType": "image/webp",
+            "path": "design-scene-office-01.webp",
+            "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/image/design-scene/design-scene-office-01.webp"
+          }
+        ],
+        "digest": "sha256:de601134d2c481fa4b3d0ac18dd788f6afab223f2ea0957a74a331b7d7c7e830",
+        "format": "website-source@1",
+        "integrity": "complete_dependency_closure",
+        "mediaType": "application/json",
+        "openMode": "structured-project",
+        "url": "https://asset.oceanleo.com/oceanleo-catalog/v1/sources/editorial-blog.site.remediated.de601134.json"
+      },
+      "sourceFormat": "website-source@1",
+      "taxonomy": {
+        "labels": [
+          "网站",
+          "博客",
+          "内容品牌"
+        ],
+        "primary": "website",
+        "tags": [
+          "responsive",
+          "editorial",
+          "four-sections"
+        ]
+      },
+      "thumbnail": {
+        "byteSize": 7984,
+        "derivation": "rendered-site",
+        "derivedFromSourceDigest": "sha256:de601134d2c481fa4b3d0ac18dd788f6afab223f2ea0957a74a331b7d7c7e830",
+        "digest": "sha256:97338a7407d5db25a15a678c103e0cfd085900ec08136412c35528864268e3dd",
+        "height": 675,
+        "mediaType": "image/png",
+        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/website/editorial-blog.png",
+        "width": 1200
+      },
+      "title": "独立创作者博客 · 编辑型内容站"
+    },
+    {
+      "artifactType": "composite_image",
+      "contentFamilyId": "oceanleo-design-mc-board-04",
+      "editor": {
+        "adapter": "design-canvas",
+        "capability": "design-canvas",
+        "editability": "native",
+        "evidence": "The source is a self-contained 1200×1600 design document with stable object IDs.",
+        "projectSchema": "oceanleo.design-document.v1",
+        "roundTrip": [
+          "load",
+          "mutate",
+          "save",
+          "reopen"
+        ]
+      },
+      "editorCapability": "design-canvas",
+      "editorClass": "design_canvas",
+      "id": "asset-template:design-canvas:safety-board:v1",
+      "preview": {
+        "byteSize": 36914,
+        "derivation": "rendered-design-document",
+        "derivedFromSourceDigest": "sha256:c7bfc5d300db14e51fdf204bfe5809f7c0c061105732b92c68ce24f3bf88368f",
+        "digest": "sha256:9f0d33a6877af85a3c1cfcd34862bcd609e3528cf181f9081797dde0fc5ea823",
+        "height": 960,
+        "mediaType": "image/webp",
+        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/mc-board-04.webp?v=202607040933",
+        "width": 720
+      },
+      "provenance": {
+        "author": "OceanLeo",
+        "inventoryId": "0538c42d-a52c-4cd9-afca-ee50f14b3123",
+        "license": {
+          "attributionRequired": false,
+          "attributionText": "",
+          "code": "LicenseRef-OceanLeo-First-Party",
+          "commercialOk": true,
+          "modifyOk": true,
+          "url": "https://asset.oceanleo.com/oceanleo-catalog/v1/RIGHTS.md#oceanleo-first-party-assets"
+        },
+        "providerAssetId": "mc-board-04",
+        "providerId": "oceanleo-design-template",
+        "reviewedAt": "2026-07-22",
+        "sourcePage": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/image/design-scene/remediations/mc-board-04.c7bfc5d300db14e51fdf204bfe5809f7c0c061105732b92c68ce24f3bf88368f.json"
+      },
+      "quality": {
+        "metrics": {
+          "elementCount": 55,
+          "elementTypes": [
+            "image",
+            "shape",
+            "text"
+          ],
+          "height": 1600,
+          "stableElementIds": true,
+          "width": 1200
+        },
+        "status": "approved"
+      },
+      "revisionId": "catalog-r1-c7bfc5d300db",
+      "roles": [
+        "template",
+        "catalog_more"
+      ],
+      "source": {
+        "byteSize": 40761,
+        "dependencies": [],
+        "digest": "sha256:c7bfc5d300db14e51fdf204bfe5809f7c0c061105732b92c68ce24f3bf88368f",
+        "format": "oceanleo.design-document.v1",
+        "integrity": "content_addressed",
+        "mediaType": "application/json",
+        "openMode": "structured-project",
+        "url": "https://asset.oceanleo.com/oceanleo-catalog/v1/sources/mc-board-04.remediated.c7bfc5d3.json"
+      },
+      "sourceFormat": "oceanleo.design-document.v1",
+      "taxonomy": {
+        "labels": [
+          "设计画布",
+          "企业行政",
+          "展板"
+        ],
+        "primary": "design",
+        "tags": [
+          "1200x1600",
+          "safety",
+          "print"
+        ]
+      },
+      "thumbnail": {
+        "byteSize": 36914,
+        "derivation": "rendered-design-document",
+        "derivedFromSourceDigest": "sha256:c7bfc5d300db14e51fdf204bfe5809f7c0c061105732b92c68ce24f3bf88368f",
+        "digest": "sha256:9f0d33a6877af85a3c1cfcd34862bcd609e3528cf181f9081797dde0fc5ea823",
+        "height": 960,
+        "mediaType": "image/webp",
+        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/mc-board-04.webp?v=202607040933",
+        "width": 720
+      },
+      "title": "安全第一 · 企业生产展板"
+    },
+    {
+      "artifactType": "deck",
+      "contentFamilyId": "oceanleo-deck-housekeeping-terrazzo",
+      "editor": {
+        "adapter": "deck",
+        "capability": "deck-editor",
+        "editability": "native",
+        "evidence": "The original eight-slide PPTX is preserved and opens in the trusted Office adapter.",
+        "projectSchema": "oceanleo.deck.v1",
+        "roundTrip": [
+          "load",
+          "mutate",
+          "save",
+          "reopen"
+        ]
+      },
+      "editorCapability": "deck-editor",
+      "editorClass": "presentation_editing",
+      "id": "asset-template:presentation-editing:housekeeping-terrazzo:v1",
+      "preview": {
+        "byteSize": 191400,
+        "derivation": "slide-1-render",
+        "derivedFromSourceDigest": "sha256:1ce53ecfa693a4f63edc1fd6f4ade1cb5c7e25dad671effb556a73975c093a39",
+        "digest": "sha256:945f8f18e6731d65bf49d43b1b5c9c4ac959a0e83f4a203baba369657b6dbbde",
+        "height": 1080,
+        "mediaType": "image/webp",
+        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/ppt/decks/housekeeping-terrazzo/p01.webp",
+        "width": 1920
+      },
+      "provenance": {
+        "author": "OceanLeo Design",
+        "inventoryId": "0049e38c-061f-437e-9f60-f21decb1550f",
+        "license": {
+          "attributionRequired": false,
+          "attributionText": "",
+          "code": "CC0-1.0",
+          "commercialOk": true,
+          "modifyOk": true,
+          "url": "https://creativecommons.org/publicdomain/zero/1.0/"
+        },
+        "providerAssetId": "housekeeping-terrazzo",
+        "providerId": "oceanleo-design",
+        "reviewedAt": "2026-07-22",
+        "sourcePage": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/ppt/decks/housekeeping-terrazzo/deck.html"
+      },
+      "quality": {
+        "metrics": {
+          "height": 1080,
+          "slideCount": 8,
+          "textCharacters": 847,
+          "width": 1920
+        },
+        "status": "approved"
+      },
+      "revisionId": "catalog-r1-1ce53ecfa693",
+      "roles": [
+        "template",
+        "catalog_more"
+      ],
+      "source": {
+        "byteSize": 508745,
+        "dependencies": [],
+        "digest": "sha256:1ce53ecfa693a4f63edc1fd6f4ade1cb5c7e25dad671effb556a73975c093a39",
+        "format": "pptx",
+        "integrity": "content_addressed",
+        "mediaType": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        "openMode": "native-file",
+        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/ppt/decks/housekeeping-terrazzo/deck.pptx"
+      },
+      "sourceFormat": "pptx",
+      "taxonomy": {
+        "labels": [
+          "幻灯片",
+          "生活服务",
+          "品牌方案"
+        ],
+        "primary": "presentation",
+        "tags": [
+          "pptx",
+          "8-slides",
+          "16:9"
+        ]
+      },
+      "thumbnail": {
+        "byteSize": 45102,
+        "derivation": "deck-cover-render",
+        "derivedFromSourceDigest": "sha256:1ce53ecfa693a4f63edc1fd6f4ade1cb5c7e25dad671effb556a73975c093a39",
+        "digest": "sha256:43fa8e1bf5284be0896ac0430c43a60f0bafe9358d9439847b96993bf850f98a",
+        "height": 495,
+        "mediaType": "image/webp",
+        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/ppt/decks/housekeeping-terrazzo/cover.webp",
+        "width": 880
+      },
+      "title": "高端家政服务体系 · 水磨石生活风"
+    },
+    {
+      "artifactType": "document",
+      "contentFamilyId": "oceanleo-document-employee-handbook",
+      "editor": {
+        "adapter": "richdoc",
+        "capability": "richdoc-editor",
+        "editability": "native",
+        "evidence": "The source is a valid DOCX with ten populated paragraphs, editable in the trusted Office adapter.",
+        "projectSchema": "tiptap-json@1",
+        "roundTrip": [
+          "load",
+          "mutate",
+          "save",
+          "reopen"
+        ]
+      },
+      "editorCapability": "richdoc-editor",
+      "editorClass": "document_editing",
+      "id": "asset-template:document-editing:employee-handbook:v1",
+      "preview": {
+        "byteSize": 14015,
+        "derivation": "document-page-render",
+        "derivedFromSourceDigest": "sha256:0fdbf3a8b8483dca70aa9eb45606fe24be29252848bb5fcee9c48c1078e9e8b1",
+        "digest": "sha256:c299b4c5ffe862abc1355a342b2abc8854284187d69534031f7abe12a282d63a",
+        "height": 1697,
+        "mediaType": "image/png",
+        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/document/employee-handbook.png",
+        "width": 1200
+      },
+      "provenance": {
+        "author": "OceanLeo",
+        "inventoryId": "6ac113a8-92d8-4c6a-895f-7a80ede77bd0",
+        "license": {
+          "attributionRequired": false,
+          "attributionText": "",
+          "code": "LicenseRef-OceanLeo-First-Party",
+          "commercialOk": true,
+          "modifyOk": true,
+          "url": "https://asset.oceanleo.com/oceanleo-catalog/v1/RIGHTS.md#oceanleo-first-party-assets"
+        },
+        "providerAssetId": "employee-handbook",
+        "providerId": "oceanleo-curated",
+        "reviewedAt": "2026-07-22",
+        "sourcePage": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/document/employee-handbook.docx"
+      },
+      "quality": {
+        "metrics": {
+          "pageCount": 1,
+          "paragraphCount": 10,
+          "textCharacters": 172
+        },
+        "status": "approved"
+      },
+      "revisionId": "catalog-r1-0fdbf3a8b848",
+      "roles": [
+        "template",
+        "catalog_more"
+      ],
+      "source": {
+        "byteSize": 2116,
+        "dependencies": [],
+        "digest": "sha256:0fdbf3a8b8483dca70aa9eb45606fe24be29252848bb5fcee9c48c1078e9e8b1",
+        "format": "docx",
+        "integrity": "content_addressed",
+        "mediaType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "openMode": "native-file",
+        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/document/employee-handbook.docx"
+      },
+      "sourceFormat": "docx",
+      "taxonomy": {
+        "labels": [
+          "文档",
+          "人力资源",
+          "入职手册"
+        ],
+        "primary": "document",
+        "tags": [
+          "docx",
+          "onboarding",
+          "30-day-plan"
+        ]
+      },
+      "thumbnail": {
+        "byteSize": 14015,
+        "derivation": "document-page-render",
+        "derivedFromSourceDigest": "sha256:0fdbf3a8b8483dca70aa9eb45606fe24be29252848bb5fcee9c48c1078e9e8b1",
+        "digest": "sha256:c299b4c5ffe862abc1355a342b2abc8854284187d69534031f7abe12a282d63a",
+        "height": 1697,
+        "mediaType": "image/png",
+        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/document/employee-handbook.png",
+        "width": 1200
+      },
+      "title": "员工入职手册 · 30 天行动版"
+    },
+    {
+      "artifactType": "grid",
+      "contentFamilyId": "oceanleo-grid-content-calendar",
+      "editor": {
+        "adapter": "grid",
+        "capability": "grid-editor",
+        "editability": "native",
+        "evidence": "The source is a valid XLSX workbook with a populated 30-cell planning sheet.",
+        "projectSchema": "oceanleo.grid.v1",
+        "roundTrip": [
+          "load",
+          "mutate",
+          "save",
+          "reopen"
+        ]
+      },
+      "editorCapability": "grid-editor",
+      "editorClass": "spreadsheet_editing",
+      "id": "asset-template:spreadsheet-editing:content-calendar:v1",
+      "preview": {
+        "byteSize": 6259,
+        "derivation": "worksheet-render",
+        "derivedFromSourceDigest": "sha256:3ab8f48589c6377909f8f9f7a1444adfffc45d3695514751ebe0ad4355717e05",
+        "digest": "sha256:48b4887ed3e7a40b5f2799465529d72cb4b1d7ff48a40aeeea13ed1b88766c49",
+        "height": 675,
+        "mediaType": "image/png",
+        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/sheet/content-calendar.png",
+        "width": 1200
+      },
+      "provenance": {
+        "author": "OceanLeo",
+        "inventoryId": "2b331364-2e01-4c2c-9547-9e12668a6d1b",
+        "license": {
+          "attributionRequired": false,
+          "attributionText": "",
+          "code": "LicenseRef-OceanLeo-First-Party",
+          "commercialOk": true,
+          "modifyOk": true,
+          "url": "https://asset.oceanleo.com/oceanleo-catalog/v1/RIGHTS.md#oceanleo-first-party-assets"
+        },
+        "providerAssetId": "content-calendar",
+        "providerId": "oceanleo-curated",
+        "reviewedAt": "2026-07-22",
+        "sourcePage": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/sheet/content-calendar.xlsx"
+      },
+      "quality": {
+        "metrics": {
+          "cellCount": 30,
+          "sheetCount": 1
+        },
+        "status": "approved"
+      },
+      "revisionId": "catalog-r1-3ab8f48589c6",
+      "roles": [
+        "template",
+        "catalog_more"
+      ],
+      "source": {
+        "byteSize": 5487,
+        "dependencies": [],
+        "digest": "sha256:3ab8f48589c6377909f8f9f7a1444adfffc45d3695514751ebe0ad4355717e05",
+        "format": "xlsx",
+        "integrity": "content_addressed",
+        "mediaType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "openMode": "native-file",
+        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/sheet/content-calendar.xlsx"
+      },
+      "sourceFormat": "xlsx",
+      "taxonomy": {
+        "labels": [
+          "表格",
+          "内容运营",
+          "排期"
+        ],
+        "primary": "spreadsheet",
+        "tags": [
+          "xlsx",
+          "calendar",
+          "collaboration"
+        ]
+      },
+      "thumbnail": {
+        "byteSize": 6259,
+        "derivation": "worksheet-render",
+        "derivedFromSourceDigest": "sha256:3ab8f48589c6377909f8f9f7a1444adfffc45d3695514751ebe0ad4355717e05",
+        "digest": "sha256:48b4887ed3e7a40b5f2799465529d72cb4b1d7ff48a40aeeea13ed1b88766c49",
+        "height": 675,
+        "mediaType": "image/png",
+        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/sheet/content-calendar.png",
+        "width": 1200
+      },
+      "title": "内容发布排期表 · 周期协作版"
+    },
+    {
+      "artifactType": "single_file_image",
+      "contentFamilyId": "pixabay-image-157876",
+      "editor": {
+        "adapter": "image",
+        "capability": "image-editor",
+        "editability": "bounded",
+        "evidence": "The verified WebP opens as a raster layer and is saved as a reopenable Fabric image project.",
+        "projectSchema": "oceanleo.fabric-image.v1",
+        "roundTrip": [
+          "load",
+          "mutate",
+          "save",
+          "reopen"
+        ]
+      },
+      "editorCapability": "image-editor",
+      "editorClass": "image_editing",
+      "id": "asset-template:image-editing:coffee-percolator:v1",
+      "preview": {
+        "byteSize": 34480,
+        "derivation": "source",
+        "derivedFromSourceDigest": "sha256:0b873e092f7f73e079709f7a25f8be591d96fee93fb9c899f787d29b2f6127c7",
+        "digest": "sha256:0b873e092f7f73e079709f7a25f8be591d96fee93fb9c899f787d29b2f6127c7",
+        "height": 1280,
+        "mediaType": "image/webp",
+        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/image/coffee/pixabay-illustration-157876.webp",
+        "width": 1159
+      },
+      "provenance": {
+        "author": "OpenClipart-Vectors",
+        "inventoryId": "001ee71d-7df6-4857-bd76-a08cdfcc6242",
+        "license": {
+          "attributionRequired": false,
+          "attributionText": "",
+          "code": "PIXABAY",
+          "commercialOk": true,
+          "modifyOk": true,
+          "url": "https://pixabay.com/service/license/"
+        },
+        "providerAssetId": "157876",
+        "providerId": "pixabay",
+        "reviewedAt": "2026-07-22",
+        "sourcePage": "https://pixabay.com/vectors/coffee-percolator-coffee-maker-pot-157876/"
+      },
+      "quality": {
+        "metrics": {
+          "height": 1280,
+          "pixelCount": 1483520,
+          "width": 1159
+        },
+        "status": "approved"
+      },
+      "revisionId": "catalog-r1-0b873e092f7f",
+      "roles": [
+        "template",
+        "catalog_more"
+      ],
+      "source": {
+        "byteSize": 34480,
+        "dependencies": [],
+        "digest": "sha256:0b873e092f7f73e079709f7a25f8be591d96fee93fb9c899f787d29b2f6127c7",
+        "format": "webp",
+        "integrity": "content_addressed",
+        "mediaType": "image/webp",
+        "openMode": "native-file",
+        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/image/coffee/pixabay-illustration-157876.webp"
+      },
+      "sourceFormat": "webp",
+      "taxonomy": {
+        "labels": [
+          "图片",
+          "插画",
+          "咖啡"
+        ],
+        "primary": "image",
+        "tags": [
+          "webp",
+          "raster",
+          "commercial"
+        ]
+      },
+      "thumbnail": {
+        "byteSize": 11968,
+        "derivation": "resized-source",
+        "derivedFromSourceDigest": "sha256:0b873e092f7f73e079709f7a25f8be591d96fee93fb9c899f787d29b2f6127c7",
+        "digest": "sha256:b13672f145170a4edd60e7a12974b3a81e611ac0e4bff4ca57eb50355a8d52f4",
+        "height": 600,
+        "mediaType": "image/webp",
+        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/image/coffee/pixabay-illustration-157876.thumb.webp",
+        "width": 543
+      },
+      "title": "复古咖啡壶插画 · 透明构图素材"
+    },
+    {
+      "artifactType": "pdf",
+      "contentFamilyId": "oceanleo-pdf-campaign-review",
+      "editor": {
+        "adapter": "pdf",
+        "capability": "pdf-editor",
+        "editability": "bounded",
+        "evidence": "The original PDF opens in the page/annotation workbench and saves a reopenable edited copy.",
+        "projectSchema": "pdf-binary@1",
+        "roundTrip": [
+          "load",
+          "mutate",
+          "save",
+          "reopen"
+        ]
+      },
+      "editorCapability": "pdf-editor",
+      "editorClass": "pdf_editing",
+      "id": "asset-template:pdf-editing:campaign-review:v1",
+      "preview": {
+        "byteSize": 14779,
+        "derivation": "pdf-page-render",
+        "derivedFromSourceDigest": "sha256:9bd71f5662a45b0c40a853616b577df695a2dd7050619ec118c957528d936815",
+        "digest": "sha256:b0f70d818e1214d8fde8de250030b48deefd6fade7fa53c4055f78914d4ec4d1",
+        "height": 1697,
+        "mediaType": "image/png",
+        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/pdf/campaign-review.png",
+        "width": 1200
+      },
+      "provenance": {
+        "author": "OceanLeo",
+        "inventoryId": "181935a5-4476-4eae-998b-132dc96fd1e2",
+        "license": {
+          "attributionRequired": false,
+          "attributionText": "",
+          "code": "LicenseRef-OceanLeo-First-Party",
+          "commercialOk": true,
+          "modifyOk": true,
+          "url": "https://asset.oceanleo.com/oceanleo-catalog/v1/RIGHTS.md#oceanleo-first-party-assets"
+        },
+        "providerAssetId": "campaign-review",
+        "providerId": "oceanleo-curated",
+        "reviewedAt": "2026-07-22",
+        "sourcePage": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/pdf/campaign-review.pdf"
+      },
+      "quality": {
+        "metrics": {
+          "pageCount": 1,
+          "renderHeight": 1697,
+          "renderWidth": 1200
+        },
+        "status": "approved"
+      },
+      "revisionId": "catalog-r1-9bd71f5662a4",
+      "roles": [
+        "template",
+        "catalog_more"
+      ],
+      "source": {
+        "byteSize": 48439,
+        "dependencies": [],
+        "digest": "sha256:9bd71f5662a45b0c40a853616b577df695a2dd7050619ec118c957528d936815",
+        "format": "pdf",
+        "integrity": "content_addressed",
+        "mediaType": "application/pdf",
+        "openMode": "native-file",
+        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/pdf/campaign-review.pdf"
+      },
+      "sourceFormat": "pdf",
+      "taxonomy": {
+        "labels": [
+          "PDF",
+          "市场运营",
+          "复盘报告"
+        ],
+        "primary": "pdf",
+        "tags": [
+          "pdf",
+          "annotation",
+          "report"
+        ]
+      },
+      "thumbnail": {
+        "byteSize": 14779,
+        "derivation": "pdf-page-render",
+        "derivedFromSourceDigest": "sha256:9bd71f5662a45b0c40a853616b577df695a2dd7050619ec118c957528d936815",
+        "digest": "sha256:b0f70d818e1214d8fde8de250030b48deefd6fade7fa53c4055f78914d4ec4d1",
+        "height": 1697,
+        "mediaType": "image/png",
+        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/pdf/campaign-review.png",
+        "width": 1200
+      },
+      "title": "市场活动复盘报告 · 批注版"
+    },
+    {
+      "artifactType": "audio",
+      "contentFamilyId": "jamendo-track-186949",
+      "editor": {
+        "adapter": "audio",
+        "capability": "audio-editor",
+        "editability": "bounded",
+        "evidence": "The original MP3 imports into the waveform editor; its real embedded ID3 artwork is the thumbnail.",
+        "projectSchema": "oceanleo.audio-project.v1",
+        "roundTrip": [
+          "load",
+          "mutate",
+          "save",
+          "reopen"
+        ]
+      },
+      "editorCapability": "audio-editor",
+      "editorClass": "audio_editing",
+      "id": "asset-template:audio-editing:the-accident:v1",
+      "preview": {
+        "byteSize": 1991170,
+        "derivation": "source",
+        "derivedFromSourceDigest": "sha256:46aaa7d8a70f44f7b2993a872f30a949bcfb86a1a73699d2184000aff18827c8",
+        "digest": "sha256:46aaa7d8a70f44f7b2993a872f30a949bcfb86a1a73699d2184000aff18827c8",
+        "durationMs": 83000,
+        "mediaType": "audio/mpeg",
+        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/audio/music/jamendo-186949.mp3"
+      },
+      "provenance": {
+        "author": "Paper Plane Pilots",
+        "inventoryId": "001b0022-35d9-4dec-9213-2c499eb18aa8",
+        "license": {
+          "attributionRequired": true,
+          "attributionText": "\"The Accident\" by Paper Plane Pilots (CC-BY-SA 3.0)",
+          "code": "CC-BY-SA-3.0",
+          "commercialOk": true,
+          "modifyOk": true,
+          "url": "https://creativecommons.org/licenses/by-sa/3.0/"
+        },
+        "providerAssetId": "186949",
+        "providerId": "jamendo",
+        "reviewedAt": "2026-07-22",
+        "sourcePage": "https://www.jamendo.com/track/186949"
+      },
+      "quality": {
+        "metrics": {
+          "artworkHeight": 400,
+          "artworkWidth": 400,
+          "durationMs": 83000,
+          "embeddedArtwork": true
+        },
+        "status": "approved"
+      },
+      "revisionId": "catalog-r1-46aaa7d8a70f",
+      "roles": [
+        "template",
+        "catalog_more"
+      ],
+      "source": {
+        "byteSize": 1991170,
+        "dependencies": [],
+        "digest": "sha256:46aaa7d8a70f44f7b2993a872f30a949bcfb86a1a73699d2184000aff18827c8",
+        "format": "mp3",
+        "integrity": "content_addressed",
+        "mediaType": "audio/mpeg",
+        "openMode": "native-file",
+        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/audio/music/jamendo-186949.mp3"
+      },
+      "sourceFormat": "mp3",
+      "taxonomy": {
+        "labels": [
+          "音频",
+          "音乐床",
+          "节奏"
+        ],
+        "primary": "audio",
+        "tags": [
+          "mp3",
+          "83s",
+          "cc-by-sa"
+        ]
+      },
+      "thumbnail": {
+        "byteSize": 16186,
+        "derivation": "embedded-id3-artwork",
+        "derivedFromSourceDigest": "sha256:46aaa7d8a70f44f7b2993a872f30a949bcfb86a1a73699d2184000aff18827c8",
+        "digest": "sha256:daa0607fa353b2f804d23085a0f705d75dee7b3e82ddc5b8cd15795865e1bffa",
+        "height": 400,
+        "mediaType": "image/jpeg",
+        "url": "https://asset.oceanleo.com/oceanleo-catalog/v1/previews/the-accident-cover.jpg",
+        "width": 400
+      },
+      "title": "The Accident · 83 秒节奏音乐床"
+    },
+    {
+      "artifactType": "chart",
+      "contentFamilyId": "oceanleo-chart-radar-draw",
+      "editor": {
+        "adapter": "chart-editor@1",
+        "capability": "chart-editor",
+        "editability": "native",
+        "evidence": "The chart source contains one radar series and six named indicators, not a flattened screenshot.",
+        "projectSchema": "oceanleo.chart.v1",
+        "roundTrip": [
+          "load",
+          "mutate",
+          "save",
+          "reopen"
+        ]
+      },
+      "editorCapability": "chart-editor",
+      "editorClass": "chart_editing",
+      "id": "asset-template:chart-editing:capability-radar:v1",
+      "preview": {
+        "byteSize": 111030,
+        "derivation": "echarts-render",
+        "derivedFromSourceDigest": "sha256:96941f776360af136789dad35639f407a8db0e03ae8835a397de36ab95fb6686",
+        "digest": "sha256:749679e45ead175ce8b53e6a9ec53ae16564c172c35d1d16e3e3b17affa8d5b4",
+        "height": 1120,
+        "mediaType": "image/png",
+        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/chart/radar/radar-draw/cover.png",
+        "width": 1800
+      },
+      "provenance": {
+        "author": "OceanLeo",
+        "inventoryId": "094901da-e787-4c1e-a105-ea24a0f9c6d8",
+        "license": {
+          "attributionRequired": false,
+          "attributionText": "",
+          "code": "CC0-1.0",
+          "commercialOk": true,
+          "modifyOk": true,
+          "url": "https://creativecommons.org/publicdomain/zero/1.0/"
+        },
+        "providerAssetId": "radar-draw",
+        "providerId": "oceanleo-chart",
+        "reviewedAt": "2026-07-22",
+        "sourcePage": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/chart/radar/radar-draw/chart.json"
+      },
+      "quality": {
+        "metrics": {
+          "dataPointCount": 6,
+          "indicatorCount": 6,
+          "seriesCount": 1
+        },
+        "status": "approved"
+      },
+      "revisionId": "catalog-r1-96941f776360",
+      "roles": [
+        "template",
+        "catalog_more"
+      ],
+      "source": {
+        "byteSize": 2197,
+        "dependencies": [],
+        "digest": "sha256:96941f776360af136789dad35639f407a8db0e03ae8835a397de36ab95fb6686",
+        "format": "oceanleo.chart.v1",
+        "integrity": "content_addressed",
+        "mediaType": "application/json",
+        "openMode": "structured-project",
+        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/chart/radar/radar-draw/chart.json"
+      },
+      "sourceFormat": "oceanleo.chart.v1",
+      "taxonomy": {
+        "labels": [
+          "图表",
+          "雷达图",
+          "团队评估"
+        ],
+        "primary": "chart",
+        "tags": [
+          "echarts",
+          "six-indicators",
+          "structured-data"
+        ]
+      },
+      "thumbnail": {
+        "byteSize": 111030,
+        "derivation": "echarts-render",
+        "derivedFromSourceDigest": "sha256:96941f776360af136789dad35639f407a8db0e03ae8835a397de36ab95fb6686",
+        "digest": "sha256:749679e45ead175ce8b53e6a9ec53ae16564c172c35d1d16e3e3b17affa8d5b4",
+        "height": 1120,
+        "mediaType": "image/png",
+        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/chart/radar/radar-draw/cover.png",
+        "width": 1800
+      },
+      "title": "团队能力雷达图 · 六维评估"
+    },
+    {
+      "artifactType": "workflow",
+      "contentFamilyId": "oceanleo-video-social-brand-film",
+      "editor": {
+        "adapter": "video-canvas",
+        "capability": "video-canvas",
+        "editability": "native",
+        "evidence": "The source passes the production oceanleo.video.project.v2 parser and contains script, media, subtitle, composite and delivery nodes.",
+        "projectSchema": "oceanleo.video-canvas.v1",
+        "roundTrip": [
+          "load",
+          "mutate",
+          "save",
+          "reopen"
+        ]
+      },
+      "editorCapability": "video-canvas",
+      "editorClass": "video_canvas",
+      "id": "asset-template:video-canvas:social-brand-film:v1",
+      "preview": {
+        "byteSize": 6363,
+        "derivation": "workflow-graph-render",
+        "derivedFromSourceDigest": "sha256:0ebb1b0c18d401bfd702324ae5800e2fcb4f317b47a62fa0d1af6ff2871dd48d",
+        "digest": "sha256:2503996390db72cf62fc2e2d293c1ee1288950b182b1a45ad73b348b9c88e872",
+        "height": 675,
+        "mediaType": "image/png",
+        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/video-workflow/video-node-workflow.png",
+        "width": 1200
+      },
+      "provenance": {
+        "author": "OceanLeo",
+        "inventoryId": "ddd08801-5e1a-441d-aac9-a49ea1ece937",
+        "license": {
+          "attributionRequired": true,
+          "attributionText": "\"The Accident\" by Paper Plane Pilots (CC-BY-SA 3.0); Pixabay assets under the Pixabay Content License.",
+          "code": "LicenseRef-OceanLeo-First-Party-With-Dependencies",
+          "commercialOk": true,
+          "modifyOk": true,
+          "url": "https://asset.oceanleo.com/oceanleo-catalog/v1/RIGHTS.md"
+        },
+        "providerAssetId": "social-brand-film-v1",
+        "providerId": "oceanleo-curated",
+        "reviewedAt": "2026-07-22",
+        "sourcePage": "https://asset.oceanleo.com/oceanleo-catalog/v1/sources/social-brand-film.leovideo.json",
+        "thirdPartyAttributions": [
+          {
+            "licenseCode": "PIXABAY",
+            "licenseUrl": "https://pixabay.com/service/license/",
+            "providerAssetId": "140667",
+            "providerId": "pixabay",
+            "sourcePage": "https://pixabay.com/videos/id-140667/"
+          },
+          {
+            "licenseCode": "PIXABAY",
+            "licenseUrl": "https://pixabay.com/service/license/",
+            "providerAssetId": "157876",
+            "providerId": "pixabay",
+            "sourcePage": "https://pixabay.com/vectors/coffee-percolator-coffee-maker-pot-157876/"
+          },
+          {
+            "licenseCode": "CC-BY-SA-3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+            "providerAssetId": "186949",
+            "providerId": "jamendo",
+            "sourcePage": "https://www.jamendo.com/track/186949"
+          }
+        ]
+      },
+      "quality": {
+        "metrics": {
+          "assetCount": 3,
+          "clipCount": 2,
+          "durationMs": 15000,
+          "edgeCount": 6,
+          "nodeCount": 7,
+          "productionParserPassed": true
+        },
+        "status": "approved"
+      },
+      "revisionId": "catalog-r1-0ebb1b0c18d4",
+      "roles": [
+        "template",
+        "catalog_more"
+      ],
+      "source": {
+        "byteSize": 10356,
+        "dependencies": [
+          {
+            "byteSize": 34480,
+            "digest": "sha256:0b873e092f7f73e079709f7a25f8be591d96fee93fb9c899f787d29b2f6127c7",
+            "mediaType": "image/webp",
+            "path": "pixabay-illustration-157876.webp",
+            "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/image/coffee/pixabay-illustration-157876.webp"
+          },
+          {
+            "byteSize": 19966599,
+            "digest": "sha256:7dfab1379bf9093ebf05ca4bd63b198202233eb7920ebfb3f23835e732cacfc3",
+            "mediaType": "video/mp4",
+            "path": "pixabay-140667.mp4",
+            "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/video/abstract/pixabay-140667.mp4"
+          },
+          {
+            "byteSize": 1991170,
+            "digest": "sha256:46aaa7d8a70f44f7b2993a872f30a949bcfb86a1a73699d2184000aff18827c8",
+            "mediaType": "audio/mpeg",
+            "path": "jamendo-186949.mp3",
+            "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/audio/music/jamendo-186949.mp3"
+          }
+        ],
+        "digest": "sha256:0ebb1b0c18d401bfd702324ae5800e2fcb4f317b47a62fa0d1af6ff2871dd48d",
+        "format": "oceanleo.video.project.v2",
+        "integrity": "complete_dependency_closure",
+        "mediaType": "application/json",
+        "openMode": "structured-project",
+        "url": "https://asset.oceanleo.com/oceanleo-catalog/v1/sources/social-brand-film.leovideo.json"
+      },
+      "sourceFormat": "oceanleo.video.project.v2",
+      "taxonomy": {
+        "labels": [
+          "视频画布",
+          "品牌短片",
+          "节点工作流"
+        ],
+        "primary": "video-workflow",
+        "tags": [
+          "7-nodes",
+          "15s",
+          "16:9",
+          "production-graph"
+        ]
+      },
+      "thumbnail": {
+        "byteSize": 6363,
+        "derivation": "workflow-graph-render",
+        "derivedFromSourceDigest": "sha256:0ebb1b0c18d401bfd702324ae5800e2fcb4f317b47a62fa0d1af6ff2871dd48d",
+        "digest": "sha256:2503996390db72cf62fc2e2d293c1ee1288950b182b1a45ad73b348b9c88e872",
+        "height": 675,
+        "mediaType": "image/png",
+        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/video-workflow/video-node-workflow.png",
+        "width": 1200
+      },
+      "title": "品牌短片 · 15 秒社交媒体工作流"
+    },
+    {
+      "artifactType": "model_3d",
+      "contentFamilyId": "polyhaven-barber-shop-chair-01",
+      "editor": {
+        "adapter": "threed",
+        "capability": "model-3d-editor",
+        "editability": "bounded",
+        "evidence": "The glTF entrypoint, binary buffer and all three PBR textures are individually hash-attested.",
+        "projectSchema": "oceanleo.model-view@1",
+        "roundTrip": [
+          "load",
+          "mutate",
+          "save",
+          "reopen"
+        ]
+      },
+      "editorCapability": "model-3d-editor",
+      "editorClass": "model_3d",
+      "id": "asset-template:model-3d:barber-chair:v1",
+      "preview": {
+        "byteSize": 20472,
+        "derivation": "model-render",
+        "derivedFromSourceDigest": "sha256:801bed991ab1d3f110ff8e7958fcfe8e60a96582cadb55dbada28e292a111f20",
+        "digest": "sha256:7ba406b52d40db88fd00fba97a72a057ff93e283af77b4334a08f41cb4153ca3",
+        "height": 512,
+        "mediaType": "image/webp",
+        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/3d/model/BarberShopChair_01.preview.webp",
+        "width": 273
+      },
+      "provenance": {
+        "author": "Poly Haven",
+        "inventoryId": "08449fd9-6b5a-49df-bafd-e46d2da8477d",
+        "license": {
+          "attributionRequired": false,
+          "attributionText": "",
+          "code": "CC0-1.0",
+          "commercialOk": true,
+          "modifyOk": true,
+          "url": "https://creativecommons.org/publicdomain/zero/1.0/"
+        },
+        "providerAssetId": "BarberShopChair_01",
+        "providerId": "polyhaven",
+        "reviewedAt": "2026-07-22",
+        "sourcePage": "https://polyhaven.com/a/BarberShopChair_01"
+      },
+      "quality": {
+        "metrics": {
+          "dependencyCount": 4,
+          "materialCount": 1,
+          "meshCount": 1,
+          "nodeCount": 1,
+          "sceneCount": 1,
+          "textureCount": 3
+        },
+        "status": "approved"
+      },
+      "revisionId": "catalog-r1-801bed991ab1",
+      "roles": [
+        "template",
+        "catalog_more"
+      ],
+      "source": {
+        "byteSize": 2706,
+        "dependencies": [
+          {
+            "byteSize": 268464,
+            "digest": "sha256:39ecebfef975af4e812134b7f056e243f6404ce60c4dc2e9dec30930802ea24b",
+            "mediaType": "application/octet-stream",
+            "path": "BarberShopChair_01.bin",
+            "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/3d/model/BarberShopChair_01/BarberShopChair_01.bin"
+          },
+          {
+            "byteSize": 215938,
+            "digest": "sha256:3f51a8f05b38a547db52e10e6e2bec48a10fbeff5d04efc66b82a5b3d026b0fb",
+            "mediaType": "image/jpeg",
+            "path": "textures/BarberShopChair_01_nor_gl_1k.jpg",
+            "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/3d/model/BarberShopChair_01/textures/BarberShopChair_01_nor_gl_1k.jpg"
+          },
+          {
+            "byteSize": 173699,
+            "digest": "sha256:9d1054e6fe12e8397cbca6f1a50ecd2b4d880d8d355cb66e982abc752bf24d22",
+            "mediaType": "image/jpeg",
+            "path": "textures/BarberShopChair_01_diff_1k.jpg",
+            "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/3d/model/BarberShopChair_01/textures/BarberShopChair_01_diff_1k.jpg"
+          },
+          {
+            "byteSize": 218372,
+            "digest": "sha256:502ecae4a2f7b09b79f03317f1fe6c141c8f2c753b77e639395e3aea3de46eba",
+            "mediaType": "image/jpeg",
+            "path": "textures/BarberShopChair_01_arm_1k.jpg",
+            "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/3d/model/BarberShopChair_01/textures/BarberShopChair_01_arm_1k.jpg"
+          }
+        ],
+        "digest": "sha256:801bed991ab1d3f110ff8e7958fcfe8e60a96582cadb55dbada28e292a111f20",
+        "format": "gltf",
+        "integrity": "complete_dependency_closure",
+        "mediaType": "model/gltf+json",
+        "openMode": "native-file",
+        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/3d/model/BarberShopChair_01/BarberShopChair_01.gltf"
+      },
+      "sourceFormat": "gltf",
+      "taxonomy": {
+        "labels": [
+          "3D 模型",
+          "家具",
+          "PBR"
+        ],
+        "primary": "3d",
+        "tags": [
+          "gltf",
+          "cc0",
+          "complete-closure"
+        ]
+      },
+      "thumbnail": {
+        "byteSize": 20472,
+        "derivation": "model-render",
+        "derivedFromSourceDigest": "sha256:801bed991ab1d3f110ff8e7958fcfe8e60a96582cadb55dbada28e292a111f20",
+        "digest": "sha256:7ba406b52d40db88fd00fba97a72a057ff93e283af77b4334a08f41cb4153ca3",
+        "height": 512,
+        "mediaType": "image/webp",
+        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/3d/model/BarberShopChair_01.preview.webp",
+        "width": 273
+      },
+      "title": "理发店复古座椅 · 完整 PBR 模型"
+    }
+  ],
   "publishedAt": "2026-07-22T00:00:00.000Z",
-  "sourceSite": "asset",
-  "contentDigest": "sha256:568a08c9d90ec03030af64c8eb22af6d2d69f427f75127dacdc2a0432896668b",
+  "qualityPolicy": {
+    "digestAlgorithm": "sha256",
+    "forbiddenProviderPattern": "(^|[-_:])(test|fixture|dummy|placeholder|noise)([-_:]|$)",
+    "forbiddenTitlePattern": "(^|\\b)(test|fixture|placeholder|untitled|lorem|sample)(\\b|$)|占位|测试素材|未命名",
+    "minimumAudioDurationMs": 30000,
+    "minimumItemsPerEditorClass": 1,
+    "minimumSourceBytesByEditorClass": {
+      "audio_editing": 500000,
+      "chart_editing": 1000,
+      "design_canvas": 10000,
+      "document_editing": 1500,
+      "image_editing": 16000,
+      "model_3d": 2000,
+      "pdf_editing": 20000,
+      "presentation_editing": 100000,
+      "spreadsheet_editing": 3000,
+      "video_canvas": 8000,
+      "video_editing": 1000000,
+      "website_finetuning": 4000
+    },
+    "minimumThumbnailHeight": 240,
+    "minimumThumbnailWidth": 240,
+    "minimumVideoDurationMs": 10000,
+    "requireLicenseUrl": true,
+    "requireRenditionSourceLink": true,
+    "requiredRoundTripCapabilities": [
+      "load",
+      "mutate",
+      "save",
+      "reopen"
+    ]
+  },
   "requiredEditorClasses": [
     "video_editing",
     "website_finetuning",
@@ -18,1279 +1292,7 @@
     "video_canvas",
     "model_3d"
   ],
-  "qualityPolicy": {
-    "minimumItemsPerEditorClass": 1,
-    "minimumThumbnailWidth": 240,
-    "minimumThumbnailHeight": 240,
-    "minimumVideoDurationMs": 10000,
-    "minimumAudioDurationMs": 30000,
-    "minimumSourceBytesByEditorClass": {
-      "video_editing": 1000000,
-      "website_finetuning": 4000,
-      "design_canvas": 10000,
-      "presentation_editing": 100000,
-      "document_editing": 1500,
-      "spreadsheet_editing": 3000,
-      "image_editing": 16000,
-      "pdf_editing": 20000,
-      "audio_editing": 500000,
-      "chart_editing": 1000,
-      "video_canvas": 8000,
-      "model_3d": 2000
-    },
-    "forbiddenTitlePattern": "(^|\\b)(test|fixture|placeholder|untitled|lorem|sample)(\\b|$)|占位|测试素材|未命名",
-    "forbiddenProviderPattern": "(^|[-_:])(test|fixture|dummy|placeholder|noise)([-_:]|$)",
-    "requiredRoundTripCapabilities": [
-      "load",
-      "mutate",
-      "save",
-      "reopen"
-    ],
-    "requireLicenseUrl": true,
-    "requireRenditionSourceLink": true,
-    "digestAlgorithm": "sha256"
-  },
-  "items": [
-    {
-      "id": "asset-template:video-editing:flowing-hearts:v1",
-      "revisionId": "catalog-r1-7dfab1379bf9",
-      "title": "流动心形粒子 · 15 秒横版片头",
-      "editorClass": "video_editing",
-      "artifactType": "video",
-      "sourceFormat": "mp4",
-      "editorCapability": "video-timeline",
-      "contentFamilyId": "pixabay-video-140667",
-      "roles": [
-        "template",
-        "catalog_more"
-      ],
-      "taxonomy": {
-        "primary": "video",
-        "labels": [
-          "视频",
-          "横版片头",
-          "抽象粒子"
-        ],
-        "tags": [
-          "16:9",
-          "15s",
-          "hearts",
-          "motion-background"
-        ]
-      },
-      "source": {
-        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/video/abstract/pixabay-140667.mp4",
-        "format": "mp4",
-        "mediaType": "video/mp4",
-        "byteSize": 19966599,
-        "digest": "sha256:7dfab1379bf9093ebf05ca4bd63b198202233eb7920ebfb3f23835e732cacfc3",
-        "integrity": "content_addressed",
-        "openMode": "native-file",
-        "dependencies": []
-      },
-      "preview": {
-        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/video/abstract/pixabay-140667.mp4",
-        "mediaType": "video/mp4",
-        "byteSize": 19966599,
-        "digest": "sha256:7dfab1379bf9093ebf05ca4bd63b198202233eb7920ebfb3f23835e732cacfc3",
-        "width": 2560,
-        "height": 1440,
-        "durationMs": 15000,
-        "derivedFromSourceDigest": "sha256:7dfab1379bf9093ebf05ca4bd63b198202233eb7920ebfb3f23835e732cacfc3",
-        "derivation": "source"
-      },
-      "thumbnail": {
-        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/video/abstract/pixabay-140667.poster.webp",
-        "mediaType": "image/webp",
-        "byteSize": 29404,
-        "digest": "sha256:4c351655f3e8a3572e3fadc174ab6ead27e3f79d23f3e96da3b1f4f5c39d6163",
-        "width": 720,
-        "height": 405,
-        "derivedFromSourceDigest": "sha256:7dfab1379bf9093ebf05ca4bd63b198202233eb7920ebfb3f23835e732cacfc3",
-        "derivation": "poster-frame"
-      },
-      "editor": {
-        "capability": "video-timeline",
-        "adapter": "video-timeline",
-        "projectSchema": "oceanleo.timeline.v1",
-        "editability": "bounded",
-        "roundTrip": [
-          "load",
-          "mutate",
-          "save",
-          "reopen"
-        ],
-        "evidence": "The production timeline imports the original MP4, edits tracks and saves a revisioned timeline project."
-      },
-      "provenance": {
-        "inventoryId": "ae9251a2-570c-4d61-b45a-2922cc63bba6",
-        "providerId": "pixabay",
-        "providerAssetId": "140667",
-        "sourcePage": "https://pixabay.com/videos/id-140667/",
-        "author": "31150642",
-        "reviewedAt": "2026-07-22",
-        "license": {
-          "code": "PIXABAY",
-          "url": "https://pixabay.com/service/license/",
-          "commercialOk": true,
-          "modifyOk": true,
-          "attributionRequired": false,
-          "attributionText": ""
-        }
-      },
-      "quality": {
-        "status": "approved",
-        "metrics": {
-          "durationMs": 15000,
-          "width": 2560,
-          "height": 1440,
-          "posterWidth": 720,
-          "posterHeight": 405
-        }
-      }
-    },
-    {
-      "id": "asset-template:website-finetuning:editorial-blog:v1",
-      "revisionId": "catalog-r1-017ebffe350f",
-      "title": "独立创作者博客 · 编辑型内容站",
-      "editorClass": "website_finetuning",
-      "artifactType": "website",
-      "sourceFormat": "website-source@1",
-      "editorCapability": "website-editor",
-      "contentFamilyId": "oceanleo-editorial-blog",
-      "roles": [
-        "template",
-        "catalog_more"
-      ],
-      "taxonomy": {
-        "primary": "website",
-        "labels": [
-          "网站",
-          "博客",
-          "内容品牌"
-        ],
-        "tags": [
-          "responsive",
-          "editorial",
-          "four-sections"
-        ]
-      },
-      "source": {
-        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/website/editorial-blog.site.json",
-        "format": "website-source@1",
-        "mediaType": "application/json",
-        "byteSize": 7038,
-        "digest": "sha256:017ebffe350f973e06e371a0465239c9cdb960315b2f3a2e32aea7a2bb40a054",
-        "integrity": "complete_dependency_closure",
-        "openMode": "structured-project",
-        "dependencies": [
-          {
-            "path": "design-scene-autumn-01.webp",
-            "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/image/design-scene/design-scene-autumn-01.webp",
-            "mediaType": "image/webp",
-            "byteSize": 717674,
-            "digest": "sha256:f314b52986affb923ce6e5f814e1f952defa988ec9710b5336bb636e21bd7056"
-          },
-          {
-            "path": "area-gradient-cover.webp",
-            "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/charts/area-gradient/cover.webp",
-            "mediaType": "image/webp",
-            "byteSize": 17794,
-            "digest": "sha256:3bda3fdaacbee2c9e903dd404f43e98408f109a2b51a0754a788628497a5aee9"
-          },
-          {
-            "path": "design-scene-office-01.webp",
-            "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/image/design-scene/design-scene-office-01.webp",
-            "mediaType": "image/webp",
-            "byteSize": 112512,
-            "digest": "sha256:ed798699d7acf38f601648fba49ca31dbbfdf1799a44025df28a8c6e0779963d"
-          }
-        ]
-      },
-      "preview": {
-        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/website/editorial-blog.png",
-        "mediaType": "image/png",
-        "byteSize": 7984,
-        "digest": "sha256:97338a7407d5db25a15a678c103e0cfd085900ec08136412c35528864268e3dd",
-        "width": 1200,
-        "height": 675,
-        "derivedFromSourceDigest": "sha256:017ebffe350f973e06e371a0465239c9cdb960315b2f3a2e32aea7a2bb40a054",
-        "derivation": "rendered-site"
-      },
-      "thumbnail": {
-        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/website/editorial-blog.png",
-        "mediaType": "image/png",
-        "byteSize": 7984,
-        "digest": "sha256:97338a7407d5db25a15a678c103e0cfd085900ec08136412c35528864268e3dd",
-        "width": 1200,
-        "height": 675,
-        "derivedFromSourceDigest": "sha256:017ebffe350f973e06e371a0465239c9cdb960315b2f3a2e32aea7a2bb40a054",
-        "derivation": "rendered-site"
-      },
-      "editor": {
-        "capability": "website-editor",
-        "adapter": "website",
-        "projectSchema": "website-source@1",
-        "editability": "native",
-        "roundTrip": [
-          "load",
-          "mutate",
-          "save",
-          "reopen"
-        ],
-        "evidence": "The source contains one page and four semantic sections consumed by the production website workbench."
-      },
-      "provenance": {
-        "inventoryId": "1ec1732f-a544-44ee-9821-6b72e70de9ac",
-        "providerId": "oceanleo-curated",
-        "providerAssetId": "editorial-blog",
-        "sourcePage": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/website/editorial-blog.site.json",
-        "author": "OceanLeo",
-        "reviewedAt": "2026-07-22",
-        "license": {
-          "code": "LicenseRef-OceanLeo-First-Party",
-          "url": "https://asset.oceanleo.com/oceanleo-catalog/v1/RIGHTS.md#oceanleo-first-party-assets",
-          "commercialOk": true,
-          "modifyOk": true,
-          "attributionRequired": false,
-          "attributionText": ""
-        }
-      },
-      "quality": {
-        "status": "approved",
-        "metrics": {
-          "pageCount": 1,
-          "sectionCount": 4,
-          "dependencyCount": 3
-        }
-      }
-    },
-    {
-      "id": "asset-template:design-canvas:safety-board:v1",
-      "revisionId": "catalog-r1-f0410de2fbdd",
-      "title": "安全第一 · 企业生产展板",
-      "editorClass": "design_canvas",
-      "artifactType": "composite_image",
-      "sourceFormat": "oceanleo.design-document.v1",
-      "editorCapability": "design-canvas",
-      "contentFamilyId": "oceanleo-design-mc-board-04",
-      "roles": [
-        "template",
-        "catalog_more"
-      ],
-      "taxonomy": {
-        "primary": "design",
-        "labels": [
-          "设计画布",
-          "企业行政",
-          "展板"
-        ],
-        "tags": [
-          "1200x1600",
-          "safety",
-          "print"
-        ]
-      },
-      "source": {
-        "url": "https://asset.oceanleo.com/design-templates/doc/mc-board-04.json",
-        "format": "oceanleo.design-document.v1",
-        "mediaType": "application/json",
-        "byteSize": 29175,
-        "digest": "sha256:f0410de2fbdd9b07bbdbec93660b6d724e01e3db495352263697faeb998f56bc",
-        "integrity": "content_addressed",
-        "openMode": "structured-project",
-        "dependencies": []
-      },
-      "preview": {
-        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/mc-board-04.webp?v=202607040933",
-        "mediaType": "image/webp",
-        "byteSize": 36914,
-        "digest": "sha256:9f0d33a6877af85a3c1cfcd34862bcd609e3528cf181f9081797dde0fc5ea823",
-        "width": 720,
-        "height": 960,
-        "derivedFromSourceDigest": "sha256:f0410de2fbdd9b07bbdbec93660b6d724e01e3db495352263697faeb998f56bc",
-        "derivation": "rendered-design-document"
-      },
-      "thumbnail": {
-        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/design-preview/mc-board-04.webp?v=202607040933",
-        "mediaType": "image/webp",
-        "byteSize": 36914,
-        "digest": "sha256:9f0d33a6877af85a3c1cfcd34862bcd609e3528cf181f9081797dde0fc5ea823",
-        "width": 720,
-        "height": 960,
-        "derivedFromSourceDigest": "sha256:f0410de2fbdd9b07bbdbec93660b6d724e01e3db495352263697faeb998f56bc",
-        "derivation": "rendered-design-document"
-      },
-      "editor": {
-        "capability": "design-canvas",
-        "adapter": "design-canvas",
-        "projectSchema": "oceanleo.design-document.v1",
-        "editability": "native",
-        "roundTrip": [
-          "load",
-          "mutate",
-          "save",
-          "reopen"
-        ],
-        "evidence": "The source is a self-contained 1200×1600 design document with stable object IDs."
-      },
-      "provenance": {
-        "inventoryId": "0538c42d-a52c-4cd9-afca-ee50f14b3123",
-        "providerId": "oceanleo-design-template",
-        "providerAssetId": "mc-board-04",
-        "sourcePage": "https://asset.oceanleo.com/design-templates/doc/mc-board-04.json",
-        "author": "OceanLeo",
-        "reviewedAt": "2026-07-22",
-        "license": {
-          "code": "LicenseRef-OceanLeo-First-Party",
-          "url": "https://asset.oceanleo.com/oceanleo-catalog/v1/RIGHTS.md#oceanleo-first-party-assets",
-          "commercialOk": true,
-          "modifyOk": true,
-          "attributionRequired": false,
-          "attributionText": ""
-        }
-      },
-      "quality": {
-        "status": "approved",
-        "metrics": {
-          "width": 1200,
-          "height": 1600,
-          "elementCount": 55,
-          "elementTypes": [
-            "image",
-            "shape",
-            "text"
-          ],
-          "stableElementIds": true
-        }
-      }
-    },
-    {
-      "id": "asset-template:presentation-editing:housekeeping-terrazzo:v1",
-      "revisionId": "catalog-r1-1ce53ecfa693",
-      "title": "高端家政服务体系 · 水磨石生活风",
-      "editorClass": "presentation_editing",
-      "artifactType": "deck",
-      "sourceFormat": "pptx",
-      "editorCapability": "deck-editor",
-      "contentFamilyId": "oceanleo-deck-housekeeping-terrazzo",
-      "roles": [
-        "template",
-        "catalog_more"
-      ],
-      "taxonomy": {
-        "primary": "presentation",
-        "labels": [
-          "幻灯片",
-          "生活服务",
-          "品牌方案"
-        ],
-        "tags": [
-          "pptx",
-          "8-slides",
-          "16:9"
-        ]
-      },
-      "source": {
-        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/ppt/decks/housekeeping-terrazzo/deck.pptx",
-        "format": "pptx",
-        "mediaType": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-        "byteSize": 508745,
-        "digest": "sha256:1ce53ecfa693a4f63edc1fd6f4ade1cb5c7e25dad671effb556a73975c093a39",
-        "integrity": "content_addressed",
-        "openMode": "native-file",
-        "dependencies": []
-      },
-      "preview": {
-        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/ppt/decks/housekeeping-terrazzo/p01.webp",
-        "mediaType": "image/webp",
-        "byteSize": 191400,
-        "digest": "sha256:945f8f18e6731d65bf49d43b1b5c9c4ac959a0e83f4a203baba369657b6dbbde",
-        "width": 1920,
-        "height": 1080,
-        "derivedFromSourceDigest": "sha256:1ce53ecfa693a4f63edc1fd6f4ade1cb5c7e25dad671effb556a73975c093a39",
-        "derivation": "slide-1-render"
-      },
-      "thumbnail": {
-        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/ppt/decks/housekeeping-terrazzo/cover.webp",
-        "mediaType": "image/webp",
-        "byteSize": 45102,
-        "digest": "sha256:43fa8e1bf5284be0896ac0430c43a60f0bafe9358d9439847b96993bf850f98a",
-        "width": 880,
-        "height": 495,
-        "derivedFromSourceDigest": "sha256:1ce53ecfa693a4f63edc1fd6f4ade1cb5c7e25dad671effb556a73975c093a39",
-        "derivation": "deck-cover-render"
-      },
-      "editor": {
-        "capability": "deck-editor",
-        "adapter": "deck",
-        "projectSchema": "oceanleo.deck.v1",
-        "editability": "native",
-        "roundTrip": [
-          "load",
-          "mutate",
-          "save",
-          "reopen"
-        ],
-        "evidence": "The original eight-slide PPTX is preserved and opens in the trusted Office adapter."
-      },
-      "provenance": {
-        "inventoryId": "0049e38c-061f-437e-9f60-f21decb1550f",
-        "providerId": "oceanleo-design",
-        "providerAssetId": "housekeeping-terrazzo",
-        "sourcePage": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/ppt/decks/housekeeping-terrazzo/deck.html",
-        "author": "OceanLeo Design",
-        "reviewedAt": "2026-07-22",
-        "license": {
-          "code": "CC0-1.0",
-          "url": "https://creativecommons.org/publicdomain/zero/1.0/",
-          "commercialOk": true,
-          "modifyOk": true,
-          "attributionRequired": false,
-          "attributionText": ""
-        }
-      },
-      "quality": {
-        "status": "approved",
-        "metrics": {
-          "slideCount": 8,
-          "textCharacters": 847,
-          "width": 1920,
-          "height": 1080
-        }
-      }
-    },
-    {
-      "id": "asset-template:document-editing:employee-handbook:v1",
-      "revisionId": "catalog-r1-0fdbf3a8b848",
-      "title": "员工入职手册 · 30 天行动版",
-      "editorClass": "document_editing",
-      "artifactType": "document",
-      "sourceFormat": "docx",
-      "editorCapability": "richdoc-editor",
-      "contentFamilyId": "oceanleo-document-employee-handbook",
-      "roles": [
-        "template",
-        "catalog_more"
-      ],
-      "taxonomy": {
-        "primary": "document",
-        "labels": [
-          "文档",
-          "人力资源",
-          "入职手册"
-        ],
-        "tags": [
-          "docx",
-          "onboarding",
-          "30-day-plan"
-        ]
-      },
-      "source": {
-        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/document/employee-handbook.docx",
-        "format": "docx",
-        "mediaType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        "byteSize": 2116,
-        "digest": "sha256:0fdbf3a8b8483dca70aa9eb45606fe24be29252848bb5fcee9c48c1078e9e8b1",
-        "integrity": "content_addressed",
-        "openMode": "native-file",
-        "dependencies": []
-      },
-      "preview": {
-        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/document/employee-handbook.png",
-        "mediaType": "image/png",
-        "byteSize": 14015,
-        "digest": "sha256:c299b4c5ffe862abc1355a342b2abc8854284187d69534031f7abe12a282d63a",
-        "width": 1200,
-        "height": 1697,
-        "derivedFromSourceDigest": "sha256:0fdbf3a8b8483dca70aa9eb45606fe24be29252848bb5fcee9c48c1078e9e8b1",
-        "derivation": "document-page-render"
-      },
-      "thumbnail": {
-        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/document/employee-handbook.png",
-        "mediaType": "image/png",
-        "byteSize": 14015,
-        "digest": "sha256:c299b4c5ffe862abc1355a342b2abc8854284187d69534031f7abe12a282d63a",
-        "width": 1200,
-        "height": 1697,
-        "derivedFromSourceDigest": "sha256:0fdbf3a8b8483dca70aa9eb45606fe24be29252848bb5fcee9c48c1078e9e8b1",
-        "derivation": "document-page-render"
-      },
-      "editor": {
-        "capability": "richdoc-editor",
-        "adapter": "richdoc",
-        "projectSchema": "tiptap-json@1",
-        "editability": "native",
-        "roundTrip": [
-          "load",
-          "mutate",
-          "save",
-          "reopen"
-        ],
-        "evidence": "The source is a valid DOCX with ten populated paragraphs, editable in the trusted Office adapter."
-      },
-      "provenance": {
-        "inventoryId": "6ac113a8-92d8-4c6a-895f-7a80ede77bd0",
-        "providerId": "oceanleo-curated",
-        "providerAssetId": "employee-handbook",
-        "sourcePage": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/document/employee-handbook.docx",
-        "author": "OceanLeo",
-        "reviewedAt": "2026-07-22",
-        "license": {
-          "code": "LicenseRef-OceanLeo-First-Party",
-          "url": "https://asset.oceanleo.com/oceanleo-catalog/v1/RIGHTS.md#oceanleo-first-party-assets",
-          "commercialOk": true,
-          "modifyOk": true,
-          "attributionRequired": false,
-          "attributionText": ""
-        }
-      },
-      "quality": {
-        "status": "approved",
-        "metrics": {
-          "pageCount": 1,
-          "paragraphCount": 10,
-          "textCharacters": 172
-        }
-      }
-    },
-    {
-      "id": "asset-template:spreadsheet-editing:content-calendar:v1",
-      "revisionId": "catalog-r1-3ab8f48589c6",
-      "title": "内容发布排期表 · 周期协作版",
-      "editorClass": "spreadsheet_editing",
-      "artifactType": "grid",
-      "sourceFormat": "xlsx",
-      "editorCapability": "grid-editor",
-      "contentFamilyId": "oceanleo-grid-content-calendar",
-      "roles": [
-        "template",
-        "catalog_more"
-      ],
-      "taxonomy": {
-        "primary": "spreadsheet",
-        "labels": [
-          "表格",
-          "内容运营",
-          "排期"
-        ],
-        "tags": [
-          "xlsx",
-          "calendar",
-          "collaboration"
-        ]
-      },
-      "source": {
-        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/sheet/content-calendar.xlsx",
-        "format": "xlsx",
-        "mediaType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        "byteSize": 5487,
-        "digest": "sha256:3ab8f48589c6377909f8f9f7a1444adfffc45d3695514751ebe0ad4355717e05",
-        "integrity": "content_addressed",
-        "openMode": "native-file",
-        "dependencies": []
-      },
-      "preview": {
-        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/sheet/content-calendar.png",
-        "mediaType": "image/png",
-        "byteSize": 6259,
-        "digest": "sha256:48b4887ed3e7a40b5f2799465529d72cb4b1d7ff48a40aeeea13ed1b88766c49",
-        "width": 1200,
-        "height": 675,
-        "derivedFromSourceDigest": "sha256:3ab8f48589c6377909f8f9f7a1444adfffc45d3695514751ebe0ad4355717e05",
-        "derivation": "worksheet-render"
-      },
-      "thumbnail": {
-        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/sheet/content-calendar.png",
-        "mediaType": "image/png",
-        "byteSize": 6259,
-        "digest": "sha256:48b4887ed3e7a40b5f2799465529d72cb4b1d7ff48a40aeeea13ed1b88766c49",
-        "width": 1200,
-        "height": 675,
-        "derivedFromSourceDigest": "sha256:3ab8f48589c6377909f8f9f7a1444adfffc45d3695514751ebe0ad4355717e05",
-        "derivation": "worksheet-render"
-      },
-      "editor": {
-        "capability": "grid-editor",
-        "adapter": "grid",
-        "projectSchema": "oceanleo.grid.v1",
-        "editability": "native",
-        "roundTrip": [
-          "load",
-          "mutate",
-          "save",
-          "reopen"
-        ],
-        "evidence": "The source is a valid XLSX workbook with a populated 30-cell planning sheet."
-      },
-      "provenance": {
-        "inventoryId": "2b331364-2e01-4c2c-9547-9e12668a6d1b",
-        "providerId": "oceanleo-curated",
-        "providerAssetId": "content-calendar",
-        "sourcePage": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/sheet/content-calendar.xlsx",
-        "author": "OceanLeo",
-        "reviewedAt": "2026-07-22",
-        "license": {
-          "code": "LicenseRef-OceanLeo-First-Party",
-          "url": "https://asset.oceanleo.com/oceanleo-catalog/v1/RIGHTS.md#oceanleo-first-party-assets",
-          "commercialOk": true,
-          "modifyOk": true,
-          "attributionRequired": false,
-          "attributionText": ""
-        }
-      },
-      "quality": {
-        "status": "approved",
-        "metrics": {
-          "sheetCount": 1,
-          "cellCount": 30
-        }
-      }
-    },
-    {
-      "id": "asset-template:image-editing:coffee-percolator:v1",
-      "revisionId": "catalog-r1-0b873e092f7f",
-      "title": "复古咖啡壶插画 · 透明构图素材",
-      "editorClass": "image_editing",
-      "artifactType": "single_file_image",
-      "sourceFormat": "webp",
-      "editorCapability": "image-editor",
-      "contentFamilyId": "pixabay-image-157876",
-      "roles": [
-        "template",
-        "catalog_more"
-      ],
-      "taxonomy": {
-        "primary": "image",
-        "labels": [
-          "图片",
-          "插画",
-          "咖啡"
-        ],
-        "tags": [
-          "webp",
-          "raster",
-          "commercial"
-        ]
-      },
-      "source": {
-        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/image/coffee/pixabay-illustration-157876.webp",
-        "format": "webp",
-        "mediaType": "image/webp",
-        "byteSize": 34480,
-        "digest": "sha256:0b873e092f7f73e079709f7a25f8be591d96fee93fb9c899f787d29b2f6127c7",
-        "integrity": "content_addressed",
-        "openMode": "native-file",
-        "dependencies": []
-      },
-      "preview": {
-        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/image/coffee/pixabay-illustration-157876.webp",
-        "mediaType": "image/webp",
-        "byteSize": 34480,
-        "digest": "sha256:0b873e092f7f73e079709f7a25f8be591d96fee93fb9c899f787d29b2f6127c7",
-        "width": 1159,
-        "height": 1280,
-        "derivedFromSourceDigest": "sha256:0b873e092f7f73e079709f7a25f8be591d96fee93fb9c899f787d29b2f6127c7",
-        "derivation": "source"
-      },
-      "thumbnail": {
-        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/image/coffee/pixabay-illustration-157876.thumb.webp",
-        "mediaType": "image/webp",
-        "byteSize": 11968,
-        "digest": "sha256:b13672f145170a4edd60e7a12974b3a81e611ac0e4bff4ca57eb50355a8d52f4",
-        "width": 543,
-        "height": 600,
-        "derivedFromSourceDigest": "sha256:0b873e092f7f73e079709f7a25f8be591d96fee93fb9c899f787d29b2f6127c7",
-        "derivation": "resized-source"
-      },
-      "editor": {
-        "capability": "image-editor",
-        "adapter": "image",
-        "projectSchema": "oceanleo.fabric-image.v1",
-        "editability": "bounded",
-        "roundTrip": [
-          "load",
-          "mutate",
-          "save",
-          "reopen"
-        ],
-        "evidence": "The verified WebP opens as a raster layer and is saved as a reopenable Fabric image project."
-      },
-      "provenance": {
-        "inventoryId": "001ee71d-7df6-4857-bd76-a08cdfcc6242",
-        "providerId": "pixabay",
-        "providerAssetId": "157876",
-        "sourcePage": "https://pixabay.com/vectors/coffee-percolator-coffee-maker-pot-157876/",
-        "author": "OpenClipart-Vectors",
-        "reviewedAt": "2026-07-22",
-        "license": {
-          "code": "PIXABAY",
-          "url": "https://pixabay.com/service/license/",
-          "commercialOk": true,
-          "modifyOk": true,
-          "attributionRequired": false,
-          "attributionText": ""
-        }
-      },
-      "quality": {
-        "status": "approved",
-        "metrics": {
-          "width": 1159,
-          "height": 1280,
-          "pixelCount": 1483520
-        }
-      }
-    },
-    {
-      "id": "asset-template:pdf-editing:campaign-review:v1",
-      "revisionId": "catalog-r1-9bd71f5662a4",
-      "title": "市场活动复盘报告 · 批注版",
-      "editorClass": "pdf_editing",
-      "artifactType": "pdf",
-      "sourceFormat": "pdf",
-      "editorCapability": "pdf-editor",
-      "contentFamilyId": "oceanleo-pdf-campaign-review",
-      "roles": [
-        "template",
-        "catalog_more"
-      ],
-      "taxonomy": {
-        "primary": "pdf",
-        "labels": [
-          "PDF",
-          "市场运营",
-          "复盘报告"
-        ],
-        "tags": [
-          "pdf",
-          "annotation",
-          "report"
-        ]
-      },
-      "source": {
-        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/pdf/campaign-review.pdf",
-        "format": "pdf",
-        "mediaType": "application/pdf",
-        "byteSize": 48439,
-        "digest": "sha256:9bd71f5662a45b0c40a853616b577df695a2dd7050619ec118c957528d936815",
-        "integrity": "content_addressed",
-        "openMode": "native-file",
-        "dependencies": []
-      },
-      "preview": {
-        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/pdf/campaign-review.png",
-        "mediaType": "image/png",
-        "byteSize": 14779,
-        "digest": "sha256:b0f70d818e1214d8fde8de250030b48deefd6fade7fa53c4055f78914d4ec4d1",
-        "width": 1200,
-        "height": 1697,
-        "derivedFromSourceDigest": "sha256:9bd71f5662a45b0c40a853616b577df695a2dd7050619ec118c957528d936815",
-        "derivation": "pdf-page-render"
-      },
-      "thumbnail": {
-        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/pdf/campaign-review.png",
-        "mediaType": "image/png",
-        "byteSize": 14779,
-        "digest": "sha256:b0f70d818e1214d8fde8de250030b48deefd6fade7fa53c4055f78914d4ec4d1",
-        "width": 1200,
-        "height": 1697,
-        "derivedFromSourceDigest": "sha256:9bd71f5662a45b0c40a853616b577df695a2dd7050619ec118c957528d936815",
-        "derivation": "pdf-page-render"
-      },
-      "editor": {
-        "capability": "pdf-editor",
-        "adapter": "pdf",
-        "projectSchema": "pdf-binary@1",
-        "editability": "bounded",
-        "roundTrip": [
-          "load",
-          "mutate",
-          "save",
-          "reopen"
-        ],
-        "evidence": "The original PDF opens in the page/annotation workbench and saves a reopenable edited copy."
-      },
-      "provenance": {
-        "inventoryId": "181935a5-4476-4eae-998b-132dc96fd1e2",
-        "providerId": "oceanleo-curated",
-        "providerAssetId": "campaign-review",
-        "sourcePage": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/pdf/campaign-review.pdf",
-        "author": "OceanLeo",
-        "reviewedAt": "2026-07-22",
-        "license": {
-          "code": "LicenseRef-OceanLeo-First-Party",
-          "url": "https://asset.oceanleo.com/oceanleo-catalog/v1/RIGHTS.md#oceanleo-first-party-assets",
-          "commercialOk": true,
-          "modifyOk": true,
-          "attributionRequired": false,
-          "attributionText": ""
-        }
-      },
-      "quality": {
-        "status": "approved",
-        "metrics": {
-          "pageCount": 1,
-          "renderWidth": 1200,
-          "renderHeight": 1697
-        }
-      }
-    },
-    {
-      "id": "asset-template:audio-editing:the-accident:v1",
-      "revisionId": "catalog-r1-46aaa7d8a70f",
-      "title": "The Accident · 83 秒节奏音乐床",
-      "editorClass": "audio_editing",
-      "artifactType": "audio",
-      "sourceFormat": "mp3",
-      "editorCapability": "audio-editor",
-      "contentFamilyId": "jamendo-track-186949",
-      "roles": [
-        "template",
-        "catalog_more"
-      ],
-      "taxonomy": {
-        "primary": "audio",
-        "labels": [
-          "音频",
-          "音乐床",
-          "节奏"
-        ],
-        "tags": [
-          "mp3",
-          "83s",
-          "cc-by-sa"
-        ]
-      },
-      "source": {
-        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/audio/music/jamendo-186949.mp3",
-        "format": "mp3",
-        "mediaType": "audio/mpeg",
-        "byteSize": 1991170,
-        "digest": "sha256:46aaa7d8a70f44f7b2993a872f30a949bcfb86a1a73699d2184000aff18827c8",
-        "integrity": "content_addressed",
-        "openMode": "native-file",
-        "dependencies": []
-      },
-      "preview": {
-        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/audio/music/jamendo-186949.mp3",
-        "mediaType": "audio/mpeg",
-        "byteSize": 1991170,
-        "digest": "sha256:46aaa7d8a70f44f7b2993a872f30a949bcfb86a1a73699d2184000aff18827c8",
-        "durationMs": 83000,
-        "derivedFromSourceDigest": "sha256:46aaa7d8a70f44f7b2993a872f30a949bcfb86a1a73699d2184000aff18827c8",
-        "derivation": "source"
-      },
-      "thumbnail": {
-        "url": "https://asset.oceanleo.com/oceanleo-catalog/v1/previews/the-accident-cover.jpg",
-        "mediaType": "image/jpeg",
-        "byteSize": 16186,
-        "digest": "sha256:daa0607fa353b2f804d23085a0f705d75dee7b3e82ddc5b8cd15795865e1bffa",
-        "width": 400,
-        "height": 400,
-        "derivedFromSourceDigest": "sha256:46aaa7d8a70f44f7b2993a872f30a949bcfb86a1a73699d2184000aff18827c8",
-        "derivation": "embedded-id3-artwork"
-      },
-      "editor": {
-        "capability": "audio-editor",
-        "adapter": "audio",
-        "projectSchema": "oceanleo.audio-project.v1",
-        "editability": "bounded",
-        "roundTrip": [
-          "load",
-          "mutate",
-          "save",
-          "reopen"
-        ],
-        "evidence": "The original MP3 imports into the waveform editor; its real embedded ID3 artwork is the thumbnail."
-      },
-      "provenance": {
-        "inventoryId": "001b0022-35d9-4dec-9213-2c499eb18aa8",
-        "providerId": "jamendo",
-        "providerAssetId": "186949",
-        "sourcePage": "https://www.jamendo.com/track/186949",
-        "author": "Paper Plane Pilots",
-        "reviewedAt": "2026-07-22",
-        "license": {
-          "code": "CC-BY-SA-3.0",
-          "url": "https://creativecommons.org/licenses/by-sa/3.0/",
-          "commercialOk": true,
-          "modifyOk": true,
-          "attributionRequired": true,
-          "attributionText": "\"The Accident\" by Paper Plane Pilots (CC-BY-SA 3.0)"
-        }
-      },
-      "quality": {
-        "status": "approved",
-        "metrics": {
-          "durationMs": 83000,
-          "embeddedArtwork": true,
-          "artworkWidth": 400,
-          "artworkHeight": 400
-        }
-      }
-    },
-    {
-      "id": "asset-template:chart-editing:capability-radar:v1",
-      "revisionId": "catalog-r1-96941f776360",
-      "title": "团队能力雷达图 · 六维评估",
-      "editorClass": "chart_editing",
-      "artifactType": "chart",
-      "sourceFormat": "oceanleo.chart.v1",
-      "editorCapability": "chart-editor",
-      "contentFamilyId": "oceanleo-chart-radar-draw",
-      "roles": [
-        "template",
-        "catalog_more"
-      ],
-      "taxonomy": {
-        "primary": "chart",
-        "labels": [
-          "图表",
-          "雷达图",
-          "团队评估"
-        ],
-        "tags": [
-          "echarts",
-          "six-indicators",
-          "structured-data"
-        ]
-      },
-      "source": {
-        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/chart/radar/radar-draw/chart.json",
-        "format": "oceanleo.chart.v1",
-        "mediaType": "application/json",
-        "byteSize": 2197,
-        "digest": "sha256:96941f776360af136789dad35639f407a8db0e03ae8835a397de36ab95fb6686",
-        "integrity": "content_addressed",
-        "openMode": "structured-project",
-        "dependencies": []
-      },
-      "preview": {
-        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/chart/radar/radar-draw/cover.png",
-        "mediaType": "image/png",
-        "byteSize": 111030,
-        "digest": "sha256:749679e45ead175ce8b53e6a9ec53ae16564c172c35d1d16e3e3b17affa8d5b4",
-        "width": 1800,
-        "height": 1120,
-        "derivedFromSourceDigest": "sha256:96941f776360af136789dad35639f407a8db0e03ae8835a397de36ab95fb6686",
-        "derivation": "echarts-render"
-      },
-      "thumbnail": {
-        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/chart/radar/radar-draw/cover.png",
-        "mediaType": "image/png",
-        "byteSize": 111030,
-        "digest": "sha256:749679e45ead175ce8b53e6a9ec53ae16564c172c35d1d16e3e3b17affa8d5b4",
-        "width": 1800,
-        "height": 1120,
-        "derivedFromSourceDigest": "sha256:96941f776360af136789dad35639f407a8db0e03ae8835a397de36ab95fb6686",
-        "derivation": "echarts-render"
-      },
-      "editor": {
-        "capability": "chart-editor",
-        "adapter": "chart-editor@1",
-        "projectSchema": "oceanleo.chart.v1",
-        "editability": "native",
-        "roundTrip": [
-          "load",
-          "mutate",
-          "save",
-          "reopen"
-        ],
-        "evidence": "The chart source contains one radar series and six named indicators, not a flattened screenshot."
-      },
-      "provenance": {
-        "inventoryId": "094901da-e787-4c1e-a105-ea24a0f9c6d8",
-        "providerId": "oceanleo-chart",
-        "providerAssetId": "radar-draw",
-        "sourcePage": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/chart/radar/radar-draw/chart.json",
-        "author": "OceanLeo",
-        "reviewedAt": "2026-07-22",
-        "license": {
-          "code": "CC0-1.0",
-          "url": "https://creativecommons.org/publicdomain/zero/1.0/",
-          "commercialOk": true,
-          "modifyOk": true,
-          "attributionRequired": false,
-          "attributionText": ""
-        }
-      },
-      "quality": {
-        "status": "approved",
-        "metrics": {
-          "seriesCount": 1,
-          "indicatorCount": 6,
-          "dataPointCount": 6
-        }
-      }
-    },
-    {
-      "id": "asset-template:video-canvas:social-brand-film:v1",
-      "revisionId": "catalog-r1-0ebb1b0c18d4",
-      "title": "品牌短片 · 15 秒社交媒体工作流",
-      "editorClass": "video_canvas",
-      "artifactType": "workflow",
-      "sourceFormat": "oceanleo.video.project.v2",
-      "editorCapability": "video-canvas",
-      "contentFamilyId": "oceanleo-video-social-brand-film",
-      "roles": [
-        "template",
-        "catalog_more"
-      ],
-      "taxonomy": {
-        "primary": "video-workflow",
-        "labels": [
-          "视频画布",
-          "品牌短片",
-          "节点工作流"
-        ],
-        "tags": [
-          "7-nodes",
-          "15s",
-          "16:9",
-          "production-graph"
-        ]
-      },
-      "source": {
-        "url": "https://asset.oceanleo.com/oceanleo-catalog/v1/sources/social-brand-film.leovideo.json",
-        "format": "oceanleo.video.project.v2",
-        "mediaType": "application/json",
-        "byteSize": 10356,
-        "digest": "sha256:0ebb1b0c18d401bfd702324ae5800e2fcb4f317b47a62fa0d1af6ff2871dd48d",
-        "integrity": "complete_dependency_closure",
-        "openMode": "structured-project",
-        "dependencies": [
-          {
-            "path": "pixabay-illustration-157876.webp",
-            "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/image/coffee/pixabay-illustration-157876.webp",
-            "mediaType": "image/webp",
-            "byteSize": 34480,
-            "digest": "sha256:0b873e092f7f73e079709f7a25f8be591d96fee93fb9c899f787d29b2f6127c7"
-          },
-          {
-            "path": "pixabay-140667.mp4",
-            "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/video/abstract/pixabay-140667.mp4",
-            "mediaType": "video/mp4",
-            "byteSize": 19966599,
-            "digest": "sha256:7dfab1379bf9093ebf05ca4bd63b198202233eb7920ebfb3f23835e732cacfc3"
-          },
-          {
-            "path": "jamendo-186949.mp3",
-            "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/audio/music/jamendo-186949.mp3",
-            "mediaType": "audio/mpeg",
-            "byteSize": 1991170,
-            "digest": "sha256:46aaa7d8a70f44f7b2993a872f30a949bcfb86a1a73699d2184000aff18827c8"
-          }
-        ]
-      },
-      "preview": {
-        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/video-workflow/video-node-workflow.png",
-        "mediaType": "image/png",
-        "byteSize": 6363,
-        "digest": "sha256:2503996390db72cf62fc2e2d293c1ee1288950b182b1a45ad73b348b9c88e872",
-        "width": 1200,
-        "height": 675,
-        "derivedFromSourceDigest": "sha256:0ebb1b0c18d401bfd702324ae5800e2fcb4f317b47a62fa0d1af6ff2871dd48d",
-        "derivation": "workflow-graph-render"
-      },
-      "thumbnail": {
-        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/workspace-starters/video-workflow/video-node-workflow.png",
-        "mediaType": "image/png",
-        "byteSize": 6363,
-        "digest": "sha256:2503996390db72cf62fc2e2d293c1ee1288950b182b1a45ad73b348b9c88e872",
-        "width": 1200,
-        "height": 675,
-        "derivedFromSourceDigest": "sha256:0ebb1b0c18d401bfd702324ae5800e2fcb4f317b47a62fa0d1af6ff2871dd48d",
-        "derivation": "workflow-graph-render"
-      },
-      "editor": {
-        "capability": "video-canvas",
-        "adapter": "video-canvas",
-        "projectSchema": "oceanleo.video-canvas.v1",
-        "editability": "native",
-        "roundTrip": [
-          "load",
-          "mutate",
-          "save",
-          "reopen"
-        ],
-        "evidence": "The source passes the production oceanleo.video.project.v2 parser and contains script, media, subtitle, composite and delivery nodes."
-      },
-      "provenance": {
-        "inventoryId": "ddd08801-5e1a-441d-aac9-a49ea1ece937",
-        "providerId": "oceanleo-curated",
-        "providerAssetId": "social-brand-film-v1",
-        "sourcePage": "https://asset.oceanleo.com/oceanleo-catalog/v1/sources/social-brand-film.leovideo.json",
-        "author": "OceanLeo",
-        "reviewedAt": "2026-07-22",
-        "license": {
-          "code": "LicenseRef-OceanLeo-First-Party-With-Dependencies",
-          "url": "https://asset.oceanleo.com/oceanleo-catalog/v1/RIGHTS.md",
-          "commercialOk": true,
-          "modifyOk": true,
-          "attributionRequired": true,
-          "attributionText": "\"The Accident\" by Paper Plane Pilots (CC-BY-SA 3.0); Pixabay assets under the Pixabay Content License."
-        },
-        "thirdPartyAttributions": [
-          {
-            "providerId": "pixabay",
-            "providerAssetId": "140667",
-            "sourcePage": "https://pixabay.com/videos/id-140667/",
-            "licenseCode": "PIXABAY",
-            "licenseUrl": "https://pixabay.com/service/license/"
-          },
-          {
-            "providerId": "pixabay",
-            "providerAssetId": "157876",
-            "sourcePage": "https://pixabay.com/vectors/coffee-percolator-coffee-maker-pot-157876/",
-            "licenseCode": "PIXABAY",
-            "licenseUrl": "https://pixabay.com/service/license/"
-          },
-          {
-            "providerId": "jamendo",
-            "providerAssetId": "186949",
-            "sourcePage": "https://www.jamendo.com/track/186949",
-            "licenseCode": "CC-BY-SA-3.0",
-            "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/"
-          }
-        ]
-      },
-      "quality": {
-        "status": "approved",
-        "metrics": {
-          "nodeCount": 7,
-          "edgeCount": 6,
-          "assetCount": 3,
-          "clipCount": 2,
-          "durationMs": 15000,
-          "productionParserPassed": true
-        }
-      }
-    },
-    {
-      "id": "asset-template:model-3d:barber-chair:v1",
-      "revisionId": "catalog-r1-801bed991ab1",
-      "title": "理发店复古座椅 · 完整 PBR 模型",
-      "editorClass": "model_3d",
-      "artifactType": "model_3d",
-      "sourceFormat": "gltf",
-      "editorCapability": "model-3d-editor",
-      "contentFamilyId": "polyhaven-barber-shop-chair-01",
-      "roles": [
-        "template",
-        "catalog_more"
-      ],
-      "taxonomy": {
-        "primary": "3d",
-        "labels": [
-          "3D 模型",
-          "家具",
-          "PBR"
-        ],
-        "tags": [
-          "gltf",
-          "cc0",
-          "complete-closure"
-        ]
-      },
-      "source": {
-        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/3d/model/BarberShopChair_01/BarberShopChair_01.gltf",
-        "format": "gltf",
-        "mediaType": "model/gltf+json",
-        "byteSize": 2706,
-        "digest": "sha256:801bed991ab1d3f110ff8e7958fcfe8e60a96582cadb55dbada28e292a111f20",
-        "integrity": "complete_dependency_closure",
-        "openMode": "native-file",
-        "dependencies": [
-          {
-            "path": "BarberShopChair_01.bin",
-            "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/3d/model/BarberShopChair_01/BarberShopChair_01.bin",
-            "mediaType": "application/octet-stream",
-            "byteSize": 268464,
-            "digest": "sha256:39ecebfef975af4e812134b7f056e243f6404ce60c4dc2e9dec30930802ea24b"
-          },
-          {
-            "path": "textures/BarberShopChair_01_nor_gl_1k.jpg",
-            "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/3d/model/BarberShopChair_01/textures/BarberShopChair_01_nor_gl_1k.jpg",
-            "mediaType": "image/jpeg",
-            "byteSize": 215938,
-            "digest": "sha256:3f51a8f05b38a547db52e10e6e2bec48a10fbeff5d04efc66b82a5b3d026b0fb"
-          },
-          {
-            "path": "textures/BarberShopChair_01_diff_1k.jpg",
-            "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/3d/model/BarberShopChair_01/textures/BarberShopChair_01_diff_1k.jpg",
-            "mediaType": "image/jpeg",
-            "byteSize": 173699,
-            "digest": "sha256:9d1054e6fe12e8397cbca6f1a50ecd2b4d880d8d355cb66e982abc752bf24d22"
-          },
-          {
-            "path": "textures/BarberShopChair_01_arm_1k.jpg",
-            "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/3d/model/BarberShopChair_01/textures/BarberShopChair_01_arm_1k.jpg",
-            "mediaType": "image/jpeg",
-            "byteSize": 218372,
-            "digest": "sha256:502ecae4a2f7b09b79f03317f1fe6c141c8f2c753b77e639395e3aea3de46eba"
-          }
-        ]
-      },
-      "preview": {
-        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/3d/model/BarberShopChair_01.preview.webp",
-        "mediaType": "image/webp",
-        "byteSize": 20472,
-        "digest": "sha256:7ba406b52d40db88fd00fba97a72a057ff93e283af77b4334a08f41cb4153ca3",
-        "width": 273,
-        "height": 512,
-        "derivedFromSourceDigest": "sha256:801bed991ab1d3f110ff8e7958fcfe8e60a96582cadb55dbada28e292a111f20",
-        "derivation": "model-render"
-      },
-      "thumbnail": {
-        "url": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/3d/model/BarberShopChair_01.preview.webp",
-        "mediaType": "image/webp",
-        "byteSize": 20472,
-        "digest": "sha256:7ba406b52d40db88fd00fba97a72a057ff93e283af77b4334a08f41cb4153ca3",
-        "width": 273,
-        "height": 512,
-        "derivedFromSourceDigest": "sha256:801bed991ab1d3f110ff8e7958fcfe8e60a96582cadb55dbada28e292a111f20",
-        "derivation": "model-render"
-      },
-      "editor": {
-        "capability": "model-3d-editor",
-        "adapter": "threed",
-        "projectSchema": "oceanleo.model-view@1",
-        "editability": "bounded",
-        "roundTrip": [
-          "load",
-          "mutate",
-          "save",
-          "reopen"
-        ],
-        "evidence": "The glTF entrypoint, binary buffer and all three PBR textures are individually hash-attested."
-      },
-      "provenance": {
-        "inventoryId": "08449fd9-6b5a-49df-bafd-e46d2da8477d",
-        "providerId": "polyhaven",
-        "providerAssetId": "BarberShopChair_01",
-        "sourcePage": "https://polyhaven.com/a/BarberShopChair_01",
-        "author": "Poly Haven",
-        "reviewedAt": "2026-07-22",
-        "license": {
-          "code": "CC0-1.0",
-          "url": "https://creativecommons.org/publicdomain/zero/1.0/",
-          "commercialOk": true,
-          "modifyOk": true,
-          "attributionRequired": false,
-          "attributionText": ""
-        }
-      },
-      "quality": {
-        "status": "approved",
-        "metrics": {
-          "sceneCount": 1,
-          "nodeCount": 1,
-          "meshCount": 1,
-          "materialCount": 1,
-          "textureCount": 3,
-          "dependencyCount": 4
-        }
-      }
-    }
-  ]
+  "schema": "oceanleo.catalog-export.v1",
+  "sourceSite": "asset",
+  "version": 1
 }
