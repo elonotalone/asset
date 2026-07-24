@@ -18,7 +18,8 @@ export type AssetType =
   | "3d"
   | "font"
   | "ppt"
-  | "chart";
+  | "chart"
+  | "prompt";
 export type LicenseFilter = "commercial" | "modify" | "any";
 
 export interface AssetLicense {
@@ -55,6 +56,8 @@ export interface Asset {
   series_id?: string;
   /** 成套素材的中文套名（如「国风文化成套」）。 */
   series_name?: string;
+  /** Prompt 示例：与图片成对的文生图 prompt（type=prompt 时必有）。 */
+  prompt?: string;
 }
 
 // 「成套素材」——一套风格统一、可整套浏览的开源素材（来自 svgrepo 同一 data_pack，
@@ -274,6 +277,7 @@ export const TYPE_LABELS: Record<AssetType, string> = {
   font: "字体",
   ppt: "PPT 模板",
   chart: "图表",
+  prompt: "Prompt 示例",
 };
 
 // 左侧栏「素材类型」分区——**只列我们真正囤到 OSS 的类型**。用户在这些栏目里只能看到
@@ -282,6 +286,7 @@ export const TYPE_LABELS: Record<AssetType, string> = {
 // 顺序对齐首页图片优先。DB 实有类型：image/chart/vector/sticker/video/3d/audio/font/ppt。
 export const TYPE_ORDER: AssetType[] = [
   "image",
+  "prompt",
   "chart",
   "vector",
   "sticker",
@@ -609,6 +614,17 @@ export const CATEGORY_PANELS: CategoryPanel[] = [
     subs: [ALL_SUB, { key: "gradient", label: "渐变背景" }, { key: "texture", label: "纹理背景" },
       { key: "festive", label: "节日背景" }, { key: "fresh", label: "清新背景" }],
   },
+  // Prompt 示例（图 + 文生图 prompt 成对）
+  { key: "portrait", label: "人像", icon: "🧑", type: "prompt", subs: [ALL_SUB] },
+  { key: "landscape", label: "风景", icon: "🏞", type: "prompt", subs: [ALL_SUB] },
+  { key: "fantasy", label: "奇幻", icon: "🧙", type: "prompt", subs: [ALL_SUB] },
+  { key: "anime", label: "二次元", icon: "🎌", type: "prompt", subs: [ALL_SUB] },
+  { key: "architecture", label: "建筑", icon: "🏛", type: "prompt", subs: [ALL_SUB] },
+  { key: "product", label: "静物产品", icon: "📦", type: "prompt", subs: [ALL_SUB] },
+  { key: "animal", label: "动物", icon: "🐾", type: "prompt", subs: [ALL_SUB] },
+  { key: "abstract", label: "抽象艺术", icon: "🎨", type: "prompt", subs: [ALL_SUB] },
+  { key: "interior", label: "室内", icon: "🛋", type: "prompt", subs: [ALL_SUB] },
+  { key: "vehicle", label: "载具", icon: "🚗", type: "prompt", subs: [ALL_SUB] },
 ];
 
 export function panelByKey(key: string): CategoryPanel | undefined {
@@ -761,6 +777,17 @@ const CATEGORY_LABELS: Record<string, string> = {
   memphis: "孟菲斯撞色风",
   noir: "黑色电影风",
   meridian: "古典航海图风",
+  // prompt（DiffusionDB 等图+prompt 成对素材；按题材粗分）
+  portrait: "人像",
+  landscape: "风景",
+  fantasy: "奇幻",
+  anime: "二次元",
+  architecture: "建筑",
+  product: "静物产品",
+  animal: "动物",
+  abstract: "抽象艺术",
+  interior: "室内",
+  vehicle: "载具",
 };
 
 export function categoryLabel(key: string): string {

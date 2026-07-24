@@ -131,7 +131,7 @@ function ChartFrame({ asset }: { asset: Asset }) {
   );
 }
 
-function CopyButton({ text }: { text: string }) {
+function CopyButton({ text, label }: { text: string; label?: string }) {
   const tt = useUI();
   const [done, setDone] = useState(false);
   return (
@@ -144,7 +144,7 @@ function CopyButton({ text }: { text: string }) {
       }}
       className="rounded-md border border-zinc-300 px-2 py-1 text-xs text-zinc-600 hover:bg-zinc-50"
     >
-      {done ? tt("已复制") : tt("复制署名")}
+      {done ? tt("已复制") : tt(label || "复制署名")}
     </button>
   );
 }
@@ -268,6 +268,20 @@ export function AssetDetail({
               </div>
             </div>
           </div>
+
+          {asset.type === "prompt" && asset.prompt && (
+            <div className="mt-4 rounded-xl border border-sky-200 bg-sky-50/70 px-4 py-3">
+              <div className="mb-2 flex items-center justify-between gap-3">
+                <p className="text-xs font-semibold uppercase tracking-wide text-sky-700">
+                  {tt("生成 Prompt")}
+                </p>
+                <CopyButton text={asset.prompt} label="复制 Prompt" />
+              </div>
+              <p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-zinc-800">
+                {asset.prompt}
+              </p>
+            </div>
+          )}
 
           {asset.license.attribution_required && (
             <div className="mt-4 flex items-start justify-between gap-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">

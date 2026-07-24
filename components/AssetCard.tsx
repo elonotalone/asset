@@ -118,9 +118,15 @@ export function AssetCard({
 
         <div className="flex min-w-0 flex-col gap-0.5 px-3 py-2">
           <span className="truncate text-sm font-medium text-zinc-800">{asset.title}</span>
-          <span className="truncate text-xs text-zinc-500">
-            {asset.author} · {asset.source}
-          </span>
+          {asset.type === "prompt" && asset.prompt ? (
+            <span className="line-clamp-2 text-xs leading-snug text-zinc-500">
+              {asset.prompt}
+            </span>
+          ) : (
+            <span className="truncate text-xs text-zinc-500">
+              {asset.author} · {asset.source}
+            </span>
+          )}
         </div>
       </button>
 

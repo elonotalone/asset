@@ -109,6 +109,7 @@ function TypeIcon({ type }: { type: AssetType }) {
     font: "M5 7V5h14v2M9 19h6M12 5v14",
     ppt: "M4 4h16v12H4zM4 16l3 4M20 16l-3 4M9 12V8h3a2 2 0 010 4z",
     chart: "M4 4v16h16M8 16v-4M12 16V8M16 16v-6",
+    prompt: "M4 5h16v10H4zM8 19h8M12 15v4M7 8h6M7 11h10",
   };
   return (
     <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
