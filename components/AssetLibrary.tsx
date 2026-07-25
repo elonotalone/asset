@@ -387,7 +387,7 @@ function AssetLibraryContent({
         <h1 className="text-2xl font-semibold text-zinc-900">{tt(TYPE_LABELS[type])}</h1>
         <p className="mt-1 text-sm text-zinc-500">
           {type === "prompt"
-            ? tt("每张图附带可复制的文生图 Prompt（DiffusionDB · CC0）。按题材浏览，点开即可复制提示词。")
+            ? tt("每张图附带可复制的文生图 Prompt（Fine-T2I 合成子集 · Apache-2.0，可商用）。按题材浏览，点开即可复制提示词。")
             : tt("平台自有素材（已囤到 OSS）· 免费可商用，按目录浏览或搜索。想找更多开源素材可去左侧「开源专区」。")}
         </p>
       </header>
