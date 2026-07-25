@@ -97,6 +97,14 @@ function PptPager({ asset }: { asset: Asset }) {
 
 // 图表专用预览：在 iframe 里加载可交互 HTML，未加载完先用静态封面兜底（避免白屏）。
 // sandbox 只放行脚本（图表要跑 echarts JS）——不给同源，隔离掉对宿主页面的访问。
+//
+// UC-3（docs/architecture/oceanleo-untrusted-content-isolation.md §8.3）：
+// full_url 不是第一方白名单。「我的素材库」把整个 asset 快照原样 POST 到
+// /v1/assets/collection 再原样取回（backend supa.collection_add 存的就是请求体），
+// 后端只校验 https / 无凭据 / 443 端口，**主机名完全由调用方决定**——包括
+// asset.oceanleo.com 自身。加上 allow-same-origin 后，这个 iframe 会回到宿主
+// origin：既能读 Domain=.oceanleo.com 且非 httpOnly 的 SSO cookie，也能自己摘掉
+// sandbox 属性再重载。图表只需要跑 JS，不需要同源能力，因此只给 allow-scripts。
 function ChartFrame({ asset }: { asset: Asset }) {
   const tt = useUI();
   const [loaded, setLoaded] = useState(false);
@@ -117,7 +125,7 @@ function ChartFrame({ asset }: { asset: Asset }) {
         title={asset.title}
         loading="lazy"
         onLoad={() => setLoaded(true)}
-        sandbox="allow-scripts allow-same-origin allow-popups"
+        sandbox="allow-scripts"
         className={`h-[600px] w-full border-0 transition-opacity duration-300 ${
           loaded ? "opacity-100" : "opacity-0"
         }`}

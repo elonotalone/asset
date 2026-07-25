@@ -9,6 +9,7 @@
     "lint": "eslint",
     "test:artifacts": "node --import ./tests/register-tsx.mjs --test tests/artifact-surface.test.tsx",
     "test:catalog": "node scripts/validate-oceanleo-catalog.mjs && node --import ./tests/register-tsx.mjs --test tests/oceanleo-catalog.test.mjs",
+    "test:security": "node --test tests/untrusted-render-surface.test.mjs",
     "verify:catalog": "node scripts/verify-oceanleo-catalog.mjs"
   },
   "dependencies": {

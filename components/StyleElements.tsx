@@ -130,11 +130,15 @@ function FxCard({
     <div className="group overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-zinc-100 transition hover:shadow-lg">
       {/* 实时 iframe 预览：加载展示级 HTML（chrome=0 只留特效+标题） */}
       <div className="relative h-48 w-full overflow-hidden bg-zinc-100">
+        {/* UC-3：src 恒为第一方 /elements/<fx>，fx 走 FX_META 白名单、palette 走
+            PALETTES_V2 兜底，且 buildShowcaseDoc 只产出纯 CSS（无 <script>）。
+            这份文档不需要任何权能，所以给最严的空 sandbox。 */}
         <iframe
           key={src}
           src={src}
           title={meta.name}
           loading="lazy"
+          sandbox=""
           className="pointer-events-none h-full w-full border-0"
           scrolling="no"
         />
@@ -231,7 +235,8 @@ function PreviewModal({
             </button>
           </div>
         </div>
-        <iframe key={src} src={src} title={meta.name} className="h-full w-full flex-1 border-0" />
+        {/* 同 FxCard：第一方纯 CSS 展示页，不需要任何权能。 */}
+        <iframe key={src} src={src} title={meta.name} sandbox="" className="h-full w-full flex-1 border-0" />
       </div>
     </div>
   );
