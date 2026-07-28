@@ -33,6 +33,7 @@ export function MaterialCatalogPage() {
       <section className="min-h-[620px] flex-1 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4">
         <MaterialCatalog
           key={defaultBoard}
+          siteKey="asset"
           byBoard={MATERIALS_BY_BOARD}
           defaultBoard={defaultBoard}
           accent="#0ea5e9"
