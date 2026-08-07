@@ -3,6 +3,7 @@
 import { useUI } from "@oceanleo/ui/i18n";
 import { Asset } from "@/lib/assets";
 import { LicenseBadge } from "@/components/LicenseBadge";
+import { AssetOriginChip } from "@/components/AssetProvenance";
 
 function fmtDuration(sec: number | null): string {
   if (!sec || sec <= 0) return "";
@@ -111,8 +112,10 @@ export function AssetCard({
               {fmtDuration(asset.duration)}
             </span>
           ) : null}
-          <span className="absolute right-2 top-2">
-            <LicenseBadge license={asset.license} />
+          {/* 产权二分排在授权前面：用户先要知道这是谁的，再看能怎么用。 */}
+          <span className="absolute right-2 top-2 flex items-center gap-1">
+            <AssetOriginChip asset={asset} />
+            <LicenseBadge license={asset.license} asset={asset} />
           </span>
         </div>
 
