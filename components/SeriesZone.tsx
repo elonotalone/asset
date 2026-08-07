@@ -12,6 +12,7 @@ import {
   searchAssets,
   Series,
 } from "@/lib/assets";
+import type { MaterialOrigin } from "@/lib/type-page-views";
 import { AssetCard } from "@/components/AssetCard";
 import { AssetDetail } from "@/components/AssetDetail";
 
@@ -19,9 +20,12 @@ import { AssetDetail } from "@/components/AssetDetail";
 // 列表展示成套封面卡片；点开进整套（series_id 过滤）。这些素材已囤到平台自有存储，
 // 与「开源搜索」（实时上游）不同。
 //
-// 它不再是左栏的一格：「成套」不是一个素材类型，而是素材的一种**形态**。现在它由
-// TypePageChrome 以 lockType 内嵌进类型页，只列本类型的成套 —— 库里真有成套数据的
-// 只有 ppt / vector / image 三类，其余类型的页面上根本不画这个开关。
+// 它不再是左栏的一格，也不是一个分区：「成套」不是素材类型，也不是来源，
+// 而是素材的一种**形态**。现在它是所属**来源分区内部**的一个筛选（见 AssetLibrary），
+// 只列本类型的成套 —— 库里真有成套数据的只有 ppt / vector / image 三类。
+//
+// `origin` 是所在分区的来源。它在取数时逐件生效：某一套的来源万一判错，
+// 结果是这一套看起来空了，而不会把开源件显示在「OceanLeo 自有」里。
 
 function CoverCollage({ covers }: { covers: string[] }) {
   const four = covers.slice(0, 4);
@@ -46,7 +50,10 @@ function CoverCollage({ covers }: { covers: string[] }) {
   );
 }
 
-export function SeriesZone({ lockType }: { lockType?: AssetType } = {}) {
+export function SeriesZone({
+  lockType,
+  origin,
+}: { lockType?: AssetType; origin?: MaterialOrigin } = {}) {
   const tt = useUI();
   const loadFailedText = tt("加载失败");
   const embedded = !!lockType;
@@ -93,7 +100,7 @@ export function SeriesZone({ lockType }: { lockType?: AssetType } = {}) {
     setPage(1);
     const my = ++reqId.current;
     setLoadingItems(true);
-    searchAssets({ q: "", type: s.type, seriesId: s.series_id, page: 1, pageSize: 60 })
+    searchAssets({ q: "", type: s.type, seriesId: s.series_id, origin, page: 1, pageSize: 60 })
       .then((r) => {
         if (my !== reqId.current) return;
         setItems(r.items);
@@ -109,7 +116,7 @@ export function SeriesZone({ lockType }: { lockType?: AssetType } = {}) {
     const my = ++reqId.current;
     const next = page + 1;
     setLoadingItems(true);
-    searchAssets({ q: "", type: openSeries.type, seriesId: openSeries.series_id, page: next, pageSize: 60 })
+    searchAssets({ q: "", type: openSeries.type, seriesId: openSeries.series_id, origin, page: next, pageSize: 60 })
       .then((r) => {
         if (my !== reqId.current) return;
         setItems((prev) => [...prev, ...r.items]);

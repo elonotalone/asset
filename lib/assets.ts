@@ -9,6 +9,7 @@ import {
   artifactTypeHasRoutableEditor,
   workspaceTemplatePreviewHref,
 } from "@oceanleo/ui/shell";
+import type { MaterialOrigin } from "@/lib/type-page-views";
 
 const GATEWAY =
   process.env.NEXT_PUBLIC_GATEWAY_URL || "https://api.oceanleo.com";
@@ -41,6 +42,12 @@ export interface Asset {
   id: string;
   source: string;
   type: AssetType;
+  /**
+   * 谁做的这件素材：`first-party` = OceanLeo 自有，`external` = 开源社区。
+   * 服务端每一行都带（`oceanleo/backend/app/supa.py:625` 的投影层写的），
+   * 类型页的三分区就按它分。老的响应里可能没有，所以是可选的。
+   */
+  origin?: MaterialOrigin;
   title: string;
   thumb_url: string;
   preview_url: string;
@@ -81,6 +88,8 @@ export interface SearchResult {
   page: number;
   has_more: boolean;
   sources_queried: string[];
+  /** 服务端报的命中总数（实时上游那条路不给，留 undefined）。 */
+  total?: number;
 }
 
 export interface SourceInfo {
@@ -120,9 +129,25 @@ interface LibraryResult {
   source: string;
 }
 
+/**
+ * 服务端**还没有** `origin` 筛选参数。
+ *
+ * `[实测 2026-08-07 W8]` 给 `/v1/assets/library/search` 传 `&origin=first-party`
+ * 会被 FastAPI 静默忽略，`total` 一个不变（image 173→173、vector 40607→40607）。
+ * 要加的地方在 `oceanleo/backend` 的三个文件里，**不在 W8 的边界内**，
+ * 已写信号 `signals/W8-origin-filter-and-real-counts.md` 请父指派。
+ *
+ * 所以这一版按来源取数靠两件事：**服务端已有的 `category` 参数**做窄查，
+ * 加上**逐件按 `item.origin` 硬过滤**兜底。
+ *
+ * 网关加上那个参数之后，把这里改成 `true` 即可：请求会直接带上 `origin=`，
+ * 目录采样与按目录扇出的搜索全部自动退化成一发普通查询。**切换成本就是这一行。**
+ */
+export const ORIGIN_FILTER_IS_SERVER_SIDE = false;
+
 // Search our SELF-OWNED hoarded library (platform_assets, served from OSS) ONLY.
-// 除「开源专区」外的所有栏目都只查我们自己囤到 OSS 的素材——用户在这些栏目里
-// 看不到、也搜不到我们 OSS 里没有的内容。想搜实时上游开源素材请走「开源专区」
+// 除实时搜索分区外的所有栏目都只查我们自己囤到 OSS 的素材——用户在这些栏目里
+// 看不到、也搜不到我们 OSS 里没有的内容。想搜实时上游开源素材请走「实时搜索」
 // (searchOpenSource)。所以这里**永不**回落到 /v1/assets/search 实时上游。
 export async function searchAssets(params: {
   q: string;
@@ -133,6 +158,12 @@ export async function searchAssets(params: {
   seriesId?: string;
   page?: number;
   pageSize?: number;
+  /**
+   * 只要这一种来源的件。服务端支持之前（见 ORIGIN_FILTER_IS_SERVER_SIDE），
+   * 它在客户端逐件生效 —— 会让这一页显示的件数少于 page_size，
+   * 但**绝不会把另一种来源的件混进来**。少数好过错标。
+   */
+  origin?: MaterialOrigin;
 }): Promise<SearchResult> {
   const page = params.page || 1;
   const pageSize = params.pageSize || 24;
@@ -148,54 +179,265 @@ export async function searchAssets(params: {
   if (params.category) libParams.category = params.category;
   if (params.subtab) libParams.subtab = params.subtab;
   if (params.seriesId) libParams.series_id = params.seriesId;
+  if (params.origin && ORIGIN_FILTER_IS_SERVER_SIDE) {
+    libParams.origin = params.origin;
+  }
   const libQs = new URLSearchParams(libParams);
   const lib = await getJson<LibraryResult>(
     `/v1/assets/library/search?${libQs.toString()}`,
   );
+  const raw = lib.items || [];
+  const items = params.origin
+    ? raw.filter((a) => a.origin === params.origin)
+    : raw;
   return {
-    items: lib.items || [],
+    items,
     page: lib.page,
     has_more: lib.page * lib.page_size < (lib.total || 0),
     sources_queried: ["library"],
+    total: lib.total || 0,
   };
 }
 
-// 分区浏览用：给一批目录各取少量样本，拼成「目录 → 一行缩略图」的分区块首页
-// （对标稿定/Foco 的分区浏览：每个目录一个 section，标题 + 「查看全部」+ 一行预览）。
-// 后端没有「一次取多目录样本」的批接口，这里对每个目录并发一发轻量 search（page_size
-// 小、只要头几张）。失败/空的目录静默丢弃，不阻塞其他分区。
-export interface CategoryPreview {
+// ---------------------------------------------------------------------------
+// 目录 → 来源索引：三分区取数的地基
+// ---------------------------------------------------------------------------
+// 网关没有 `origin` 筛选（见 ORIGIN_FILTER_IS_SERVER_SIDE），但它**有** `category`
+// 筛选，而且每一行都带 `origin`。所以：一个类型页开场先对每个目录取一小把样本，
+// 从样本里读服务端说的 origin，把目录分给 ①/② 两区，件数直接用服务端报的 total。
+//
+// 三件事要说清楚：
+//
+// 1. **目录归属是读来的，不是猜的。** 判据是服务端返回的 `items[].origin`。
+// 2. **成本没有变。** 上一版的分区首页本来就对每个目录各打一发取预览行
+//    （旧的 previewCategories），这里是同一批请求多用了一次，采样直接当预览行用。
+// 3. **万一某个目录以后混进两种来源**（比如 W7 归拢时把自有件塞进一个已有的开源
+//    目录），它会被记进 `mixedCategories` 且**不分给任何一区**；再加上取数时逐件
+//    硬过滤，最坏结果是那一区少显示几件，**不会把开源件标成 OceanLeo 自有**。
+//
+// `[实测 2026-08-07 W8]` 今天货架可见集合里没有任何一个目录混两种来源（查询与读数
+// 在 signals/W8-origin-filter-and-real-counts.md）。
+
+/** 一个目录在三分区里的落位与真实件数。 */
+export interface ZoneCategory {
   key: string;
-  items: Asset[];
+  /** 服务端样本一致给出的来源；样本里出现两种来源或取不到样本时为 null。 */
+  origin: MaterialOrigin | null;
+  /** 服务端报的这个目录的货架件数。 */
+  total: number;
+  /** 采样件，分区首页那一行预览直接用它，不再多打一发请求。 */
+  sample: Asset[];
 }
 
-export async function previewCategories(params: {
+export interface TypeOriginIndex {
   type: AssetType;
-  categories: string[];
-  license?: LicenseFilter;
-  perCategory?: number;
-}): Promise<CategoryPreview[]> {
-  const per = Math.max(4, params.perCategory || 8);
-  const license = params.license || "commercial";
-  const results = await Promise.all(
-    params.categories.map(async (key) => {
+  /** 只留货架上真有件的目录（服务端 total>0）。 */
+  categories: ZoneCategory[];
+  /** 这个类型货架上一共多少件（不分来源）。 */
+  shelfTotal: number;
+  /** 按来源分的件数。 */
+  totalByOrigin: Record<MaterialOrigin, number>;
+  /** 采样里混了两种来源的目录键。正常为空；不为空说明该回来重看判据。 */
+  mixedCategories: string[];
+  /** 取索引时出错了（网关不可用）。UI 要把它和「真的没货」区分开。 */
+  failed: boolean;
+}
+
+const SAMPLE_PER_CATEGORY = 6;
+
+const originIndexCache = new Map<AssetType, Promise<TypeOriginIndex>>();
+
+async function buildTypeOriginIndex(type: AssetType): Promise<TypeOriginIndex> {
+  const empty: TypeOriginIndex = {
+    type,
+    categories: [],
+    shelfTotal: 0,
+    totalByOrigin: { "first-party": 0, external: 0 },
+    mixedCategories: [],
+    failed: false,
+  };
+
+  let keys: string[] = [];
+  let shelfTotal = 0;
+  try {
+    const [cats, whole] = await Promise.all([
+      listLibraryCategories(type),
+      // 该类型的货架总数。用来判断某一区是不是独占了全部货
+      // （独占时搜索可以一发到底，不必按目录扇出）。
+      searchAssets({ q: "", type, page: 1, pageSize: 4 }),
+    ]);
+    keys = cats.categories || [];
+    shelfTotal = whole.total || 0;
+  } catch {
+    return { ...empty, failed: true };
+  }
+
+  const sampled = await Promise.all(
+    keys.map(async (key): Promise<ZoneCategory | null> => {
       try {
         const r = await searchAssets({
           q: "",
-          type: params.type,
-          license,
+          type,
           category: key,
           page: 1,
-          pageSize: per,
+          pageSize: SAMPLE_PER_CATEGORY,
         });
-        return { key, items: r.items };
+        if (!r.total || r.items.length === 0) return null;
+        const origins = new Set(
+          r.items.map((a) => a.origin).filter(Boolean) as MaterialOrigin[],
+        );
+        return {
+          key,
+          origin: origins.size === 1 ? [...origins][0] : null,
+          total: r.total,
+          sample: r.items,
+        };
       } catch {
-        return { key, items: [] as Asset[] };
+        return null;
       }
     }),
   );
-  // 只保留真正有内容的目录（空目录不成块），保序。
-  return results.filter((r) => r.items.length > 0);
+
+  const categories = sampled.filter((c): c is ZoneCategory => c !== null);
+  const totalByOrigin: Record<MaterialOrigin, number> = {
+    "first-party": 0,
+    external: 0,
+  };
+  for (const c of categories) {
+    if (c.origin) totalByOrigin[c.origin] += c.total;
+  }
+  return {
+    type,
+    categories,
+    shelfTotal,
+    totalByOrigin,
+    mixedCategories: categories.filter((c) => !c.origin).map((c) => c.key),
+    failed: false,
+  };
+}
+
+/** 取（并缓存）一个类型的目录→来源索引。同一次会话里每个类型只建一次。 */
+export function loadTypeOriginIndex(type: AssetType): Promise<TypeOriginIndex> {
+  let p = originIndexCache.get(type);
+  if (!p) {
+    p = buildTypeOriginIndex(type).catch((e) => {
+      // 失败不留在缓存里，下次进来重试。
+      originIndexCache.delete(type);
+      throw e;
+    });
+    originIndexCache.set(type, p);
+  }
+  return p;
+}
+
+/** 这一区有哪些目录（保持服务端给的件数降序）。 */
+export function zoneCategories(
+  index: TypeOriginIndex,
+  origin: MaterialOrigin,
+): ZoneCategory[] {
+  return index.categories.filter((c) => c.origin === origin);
+}
+
+/** 这一区共多少件 —— 数字来自服务端每个目录报的 total，不是前端数出来的。 */
+export function zoneTotal(
+  index: TypeOriginIndex,
+  origin: MaterialOrigin,
+): number {
+  return index.totalByOrigin[origin] || 0;
+}
+
+/**
+ * 这一区是不是占了本类型货架的全部。
+ * 是的话搜索不必按目录扇出，一发普通查询就已经天然只剩这一区的件
+ * （例：PPT 243 件全是自有件，矢量图 40,607 件全是开源已入库件）。
+ */
+export function zoneOwnsWholeShelf(
+  index: TypeOriginIndex,
+  origin: MaterialOrigin,
+): boolean {
+  return index.shelfTotal > 0 && zoneTotal(index, origin) === index.shelfTotal;
+}
+
+/**
+ * 在某一个分区里取数（目录网格 / 区内搜索 / 区内「全部」）。
+ *
+ * 走哪条路由取决于这一区在本类型货架上的占比：
+ *
+ * - 指定了目录 → 一发窄查（目录本身就是纯的）。
+ * - 这一区占了全部 → 一发普通查（`ORIGIN_FILTER_IS_SERVER_SIDE` 之前也不会串味）。
+ * - 否则 → **按本区目录并发扇出再合并**。不这么做的话，区内搜索会被另一区的件
+ *   把整页占满然后被过滤成空 —— 例如「图片」有 170 件自有、3 件开源已入库，
+ *   在开源已入库区搜东西会明明有货却一件都出不来。
+ *
+ * 无论走哪条路，返回前都按 origin 逐件过滤一遍。
+ */
+export async function searchAssetsInZone(params: {
+  index: TypeOriginIndex;
+  type: AssetType;
+  origin: MaterialOrigin;
+  q: string;
+  category?: string;
+  subtab?: string;
+  seriesId?: string;
+  page?: number;
+  pageSize?: number;
+  license?: LicenseFilter;
+}): Promise<SearchResult> {
+  const {
+    index,
+    type,
+    origin,
+    q,
+    category,
+    subtab,
+    seriesId,
+    license,
+  } = params;
+  const page = params.page || 1;
+  const pageSize = params.pageSize || 30;
+  const one = (extra: { category?: string; pageSize?: number }) =>
+    searchAssets({
+      q,
+      type,
+      license,
+      subtab,
+      seriesId,
+      origin,
+      page,
+      pageSize: extra.pageSize ?? pageSize,
+      category: extra.category,
+    });
+
+  if (category || seriesId || zoneOwnsWholeShelf(index, origin)) {
+    return one({ category });
+  }
+
+  const cats = zoneCategories(index, origin);
+  if (cats.length === 0) {
+    return { items: [], page, has_more: false, sources_queried: ["library"], total: 0 };
+  }
+  // 每个目录分到的配额。服务端 page_size 下限是 4，所以细分区会稍微多取一点，
+  // 多出来的部分留着显示不截断 —— 截断会让「加载更多」错位。
+  const per = Math.max(4, Math.ceil(pageSize / cats.length));
+  const parts = await Promise.all(
+    cats.map((c) =>
+      one({ category: c.key, pageSize: per }).catch(() => null),
+    ),
+  );
+  const items: Asset[] = [];
+  let hasMore = false;
+  for (const part of parts) {
+    if (!part) continue;
+    items.push(...part.items);
+    if (part.has_more) hasMore = true;
+  }
+  return {
+    items,
+    page,
+    has_more: hasMore,
+    sources_queried: ["library"],
+    total: zoneTotal(index, origin),
+  };
 }
 
 // 「开源专区」专用：直查实时上游开源素材网关（openverse/pexels/pixabay/polyhaven/

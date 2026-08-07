@@ -1,113 +1,167 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useUI } from "@oceanleo/ui/i18n";
-import { AssetType, TYPE_LABELS, TYPE_ORDER } from "@/lib/assets";
 import {
-  OPEN_SEARCH_TYPES,
-  SERIES_TYPES,
-  type TypeView,
+  AssetType,
+  loadTypeOriginIndex,
+  TYPE_LABELS,
+  TYPE_ORDER,
+  zoneTotal,
+} from "@/lib/assets";
+import {
+  defaultZone,
+  parseZone,
+  TYPE_ZONES,
   typePageHref,
+  ZONE_LABELS,
+  ZONE_LIVE_UNAVAILABLE_NOTE,
+  ZONE_NOTES,
+  zoneIsUsable,
+  zoneOrigin,
+  type TypeZone,
 } from "@/lib/type-page-views";
 import { OpenZone } from "@/components/OpenZone";
-import { SeriesZone } from "@/components/SeriesZone";
 
-// 左栏是**纯素材类型轴**，「开源」和「成套」都不是素材类型：
-// 前者是「现搜全网上游」这个**功能**，后者是素材的一种**形态**。两者原先各占左栏一格
-// （开源专区 / 成套素材），现在降级成类型页顶部的开关 —— 你先选「找什么素材」，
-// 再在这一类里面选「从哪儿找 / 要不要整套」。
+// 类型页右侧的三分区开关。三格是同一条轴上的三个取值：
 //
-// 这一层刻意做成 AssetLibrary 的**外壳**而不是改 AssetLibrary：素材库那个组件是
-// A3 的面，也是本站最重的组件，包在外面就能加开关，不必动它一行。
+//   ① OceanLeo 自有        我们做的，在库里
+//   ② 开源专区（已入库）    别人做的，在库里
+//   ③ 实时搜索             别人做的，还不在库里
 //
-// 哪一类画哪个开关由 lib/type-page-views.ts 的两张白名单说了算（重定向路由也读同一份）。
-// 最要紧的一条纪律就在那两张表里：**没有上游就不画开关**。
+// 上一版是「本站素材 / 开源搜索 / 成套」：第一格顶着「本站/自有」的名字，装的却是
+// 已囤进本站的**开源件**（名实不符，这是操作员点名要改的）；第三格「成套」讲的是
+// 形态不是来源，跟前两格不是同一种东西。判据与词汇表都搬进 lib/type-page-views.ts。
+//
+// **三格永远画出来。** 操作员这次不满的根源就是「看不出到底有没有东西」——
+// 藏掉一格，用户分不清是没货还是页面没做。所以：没货就把件数写成 0 并画空态；
+// 上游不支持这一类时，③ 那格照画，只是点不动并写明为什么。
+//
+// 这一层仍然是 AssetLibrary 的**外壳**而不是改 AssetLibrary：①② 都是同一个素材库，
+// 只是来源筛选不同，由 AssetLibrary 自己从 ?view= 读分区（它本来就在读 useSearchParams）。
 
 function normType(t: string | null): AssetType {
   return t && TYPE_ORDER.includes(t as AssetType) ? (t as AssetType) : "image";
 }
 
-// 手敲一个这一类不支持的 view（?type=font&view=open）要落回本站素材，
-// 而不是渲染一个搜不到东西的面。
-function normView(v: string | null, type: AssetType): TypeView {
-  if (v === "open" && OPEN_SEARCH_TYPES.includes(type)) return "open";
-  if (v === "series" && SERIES_TYPES.includes(type)) return "series";
-  return "library";
-}
+type ZoneCounts = { owned: number; stocked: number } | null;
 
 export function TypePageChrome({ children }: { children: ReactNode }) {
   const tt = useUI();
   const search = useSearchParams();
   const type = normType(search.get("type"));
   const cat = search.get("cat");
-  const view = normView(search.get("view"), type);
   const typeName = tt(TYPE_LABELS[type]);
 
-  const tabs: { view: TypeView; label: string; note: string }[] = [
-    {
-      view: "library",
-      label: tt("本站素材"),
-      note: tt("本站已囤到自有存储的「{type}」原件，可直接下载商用。", { type: typeName }),
-    },
-  ];
-  if (OPEN_SEARCH_TYPES.includes(type)) {
-    tabs.push({
-      view: "open",
-      label: tt("开源搜索"),
-      note: tt(
-        "现搜全网开源可商用「{type}」（Openverse / Pexels / Pixabay / Poly Haven / Freesound 等）。这些素材来自开源社区，不在本站库里。",
-        { type: typeName },
-      ),
-    });
-  }
-  if (SERIES_TYPES.includes(type)) {
-    tabs.push({
-      view: "series",
-      label: tt("成套"),
-      note: tt("风格统一、成组配套的「{type}」，整套取用不违和（每套均已人工逐件过目）。", {
-        type: typeName,
-      }),
-    });
-  }
+  // 页签上的件数。数字全部来自服务端每个目录报的 total（见 loadTypeOriginIndex），
+  // 不是前端数出来的。拿到之前页签不显示数字，而不是先显示一个 0 再跳。
+  const [counts, setCounts] = useState<ZoneCounts>(null);
+  useEffect(() => {
+    let alive = true;
+    setCounts(null);
+    loadTypeOriginIndex(type)
+      .then((index) => {
+        if (!alive) return;
+        setCounts({
+          owned: zoneTotal(index, "first-party"),
+          stocked: zoneTotal(index, "external"),
+        });
+      })
+      .catch(() => {
+        /* 网关不可用：页签不显示件数，内容区自己报错 */
+      });
+    return () => {
+      alive = false;
+    };
+  }, [type]);
 
-  // 这一类既没有上游也没有成套 —— **一个开关都不画**，页面就是纯粹的素材库。
-  if (tabs.length === 1) return <>{children}</>;
+  const requested = parseZone(search.get("view"), type);
+  // 没写 ?view= 是左栏点进来的落地态：落到这一类真有货的那一区，
+  // 但三个页签一个不少（见 defaultZone 的注释）。
+  const zone: TypeZone =
+    requested ?? (counts ? defaultZone(type, counts) : "owned");
 
-  const active = tabs.find((t) => t.view === view) ?? tabs[0];
+  const countOf = (z: TypeZone): number | null => {
+    if (!counts) return null;
+    if (z === "owned") return counts.owned;
+    if (z === "stocked") return counts.stocked;
+    return null; // 实时搜索没有「库里有几件」这回事
+  };
+
+  const activeNote = zoneIsUsable(type, zone)
+    ? tt(ZONE_NOTES[zone], { type: typeName })
+    : tt(ZONE_LIVE_UNAVAILABLE_NOTE, { type: typeName });
 
   return (
     <div>
       <div className="border-b border-zinc-200 bg-white">
         <div className="mx-auto max-w-6xl px-5 pt-5">
           <div className="flex flex-wrap items-center gap-1.5">
-            {tabs.map((t) => (
-              <Link
-                key={t.view}
-                href={typePageHref(type, t.view, cat)}
-                scroll={false}
-                aria-current={t.view === view ? "page" : undefined}
-                className={`rounded-lg px-3.5 py-1.5 text-sm font-medium transition ${
-                  t.view === view
-                    ? "bg-zinc-900 text-white"
-                    : "bg-white text-zinc-600 ring-1 ring-zinc-200 hover:bg-zinc-50 hover:text-zinc-900"
-                }`}
-              >
-                {t.label}
-              </Link>
-            ))}
+            {TYPE_ZONES.map((z) => {
+              const usable = zoneIsUsable(type, z);
+              const active = z === zone;
+              const n = countOf(z);
+              const label = tt(ZONE_LABELS[z]);
+              const body = (
+                <>
+                  {label}
+                  {n !== null && (
+                    <span
+                      className={`ml-1.5 tabular-nums text-xs ${
+                        active
+                          ? "text-white/70"
+                          : n === 0
+                            ? "text-zinc-400"
+                            : "text-zinc-500"
+                      }`}
+                    >
+                      {n.toLocaleString("en-US")}
+                    </span>
+                  )}
+                </>
+              );
+              const shape = "rounded-lg px-3.5 py-1.5 text-sm font-medium transition";
+              if (!usable) {
+                // 画出来，但点不动 —— 这一类没有可实时搜索的上游，
+                // 给一个点下去永远空的搜索框比不给更糟。
+                return (
+                  <span
+                    key={z}
+                    aria-disabled="true"
+                    title={tt(ZONE_LIVE_UNAVAILABLE_NOTE, { type: typeName })}
+                    className={`${shape} cursor-not-allowed bg-zinc-50 text-zinc-400 ring-1 ring-zinc-200`}
+                  >
+                    {body}
+                  </span>
+                );
+              }
+              return (
+                <Link
+                  key={z}
+                  href={typePageHref(type, z, { cat })}
+                  scroll={false}
+                  aria-current={active ? "page" : undefined}
+                  className={`${shape} ${
+                    active
+                      ? "bg-zinc-900 text-white"
+                      : "bg-white text-zinc-600 ring-1 ring-zinc-200 hover:bg-zinc-50 hover:text-zinc-900"
+                  }`}
+                >
+                  {body}
+                </Link>
+              );
+            })}
           </div>
-          <p className="pb-3 pt-2 text-xs text-zinc-500">{active.note}</p>
+          <p className="pb-3 pt-2 text-xs text-zinc-500">{activeNote}</p>
         </div>
       </div>
 
       {/* key=type：换类型就是换一个全新的浏览上下文，重建组件比在 effect 里逐个
           reset 干净，也不会短暂混用上一类型的搜索词与结果。 */}
-      {view === "open" ? (
+      {zoneOrigin(zone) === null ? (
         <OpenZone key={type} lockType={type} />
-      ) : view === "series" ? (
-        <SeriesZone key={type} lockType={type} />
       ) : (
         children
       )}
