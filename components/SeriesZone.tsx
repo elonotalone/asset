@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useUI } from "@oceanleo/ui/i18n";
 import {
   Asset,
+  AssetType,
   listCollectionIds,
   listSeries,
   removeFromCollection,
@@ -14,9 +15,13 @@ import {
 import { AssetCard } from "@/components/AssetCard";
 import { AssetDetail } from "@/components/AssetDetail";
 
-// 「成套素材」专区——一批风格统一、可整套浏览的开源素材（来自 svgrepo 同一 data_pack，
-// 每套均已人工逐张过目）。列表页展示成套封面卡片；点开进整套（series_id 过滤）。
-// 这些素材已囤到平台 OSS，属于自有库；与「开源专区」（实时上游）不同。
+// 一批风格统一、可整套浏览的素材（来自同一 data_pack，每套均已人工逐张过目）。
+// 列表展示成套封面卡片；点开进整套（series_id 过滤）。这些素材已囤到平台自有存储，
+// 与「开源搜索」（实时上游）不同。
+//
+// 它不再是左栏的一格：「成套」不是一个素材类型，而是素材的一种**形态**。现在它由
+// TypePageChrome 以 lockType 内嵌进类型页，只列本类型的成套 —— 库里真有成套数据的
+// 只有 ppt / vector / image 三类，其余类型的页面上根本不画这个开关。
 
 function CoverCollage({ covers }: { covers: string[] }) {
   const four = covers.slice(0, 4);
@@ -41,9 +46,10 @@ function CoverCollage({ covers }: { covers: string[] }) {
   );
 }
 
-export function SeriesZone() {
+export function SeriesZone({ lockType }: { lockType?: AssetType } = {}) {
   const tt = useUI();
   const loadFailedText = tt("加载失败");
+  const embedded = !!lockType;
   const [series, setSeries] = useState<Series[]>([]);
   const [loadingList, setLoadingList] = useState(true);
   const [listError, setListError] = useState("");
@@ -60,7 +66,8 @@ export function SeriesZone() {
 
   useEffect(() => {
     let alive = true;
-    listSeries()
+    // 内嵌时按类型窄查，让网关只回本类型的成套，而不是拉全量再在前端筛。
+    listSeries(lockType)
       .then((r) => {
         if (alive) setSeries(r.series || []);
       })
@@ -78,7 +85,7 @@ export function SeriesZone() {
     return () => {
       alive = false;
     };
-  }, [loadFailedText]);
+  }, [loadFailedText, lockType]);
 
   function openOne(s: Series) {
     setOpenSeries(s);
@@ -201,13 +208,16 @@ export function SeriesZone() {
 
   // —— 成套列表视图 ——
   return (
-    <div className="mx-auto max-w-6xl px-5 py-6 sm:py-8">
-      <header className="mb-5">
-        <h1 className="text-2xl font-semibold text-zinc-900">{tt("成套素材")}</h1>
-        <p className="mt-1 text-sm text-zinc-500">
-          {tt("风格统一、成组配套的开源素材集（每套均已人工筛选审阅）。点开任意一套，整套风格一致，直接取用不违和。")}
-        </p>
-      </header>
+    <div className={`mx-auto max-w-6xl px-5 ${embedded ? "py-5" : "py-6 sm:py-8"}`}>
+      {/* 内嵌进类型页时，「哪一类的成套」已由左栏格子和顶部开关说清，不再重复一遍。 */}
+      {!embedded && (
+        <header className="mb-5">
+          <h1 className="text-2xl font-semibold text-zinc-900">{tt("成套素材")}</h1>
+          <p className="mt-1 text-sm text-zinc-500">
+            {tt("风格统一、成组配套的开源素材集（每套均已人工筛选审阅）。点开任意一套，整套风格一致，直接取用不违和。")}
+          </p>
+        </header>
+      )}
 
       {listError && (
         <div className="mb-4 rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">

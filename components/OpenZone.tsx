@@ -16,10 +16,12 @@ import {
 import { AssetCard } from "@/components/AssetCard";
 import { AssetDetail } from "@/components/AssetDetail";
 
-// 「开源专区」——**唯一**能搜索到我们 OSS 之外内容的入口。直查实时上游开源素材网关
-// （openverse/pexels/pixabay/polyhaven/freesound/jamendo…），只展示可商用授权的结果。
-// 与其他左栏栏目（只查平台自有 OSS 素材）严格区分：这里的素材是「现搜现取」的开源库，
-// 不在我们的自有库里。
+// 直查实时上游开源素材网关（openverse/pexels/pixabay/polyhaven/freesound/jamendo…），
+// 只展示可商用授权的结果。这里的素材是「现搜现取」的开源库，**不在我们的自有库里**。
+//
+// 它不再是左栏的一格：「开源」不是一个素材类型，而是「从哪儿找」这个维度。现在它由
+// TypePageChrome 以 lockType 内嵌进类型页 —— 你先选类型，再在这一类里切到开源搜索。
+// 内嵌时不画自己的大标题和类型切换条（那两样由外层的开关承担），只留搜索与结果。
 
 function normOpenType(t: string | null): AssetType {
   return t && OPEN_SOURCE_TYPES.includes(t as AssetType)
@@ -38,11 +40,14 @@ type OpenSearchResult = {
   loadingMore: boolean;
 };
 
-export function OpenZone() {
+export function OpenZone({ lockType }: { lockType?: AssetType } = {}) {
   const tt = useUI();
   const loadFailedText = tt("加载失败");
   const search = useSearchParams();
-  const [type, setType] = useState<AssetType>(() => normOpenType(search.get("type")));
+  const embedded = !!lockType;
+  const [type, setType] = useState<AssetType>(
+    () => lockType ?? normOpenType(search.get("type")),
+  );
   const [query, setQuery] = useState("");
   const [input, setInput] = useState("");
   const [result, setResult] = useState<OpenSearchResult | null>(null);
@@ -184,34 +189,39 @@ export function OpenZone() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-5 py-6 sm:py-8">
-      <header className="mb-4">
-        <h1 className="text-2xl font-semibold text-zinc-900">{tt("开源专区")}</h1>
-        <p className="mt-1 text-sm text-zinc-500">
-          {tt("实时检索全网开源可商用素材（Openverse / Pexels / Pixabay / Poly Haven / Freesound / Jamendo 等），默认只展示可商用授权。这里的素材来自开源社区，不在平台自有素材库中。")}
-        </p>
-      </header>
+    <div className={`mx-auto max-w-6xl px-5 ${embedded ? "py-5" : "py-6 sm:py-8"}`}>
+      {/* 内嵌进类型页时，「搜的是哪一类」已由左栏格子和顶部开关说清，不再重复一遍。 */}
+      {!embedded && (
+        <>
+          <header className="mb-4">
+            <h1 className="text-2xl font-semibold text-zinc-900">{tt("开源素材")}</h1>
+            <p className="mt-1 text-sm text-zinc-500">
+              {tt("实时检索全网开源可商用素材（Openverse / Pexels / Pixabay / Poly Haven / Freesound / Jamendo 等），默认只展示可商用授权。这里的素材来自开源社区，不在平台自有素材库中。")}
+            </p>
+          </header>
 
-      {/* 类型切换（上游支持的类型） */}
-      <nav className="mb-3 flex flex-wrap gap-1.5">
-        {OPEN_SOURCE_TYPES.map((t) => (
-          <button
-            key={t}
-            onClick={() => {
-              setType(t);
-              setQuery("");
-              setInput("");
-            }}
-            className={`rounded-lg px-3 py-1.5 text-sm font-medium transition ${
-              t === type
-                ? "bg-zinc-900 text-white"
-                : "bg-white text-zinc-600 ring-1 ring-zinc-200 hover:bg-zinc-50 hover:text-zinc-900"
-            }`}
-          >
-            {OPEN_SOURCE_TYPE_LABELS[t] ? tt(OPEN_SOURCE_TYPE_LABELS[t]) : t}
-          </button>
-        ))}
-      </nav>
+          {/* 类型切换（上游支持的类型） */}
+          <nav className="mb-3 flex flex-wrap gap-1.5">
+            {OPEN_SOURCE_TYPES.map((t) => (
+              <button
+                key={t}
+                onClick={() => {
+                  setType(t);
+                  setQuery("");
+                  setInput("");
+                }}
+                className={`rounded-lg px-3 py-1.5 text-sm font-medium transition ${
+                  t === type
+                    ? "bg-zinc-900 text-white"
+                    : "bg-white text-zinc-600 ring-1 ring-zinc-200 hover:bg-zinc-50 hover:text-zinc-900"
+                }`}
+              >
+                {OPEN_SOURCE_TYPE_LABELS[t] ? tt(OPEN_SOURCE_TYPE_LABELS[t]) : t}
+              </button>
+            ))}
+          </nav>
+        </>
+      )}
 
       {/* 搜索 */}
       <form onSubmit={submitSearch} className="mb-5 flex gap-2">
