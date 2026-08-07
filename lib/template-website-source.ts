@@ -160,6 +160,18 @@ function headSub(section: SectionIR, ctx: EmitCtx): string {
  * `stats[0]`，实测 200 个模板里带角标的 143 节，其中 110 节所在站点**已经有** stats 节，
  * 补节会变成同一个数字在站上出现两次。
  */
+/**
+ * `sigFsPanel` 降级成 `about` 时，它的整屏副标题（一整句介绍）原先无处可去 ——
+ * 该节没有 `body` 槽位，发射出来的 `about.body` 是**空数组**，副标题就此消失。
+ * 空的时候拿副标题当正文第一段接住；`about` 自己有 `body` 时按原样走，不受影响。
+ */
+function aboutBody(section: SectionIR, ctx: EmitCtx): string[] {
+  const body = listOf(section.slots, "body", ctx.lang).slice(0, LIMITS.aboutListMax);
+  if (body.length) return body;
+  const subtitle = headSub(section, ctx);
+  return subtitle ? [subtitle] : body;
+}
+
 function aboutBullets(section: SectionIR, ctx: EmitCtx): string[] {
   const list = listOf(section.slots, "highlights", ctx.lang);
   const value = txt(section.slots, "badgeValue", ctx.lang);
@@ -231,7 +243,7 @@ const BUILDERS: Record<WebsiteSectionType, ContentBuilder> = {
   about: (s, ctx) => ({
     eyebrow: txt(s.slots, "eyebrow", ctx.lang),
     title: headTitle(s, ctx),
-    body: listOf(s.slots, "body", ctx.lang).slice(0, LIMITS.aboutListMax),
+    body: aboutBody(s, ctx),
     bullets: aboutBullets(s, ctx),
     image: imageOf(s.slots, ctx.keyword, headTitle(s, ctx)),
   }),
@@ -403,7 +415,9 @@ const BUILDERS: Record<WebsiteSectionType, ContentBuilder> = {
     primaryHref: href(s.slots, "ctaLabel", "/contact"),
     secondaryLabel: txt(s.slots, "secondaryCta", ctx.lang),
     secondaryHref: findSlot(s.slots, "secondaryCta") ? href(s.slots, "secondaryCta", "/contact") : "",
-    note: txt(s.slots, "phone", ctx.lang),
+    // `sigCodeWindow` 降级成 `cta` 时代码窗标题栏上那行品牌名原先无处可去；
+    // 该节没有 `phone` 槽位，`note` 发射出来是空串，正好原样接住它。
+    note: txt(s.slots, "phone", ctx.lang) || txt(s.slots, "codeBrand", ctx.lang),
     image: NO_IMAGE,
   }),
 
