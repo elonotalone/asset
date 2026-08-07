@@ -4,6 +4,8 @@
 // Browsing is PUBLIC (no token needed), so unlike other sites' gateway clients
 // these are unauthenticated GETs. The gateway holds every source key.
 import { accessToken } from "@oceanleo/ui/lib/auth";
+import { assetPreviewUrl } from "@oceanleo/ui/lib";
+import { workspaceTemplatePreviewHref } from "@oceanleo/ui/shell";
 
 const GATEWAY =
   process.env.NEXT_PUBLIC_GATEWAY_URL || "https://api.oceanleo.com";
@@ -343,15 +345,90 @@ export const PPT_INDUSTRIES: CategorySub[] = [
 ];
 
 // ---------------------------------------------------------------------------
-// 设计模板专区（design-templates zone）
+// 平面设计成品的类型轴
 // ---------------------------------------------------------------------------
-// 这是一个「先把筛选骨架立起来、暂无素材」的专区：左侧栏单独一个入口，主区渲染
-// 「渠道 / 物料 / 行业」三栏筛选 + 空态（即将上线）。它不调用素材网关，所以切到
-// 这里永远是瞬时的——也顺带不会触发实时上游搜索的慢路径。
+// 左栏的判准是「一个名称 = 一个素材类型」。manifest 里那 684 件成品带的 `material`
+// 是**尺寸规格**（方形海报 / 竖版海报 / 横版海报…），粒度比「素材类型」细一档：
+// 三种海报是同一个素材类型的三个开本，不该在左栏各占一格。所以这里把 23 个 material
+// 归到 10 个素材类型上，material 降级成类型页内部的二级筛选。
+//
+// 硬约束：`DESIGN_TYPE_MATERIALS` 的并集必须**恰好等于** manifest 里出现过的全部
+// material，既不漏也不重——漏一个就有素材在左栏里无处可去，重一个就会在两格里各出现
+// 一次。`designTypeOf()` 对未登记的 material 返回 null，宁可让它落空也不猜。
+
+export type DesignAssetType =
+  | "poster"
+  | "cover"
+  | "card"
+  | "qrcode"
+  | "product_shot"
+  | "resume"
+  | "logo"
+  | "avatar"
+  | "emoji_pack"
+  | "wallpaper";
+
+export const DESIGN_TYPE_ORDER: DesignAssetType[] = [
+  "poster",
+  "cover",
+  "card",
+  "qrcode",
+  "product_shot",
+  "resume",
+  "logo",
+  "avatar",
+  "emoji_pack",
+  "wallpaper",
+];
+
+export const DESIGN_TYPE_LABELS: Record<DesignAssetType, string> = {
+  poster: "海报",
+  cover: "封面",
+  card: "卡证",
+  qrcode: "二维码",
+  product_shot: "商品主图",
+  resume: "简历",
+  logo: "LOGO",
+  avatar: "头像",
+  emoji_pack: "表情包",
+  wallpaper: "壁纸",
+};
+
+// 类型 → 它涵盖的 manifest `material` 值（= 类型页里的二级筛选项）。
+export const DESIGN_TYPE_MATERIALS: Record<DesignAssetType, string[]> = {
+  poster: ["方形海报", "竖版海报", "横版海报", "长图", "易拉宝", "展板"],
+  cover: ["小红书封面", "视频封面", "书籍封面", "公众号首图"],
+  card: ["名片", "邀请函", "红包封面", "工作证", "门票", "桌牌"],
+  qrcode: ["二维码"],
+  product_shot: ["商品主图"],
+  resume: ["简历"],
+  logo: ["LOGO"],
+  avatar: ["头像"],
+  emoji_pack: ["表情包"],
+  wallpaper: ["壁纸"],
+};
+
+const DESIGN_MATERIAL_TO_TYPE: Record<string, DesignAssetType> = Object.fromEntries(
+  DESIGN_TYPE_ORDER.flatMap((t) => DESIGN_TYPE_MATERIALS[t].map((m) => [m, t])),
+);
+
+export function designTypeOf(material: string): DesignAssetType | null {
+  return DESIGN_MATERIAL_TO_TYPE[material] ?? null;
+}
+
+export function isDesignAssetType(v: string): v is DesignAssetType {
+  return v in DESIGN_TYPE_LABELS;
+}
+
+// ---------------------------------------------------------------------------
+// 设计模板筛选维度（渠道 / 物料 / 行业）
+// ---------------------------------------------------------------------------
+// 「渠道 / 行业」两条维度是所有平面设计类型页共用的横向筛选。第三条「物料」不再
+// 从这里取全量清单——它现在由 `DESIGN_TYPE_MATERIALS` 按当前类型给出，只列这一格
+// 里真实存在的开本，避免出现点了没结果的死选项。数据来自 manifest，不走素材网关。
 //
 // 取材自稿定式模板库的筛选维度，但**重新挑选并排序**（不照搬每一项命名）：高频、
-// 通用、对国内创作者真正有意义的项排在前面，长尾项收口。每一项即便暂时没有对应图片
-// 也保留占位，待后续素材补齐。
+// 通用、对国内创作者真正有意义的项排在前面，长尾项收口。
 
 export interface FilterGroup {
   /** URL / 状态用的英文 key */
@@ -899,4 +976,252 @@ export function removeFromCollection(id: string): Promise<{ ok: boolean; id: str
     `/v1/assets/collection?id=${encodeURIComponent(id)}`,
     { method: "DELETE" },
   );
+}
+
+// ---------------------------------------------------------------------------
+// 成品货架接入（`template_materials`，与上面的原料库 `platform_assets` 是两张表）
+// ---------------------------------------------------------------------------
+// 上面所有函数走 /v1/assets/*，读的是原料库：图标、照片、字体、音频，只有裸文件，
+// 没有 artifact 身份，打不开也编不动。本节走 /v1/template-materials，读的是成品库：
+// 文档、表格、海报、PDF 这类**打得开、编得动**的成品。
+//
+// 素材站自己在成品库里一件都没有（site_key='asset' 为 0 行）。所以货架展示的全部是
+// **别的站已发布的成品**，每一件都必须在界面上标明它属于哪个站——这不是装饰，
+// 是「编辑」按钮要跳去哪个站的依据。
+//
+// 为什么不用 /v1/library/search：① 它没有 siteKey 参数（只有 originSiteKey），
+// 且不区分成品与用户产物，全目录 59,512 行；② 宽查询会撞上网关约 8 秒的硬闸稳定 503
+// （`?role=template` 实测 503/8.06s）。/v1/template-materials 按站查实测 0.37s，
+// 且行数与库里 published 计数逐站对得上。
+
+/** 成品库一件已发布成品。字段名对齐 `/v1/template-materials` 回包。 */
+export interface ShelfArtifact {
+  /** 目录键，形如 `<appId>-<n>`，只保证同 app 内唯一。 */
+  id: string;
+  title: string;
+  summary: string;
+  tags: string[];
+  /** artifact 身份。深链按它定位，**不是** `id`（`id` 跨 app 会撞车）。 */
+  artifactId: string;
+  /** 成品库的 16 种类型之一，与原料库的 `AssetType` 是两套词汇表。 */
+  artifactType: string;
+  /** 归属站，界面必须显示。 */
+  siteKey: string;
+  /** 归属 app，「编辑」深链的落点锚点。 */
+  appId: string;
+  /** 裸 OSS key（`<category>/<slug>`）或绝对 https URL。 */
+  previewKey: string;
+  width: number;
+  height: number;
+}
+
+/**
+ * 有**已发布**编辑器的 artifact 类型，共 6 种。
+ *
+ * 权威在后端：`public_editable_catalog/pack.py:38-45` 的 `RELEASED_EDITOR_FEATURE_IDS`
+ * 列出 6 个 feature id，各自的 artifact 类型在 `typed_artifact_models.py` 的
+ * `ADVANCED_CAPABILITY_CONTRACT` 里：spreadsheet_editing→grid、image_editing→
+ * single_file_image、pdf_editing→pdf、chart_editing→chart、geo_map_editing→geo_map、
+ * interactive_doc_editing→interactive_doc。
+ *
+ * `_EDITOR_CAPABILITIES` 声明了 16 种类型的编辑能力，但**声明 ≠ 已发布**。
+ * `composite_image` 与 `vector_image` 绑的是 `design_canvas`，那个 feature 不在已发布
+ * 名单里，所以这两类只给预览。不在本表里的类型**一律不画编辑按钮**——画一颗点了
+ * 没有编辑器接住的按钮，比不画更糟。
+ */
+export const RELEASED_EDITOR_ARTIFACT_TYPES: readonly string[] = [
+  "grid",
+  "single_file_image",
+  "pdf",
+  "chart",
+  "geo_map",
+  "interactive_doc",
+];
+
+export function artifactTypeHasEditor(artifactType: string): boolean {
+  return RELEASED_EDITOR_ARTIFACT_TYPES.includes(artifactType);
+}
+
+/** 成品库 16 种 `artifact_type` 的中文名。与 `TYPE_LABELS`（原料库）**不是**一套。 */
+export const SHELF_ARTIFACT_TYPE_LABELS: Record<string, string> = {
+  document: "文档",
+  grid: "表格",
+  deck: "幻灯片",
+  pdf: "PDF",
+  website: "网站",
+  single_file_image: "单文件图片",
+  composite_image: "复合图片",
+  vector_image: "矢量图片",
+  chart: "图表",
+  model_3d: "3D 模型",
+  workflow: "工作流",
+  audio: "音频",
+  video: "视频",
+  game: "游戏",
+  geo_map: "地图",
+  interactive_doc: "交互文档",
+};
+
+export function shelfArtifactTypeLabel(artifactType: string): string {
+  return SHELF_ARTIFACT_TYPE_LABELS[artifactType] || artifactType;
+}
+
+/**
+ * 有成品的 33 个站。`host` 是子域名前缀。
+ *
+ * 权威是门户仓的 `oceanleo/lib/sites.tsx` 的 `SITES` 数组（`href` 字段），校验脚本
+ * `scripts/oceanleo-sites-check.sh`。这里是一份只读镜像，因为素材站 import 不到门户仓。
+ *
+ * ⚠️ **`host` 不能按 `<siteKey>.oceanleo.com` 硬拼**：35 个站里有 3 个不符合这个规律
+ * （`ecommerce`→`e-commerce`、`ppt`→`slide`、`threed`→`3d`）。这三个站合计 412 件
+ * 已发布成品，按规律拼会给它们全部生成打不开的编辑链接。
+ *
+ * `oceanleo` 是门户自己（87 件成品），它不在 `SITES` 数组里（门户不出现在自己的导航
+ * 里），origin 是无子域的 `oceanleo.com`，故 `host` 留空。
+ */
+export const SHELF_SITES: readonly { key: string; label: string; host: string }[] = [
+  { key: "med", label: "LeoMed 体检解读", host: "med" },
+  { key: "design", label: "LeoDesign 设计", host: "design" },
+  { key: "law", label: "LeoLaw 法律", host: "law" },
+  { key: "study", label: "LeoStudy 学习", host: "study" },
+  { key: "image", label: "LeoImage 图片", host: "image" },
+  { key: "threed", label: "Leo3D 三维", host: "3d" },
+  { key: "prompt", label: "LeoPrompt 提示词", host: "prompt" },
+  { key: "logo", label: "LeoLogo 标志", host: "logo" },
+  { key: "paper", label: "LeoPaper 论文", host: "paper" },
+  { key: "script", label: "LeoScript 剧本", host: "script" },
+  { key: "website", label: "Website 建站", host: "website" },
+  { key: "novel", label: "LeoNovel 小说", host: "novel" },
+  { key: "word", label: "LeoDoc 文档", host: "word" },
+  { key: "converter", label: "LeoConvert 转换", host: "converter" },
+  { key: "notebook", label: "LeoNote 笔记", host: "notebook" },
+  { key: "ecommerce", label: "LeoStudio 电商", host: "e-commerce" },
+  { key: "travel", label: "LeoTravel 旅行", host: "travel" },
+  { key: "aihuman", label: "LeoHuman 数字人", host: "aihuman" },
+  { key: "resume", label: "LeoResume 简历", host: "resume" },
+  { key: "edu", label: "LeoEdu 教育", host: "edu" },
+  { key: "oceanleo", label: "OceanLeo 门户", host: "" },
+  { key: "interior", label: "LeoInterior 室内", host: "interior" },
+  { key: "music", label: "LeoMusic 音乐", host: "music" },
+  { key: "make", label: "LeoMake 制作", host: "make" },
+  { key: "chat", label: "LeoChat 对话", host: "chat" },
+  { key: "ppt", label: "LeoSlides 幻灯片", host: "slide" },
+  { key: "meeting", label: "LeoMeeting 会议", host: "meeting" },
+  { key: "video", label: "LeoVideo 视频", host: "video" },
+  { key: "search", label: "LeoSearch 搜索", host: "search" },
+  { key: "finance", label: "LeoFinance 财务", host: "finance" },
+  { key: "excel", label: "LeoSheet 表格", host: "excel" },
+  { key: "bizdev", label: "LeoBizDev 商务", host: "bizdev" },
+  { key: "game", label: "LeoPlay 游戏", host: "game" },
+];
+
+const SHELF_SITE_BY_KEY = new Map(SHELF_SITES.map((s) => [s.key, s]));
+
+export function shelfSiteLabel(siteKey: string): string {
+  return SHELF_SITE_BY_KEY.get(siteKey)?.label || siteKey;
+}
+
+/**
+ * 归属站的 origin。名册里没有的站返回 ""，调用方据此**不画**编辑按钮——
+ * 猜一个 origin 出来只会得到一颗点开是 404 的按钮。
+ */
+export function shelfSiteOrigin(siteKey: string): string {
+  const site = SHELF_SITE_BY_KEY.get(siteKey);
+  if (!site) return "";
+  return site.host
+    ? `https://${site.host}.oceanleo.com`
+    : "https://oceanleo.com";
+}
+
+/** 预览图直链。`previewKey` 已是绝对 https URL 时原样透传。 */
+export function shelfPreviewImageUrl(item: ShelfArtifact): string {
+  return item.previewKey ? assetPreviewUrl(item.previewKey) : "";
+}
+
+/**
+ * 「编辑」的跨站落点。
+ *
+ * query 形状**不自己拼**，交给共享包的 `workspaceTemplatePreviewHref(appId, artifactId)`
+ * ——它是这条深链的唯一事实源，键名将来改了我们自动跟上。它产出的是站内路径
+ * （`/workspace?…`），素材站要跳的是**别的站**，所以在前面接上归属站的 origin。
+ *
+ * 归属站或归属 app 缺一，就返回 ""：没有 app 锚点的预览链接落不了地
+ * （共享包自己也会退回目录并告警），宁可不画这颗按钮。
+ */
+export function shelfEditHref(item: ShelfArtifact): string {
+  const origin = shelfSiteOrigin(item.siteKey);
+  if (!origin || !item.appId || !item.artifactId) return "";
+  return `${origin}${workspaceTemplatePreviewHref(item.appId, item.artifactId)}`;
+}
+
+const SHELF_PREVIEW_KEY = /^[A-Za-z0-9][A-Za-z0-9._/-]*$/;
+
+// 预览 key 是目录行里唯一能变成任意图片请求的字段，照共享包 `safeTemplatePreviewKey`
+// 的口径收紧：只收裸 OSS key 或绝对 https URL，不收 http:，不收 `..`。
+function safeShelfPreviewKey(raw: unknown): string {
+  const value = typeof raw === "string" ? raw.trim() : "";
+  if (!value) return "";
+  if (/^[a-z][a-z0-9+.-]*:/i.test(value)) {
+    try {
+      return new URL(value).protocol === "https:" ? value : "";
+    } catch {
+      return "";
+    }
+  }
+  return SHELF_PREVIEW_KEY.test(value) && !value.includes("..") ? value : "";
+}
+
+function toShelfArtifact(raw: Record<string, unknown>): ShelfArtifact | null {
+  const id = typeof raw.id === "string" ? raw.id.trim() : "";
+  const artifactId =
+    typeof raw.artifactId === "string" ? raw.artifactId.trim() : "";
+  const artifactType =
+    typeof raw.artifactType === "string" ? raw.artifactType.trim() : "";
+  const siteKey = typeof raw.siteKey === "string" ? raw.siteKey.trim() : "";
+  // 归属 app 缺失的行直接丢：它撑不起「编辑」按钮，也说不清自己属于哪个 app。
+  const appId =
+    typeof raw.primaryAppId === "string" && raw.primaryAppId.trim()
+      ? raw.primaryAppId.trim()
+      : typeof raw.appId === "string"
+        ? raw.appId.trim()
+        : "";
+  if (!id || !artifactId || !artifactType || !siteKey || !appId) return null;
+  const size = (v: unknown) => {
+    const n = typeof v === "number" ? v : Number(v);
+    return Number.isFinite(n) && n > 0 ? Math.floor(n) : 0;
+  };
+  return {
+    id,
+    title: typeof raw.title === "string" ? raw.title : "",
+    summary: typeof raw.summary === "string" ? raw.summary : "",
+    tags: Array.isArray(raw.tags)
+      ? raw.tags.filter((t): t is string => typeof t === "string")
+      : [],
+    artifactId,
+    artifactType,
+    siteKey,
+    appId,
+    previewKey: safeShelfPreviewKey(raw.previewUrl),
+    width: size(raw.width),
+    height: size(raw.height),
+  };
+}
+
+/**
+ * 读某个站的已发布成品。
+ *
+ * **必须带 `siteKey`**：不带的话网关按 1,000 行截断（实测只覆盖到 11 个站），
+ * 用户会以为别的站没有成品。按站查实测 0.37 s，且行数与库里逐站 published 计数一致。
+ */
+export async function listShelfArtifacts(
+  siteKey: string,
+): Promise<ShelfArtifact[]> {
+  const data = await getJson<{ items?: unknown[] }>(
+    `/v1/template-materials?siteKey=${encodeURIComponent(siteKey)}`,
+  );
+  const rows = Array.isArray(data.items) ? data.items : [];
+  return rows
+    .filter((r): r is Record<string, unknown> => !!r && typeof r === "object")
+    .map(toShelfArtifact)
+    .filter((r): r is ShelfArtifact => r !== null);
 }
