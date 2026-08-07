@@ -26,17 +26,6 @@ function IconLicense() {
   );
 }
 
-function IconOverview() {
-  return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
-      <rect x="3" y="3" width="8" height="8" rx="2" />
-      <rect x="13" y="3" width="8" height="8" rx="2" />
-      <rect x="3" y="13" width="8" height="8" rx="2" />
-      <rect x="13" y="13" width="8" height="8" rx="2" />
-    </svg>
-  );
-}
-
 function IconBookmark() {
   return (
     <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -173,12 +162,6 @@ function SiteShellInner({ children }: { children: ReactNode }) {
   const navGroups: ShellNavGroup[] = [
     {
       items: [
-        {
-          label: tt("素材总览"),
-          icon: <IconOverview />,
-          href: "/materials",
-          match: (p) => p.startsWith("/materials"),
-        },
         {
           label: tt("开源专区"),
           icon: <IconOpenSource />,
