@@ -171,6 +171,17 @@ export type SectionKind =
 //
 // 中间层的做法：子类声明「这门生意是什么业态」，家族声明「我服务哪些业态」。
 // 新增子类只改一处（SUB_ARCHETYPES），新增家族也只改一处（serves）。
+//
+// 写 serves 的时候必须记住一件事：**家族的 label 会原样印在卡片副标题上**
+// （TemplateThumb.tsx 的「多页 · {label}」），所以 label 本身就是相容性的一部分。
+// 21 个家族分两类：
+//  - 名字说的是站型或风格（企业官网 / 品牌商城 / 作品工作室 / 创意机构 / 极简单品 /
+//    杂志编辑 / 霓虹科技 / 全屏叙事 / 便当格栅 / 粗野主义）—— 印在谁的卡片上都不算错，
+//    可以服务较宽的业态；
+//  - 名字说的是行业（餐饮美食 / 医疗健康 / 教育培训 / 文旅酒店 / 专业事务所 / 制造工业 /
+//    农业环保 / 汽车服务 / 婚庆摄影 / 物流网络 / 医药健康）—— 只服务本行当的业态。
+//    「搬家公司 · 多页 · 医疗健康」正是操作员当场看出来的那种错配，
+//    光把版式换对、名字还挂着别的行业，用户照样觉得配错了。
 
 export type Archetype =
   | "corporate-trust" // 企业形象与资质取信：要案例、资质、新闻
@@ -268,9 +279,10 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     // 六页齐全、案例＋资质＋新闻，是唯一一个几乎任何业态都不出错的通用站型，
     // 因此它服务面最宽 —— 这不是偷懒，是它本来的定位。
     serves: [
-      "corporate-trust", "pro-service", "industrial-supply", "logistics-net",
-      "learn-org", "agri-nature", "tech-product", "rental-lease", "vehicle",
-      "wellness-goods", "field-service", "care-clinic", "stay-travel",
+      "corporate-trust", "pro-service", "industrial-supply", "logistics-net", "learn-org",
+      "agri-nature", "tech-product", "rental-lease", "vehicle", "wellness-goods",
+      "field-service", "care-clinic", "stay-travel", "food-goods", "event-ceremony",
+      "retail-goods",
     ],
     pages: ["home", "about", "services", "cases", "news", "contact"],
     sections: {
@@ -286,10 +298,7 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     key: "agency",
     label: "创意机构",
     industries: ["media", "tech", "general", "business", "life"],
-    serves: [
-      "creative-work", "corporate-trust", "tech-product",
-      "event-ceremony", "lifestyle-brand", "pro-service", "field-service",
-    ],
+    serves: ["creative-work", "tech-product", "event-ceremony", "lifestyle-brand"],
     pages: ["home", "works", "services", "about", "contact"],
     sections: {
       home: ["hero", "gallery", "services", "marquee", "testimonials", "cta"],
@@ -304,8 +313,8 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     label: "品牌商城",
     industries: ["fashion", "home", "grocery", "general", "hardware", "food"],
     serves: [
-      "retail-goods", "lifestyle-brand", "food-goods",
-      "wellness-goods", "industrial-supply", "vehicle",
+      "retail-goods", "lifestyle-brand", "food-goods", "wellness-goods", "industrial-supply",
+      "vehicle", "agri-nature",
     ],
     pages: ["home", "products", "about", "news", "contact"],
     sections: {
@@ -320,7 +329,7 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     key: "restaurant",
     label: "餐饮美食",
     industries: ["food"],
-    serves: ["dine-in", "food-goods"],
+    serves: ["dine-in"],
     pages: ["home", "menu", "about", "contact"],
     sections: {
       home: ["hero", "menu", "about", "gallery", "testimonials", "cta"],
@@ -334,8 +343,8 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     label: "作品工作室",
     industries: ["life", "media", "fashion"],
     serves: [
-      "creative-work", "event-ceremony", "personal-page",
-      "lifestyle-brand", "field-service", "stay-travel",
+      "creative-work", "event-ceremony", "personal-page", "lifestyle-brand", "field-service",
+      "stay-travel", "rental-lease",
     ],
     pages: ["home", "works", "about", "contact"],
     sections: {
@@ -351,8 +360,8 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     industries: ["grocery", "fashion", "life", "org"],
     // 收窄的重点在这里：原本 industries 含 life，于是搬家公司/家庭保洁都能拿到
     // 「医疗健康」版式（操作员当场看出来的那个错配）。改成按业态服务后，
-    // 只有真正到院就诊的业态才会拿到它。
-    serves: ["care-clinic", "wellness-goods", "learn-org"],
+    // 只有真正到院就诊、以及卖药械的业态才会拿到它。
+    serves: ["care-clinic", "wellness-goods"],
     pages: ["home", "services", "team", "news", "contact"],
     sections: {
       home: ["hero", "features", "services", "team", "faq", "cta"],
@@ -366,7 +375,7 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     key: "education",
     label: "教育培训",
     industries: ["org", "general", "business", "tech"],
-    serves: ["learn-org", "pro-service", "tech-product", "corporate-trust"],
+    serves: ["learn-org"],
     pages: ["home", "services", "team", "cases", "contact"],
     sections: {
       home: ["hero", "about", "services", "stats", "cases", "cta"],
@@ -382,9 +391,9 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     industries: ["tech", "general", "business", "media", "org", "logistics", "hardware", "industry", "home"],
     // 三页、无行业腔调的纯风格站型，和 corporate 一样是宽服务面的兜底款。
     serves: [
-      "tech-product", "personal-page", "pro-service", "corporate-trust",
-      "retail-goods", "logistics-net", "industrial-supply", "rental-lease",
-      "care-clinic", "vehicle", "field-service",
+      "tech-product", "personal-page", "pro-service", "corporate-trust", "retail-goods",
+      "logistics-net", "industrial-supply", "rental-lease", "care-clinic", "vehicle",
+      "field-service", "learn-org", "dine-in", "food-goods",
     ],
     pages: ["home", "pricing", "contact"],
     sections: {
@@ -400,7 +409,7 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     key: "hotel-resort",
     label: "文旅酒店",
     industries: ["food"],
-    serves: ["stay-travel", "dine-in", "event-ceremony"],
+    serves: ["stay-travel", "dine-in"],
     pages: ["home", "gallery", "services", "about", "contact"],
     sections: {
       home: ["hero", "gallery", "features", "testimonials", "faq", "cta"],
@@ -415,7 +424,7 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     key: "legal-pro",
     label: "专业事务所",
     industries: ["business", "org"],
-    serves: ["pro-service", "corporate-trust", "learn-org", "rental-lease", "care-clinic"],
+    serves: ["pro-service", "corporate-trust", "learn-org", "care-clinic", "rental-lease"],
     pages: ["home", "cases", "team", "about", "contact"],
     sections: {
       home: ["pageHeader", "about", "cases", "team", "faq", "cta"],
@@ -461,9 +470,9 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     key: "auto-service",
     label: "汽车服务",
     industries: ["hardware", "life", "logistics"],
-    // 卡片副标题会原样显示「汽车服务」，所以它只服务真的和车有关的业态；
-    // 家庭保洁/搬家这类上门服务虽然结构上也吃「项目＋价格＋问答」，但名字对不上。
-    serves: ["vehicle", "rental-lease"],
+    // 行业名家族的典型例子：结构上「项目＋价格＋问答」对家庭保洁/搬家一样合适，
+    // 但卡片会印出「汽车服务」，所以它只服务真的和车有关的业态。
+    serves: ["vehicle"],
     pages: ["home", "services", "pricing", "about", "contact"],
     sections: {
       home: ["hero", "services", "process", "pricing", "faq", "cta"],
@@ -478,7 +487,7 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     key: "wedding-photo",
     label: "婚庆摄影",
     industries: ["life", "fashion", "media"],
-    serves: ["event-ceremony", "creative-work", "lifestyle-brand"],
+    serves: ["event-ceremony"],
     pages: ["home", "works", "services", "about", "contact"],
     sections: {
       home: ["gallery", "hero", "services", "testimonials", "cta"],
@@ -493,7 +502,7 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     key: "logistics-net",
     label: "物流网络",
     industries: ["logistics", "tech"],
-    serves: ["logistics-net", "industrial-supply", "tech-product", "rental-lease"],
+    serves: ["logistics-net", "industrial-supply", "tech-product"],
     pages: ["home", "services", "cases", "news", "contact"],
     sections: {
       home: ["hero", "stats", "process", "chart", "logos", "cta"],
@@ -508,7 +517,7 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     key: "pharma-care",
     label: "医药健康",
     industries: ["grocery", "org"],
-    serves: ["wellness-goods", "care-clinic", "agri-nature", "food-goods"],
+    serves: ["wellness-goods", "care-clinic"],
     pages: ["home", "products", "team", "news", "about", "contact"],
     sections: {
       home: ["hero", "features", "products", "team", "news", "cta"],
@@ -530,8 +539,8 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     label: "杂志编辑",
     industries: ["fashion", "media", "life", "grocery"],
     serves: [
-      "lifestyle-brand", "creative-work", "food-goods", "personal-page",
-      "stay-travel", "learn-org", "retail-goods", "dine-in",
+      "lifestyle-brand", "creative-work", "food-goods", "personal-page", "stay-travel",
+      "dine-in", "pro-service", "corporate-trust", "field-service",
     ],
     pages: ["home", "works", "about", "contact"],
     sections: {
@@ -570,8 +579,8 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     label: "全屏叙事",
     industries: ["food", "life", "industry"],
     serves: [
-      "stay-travel", "dine-in", "event-ceremony",
-      "lifestyle-brand", "agri-nature", "creative-work",
+      "stay-travel", "dine-in", "event-ceremony", "lifestyle-brand", "agri-nature",
+      "creative-work",
     ],
     pages: ["home", "about", "contact"],
     sections: {
@@ -587,8 +596,8 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     label: "便当格栅",
     industries: ["tech", "general", "home", "media"],
     serves: [
-      "tech-product", "retail-goods", "corporate-trust",
-      "personal-page", "wellness-goods", "field-service",
+      "tech-product", "retail-goods", "corporate-trust", "personal-page", "wellness-goods",
+      "field-service", "rental-lease", "learn-org", "pro-service",
     ],
     pages: ["home", "services", "about", "contact"],
     sections: {
@@ -604,7 +613,9 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     key: "brutalist",
     label: "粗野主义",
     industries: ["media", "general", "fashion"],
-    serves: ["creative-work", "lifestyle-brand", "personal-page", "retail-goods", "dine-in"],
+    serves: [
+      "creative-work", "lifestyle-brand", "personal-page", "retail-goods",
+    ],
     pages: ["home", "works", "services", "contact"],
     sections: {
       home: ["sigBrutalHero", "sigBrutalCards", "gallery", "sigStickerCta"],
@@ -688,7 +699,7 @@ export const SUB_ARCHETYPES: Record<string, Archetype[]> = {
   bridal: ["event-ceremony", "lifestyle-brand"],
   photography: ["creative-work", "event-ceremony"],
   cleaning: ["field-service", "corporate-trust"],
-  "car-care": ["vehicle", "field-service"],
+  "car-care": ["vehicle"],
   "photo-print": ["creative-work", "retail-goods"],
   // 操作员点名的那件：搬家只属于「上门到店服务」，不再蹭 life 里的医疗家族。
   moving: ["field-service"],

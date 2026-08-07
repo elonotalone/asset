@@ -29,7 +29,12 @@ const familiesForSub = dna.familiesForSub ?? null;
 function candidatesFor(subKey, industryKey) {
   if (resolveFamilies) {
     const r = resolveFamilies(subKey, industryKey);
-    return { keys: r.families.map((f) => f.key), via: r.via, toppedUp: r.toppedUp };
+    return {
+      keys: r.families.map((f) => f.key),
+      via: r.via,
+      toppedUp: r.toppedUp,
+      archetypes: r.archetypes,
+    };
   }
   if (familiesForSub) {
     return { keys: familiesForSub(subKey, industryKey).map((f) => f.key), via: "sub", toppedUp: [] };
@@ -55,6 +60,7 @@ for (const ind of INDUSTRIES) {
       variants: countForSub(sub.key),
       via: c.via,
       toppedUp: c.toppedUp,
+      archetypes: c.archetypes ?? [],
       candidates: c.keys,
     });
   }
@@ -117,7 +123,45 @@ for (const ind of INDUSTRIES) {
 }
 console.log(`候选集能区分子类的粗行业数\t${discriminating}/${INDUSTRIES.length}`);
 
+// 收窄候选集会让某些家族被用得更少甚至用不上 —— 那是「模板都长得差不多」的另一种坏法，
+// 所以把家族使用分布一并量出来。
+console.log("\n家族使用分布（500 个模板落到哪个家族）");
+const usage = new Map(LAYOUT_FAMILIES.map((f) => [f.key, 0]));
+for (const t of templates) usage.set(t.layoutKey, (usage.get(t.layoutKey) ?? 0) + 1);
+const sortedUsage = [...usage.entries()].sort((a, b) => b[1] - a[1]);
+for (const [key, n] of sortedUsage) {
+  console.log(`${key}\t${n}\t${((n / templates.length) * 100).toFixed(1)}%`);
+}
+console.log(`用不上的家族\t${sortedUsage.filter(([, n]) => n === 0).map(([k]) => k).join(",") || "无"}`);
+console.log(`最大占比\t${((sortedUsage[0][1] / templates.length) * 100).toFixed(1)}% (${sortedUsage[0][0]})`);
+
 const baselinePath = argOf("--baseline");
+const coveragePath = argOf("--coverage");
+if (coveragePath && baselinePath) {
+  const before = JSON.parse(readFileSync(baselinePath, "utf8"));
+  const beforeSubs = new Map(before.subs.map((s) => [s.subKey, s]));
+  const lines = [];
+  lines.push("# W1 候选集覆盖表 —— 全部 105 个子类，改前 / 改后");
+  lines.push("");
+  lines.push("由 `asset/tests/w1-layout-compat-report.mjs --coverage` 生成，**不要手改**。");
+  lines.push("");
+  lines.push("判据来源三档：`sub` = 按子类业态算出来（正路）；`industry` = 退到粗行业；`all` = 退到全集（最糟）。");
+  lines.push("");
+  lines.push("| 子类 | 粗行业 | 变体数 | 改前判据 | 改前候选数 | 改后判据 | 改后候选数 | 业态 | 改后候选家族 |");
+  lines.push("|---|---|---|---|---|---|---|---|---|");
+  for (const s of subs) {
+    const b = beforeSubs.get(s.subKey);
+    lines.push(
+      `| ${s.subLabel}（\`${s.subKey}\`） | \`${s.industryKey}\` | ${s.variants} | ` +
+        `\`${b ? b.via : "?"}\` | ${b ? b.candidates.length : "?"} | ` +
+        `\`${s.via}\` | ${s.candidates.length} | ` +
+        `${(s.archetypes ?? []).join(" + ") || "—"} | ${s.candidates.join(", ")} |`,
+    );
+  }
+  writeFileSync(coveragePath, lines.join("\n") + "\n");
+  console.log(`[w1-report] wrote ${coveragePath}`);
+}
+
 if (baselinePath) {
   const before = JSON.parse(readFileSync(baselinePath, "utf8"));
   const beforeBySlug = new Map(before.templates.map((t) => [t.slug, t]));
