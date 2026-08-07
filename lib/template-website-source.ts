@@ -890,8 +890,12 @@ export const RUNTIME_JS = String.raw`// OceanLeo website-source@1 runtime ——
     contact: function (c) {
       var form = h("form", { class: "form" }, [t("h3", null, c.formTitle)]);
       form.addEventListener("submit", function (ev) { ev.preventDefault(); });
-      ["nameLabel", "phoneLabel", "emailLabel"].forEach(function (k) {
-        add(form, h("label", null, [str(c[k]), h("input", { type: "text" }, null)]));
+      // 输入类型跟着字段走：电话给 tel（手机上弹数字键盘）、邮箱给 email（弹 @ 键盘并带浏览器校验）。
+      // 结构 IR 的 contact.fields[].inputType 实测 160/160 件都是 [text,tel,email,textarea]，
+      // 而这四格在接口 B 里是**定名字段**（nameLabel/phoneLabel/emailLabel/messageLabel），
+      // 类型由字段身份唯一确定，所以按字段写死即可，不需要往 content 里加新键。
+      [["nameLabel", "text"], ["phoneLabel", "tel"], ["emailLabel", "email"]].forEach(function (pair) {
+        add(form, h("label", null, [str(c[pair[0]]), h("input", { type: pair[1] }, null)]));
       });
       add(form, h("label", null, [str(c.messageLabel), h("textarea", { rows: "4" }, null)]));
       add(form, h("button", { class: "btn primary", type: "submit", text: c.submitLabel }));
