@@ -22,6 +22,7 @@ import {
 } from "@/lib/assets";
 import { AssetCard } from "@/components/AssetCard";
 import { AssetDetail } from "@/components/AssetDetail";
+import { ArtifactShelf } from "@/components/ArtifactShelf";
 
 // 左侧栏「素材类型」是唯一事实源：?type= 决定当前类型，?cat= 可直达该类型下某目录。
 const VALID_TYPES = new Set<AssetType>(TYPE_ORDER);
@@ -383,6 +384,10 @@ function AssetLibraryContent({
           />
         </section>
       )}
+      {/* 成品货架落位点：与上面那块「已接入耐久素材」同属素材库首页，只在没有
+          ?type= / ?cat= 的落地态出现——进了某个类型页用户是来找原件的，不该被
+          别站的成品打断。 */}
+      {showContextShelf && <ArtifactShelf />}
       <header className="mb-4">
         <h1 className="text-2xl font-semibold text-zinc-900">{tt(TYPE_LABELS[type])}</h1>
         <p className="mt-1 text-sm text-zinc-500">

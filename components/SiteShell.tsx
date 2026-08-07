@@ -6,6 +6,11 @@ import { useUI } from "@oceanleo/ui/i18n";
 import { AppShell, ShellNavGroup, ShellNavItem } from "@/components/AppShell";
 import { browserClient, getCredits, signOutEverywhere } from "@/lib/oceanleo-auth";
 import { AssetType, TYPE_LABELS, TYPE_ORDER } from "@/lib/assets";
+import {
+  DESIGN_TYPE_LABELS,
+  DESIGN_TYPE_ORDER,
+  type DesignAssetType,
+} from "@/lib/design-taxonomy";
 
 function LeoAssetLogo() {
   return (
@@ -34,57 +39,6 @@ function IconBookmark() {
   );
 }
 
-function IconTemplates() {
-  return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="3" width="7" height="9" rx="1" />
-      <rect x="14" y="3" width="7" height="5" rx="1" />
-      <rect x="14" y="12" width="7" height="9" rx="1" />
-      <rect x="3" y="16" width="7" height="5" rx="1" />
-    </svg>
-  );
-}
-
-function IconDesign() {
-  return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="3" width="7" height="7" rx="1.5" />
-      <rect x="14" y="3" width="7" height="7" rx="1.5" />
-      <rect x="3" y="14" width="7" height="7" rx="1.5" />
-      <rect x="14" y="14" width="7" height="7" rx="1.5" />
-    </svg>
-  );
-}
-
-function IconSparkle() {
-  return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 3l1.9 5.6L19.5 10l-5.6 1.4L12 17l-1.9-5.6L4.5 10l5.6-1.4z" />
-      <path d="M18.5 3.5l.6 1.7 1.7.6-1.7.6-.6 1.7-.6-1.7-1.7-.6 1.7-.6z" />
-    </svg>
-  );
-}
-
-function IconOpenSource() {
-  return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="9" />
-      <path d="M12 3a9 9 0 0 1 0 18M12 3a9 9 0 0 0 0 18M3 12h18" />
-    </svg>
-  );
-}
-
-function IconSeries() {
-  return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="3" width="7" height="7" rx="1.5" />
-      <rect x="14" y="3" width="7" height="7" rx="1.5" />
-      <rect x="3" y="14" width="7" height="7" rx="1.5" />
-      <path d="M14 17.5h7M17.5 14v7" />
-    </svg>
-  );
-}
-
 // 每个素材类别一个图标（左侧栏分区用）。
 function TypeIcon({ type }: { type: AssetType }) {
   const D: Record<AssetType, string> = {
@@ -103,6 +57,45 @@ function TypeIcon({ type }: { type: AssetType }) {
   return (
     <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
       <path d={D[type]} />
+    </svg>
+  );
+}
+
+// 平面设计成品的十个类型，以及网站 / 网页动效这两个来自代码常量的类型。
+function DesignTypeIcon({ type }: { type: DesignAssetType }) {
+  const D: Record<DesignAssetType, string> = {
+    poster: "M5 3h14v18H5zM8 7h8M8 11h8M8 15h5",
+    cover: "M4 4h16v16H4zM4 14l4-4 4 4 3-3 5 5",
+    card: "M3 6h18v12H3zM7 10h4M7 14h7M16 10h2",
+    qrcode: "M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2M18 14h2v2h-2M14 18h2v2h-2M18 18h2v2h-2",
+    product_shot: "M4 7l8-4 8 4v10l-8 4-8-4zM4 7l8 4 8-4M12 11v10",
+    resume: "M6 3h9l4 4v14H6zM15 3v4h4M9 12h7M9 16h7M9 8h3",
+    logo: "M12 3l7 4v7l-7 5-7-5V7zM12 8.5l3 1.7v3.4l-3 1.7-3-1.7v-3.4z",
+    avatar: "M12 12a4 4 0 100-8 4 4 0 000 8zM4.5 20a7.5 7.5 0 0115 0",
+    emoji_pack: "M12 21a9 9 0 100-18 9 9 0 000 18zM9 10h.01M15 10h.01M8.5 14.5a4.5 4.5 0 007 0",
+    wallpaper: "M3 5h18v14H3zM3 15l5-5 4 4 3-2 6 5",
+  };
+  return (
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <path d={D[type]} />
+    </svg>
+  );
+}
+
+function IconWebsite() {
+  return (
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="4" width="18" height="16" rx="2" />
+      <path d="M3 9h18M6.5 6.5h.01M9 6.5h.01" />
+    </svg>
+  );
+}
+
+function IconWebMotion() {
+  return (
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="4" width="18" height="16" rx="2" />
+      <path d="M3 15c3-4 5.5-4 8.5 0s5.5 4 9-0.5" />
     </svg>
   );
 }
@@ -147,65 +140,65 @@ function SiteShellInner({ children }: { children: ReactNode }) {
   const onLibrary = pathname === "/";
   const activeType = (search.get("type") as AssetType) || "image";
 
-  // 左侧栏「平台素材」分区：按素材类型浏览（图片/矢量图/贴纸/视频/3D/音频/字体）。
-  // 这些栏目**只**展示平台已囤到 OSS 的自有素材——用户在这里看不到、搜不到 OSS 之外
-  // 的内容。想找开源素材请用下面独立的「开源专区」。
+  // 左栏只有一条轴：**素材类型**。一个名称对应一个类型，没有任何「专区」。
+  //
+  // 「开源专区」「成套素材」不是类型，前者是**即时搜索**这个功能、后者是素材的一种
+  // **形态**，两者都降级成类型页里的开关（见 TypePageChrome），不再占左栏一格。
+  // 「模板专区 / 风格元素 / 设计模板」是按**数据来源**分的，不是按类型分的，
+  // 已按素材类型拆开归位：模板专区 → 网站，风格元素 → 网页动效，
+  // 设计模板 → 海报 / 封面 / 卡证 … 十个类型。**三者没有被合并成一个入口。**
+  //
   // 用 href（Next <Link>）而非 onClick(router.push)：<Link> 会预取目标路由、点击即
   // 客户端瞬时切换并高亮，不必等网络。这是消除「按按键要等很久才跳页」的关键。
-  const categoryItems: ShellNavItem[] = TYPE_ORDER.map((t) => ({
+
+  // ① 库内素材（platform_assets，走网关实时查）。
+  const libraryTypes: ShellNavItem[] = TYPE_ORDER.map((t) => ({
     label: tt(TYPE_LABELS[t]),
     icon: <TypeIcon type={t} />,
     href: t === "image" ? "/" : `/?type=${t}`,
     match: () => onLibrary && activeType === t,
   }));
 
+  // ② 平面设计成品（public/design-templates/manifest.json，684 件按类型分十格）。
+  const designTypes: ShellNavItem[] = DESIGN_TYPE_ORDER.map((t) => ({
+    label: tt(DESIGN_TYPE_LABELS[t]),
+    icon: <DesignTypeIcon type={t} />,
+    href: `/design/${t}`,
+    match: (p) => p === `/design/${t}`,
+  }));
+
+  // ③ 两个来自代码常量的类型。
+  const codeTypes: ShellNavItem[] = [
+    {
+      label: tt("网站"),
+      icon: <IconWebsite />,
+      href: "/templates",
+      match: (p) => p.startsWith("/templates"),
+    },
+    {
+      label: tt("网页动效"),
+      icon: <IconWebMotion />,
+      href: "/elements",
+      match: (p) => p.startsWith("/elements"),
+    },
+  ];
+
   const navGroups: ShellNavGroup[] = [
     {
+      heading: tt("素材类型"),
+      items: [...libraryTypes, ...designTypes, ...codeTypes],
+    },
+    // 这一组不是类型轴，也不是「专区」：一个是用户自己的收藏，一个是说明页。
+    {
       items: [
-        {
-          label: tt("开源专区"),
-          icon: <IconOpenSource />,
-          href: "/open",
-          match: (p) => p.startsWith("/open"),
-        },
-        {
-          label: tt("成套素材"),
-          icon: <IconSeries />,
-          href: "/series",
-          match: (p) => p.startsWith("/series"),
-        },
-        {
-          label: tt("模板专区"),
-          icon: <IconTemplates />,
-          href: "/templates",
-          match: (p) => p.startsWith("/templates"),
-        },
-        {
-          label: tt("风格元素"),
-          icon: <IconSparkle />,
-          href: "/elements",
-          match: (p) => p.startsWith("/elements"),
-        },
         {
           label: tt("我的素材库"),
           icon: <IconBookmark />,
           href: "/collection",
           match: (p) => p === "/collection",
         },
-        {
-          label: tt("设计模板"),
-          icon: <IconDesign />,
-          href: "/design",
-          match: (p) => p === "/design",
-        },
+        { label: tt("授权说明"), href: "/licenses", icon: <IconLicense /> },
       ],
-    },
-    {
-      heading: tt("平台素材"),
-      items: categoryItems,
-    },
-    {
-      items: [{ label: tt("授权说明"), href: "/licenses", icon: <IconLicense /> }],
     },
   ];
 
