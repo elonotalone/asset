@@ -149,6 +149,25 @@ function headSub(section: SectionIR, ctx: EmitCtx): string {
   return txt(section.slots, "subtitle", ctx.lang);
 }
 
+/**
+ * 资历角标（asset 侧是浮在配图右下角那张卡：大号 `12年` ＋ 小号 `行业深耕`，
+ * 见 `template-engine.ts` renderAbout）。接口 B 的 `about` 只有
+ * eyebrow / title / body / bullets / image 五个字段，**没有承接浮标的位置**，
+ * 而 `bullets` 的来源槽位本来就叫 `highlights` —— 资历本身就是一条 highlight，
+ * 所以并进 bullets、排在服务名之前，值与标签逐字保留。
+ *
+ * 为什么不另起一节 stats 承接（`sigBentoHero` 那条先例）：角标取的就是内容包的
+ * `stats[0]`，实测 200 个模板里带角标的 143 节，其中 110 节所在站点**已经有** stats 节，
+ * 补节会变成同一个数字在站上出现两次。
+ */
+function aboutBullets(section: SectionIR, ctx: EmitCtx): string[] {
+  const list = listOf(section.slots, "highlights", ctx.lang);
+  const value = txt(section.slots, "badgeValue", ctx.lang);
+  const label = txt(section.slots, "badgeLabel", ctx.lang);
+  const badge = [value, label].filter(Boolean).join(" · ");
+  return (badge ? [badge, ...list] : list).slice(0, LIMITS.aboutListMax);
+}
+
 const BUILDERS: Record<WebsiteSectionType, ContentBuilder> = {
   hero: (s, ctx) => ({
     eyebrow: txt(s.slots, "eyebrow", ctx.lang),
@@ -213,7 +232,7 @@ const BUILDERS: Record<WebsiteSectionType, ContentBuilder> = {
     eyebrow: txt(s.slots, "eyebrow", ctx.lang),
     title: headTitle(s, ctx),
     body: listOf(s.slots, "body", ctx.lang).slice(0, LIMITS.aboutListMax),
-    bullets: listOf(s.slots, "highlights", ctx.lang).slice(0, LIMITS.aboutListMax),
+    bullets: aboutBullets(s, ctx),
     image: imageOf(s.slots, ctx.keyword, headTitle(s, ctx)),
   }),
 
