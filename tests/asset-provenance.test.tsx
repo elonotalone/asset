@@ -64,6 +64,22 @@ test("自产素材恒为禁止再分发；外部素材没明说可以就当不�
   );
 });
 
+test("Free-Commercial / OFL 的开源字体不许被说成 OceanLeo 自产", () => {
+  // [实测] 货架上 73 件 source='opensource-font'，code 是 Free-Commercial 或 OFL。
+  // Free-Commercial 在 L5 里的 license_family 就是 'first-party'（事实 B8），
+  // 按 family 判产权会谎报所有权，并把 OFL 的随附原文义务整段吞掉。
+  const ofl = {
+    source: "opensource-font",
+    source_url: "https://fonts.example/x",
+    license: { code: "OFL", name: "SIL Open Font License 1.1", commercial_ok: true, modify_ok: true, attribution_required: true },
+  };
+  const freeCommercial = { ...ofl, license: { ...ofl.license, code: "Free-Commercial" } };
+  assert.equal(deriveProvenance(ofl).origin, "external");
+  assert.equal(deriveProvenance(freeCommercial).origin, "external");
+  assert.match(render(<AssetProvenance asset={ofl} />), /必须附带许可证原文/);
+  assert.ok(!render(<AssetProvenance asset={ofl} />).includes("OceanLeo 自产"));
+});
+
 // --- 一个 CC0 字样都不许留 ---------------------------------------------------
 
 test("自产素材的产权块里没有 CC0 字样，且明说禁止再分发", () => {

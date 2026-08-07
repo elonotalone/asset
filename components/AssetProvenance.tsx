@@ -116,13 +116,14 @@ function obligationsOf(
   return { noticeRequired: row.notice, shareAlike: row.shareAlike };
 }
 
+// 只认 OceanLeo-* 这一族 code。**故意不按 license_family='first-party' 判**：
+// `[实测]` 货架上 73 件 `opensource-font` 的 code 是 `Free-Commercial` / `OFL`，而
+// `Free-Commercial` 在 L5 里的 family 就是 `first-party`（assets.py:155-156，事实 B8）。
+// 按 family 判会把开源字体说成「OceanLeo 自产」，既谎报产权，又会把 OFL 那条
+// 「必须附带许可证原文」的义务整段吞掉——那是最不能出错的方向。
+// 前缀判定同时覆盖合同 §4.0 那个尚未上线的 `OceanLeo-Free-1.0`。
 function isFirstPartyCode(code: string): boolean {
-  const upper = (code || "").trim().toUpperCase();
-  if (!upper) return false;
-  // 前缀判定覆盖尚未落进镜像表的自产 code（合同 §4.0 的 OceanLeo-Free-1.0 由 W1 注册
-  // 进 L5 后才会出现）。这里只判「是不是我们的」，不主张任何权限位。
-  if (upper.startsWith("OCEANLEO")) return true;
-  return LICENSE_OBLIGATIONS[upper]?.family === "first-party";
+  return (code || "").trim().toUpperCase().startsWith("OCEANLEO");
 }
 
 /** 只放行 http/https。javascript: / data: 之类一律当作没有出处，不渲染链接。 */
