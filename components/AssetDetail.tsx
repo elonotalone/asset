@@ -10,6 +10,7 @@ import { useUI } from "@oceanleo/ui/i18n";
 import { Asset, assetDetail, downloadHref, pptPageUrls } from "@/lib/assets";
 import { LicenseFlags } from "@/components/LicenseBadge";
 import { ModelViewer } from "@/components/ModelViewer";
+import { AssetProvenance } from "@/components/AssetProvenance";
 
 const subscribeToHydration = () => () => {};
 
@@ -260,11 +261,12 @@ export function AssetDetail({
                 <a href={asset.source_url || asset.full_url} target="_blank" rel="noopener noreferrer" className="text-xs text-sky-600 hover:underline">
                   {tt("打开网页版（HTML）")} ↗
                 </a>
-              ) : (
-                <a href={asset.source_url} target="_blank" rel="noopener noreferrer" className="text-xs text-sky-600 hover:underline">
-                  {tt("在 {source} 查看原始页面", { source: asset.source })} ↗
-                </a>
-              )}
+              ) : null}
+              {/* 通用出处链接已交给下方 <AssetProvenance/>。它对同一个 source_url 多做
+                  两件这里做不到的事：自产素材的 source_url 指向内部 JSON，点开是下载
+                  一个文件而不是看到出处，那一支要改指法务页；外部素材没有可跳转出处
+                  时要明说「该来源未提供」，而不是留一个 href="" 的死链。
+                  剩下的 pptHtmlUrl / isChart 两支不是出处，是「打开网页版」，留在原处。 */}
             </div>
             <div>
               <p className="text-xs uppercase tracking-wide text-zinc-400">{tt("授权")}</p>
@@ -276,6 +278,10 @@ export function AssetDetail({
               </div>
             </div>
           </div>
+
+          {/* 产权卡：这件素材是谁的、能不能拿走、用了要背什么义务。三个问题在一处
+              回答，紧挨着上面的「作者 / 来源」与「授权」，不另开一屏。 */}
+          <AssetProvenance asset={asset} />
 
           {asset.type === "prompt" && asset.prompt && (
             <div className="mt-4 rounded-xl border border-sky-200 bg-sky-50/70 px-4 py-3">
