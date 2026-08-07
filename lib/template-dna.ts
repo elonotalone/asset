@@ -161,6 +161,64 @@ export type SectionKind =
   | "sigBrutalCards"
   | "sigStickerCta";
 
+// ————————————————————————————————————————————————————————————
+// 业态原型（archetype）—— 子类与布局家族之间的中间层
+// ————————————————————————————————————————————————————————————
+//
+// 为什么要有这一层：相容性原本只按 13 个粗行业判，于是「搬家公司」和「诊所」
+// 同属 life，候选家族一模一样，机制上永远区分不开（2026-08-07 实测）。
+// 但直接让 21 个家族逐一声明 105 个子类 = 2205 格手填矩阵，改一个子类要改 21 处。
+//
+// 中间层的做法：子类声明「这门生意是什么业态」，家族声明「我服务哪些业态」。
+// 新增子类只改一处（SUB_ARCHETYPES），新增家族也只改一处（serves）。
+
+export type Archetype =
+  | "corporate-trust" // 企业形象与资质取信：要案例、资质、新闻
+  | "pro-service" // 专业顾问服务：律所/会计/注册，克制、重团队与问答
+  | "retail-goods" // 消费品零售：要商品陈列
+  | "lifestyle-brand" // 时尚生活方式品牌：要气质与画面
+  | "industrial-supply" // 工业品与设备供应：要参数、产线、产能数据
+  | "dine-in" // 到店餐饮：要菜单
+  | "food-goods" // 食品茶酒货品：要产地故事 + 商品
+  | "stay-travel" // 住宿与旅行：要大图与图库
+  | "creative-work" // 创意作品：作品集主导
+  | "event-ceremony" // 仪式与人生大事：婚庆、展会
+  | "care-clinic" // 到院医疗与身体护理：服务项目 + 医师团队 + 问答
+  | "wellness-goods" // 医药与保健货品
+  | "learn-org" // 教育与组织机构
+  | "field-service" // 上门 / 到店生活服务：保洁、搬家、美发
+  | "vehicle" // 车辆相关：销售、保养、租赁
+  | "logistics-net" // 物流履约网络：要覆盖数据与流程
+  | "rental-lease" // 租赁：房屋、车辆
+  | "tech-product" // 科技产品与互联网
+  | "agri-nature" // 农林牧渔与环保
+  | "personal-page"; // 个人主页与活动单页
+
+export const ARCHETYPE_LABEL: Record<Archetype, string> = {
+  "corporate-trust": "企业资质取信",
+  "pro-service": "专业顾问服务",
+  "retail-goods": "消费品零售",
+  "lifestyle-brand": "时尚生活方式",
+  "industrial-supply": "工业品供应",
+  "dine-in": "到店餐饮",
+  "food-goods": "食品茶酒货品",
+  "stay-travel": "住宿与旅行",
+  "creative-work": "创意作品",
+  "event-ceremony": "仪式与大事",
+  "care-clinic": "到院医疗护理",
+  "wellness-goods": "医药保健货品",
+  "learn-org": "教育与组织",
+  "field-service": "上门到店服务",
+  vehicle: "车辆相关",
+  "logistics-net": "物流履约网络",
+  "rental-lease": "租赁",
+  "tech-product": "科技产品",
+  "agri-nature": "农林与环保",
+  "personal-page": "个人与单页",
+};
+
+export const ALL_ARCHETYPES = Object.keys(ARCHETYPE_LABEL) as Archetype[];
+
 export interface LayoutFamily {
   key: string;
   label: string;
@@ -168,8 +226,17 @@ export interface LayoutFamily {
   pages: PageKey[];
   /** 每页的章节序列（home 页内容最丰富）。 */
   sections: Record<string, SectionKind[]>;
-  /** 这个家族适配哪些一级行业（用于把家族分配给子类）。空 = 通用。 */
+  /**
+   * 这个家族适配哪些一级行业。**只作兜底**：子类没有业态声明时才用它。
+   * 正路是下面的 `serves`。
+   */
   industries?: string[];
+  /**
+   * 这个家族服务哪些业态原型（相容性的正路）。
+   * 不变量：每个原型至少要有 MIN_FAMILY_CANDIDATES 个家族服务它，
+   * 否则同子类的多个变体铺不开（见 dnaFor 的互质步长）。由判据测试守住。
+   */
+  serves?: Archetype[];
   /**
    * v3 特色家族：钉死主题维度，覆盖 slug 随机 DNA，形成「一眼可辨」的统一强风格。
    * 只有特色家族设它；普通家族不设，仍走全维度随机 DNA。未指定的维度仍随机，
@@ -198,6 +265,13 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     key: "corporate",
     label: "企业官网",
     industries: ["business", "media", "industry", "hardware", "logistics", "general", "tech", "org", "home"],
+    // 六页齐全、案例＋资质＋新闻，是唯一一个几乎任何业态都不出错的通用站型，
+    // 因此它服务面最宽 —— 这不是偷懒，是它本来的定位。
+    serves: [
+      "corporate-trust", "pro-service", "industrial-supply", "logistics-net",
+      "learn-org", "agri-nature", "tech-product", "rental-lease", "vehicle",
+      "wellness-goods", "field-service", "care-clinic", "stay-travel",
+    ],
     pages: ["home", "about", "services", "cases", "news", "contact"],
     sections: {
       home: ["hero", "marquee", "about", "services", "stats", "cases", "cta"],
@@ -212,6 +286,10 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     key: "agency",
     label: "创意机构",
     industries: ["media", "tech", "general", "business", "life"],
+    serves: [
+      "creative-work", "corporate-trust", "tech-product",
+      "event-ceremony", "lifestyle-brand", "pro-service", "field-service",
+    ],
     pages: ["home", "works", "services", "about", "contact"],
     sections: {
       home: ["hero", "gallery", "services", "marquee", "testimonials", "cta"],
@@ -225,6 +303,10 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     key: "commerce",
     label: "品牌商城",
     industries: ["fashion", "home", "grocery", "general", "hardware", "food"],
+    serves: [
+      "retail-goods", "lifestyle-brand", "food-goods",
+      "wellness-goods", "industrial-supply", "vehicle",
+    ],
     pages: ["home", "products", "about", "news", "contact"],
     sections: {
       home: ["hero", "marquee", "products", "features", "stats", "news", "cta"],
@@ -238,6 +320,7 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     key: "restaurant",
     label: "餐饮美食",
     industries: ["food"],
+    serves: ["dine-in", "food-goods"],
     pages: ["home", "menu", "about", "contact"],
     sections: {
       home: ["hero", "menu", "about", "gallery", "testimonials", "cta"],
@@ -250,6 +333,10 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     key: "portfolio",
     label: "作品工作室",
     industries: ["life", "media", "fashion"],
+    serves: [
+      "creative-work", "event-ceremony", "personal-page",
+      "lifestyle-brand", "field-service", "stay-travel",
+    ],
     pages: ["home", "works", "about", "contact"],
     sections: {
       home: ["hero", "gallery", "about", "cta"],
@@ -262,6 +349,10 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     key: "clinic",
     label: "医疗健康",
     industries: ["grocery", "fashion", "life", "org"],
+    // 收窄的重点在这里：原本 industries 含 life，于是搬家公司/家庭保洁都能拿到
+    // 「医疗健康」版式（操作员当场看出来的那个错配）。改成按业态服务后，
+    // 只有真正到院就诊的业态才会拿到它。
+    serves: ["care-clinic", "wellness-goods", "learn-org"],
     pages: ["home", "services", "team", "news", "contact"],
     sections: {
       home: ["hero", "features", "services", "team", "faq", "cta"],
@@ -275,6 +366,7 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     key: "education",
     label: "教育培训",
     industries: ["org", "general", "business", "tech"],
+    serves: ["learn-org", "pro-service", "tech-product", "corporate-trust"],
     pages: ["home", "services", "team", "cases", "contact"],
     sections: {
       home: ["hero", "about", "services", "stats", "cases", "cta"],
@@ -288,6 +380,12 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     key: "minimal",
     label: "极简单品",
     industries: ["tech", "general", "business", "media", "org", "logistics", "hardware", "industry", "home"],
+    // 三页、无行业腔调的纯风格站型，和 corporate 一样是宽服务面的兜底款。
+    serves: [
+      "tech-product", "personal-page", "pro-service", "corporate-trust",
+      "retail-goods", "logistics-net", "industrial-supply", "rental-lease",
+      "care-clinic", "vehicle", "field-service",
+    ],
     pages: ["home", "pricing", "contact"],
     sections: {
       home: ["hero", "features", "process", "testimonials", "cta"],
@@ -302,6 +400,7 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     key: "hotel-resort",
     label: "文旅酒店",
     industries: ["food"],
+    serves: ["stay-travel", "dine-in", "event-ceremony"],
     pages: ["home", "gallery", "services", "about", "contact"],
     sections: {
       home: ["hero", "gallery", "features", "testimonials", "faq", "cta"],
@@ -316,6 +415,7 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     key: "legal-pro",
     label: "专业事务所",
     industries: ["business", "org"],
+    serves: ["pro-service", "corporate-trust", "learn-org", "rental-lease", "care-clinic"],
     pages: ["home", "cases", "team", "about", "contact"],
     sections: {
       home: ["pageHeader", "about", "cases", "team", "faq", "cta"],
@@ -330,6 +430,7 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     key: "factory",
     label: "制造工业",
     industries: ["industry", "hardware", "home"],
+    serves: ["industrial-supply", "agri-nature", "logistics-net", "vehicle"],
     pages: ["home", "products", "about", "timeline", "cases", "contact"],
     sections: {
       home: ["hero", "stats", "products", "process", "logos", "cta"],
@@ -345,6 +446,7 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     key: "agri-eco",
     label: "农业环保",
     industries: ["industry", "food", "grocery"],
+    serves: ["agri-nature", "food-goods"],
     pages: ["home", "about", "products", "gallery", "contact"],
     sections: {
       home: ["hero", "about", "process", "gallery", "stats", "cta"],
@@ -359,6 +461,9 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     key: "auto-service",
     label: "汽车服务",
     industries: ["hardware", "life", "logistics"],
+    // 卡片副标题会原样显示「汽车服务」，所以它只服务真的和车有关的业态；
+    // 家庭保洁/搬家这类上门服务虽然结构上也吃「项目＋价格＋问答」，但名字对不上。
+    serves: ["vehicle", "rental-lease"],
     pages: ["home", "services", "pricing", "about", "contact"],
     sections: {
       home: ["hero", "services", "process", "pricing", "faq", "cta"],
@@ -373,6 +478,7 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     key: "wedding-photo",
     label: "婚庆摄影",
     industries: ["life", "fashion", "media"],
+    serves: ["event-ceremony", "creative-work", "lifestyle-brand"],
     pages: ["home", "works", "services", "about", "contact"],
     sections: {
       home: ["gallery", "hero", "services", "testimonials", "cta"],
@@ -387,6 +493,7 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     key: "logistics-net",
     label: "物流网络",
     industries: ["logistics", "tech"],
+    serves: ["logistics-net", "industrial-supply", "tech-product", "rental-lease"],
     pages: ["home", "services", "cases", "news", "contact"],
     sections: {
       home: ["hero", "stats", "process", "chart", "logos", "cta"],
@@ -401,6 +508,7 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     key: "pharma-care",
     label: "医药健康",
     industries: ["grocery", "org"],
+    serves: ["wellness-goods", "care-clinic", "agri-nature", "food-goods"],
     pages: ["home", "products", "team", "news", "about", "contact"],
     sections: {
       home: ["hero", "features", "products", "team", "news", "cta"],
@@ -421,6 +529,10 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     key: "editorial",
     label: "杂志编辑",
     industries: ["fashion", "media", "life", "grocery"],
+    serves: [
+      "lifestyle-brand", "creative-work", "food-goods", "personal-page",
+      "stay-travel", "learn-org", "retail-goods", "dine-in",
+    ],
     pages: ["home", "works", "about", "contact"],
     sections: {
       home: ["sigEditorialHero", "sigEditorialFeature", "sigEditorialGallery", "sigPullQuote", "cta"],
@@ -435,6 +547,7 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     key: "neon-tech",
     label: "霓虹科技",
     industries: ["tech", "logistics"],
+    serves: ["tech-product", "logistics-net"],
     pages: ["home", "services", "cases", "contact"],
     sections: {
       home: ["sigNeonHero", "sigNeonStats", "sigGlassGrid", "sigCodeWindow", "cta"],
@@ -456,6 +569,10 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     key: "fullscreen-scroll",
     label: "全屏叙事",
     industries: ["food", "life", "industry"],
+    serves: [
+      "stay-travel", "dine-in", "event-ceremony",
+      "lifestyle-brand", "agri-nature", "creative-work",
+    ],
     pages: ["home", "about", "contact"],
     sections: {
       home: ["sigFsIntro", "sigFsPanel", "sigFsSplit", "sigFsPanel", "cta"],
@@ -469,6 +586,10 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     key: "bento",
     label: "便当格栅",
     industries: ["tech", "general", "home", "media"],
+    serves: [
+      "tech-product", "retail-goods", "corporate-trust",
+      "personal-page", "wellness-goods", "field-service",
+    ],
     pages: ["home", "services", "about", "contact"],
     sections: {
       home: ["sigBentoHero", "sigBentoFeatures", "stats", "cases", "cta"],
@@ -483,6 +604,7 @@ export const LAYOUT_FAMILIES: LayoutFamily[] = [
     key: "brutalist",
     label: "粗野主义",
     industries: ["media", "general", "fashion"],
+    serves: ["creative-work", "lifestyle-brand", "personal-page", "retail-goods", "dine-in"],
     pages: ["home", "works", "services", "contact"],
     sections: {
       home: ["sigBrutalHero", "sigBrutalCards", "gallery", "sigStickerCta"],
@@ -498,9 +620,299 @@ export function layoutByKey(key: string): LayoutFamily {
   return LAYOUT_FAMILIES.find((f) => f.key === key) ?? LAYOUT_FAMILIES[0];
 }
 
-/** 给定行业，候选布局家族（适配该行业的优先，否则全集）。 */
-export function familiesForIndustry(industryKey: string): LayoutFamily[] {
-  const match = LAYOUT_FAMILIES.filter((f) => f.industries?.includes(industryKey));
+// ————————————————————————————————————————————————————————————
+// 子类 → 业态原型（相容性判据的单一事实源）
+// ————————————————————————————————————————————————————————————
+//
+// 键必须与 template-taxonomy.ts 的 ALL_SUB_KEYS 逐一对上（两个方向都对，
+// 由 tests/template-layout-compat.test.mjs 守住）。这里故意不 import 那个文件：
+// template-taxonomy.ts 已经 import 了本文件的 dnaFor，反向再 import 会成环，
+// 而它的模块顶层就在跑 allTemplates()。完整性检查因此放在判据测试里做。
+//
+// 一个子类可以有多个业态（例如「农家乐」既是住宿也是农林）。候选集 = 各业态
+// 服务家族的并集，按 LAYOUT_FAMILIES 的声明顺序去重，保证确定性。
+export const SUB_ARCHETYPES: Record<string, Archetype[]> = {
+  // —— media 传媒/广告/营销策划 ——
+  "culture-media": ["creative-work", "corporate-trust"],
+  "ad-design": ["creative-work"],
+  "pr-consulting": ["pro-service", "corporate-trust"],
+  "brand-planning": ["creative-work", "pro-service"],
+  "gift-custom": ["retail-goods", "creative-work"],
+  exhibition: ["event-ceremony", "corporate-trust"],
+  printing: ["industrial-supply", "creative-work"],
+
+  // —— business 金融/地产/商业服务 ——
+  finance: ["pro-service", "corporate-trust"],
+  investment: ["pro-service", "corporate-trust"],
+  loan: ["pro-service"],
+  realestate: ["corporate-trust", "rental-lease"],
+  registration: ["pro-service"],
+  accounting: ["pro-service"],
+  trademark: ["pro-service"],
+  law: ["pro-service"],
+  guarantee: ["pro-service", "corporate-trust"],
+  pawn: ["retail-goods", "pro-service"],
+
+  // —— fashion 服装/饰品/美容护肤 ——
+  womenswear: ["lifestyle-brand", "retail-goods"],
+  menswear: ["lifestyle-brand", "retail-goods"],
+  kidswear: ["retail-goods", "lifestyle-brand"],
+  maternity: ["retail-goods", "wellness-goods"],
+  shoes: ["retail-goods", "lifestyle-brand"],
+  bags: ["lifestyle-brand", "retail-goods"],
+  jewelry: ["lifestyle-brand", "retail-goods"],
+  glasses: ["retail-goods", "care-clinic"],
+  watches: ["lifestyle-brand", "retail-goods"],
+  hairsalon: ["field-service", "lifestyle-brand"],
+  nails: ["field-service", "lifestyle-brand"],
+  makeup: ["lifestyle-brand", "retail-goods"],
+  slimming: ["care-clinic", "field-service"],
+  // 医学美容挂在 fashion 下（分类树的怪处，见 W1 结论）。业态判据在这里纠正它：
+  // 它先是「到院医疗护理」，其次才是时尚生活方式。
+  "medical-beauty": ["care-clinic", "lifestyle-brand"],
+
+  // —— org 教育/政府/组织机构 ——
+  school: ["learn-org"],
+  training: ["learn-org"],
+  government: ["learn-org", "corporate-trust"],
+  association: ["learn-org", "corporate-trust"],
+  chamber: ["learn-org", "corporate-trust"],
+
+  // —— tech IT/互联网/科技行业 ——
+  "web-build": ["tech-product", "creative-work"],
+  internet: ["tech-product"],
+  "tech-company": ["tech-product", "corporate-trust"],
+
+  // —— life 婚庆/摄影/生活服务 ——
+  wedding: ["event-ceremony"],
+  bridal: ["event-ceremony", "lifestyle-brand"],
+  photography: ["creative-work", "event-ceremony"],
+  cleaning: ["field-service", "corporate-trust"],
+  "car-care": ["vehicle", "field-service"],
+  "photo-print": ["creative-work", "retail-goods"],
+  // 操作员点名的那件：搬家只属于「上门到店服务」，不再蹭 life 里的医疗家族。
+  moving: ["field-service"],
+  pets: ["field-service", "retail-goods"],
+  flowers: ["retail-goods", "lifestyle-brand"],
+
+  // —— food 餐饮/酒店/旅游服务 ——
+  fastfood: ["dine-in"],
+  hotpot: ["dine-in"],
+  western: ["dine-in"],
+  "japanese-korean": ["dine-in"],
+  bakery: ["dine-in", "food-goods"],
+  bbq: ["dine-in"],
+  farmstay: ["stay-travel", "agri-nature"],
+  resort: ["stay-travel"],
+  hotel: ["stay-travel"],
+  "travel-agency": ["stay-travel", "pro-service"],
+  "local-tour": ["stay-travel"],
+  visa: ["pro-service", "stay-travel"],
+
+  // —— industry 化工/环保/农林牧渔 ——
+  "chem-material": ["industrial-supply"],
+  textile: ["industrial-supply"],
+  "rubber-plastic": ["industrial-supply"],
+  metallurgy: ["industrial-supply"],
+  recycling: ["agri-nature", "industrial-supply"],
+  farming: ["agri-nature"],
+  feed: ["agri-nature", "industrial-supply"],
+  garden: ["agri-nature", "lifestyle-brand"],
+
+  // —— home 数码/家具/家居百货 ——
+  digital: ["retail-goods", "tech-product"],
+  appliance: ["retail-goods"],
+  phone: ["retail-goods", "tech-product"],
+  furniture: ["retail-goods", "lifestyle-brand"],
+  kitchenware: ["retail-goods", "industrial-supply"],
+  decor: ["lifestyle-brand", "retail-goods"],
+  bedding: ["retail-goods", "lifestyle-brand"],
+  towel: ["retail-goods", "industrial-supply"],
+  lighting: ["retail-goods", "industrial-supply"],
+
+  // —— grocery 食品/茶酒/医药保健 ——
+  "fruit-veg": ["food-goods", "agri-nature"],
+  snacks: ["food-goods", "retail-goods"],
+  specialty: ["food-goods", "agri-nature"],
+  tea: ["food-goods", "lifestyle-brand"],
+  baijiu: ["food-goods", "lifestyle-brand"],
+  wine: ["food-goods", "lifestyle-brand"],
+  // 医院挂在 grocery（食品/茶酒/医药保健）下，同样是分类树的怪处；业态判据纠正它。
+  hospital: ["care-clinic"],
+  pharmacy: ["wellness-goods", "retail-goods"],
+  dental: ["care-clinic"],
+
+  // —— hardware 五金/设备/汽车服务 ——
+  handles: ["industrial-supply"],
+  windows: ["industrial-supply"],
+  bathroom: ["industrial-supply", "retail-goods"],
+  machinery: ["industrial-supply"],
+  instruments: ["industrial-supply"],
+  firesafety: ["industrial-supply", "corporate-trust"],
+  electrical: ["industrial-supply"],
+  surveillance: ["industrial-supply", "tech-product"],
+  auto: ["vehicle", "retail-goods"],
+
+  // —— logistics 物流/租赁/商业贸易 ——
+  freight: ["logistics-net"],
+  express: ["logistics-net"],
+  "house-rent": ["rental-lease"],
+  "car-rent": ["rental-lease", "vehicle"],
+  "export-trade": ["logistics-net", "corporate-trust"],
+
+  // —— general 通用行业 ——
+  enterprise: ["corporate-trust"],
+  mall: ["retail-goods"],
+  personal: ["personal-page"],
+  landing: ["personal-page", "corporate-trust"],
+  others: ["corporate-trust", "personal-page"],
+};
+
+/**
+ * 候选家族的下限。dnaFor 用与家族数互质的步长按变体号递进，
+ * 只有「候选家族数 ≥ 该子类的变体数」时，同子类的变体才走遍不同家族不重复。
+ * 当前每子类最多 5 个变体（template-taxonomy.ts 的 countForSub），故取 5。
+ */
+export const MIN_FAMILY_CANDIDATES = 5;
+
+/** 候选集是怎么算出来的。sub 是正路，后两档都是缺陷信号。 */
+export type FamilyResolution =
+  | "sub" // 按子类业态算出来的（正路）
+  | "industry" // 子类没有业态声明，退到粗行业（会重现「搬家拿到诊所」那类错配）
+  | "all"; // 连粗行业都没人声明，退到全集（最糟的一档）
+
+export interface FamilyPick {
+  families: LayoutFamily[];
+  via: FamilyResolution;
+  /** via==="sub" 时命中的业态。 */
+  archetypes: Archetype[];
+  /** 子类声明的家族数不足 MIN_FAMILY_CANDIDATES 时，从粗行业补上来的家族 key。 */
+  toppedUp: string[];
+}
+
+export interface FamilyFallback {
+  subKey: string;
+  industryKey: string | null;
+  via: FamilyResolution;
+  toppedUp: string[];
+  /** 说人话的一句：这条回落会让用户看到什么。 */
+  note: string;
+}
+
+// 回落台账：静默回落正是「搬家公司拿到诊所版式」的机制，所以它必须留下痕迹。
+// 生成器、判据测试、报表工具都读这里；同一个 key 只记一次，最多 105 条。
+const fallbackLedger = new Map<string, FamilyFallback>();
+
+export function familyFallbacks(): FamilyFallback[] {
+  return [...fallbackLedger.values()];
+}
+
+export function clearFamilyFallbacks(): void {
+  fallbackLedger.clear();
+}
+
+function recordFallback(entry: FamilyFallback): void {
+  const key = `${entry.subKey}|${entry.industryKey ?? ""}|${entry.via}`;
+  if (fallbackLedger.has(key)) return;
+  fallbackLedger.set(key, entry);
+  if (process.env.OCEANLEO_SILENCE_LAYOUT_FALLBACK !== "1") {
+    console.warn(`[template-dna] 版式相容性回落：${entry.note}`);
+  }
+}
+
+function familiesServing(archetypes: Archetype[]): LayoutFamily[] {
+  const wanted = new Set(archetypes);
+  return LAYOUT_FAMILIES.filter((f) => f.serves?.some((a) => wanted.has(a)));
+}
+
+function familiesDeclaringIndustry(industryKey: string): LayoutFamily[] {
+  return LAYOUT_FAMILIES.filter((f) => f.industries?.includes(industryKey));
+}
+
+/**
+ * 给定子类，算出它的候选布局家族。
+ *
+ * 三档，越往下越糟，而且**每一档回落都记账**（见 familyFallbacks）：
+ *  1. 子类声明了业态 → 取服务这些业态的家族。候选不足下限时，从粗行业按声明顺序补齐，
+ *     补齐动作同样记账（生成不会因此退化，但缺声明会被看见）。
+ *  2. 子类没有业态声明 → 退到粗行业声明。这就是改造前全体子类所处的那一档。
+ *  3. 粗行业也没人声明 → 退到全集。
+ */
+export function resolveFamilies(subKey: string, industryKey?: string): FamilyPick {
+  const archetypes = SUB_ARCHETYPES[subKey];
+  const industryFamilies = industryKey ? familiesDeclaringIndustry(industryKey) : [];
+
+  if (archetypes && archetypes.length) {
+    const byArchetype = familiesServing(archetypes);
+    const toppedUp: string[] = [];
+    const families = [...byArchetype];
+    for (const f of industryFamilies) {
+      if (families.length >= MIN_FAMILY_CANDIDATES) break;
+      if (families.includes(f)) continue;
+      families.push(f);
+      toppedUp.push(f.key);
+    }
+    if (toppedUp.length) {
+      recordFallback({
+        subKey,
+        industryKey: industryKey ?? null,
+        via: "sub",
+        toppedUp,
+        note:
+          `子类 ${subKey} 按业态只算出 ${byArchetype.length} 个候选家族，` +
+          `低于下限 ${MIN_FAMILY_CANDIDATES}，从粗行业 ${industryKey ?? "(未给)"} 补了 ` +
+          `${toppedUp.join("/")}。后果：该子类的多个模板可能长得偏近，` +
+          `且补进来的家族名字未必对得上这门生意。`,
+      });
+    }
+    return {
+      families: families.length ? families : LAYOUT_FAMILIES,
+      via: "sub",
+      archetypes,
+      toppedUp,
+    };
+  }
+
+  if (industryFamilies.length) {
+    recordFallback({
+      subKey,
+      industryKey: industryKey ?? null,
+      via: "industry",
+      toppedUp: [],
+      note:
+        `子类 ${subKey} 没有在 SUB_ARCHETYPES 里声明业态，退回按粗行业 ${industryKey} 选版式。` +
+        `后果：它会和同行业的其它子类拿到一模一样的候选版式，` +
+        `重现「搬家公司套上诊所版式」那类错配。补一行声明即可。`,
+    });
+    return { families: industryFamilies, via: "industry", archetypes: [], toppedUp: [] };
+  }
+
+  recordFallback({
+    subKey,
+    industryKey: industryKey ?? null,
+    via: "all",
+    toppedUp: [],
+    note:
+      `子类 ${subKey}（行业 ${industryKey ?? "(未给)"}）既没有业态声明、也没有任何家族声明这个行业，` +
+      `退到全部 ${LAYOUT_FAMILIES.length} 个家族。后果：版式完全随机，什么都可能配上。`,
+  });
+  return { families: LAYOUT_FAMILIES, via: "all", archetypes: [], toppedUp: [] };
+}
+
+/** 给定子类，候选布局家族。 */
+export function familiesForSub(subKey: string, industryKey?: string): LayoutFamily[] {
+  return resolveFamilies(subKey, industryKey).families;
+}
+
+/**
+ * 兼容入口：既吃子类键也吃粗行业键。
+ *
+ * 历史上它只吃粗行业键，传子类键会静默回落到全集 —— 那是本轮修掉的病根之一。
+ * 现在先按子类解析，解析不到再按行业。新代码请直接用 familiesForSub。
+ */
+export function familiesForIndustry(key: string): LayoutFamily[] {
+  if (SUB_ARCHETYPES[key]) return familiesForSub(key);
+  const match = familiesDeclaringIndustry(key);
   return match.length ? match : LAYOUT_FAMILIES;
 }
 
@@ -584,11 +996,13 @@ export function dnaFor(
   variant: number,
   defaultPaletteFamily?: string,
 ): TemplateDNA {
-  const families = familiesForIndustry(industryKey);
   // 同子类的多个变体必须铺开到不同布局家族：以「子类 key」（slug 去掉尾部
   // -<变体号>）为哈希基准取起点，再用与家族数互质的确定性步长按 variant 递进 ——
   // 互质保证相邻变体走遍全部家族才回头（家族数 >= 变体数时同子类内零重复）。
   const base = slug.replace(/-\d+$/, "");
+  // 候选集按子类算，粗行业只作兜底。此前这里传的是粗行业键，子类在这一步就被丢掉，
+  // 于是「搬家公司」和「家庭保洁」共用一套候选，谁都可能拿到「医疗健康」版式。
+  const families = resolveFamilies(base, industryKey).families;
   const n = families.length;
   const strides = [1, 2, 3, 5, 7, 11, 13].filter((s) => s < n && gcd(s, n) === 1);
   const stride = strides.length ? strides[hashStr(base + ":stride") % strides.length] : 1;
