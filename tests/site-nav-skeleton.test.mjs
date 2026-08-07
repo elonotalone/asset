@@ -19,16 +19,27 @@ import { readFileSync } from "node:fs";
 
 import { DESIGN_TYPE_LABELS, DESIGN_TYPE_ORDER } from "../lib/design-taxonomy.ts";
 import {
-  OPEN_SEARCH_TYPES,
-  SERIES_TYPES,
+  LIVE_SEARCH_TYPES,
+  SERIES_ZONE,
+  TYPE_ZONES,
+  ZONE_LABELS,
+  ZONE_ORIGIN,
+  defaultZone,
   fallbackTypeFor,
-  supportsView,
+  hasSeriesFilter,
+  normSeriesFlag,
+  parseZone,
+  seriesZoneOf,
+  typeLandingHref,
   typePageHref,
+  zoneIsUsable,
+  zoneOrigin,
 } from "../lib/type-page-views.ts";
 
 const SHELL = readFileSync(new URL("../components/SiteShell.tsx", import.meta.url), "utf8");
 const ASSETS = readFileSync(new URL("../lib/assets.ts", import.meta.url), "utf8");
 const CHROME = readFileSync(new URL("../components/TypePageChrome.tsx", import.meta.url), "utf8");
+const LIBRARY = readFileSync(new URL("../components/AssetLibrary.tsx", import.meta.url), "utf8");
 const HOME = readFileSync(new URL("../app/page.tsx", import.meta.url), "utf8");
 const OPEN_ROUTE = readFileSync(new URL("../app/open/page.tsx", import.meta.url), "utf8");
 const SERIES_ROUTE = readFileSync(new URL("../app/series/page.tsx", import.meta.url), "utf8");
@@ -94,38 +105,121 @@ test("第二组是两个工具入口，与类型轴分开成组", () => {
   assert.deepEqual(headings, ["素材类型"]);
 });
 
-// —— 类型页上的两个开关（P5）——————————————————————————————————
-// 唯一纪律：**没有上游就不画开关**。这两张表是白名单，加一格就得先有数据。
+// —— 类型页右侧的三分区（W8）————————————————————————————————
+//
+// 操作员的要求：每一类右侧从两块改成三块 —— OceanLeo 自有 / 开源专区（已入库）/
+// 搜索（实时）。守两条纪律：
+//   ① 名字要对上内容（旧的「本站素材」装的是已入库的开源件，名实不符）；
+//   ② **三格一个都不许藏**，没货画空态 —— 藏掉就让用户分不清没货还是没做。
 
-test("开源搜索开关只画在有实时上游的 5 类", () => {
-  assert.deepEqual([...OPEN_SEARCH_TYPES].sort(), ["3d", "audio", "image", "vector", "video"]);
-  // music 是上游 OPEN_SOURCE_TYPES 的第 6 类，但库里 0 行、左栏没格子，不画。
-  assert.ok(!OPEN_SEARCH_TYPES.includes("music"), "music 没有左栏格子，不该画开关");
+test("三个分区一个不少，且名字讲的是「来源 × 在不在库里」", () => {
+  assert.deepEqual(TYPE_ZONES, ["owned", "stocked", "live"]);
+  assert.equal(ZONE_LABELS.owned, "OceanLeo 自有");
+  assert.equal(ZONE_LABELS.stocked, "开源专区（已入库）");
+  assert.equal(ZONE_LABELS.live, "实时搜索");
+  // 名实不符的旧名字不许再出现在任何一格上。
+  for (const label of Object.values(ZONE_LABELS)) {
+    assert.notEqual(label, "本站素材", "「本站素材」这个名字又回来了");
+  }
+  assert.ok(!/tt\("本站素材"\)/.test(CHROME), "TypePageChrome 里还写着「本站素材」");
+  // ①② 直接对上 platform_assets.origin 的两个值。
+  assert.equal(ZONE_ORIGIN.owned, "first-party");
+  assert.equal(ZONE_ORIGIN.stocked, "external");
+  assert.equal(zoneOrigin("live"), null, "实时搜索不入库，不该有 origin");
+});
+
+test("判据是两种，不是一张白名单：①② 与数据无关，③ 看上游能力", () => {
+  // ①② 是同一张货架的两个来源切片。今天没货的类型明天可能有（W7 归拢），
+  // 所以判据里不许出现「这一类有没有货」。
+  for (const t of ["image", "vector", "sticker", "font", "chart", "prompt", "ppt", "video", "audio", "3d"]) {
+    assert.ok(zoneIsUsable(t, "owned"), `${t} 的「OceanLeo 自有」不该被判为不可用`);
+    assert.ok(zoneIsUsable(t, "stocked"), `${t} 的「开源专区（已入库）」不该被判为不可用`);
+  }
+  // ③ 是外部上游的能力表：上游不供这一类，点下去永远搜不到东西。
+  assert.deepEqual([...LIVE_SEARCH_TYPES].sort(), ["3d", "audio", "image", "vector", "video"]);
+  // music 是上游 OPEN_SOURCE_TYPES 的第 6 类，但左栏没格子，进不到类型页。
+  assert.ok(!LIVE_SEARCH_TYPES.includes("music"), "music 没有左栏格子");
   assert.match(ASSETS, /OPEN_SOURCE_TYPES/, "上游类型表不在 assets.ts 里了");
   assert.equal(arrayLength(ASSETS, "OPEN_SOURCE_TYPES"), 6);
-});
-
-test("成套筛选只画在真有成套数据的 3 类（273 套）", () => {
-  assert.deepEqual([...SERIES_TYPES].sort(), ["image", "ppt", "vector"]);
-});
-
-test("其余类型一个开关都不画", () => {
-  const noSwitch = ["sticker", "font", "chart", "prompt"];
-  for (const t of noSwitch) {
-    assert.ok(!supportsView(t, "open"), `${t} 不该有开源搜索`);
-    assert.ok(!supportsView(t, "series"), `${t} 不该有成套筛选`);
-    assert.ok(supportsView(t, "library"), `${t} 必须有本站素材`);
+  for (const t of ["sticker", "font", "chart", "prompt", "ppt"]) {
+    assert.ok(!zoneIsUsable(t, "live"), `${t} 没有实时上游，③ 不该可用`);
   }
 });
 
-test("类型页地址：默认类型与默认视图都不带多余 query", () => {
-  assert.equal(typePageHref("image"), "/");
-  assert.equal(typePageHref("ppt"), "/?type=ppt");
-  assert.equal(typePageHref("image", "open"), "/?view=open");
-  assert.equal(typePageHref("ppt", "series"), "/?type=ppt&view=series");
-  // ?cat= 只属于本站素材，切到开源 / 成套就不该带过去。
-  assert.equal(typePageHref("vector", "library", "icons"), "/?type=vector&cat=icons");
-  assert.equal(typePageHref("vector", "open", "icons"), "/?type=vector&view=open");
+test("三格永远画出来：不可用的那格是点不动，不是不画", () => {
+  // 遍历 TYPE_ZONES 渲染 = 三格恒画；不可用时走 aria-disabled 分支而不是返回 null。
+  assert.match(CHROME, /TYPE_ZONES\.map\(/, "页签不是遍历三个分区画出来的");
+  assert.match(CHROME, /aria-disabled/, "不可用的分区没有画成点不动，可能是被藏了");
+  assert.match(CHROME, /ZONE_LIVE_UNAVAILABLE_NOTE/, "没有写明这一格为什么不可用");
+  assert.ok(
+    !/tabs\.length === 1/.test(CHROME),
+    "还留着「只有一格就整排不画」的旧逻辑",
+  );
+});
+
+test("没货的分区画空态，且空态要说清是「没货」不是「没做」", () => {
+  assert.match(LIBRARY, /ZoneEmptyState/, "分区没有空态组件");
+  assert.match(LIBRARY, /这一格不是没做/, "空态没有把「没货」和「没做」分开说");
+});
+
+test("成套不是第四个分区，是所属来源分区里的一个筛选", () => {
+  // 成套讲的是形态（单件还是整套），三分区讲的是来源，两者不是同一条轴。
+  assert.deepEqual(SERIES_ZONE, { ppt: "owned", image: "owned", vector: "stocked" });
+  assert.equal(seriesZoneOf("ppt"), "owned", "PPT 的 243 套是自有件，该落 ①");
+  assert.equal(seriesZoneOf("vector"), "stocked", "矢量图的 20 套是已入库开源件，该落 ②");
+  assert.equal(seriesZoneOf("audio"), null, "音频没有成套数据");
+  assert.ok(hasSeriesFilter("ppt", "owned"));
+  assert.ok(!hasSeriesFilter("ppt", "stocked"), "成套筛选不该出现在没有它的那一区");
+  assert.ok(!TYPE_ZONES.includes("series"), "成套又变回一个分区了");
+});
+
+test("类型页地址：分区永远写进 view=，左栏落地地址才不写", () => {
+  assert.equal(typePageHref("image", "owned"), "/?view=owned");
+  assert.equal(typePageHref("ppt", "owned"), "/?type=ppt&view=owned");
+  assert.equal(typePageHref("vector", "stocked"), "/?type=vector&view=stocked");
+  assert.equal(typePageHref("image", "live"), "/?view=live");
+  // 左栏点进来不指定分区，落地时按真实件数决定落哪一区。
+  assert.equal(typeLandingHref("image"), "/");
+  assert.equal(typeLandingHref("ppt"), "/?type=ppt");
+  // ?cat= 只属于库内分区，切到实时搜索就不该带过去。
+  assert.equal(
+    typePageHref("vector", "stocked", { cat: "icon" }),
+    "/?type=vector&view=stocked&cat=icon",
+  );
+  assert.equal(typePageHref("vector", "live", { cat: "icon" }), "/?type=vector&view=live");
+  // 成套只在它所属的那一区能挂上。
+  assert.equal(typePageHref("ppt", "owned", { series: true }), "/?type=ppt&view=owned&series=1");
+  assert.equal(typePageHref("ppt", "stocked", { series: true }), "/?type=ppt&view=stocked");
+});
+
+test("老地址键还认：library / open / series 都有落点", () => {
+  assert.equal(parseZone("library", "image"), null, "未知键交给 defaultZone 决定");
+  assert.equal(parseZone("owned", "image"), "owned");
+  assert.equal(parseZone("stocked", "vector"), "stocked");
+  // 旧的「开源搜索」= 现搜全网，落 ③；这一类没上游就退回 ①。
+  assert.equal(parseZone("open", "image"), "live");
+  assert.equal(parseZone("open", "font"), "owned");
+  // 旧的「成套」落到该类型成套所属的那一区。
+  assert.equal(parseZone("series", "ppt"), "owned");
+  assert.equal(parseZone("series", "vector"), "stocked");
+  assert.equal(parseZone(null, "image"), null, "没写 view 要交给 defaultZone");
+  // 落进新分区之后成套筛选要跟着打开。
+  assert.ok(normSeriesFlag("series", null, "ppt", "owned"));
+  assert.ok(normSeriesFlag(null, "1", "vector", "stocked"));
+  assert.ok(!normSeriesFlag("series", null, "audio", "owned"), "音频没有成套，不该打开");
+});
+
+test("落地不落在空区上，但空区的页签仍然在", () => {
+  // 「矢量图」0 件自有、40,607 件已入库开源 → 落地落 ②，而 ① 那格照画着 0。
+  assert.equal(defaultZone("vector", { owned: 0, stocked: 40607 }), "stocked");
+  assert.equal(defaultZone("ppt", { owned: 243, stocked: 0 }), "owned");
+  assert.equal(defaultZone("image", { owned: 170, stocked: 3 }), "owned");
+  // 两区都空、但有实时上游 → 落 ③（video 今天就是这样：库里 0 件）。
+  assert.equal(defaultZone("video", { owned: 0, stocked: 0 }), "live");
+  // 两区都空且没有上游 → 停在 ①，让空态把话说清楚。
+  assert.equal(defaultZone("font", { owned: 0, stocked: 0 }), "owned");
+  // 三格恒画与落地选区是两回事：落地挑了 stocked，不代表 owned 被判为不可用。
+  assert.ok(zoneIsUsable("vector", "owned"));
 });
 
 test("旧的 /open 与 /series 只剩重定向，不再是独立入口", () => {
@@ -136,12 +230,43 @@ test("旧的 /open 与 /series 只剩重定向，不再是独立入口", () => {
     assert.match(src, /redirect\(/, `${name} 还不是重定向`);
     assert.ok(!/SiteShell/.test(src), `${name} 还在自己渲染一个整页`);
   }
-  // 老链接带过来的 ?type= 要保住；落不住才退到该视图里样本最多的那一类。
+  // 老链接带过来的 ?type= 要保住；落不住才退到该入口里样本最多的那一类。
   assert.equal(fallbackTypeFor("open", "audio"), "audio");
   assert.equal(fallbackTypeFor("open", "font"), "image");
   assert.equal(fallbackTypeFor("open", undefined), "image");
   assert.equal(fallbackTypeFor("series", "vector"), "vector");
   assert.equal(fallbackTypeFor("series", "audio"), "ppt");
+});
+
+test("按来源取数：服务端还没有 origin 筛选，所以逐件硬过滤必须在", () => {
+  // 网关传了 origin 会被静默忽略（实测），所以这个开关必须是 false —— 一旦有人
+  // 误改成 true 而后端还没跟上，「OceanLeo 自有」里会混进开源件。
+  assert.match(
+    ASSETS,
+    /export const ORIGIN_FILTER_IS_SERVER_SIDE = false/,
+    "服务端还没有 origin 筛选，这个开关不能是 true",
+  );
+  assert.match(
+    ASSETS,
+    /libParams\.origin = params\.origin/,
+    "开关打开后没有真的把 origin 传给网关",
+  );
+  // 兜底：无论服务端支不支持，返回前都按 origin 逐件过滤。
+  assert.match(
+    ASSETS,
+    /raw\.filter\(\(a\) => a\.origin === params\.origin\)/,
+    "少了逐件硬过滤，分区可能混进另一种来源的件",
+  );
+  // 目录归属是读服务端的 origin，不是前端猜的。
+  assert.match(ASSETS, /r\.items\.map\(\(a\) => a\.origin\)/, "目录归属不是从服务端读的");
+  // 混了两种来源的目录不分给任何一区。
+  assert.match(ASSETS, /mixedCategories/, "没有处理「一个目录混两种来源」的情况");
+});
+
+test("分区件数取自服务端报的 total，不是前端数出来的", () => {
+  assert.match(ASSETS, /totalByOrigin\[c\.origin\] \+= c\.total/, "件数不是按服务端 total 累加的");
+  assert.match(ASSETS, /export function zoneTotal/, "没有对外给出分区件数");
+  assert.match(CHROME, /zoneTotal\(index, "first-party"\)/, "页签上的件数不是从索引来的");
 });
 
 test("开关是包在 AssetLibrary 外面的一层壳，没有改 AssetLibrary", () => {

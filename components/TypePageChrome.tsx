@@ -20,7 +20,6 @@ import {
   ZONE_LIVE_UNAVAILABLE_NOTE,
   ZONE_NOTES,
   zoneIsUsable,
-  zoneOrigin,
   type TypeZone,
 } from "@/lib/type-page-views";
 import { OpenZone } from "@/components/OpenZone";
@@ -160,10 +159,10 @@ export function TypePageChrome({ children }: { children: ReactNode }) {
 
       {/* key=type：换类型就是换一个全新的浏览上下文，重建组件比在 effect 里逐个
           reset 干净，也不会短暂混用上一类型的搜索词与结果。 */}
-      {zoneOrigin(zone) === null ? (
+      {zone === "live" ? (
         <OpenZone key={type} lockType={type} />
       ) : (
-        children
+        <>{children}</>
       )}
     </div>
   );
