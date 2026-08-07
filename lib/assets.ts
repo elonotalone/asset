@@ -241,6 +241,15 @@ export interface TypeOriginIndex {
   mixedCategories: string[];
   /** 取索引时出错了（网关不可用）。UI 要把它和「真的没货」区分开。 */
   failed: boolean;
+  /**
+   * 有目录没采成（重试后仍然失败）。
+   *
+   * `[实测 2026-08-07 W8]` `api.oceanleo.com` 会间歇性返回 503
+   * `control-plane-unavailable`（台账 §B4/§G：线上与开发挤在同一台机上，归 W11）。
+   * 采样掉一个目录 = 那个目录的件数没算进分区件数 ⇒ **页面上的数字会偏小**。
+   * 所以这里如实标出来，让 UI 说「至少这么多」而不是报一个假的确数。
+   */
+  incomplete: boolean;
 }
 
 const SAMPLE_PER_CATEGORY = 6;
@@ -255,6 +264,7 @@ async function buildTypeOriginIndex(type: AssetType): Promise<TypeOriginIndex> {
     totalByOrigin: { "first-party": 0, external: 0 },
     mixedCategories: [],
     failed: false,
+    incomplete: false,
   };
 
   let keys: string[] = [];
@@ -272,29 +282,40 @@ async function buildTypeOriginIndex(type: AssetType): Promise<TypeOriginIndex> {
     return { ...empty, failed: true };
   }
 
+  // 网关的 503 是间歇性的（见 TypeOriginIndex.incomplete），重试一次多半就过了。
+  let dropped = 0;
   const sampled = await Promise.all(
     keys.map(async (key): Promise<ZoneCategory | null> => {
-      try {
-        const r = await searchAssets({
-          q: "",
-          type,
-          category: key,
-          page: 1,
-          pageSize: SAMPLE_PER_CATEGORY,
-        });
-        if (!r.total || r.items.length === 0) return null;
-        const origins = new Set(
-          r.items.map((a) => a.origin).filter(Boolean) as MaterialOrigin[],
-        );
-        return {
-          key,
-          origin: origins.size === 1 ? [...origins][0] : null,
-          total: r.total,
-          sample: r.items,
-        };
-      } catch {
-        return null;
+      for (let attempt = 0; attempt < 2; attempt++) {
+        try {
+          const r = await searchAssets({
+            q: "",
+            type,
+            category: key,
+            page: 1,
+            pageSize: SAMPLE_PER_CATEGORY,
+          });
+          if (!r.total || r.items.length === 0) return null;
+          const origins = new Set(
+            r.items.map((a) => a.origin).filter(Boolean) as MaterialOrigin[],
+          );
+          return {
+            key,
+            origin: origins.size === 1 ? [...origins][0] : null,
+            total: r.total,
+            sample: r.items,
+          };
+        } catch {
+          if (attempt === 0) {
+            await new Promise((r) => setTimeout(r, 500));
+            continue;
+          }
+          // 重试也没成：这个目录的件数进不了分区件数，如实记一笔。
+          dropped++;
+          return null;
+        }
       }
+      return null;
     }),
   );
 
@@ -313,6 +334,7 @@ async function buildTypeOriginIndex(type: AssetType): Promise<TypeOriginIndex> {
     totalByOrigin,
     mixedCategories: categories.filter((c) => !c.origin).map((c) => c.key),
     failed: false,
+    incomplete: dropped > 0,
   };
 }
 

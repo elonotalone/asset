@@ -497,8 +497,16 @@ function AssetLibraryContent({
       <header className="mb-4">
         <h1 className="text-2xl font-semibold text-zinc-900">
           {typeName}
-          <span className="ml-2 align-middle text-sm font-normal text-zinc-400">
-            {tt(ZONE_LABELS[zone])} · {totalInZone.toLocaleString("en-US")}
+          <span
+            className="ml-2 align-middle text-sm font-normal text-zinc-400"
+            title={
+              index.incomplete
+                ? tt("素材网关刚才有请求没成功，实际件数只会更多，不会更少。")
+                : undefined
+            }
+          >
+            {tt(ZONE_LABELS[zone])} · {index.incomplete ? "≥" : ""}
+            {totalInZone.toLocaleString("en-US")}
             {tt(" 件")}
           </span>
         </h1>

@@ -45,7 +45,12 @@ function normType(t: string | null): AssetType {
   return t && TYPE_ORDER.includes(t as AssetType) ? (t as AssetType) : "image";
 }
 
-type ZoneCounts = { owned: number; stocked: number } | null;
+type ZoneCounts = {
+  owned: number;
+  stocked: number;
+  /** 有目录没采到（网关间歇 503）⇒ 数字偏小，页签要说「至少」而不是报个假确数。 */
+  incomplete: boolean;
+} | null;
 
 export function TypePageChrome({ children }: { children: ReactNode }) {
   const tt = useUI();
@@ -66,6 +71,7 @@ export function TypePageChrome({ children }: { children: ReactNode }) {
         setCounts({
           owned: zoneTotal(index, "first-party"),
           stocked: zoneTotal(index, "external"),
+          incomplete: index.incomplete,
         });
       })
       .catch(() => {
@@ -108,6 +114,11 @@ export function TypePageChrome({ children }: { children: ReactNode }) {
                   {label}
                   {n !== null && (
                     <span
+                      title={
+                        counts?.incomplete
+                          ? tt("素材网关刚才有请求没成功，实际件数只会更多，不会更少。")
+                          : undefined
+                      }
                       className={`ml-1.5 tabular-nums text-xs ${
                         active
                           ? "text-white/70"
@@ -116,6 +127,7 @@ export function TypePageChrome({ children }: { children: ReactNode }) {
                             : "text-zinc-500"
                       }`}
                     >
+                      {counts?.incomplete ? "≥" : ""}
                       {n.toLocaleString("en-US")}
                     </span>
                   )}
