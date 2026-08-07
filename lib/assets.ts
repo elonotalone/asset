@@ -5,7 +5,10 @@
 // these are unauthenticated GETs. The gateway holds every source key.
 import { accessToken } from "@oceanleo/ui/lib/auth";
 import { assetPreviewUrl } from "@oceanleo/ui/lib";
-import { workspaceTemplatePreviewHref } from "@oceanleo/ui/shell";
+import {
+  artifactTypeHasRoutableEditor,
+  workspaceTemplatePreviewHref,
+} from "@oceanleo/ui/shell";
 
 const GATEWAY =
   process.env.NEXT_PUBLIC_GATEWAY_URL || "https://api.oceanleo.com";
@@ -1016,30 +1019,25 @@ export interface ShelfArtifact {
 }
 
 /**
- * 有**已发布**编辑器的 artifact 类型，共 6 种。
+ * 这一类素材有没有一个**到得了的**编辑器。
  *
- * 权威在后端：`public_editable_catalog/pack.py:38-45` 的 `RELEASED_EDITOR_FEATURE_IDS`
- * 列出 6 个 feature id，各自的 artifact 类型在 `typed_artifact_models.py` 的
- * `ADVANCED_CAPABILITY_CONTRACT` 里：spreadsheet_editing→grid、image_editing→
- * single_file_image、pdf_editing→pdf、chart_editing→chart、geo_map_editing→geo_map、
- * interactive_doc_editing→interactive_doc。
+ * 判据交给共享包的 `artifactTypeHasRoutableEditor`，本文件**不再自己维护清单**。
  *
- * `_EDITOR_CAPABILITIES` 声明了 16 种类型的编辑能力，但**声明 ≠ 已发布**。
- * `composite_image` 与 `vector_image` 绑的是 `design_canvas`，那个 feature 不在已发布
- * 名单里，所以这两类只给预览。不在本表里的类型**一律不画编辑按钮**——画一颗点了
- * 没有编辑器接住的按钮，比不画更糟。
+ * 这里原先手抄了一份六种类型的表，抄的是后端 `RELEASED_EDITOR_FEATURE_IDS`。
+ * 2026-08-07 查实那是**答错了问题**：那份名单钉的是 `ADVANCED_FEATURE_PACKS`，
+ * 即哪些能力被打包成了高级功能包——一个产品与计费的划分，不是「有没有编辑器」。
+ * 代价是 16 种类型里有 10 种（网站、复合图片、矢量图、文档、幻灯片、视频、音频、
+ * 3D 模型、工作流、游戏）明明编辑器已存在且可路由，却被一律告知
+ * 「这一类还没有已发布的编辑器」，一颗编辑按钮都不出。
+ * `[实测 2026-08-07]` 这 10 类在架共 3,443 件 —— 网站 49、文档 2,052、
+ * 复合图片 352、幻灯片 277、矢量图 240、3D 模型 218、工作流 161、音频 91、游戏 3。
+ *
+ * 换成共享包推导之后，原表那句「不在表里就不画按钮」的纪律**一个字都没放松**：
+ * 现在仍然只在编辑器真的到得了时才画，只是「到得了」这件事改由适配器注册表回答，
+ * 而不是由一份会漂的手抄清单回答。新增可路由适配器，这里自动跟上。
  */
-export const RELEASED_EDITOR_ARTIFACT_TYPES: readonly string[] = [
-  "grid",
-  "single_file_image",
-  "pdf",
-  "chart",
-  "geo_map",
-  "interactive_doc",
-];
-
 export function artifactTypeHasEditor(artifactType: string): boolean {
-  return RELEASED_EDITOR_ARTIFACT_TYPES.includes(artifactType);
+  return artifactTypeHasRoutableEditor(artifactType);
 }
 
 /** 成品库 16 种 `artifact_type` 的中文名。与 `TYPE_LABELS`（原料库）**不是**一套。 */
