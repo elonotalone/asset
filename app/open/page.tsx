@@ -1,16 +1,16 @@
-import { SiteShell } from "@/components/SiteShell";
-import { OpenZone } from "@/components/OpenZone";
-import { ttServer } from "@oceanleo/ui/i18n/server";
+import { redirect } from "next/navigation";
+import { fallbackTypeFor, typePageHref } from "@/lib/type-page-views";
 
-export async function generateMetadata() {
-  const tt = await ttServer();
-  return { title: tt("开源专区 | LeoAsset") };
-}
-
-export default function OpenPage() {
-  return (
-    <SiteShell>
-      <OpenZone />
-    </SiteShell>
-  );
+// 「开源专区」不再是一个入口 ——「开源」不是素材类型，是「从哪儿找」这个维度。
+// 它现在是类型页顶部的一个开关（见 components/TypePageChrome.tsx）。
+//
+// 这条路由留着只为不打断老链接：站内仍有指向 /open 的文字链，站外也可能有人存过。
+// 带过来的 ?type= 尽量保留，落不住就退到图片（开源上游里样本最多的一类）。
+export default async function OpenPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ type?: string }>;
+}) {
+  const { type } = await searchParams;
+  redirect(typePageHref(fallbackTypeFor("open", type), "open"));
 }

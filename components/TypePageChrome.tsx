@@ -5,6 +5,12 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useUI } from "@oceanleo/ui/i18n";
 import { AssetType, TYPE_LABELS, TYPE_ORDER } from "@/lib/assets";
+import {
+  OPEN_SEARCH_TYPES,
+  SERIES_TYPES,
+  type TypeView,
+  typePageHref,
+} from "@/lib/type-page-views";
 import { OpenZone } from "@/components/OpenZone";
 import { SeriesZone } from "@/components/SeriesZone";
 
@@ -16,19 +22,8 @@ import { SeriesZone } from "@/components/SeriesZone";
 // 这一层刻意做成 AssetLibrary 的**外壳**而不是改 AssetLibrary：素材库那个组件是
 // A3 的面，也是本站最重的组件，包在外面就能加开关，不必动它一行。
 //
-// 最要紧的一条纪律写在下面两张表里：**没有上游就不画开关**。
-// 画一个点下去永远空的搜索框，比不画更糟。
-
-/**
- * 有实时上游可搜的 5 个类型（上游 `OPEN_SOURCE_TYPES` 是 6 个，多出来的 `music`
- * 在库里一行都没有、左栏也没有格子，所以这里没有它）。
- */
-export const OPEN_SEARCH_TYPES: AssetType[] = ["image", "vector", "video", "audio", "3d"];
-
-/** 库里真有成套数据的 3 个类型：ppt 243 套 / vector 20 套 / image 10 套，合计 273 套。 */
-export const SERIES_TYPES: AssetType[] = ["ppt", "vector", "image"];
-
-type TypeView = "library" | "open" | "series";
+// 哪一类画哪个开关由 lib/type-page-views.ts 的两张白名单说了算（重定向路由也读同一份）。
+// 最要紧的一条纪律就在那两张表里：**没有上游就不画开关**。
 
 function normType(t: string | null): AssetType {
   return t && TYPE_ORDER.includes(t as AssetType) ? (t as AssetType) : "image";
@@ -40,16 +35,6 @@ function normView(v: string | null, type: AssetType): TypeView {
   if (v === "open" && OPEN_SEARCH_TYPES.includes(type)) return "open";
   if (v === "series" && SERIES_TYPES.includes(type)) return "series";
   return "library";
-}
-
-function hrefFor(type: AssetType, view: TypeView, cat: string | null): string {
-  const qs = new URLSearchParams();
-  if (type !== "image") qs.set("type", type);
-  if (view !== "library") qs.set("view", view);
-  // ?cat= 是本站素材独有的目录直达，换到开源 / 成套就没有意义了。
-  else if (cat) qs.set("cat", cat);
-  const s = qs.toString();
-  return s ? `/?${s}` : "/";
 }
 
 export function TypePageChrome({ children }: { children: ReactNode }) {
@@ -100,7 +85,7 @@ export function TypePageChrome({ children }: { children: ReactNode }) {
             {tabs.map((t) => (
               <Link
                 key={t.view}
-                href={hrefFor(type, t.view, cat)}
+                href={typePageHref(type, t.view, cat)}
                 scroll={false}
                 aria-current={t.view === view ? "page" : undefined}
                 className={`rounded-lg px-3.5 py-1.5 text-sm font-medium transition ${
