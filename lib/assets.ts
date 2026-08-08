@@ -310,17 +310,39 @@ async function buildTypeOriginIndex(type: AssetType): Promise<TypeOriginIndex> {
   let keys: string[] = [];
   let shelfTotal = 0;
   let serverTotals: Record<MaterialOrigin, number> | null = null;
+  // 目录归属：服务端按 origin 各报一张目录表，归属靠**两张表的成员关系**判定，
+  // 不再靠采样推断。同时出现在两张表里 = 这个目录真混了两种来源。
+  let ownKeys = new Set<string>();
+  let extKeys = new Set<string>();
   try {
-    const [cats, whole, byOrigin] = await Promise.all([
-      listLibraryCategories(type),
+    const [ownCats, extCats, whole, byOrigin] = await Promise.all([
+      // 两张按区分好的目录表。**不再另打一发不分区的**：整张货架的目录就是这
+      // 两张表的并集，而 `/library/categories` 对 vector 这种四万件的类型要翻
+      // 41 页才数得完，多打一发就是多 41 个来回，实测会把连接打断。
+      listLibraryCategories(type, "first-party"),
+      listLibraryCategories(type, "external"),
       // 该类型的货架总数。用来判断某一区是不是独占了全部货
       // （独占时搜索可以一发到底，不必按目录扇出）。
       searchAssets({ q: "", type, page: 1, pageSize: 4 }),
       fetchTotalsByOrigin(type),
     ]);
-    keys = cats.categories || [];
+    ownKeys = new Set(ownCats.categories || []);
+    extKeys = new Set(extCats.categories || []);
+    // 各区内部保持服务端给的「件多的在前」顺序，先自有后开源，去重。
+    keys = [...new Set([...(ownCats.categories || []), ...(extCats.categories || [])])];
     shelfTotal = whole.total || 0;
     serverTotals = byOrigin;
+    // 旧码（线上今天跑的就是）**静默忽略** `origin=`，两张表会一字不差。
+    // 那不是「每个目录都混两种来源」，是这个网关根本没筛 —— 认不出来的话
+    // 三分区会一个目录都分不出去。识别出来就把两张表作废，归属退回逐目录采样。
+    if (
+      ownKeys.size > 0 &&
+      ownKeys.size === extKeys.size &&
+      [...ownKeys].every((k) => extKeys.has(k))
+    ) {
+      ownKeys = new Set();
+      extKeys = new Set();
+    }
   } catch {
     return { ...empty, failed: true };
   }
@@ -339,15 +361,17 @@ async function buildTypeOriginIndex(type: AssetType): Promise<TypeOriginIndex> {
             pageSize: SAMPLE_PER_CATEGORY,
           });
           if (!r.total || r.items.length === 0) return null;
-          const origins = new Set(
+          // 归属先看服务端的两张目录表（权威）；两张表都不认识这个目录时
+          // （旧码忽略了 origin 参数，三张表一模一样）才退回读采样件的 origin。
+          const inOwn = ownKeys.has(key);
+          const inExt = extKeys.has(key);
+          const sampled = new Set(
             r.items.map((a) => a.origin).filter(Boolean) as MaterialOrigin[],
           );
-          return {
-            key,
-            origin: origins.size === 1 ? [...origins][0] : null,
-            total: r.total,
-            sample: r.items,
-          };
+          let origin: MaterialOrigin | null = null;
+          if (inOwn !== inExt) origin = inOwn ? "first-party" : "external";
+          else if (!inOwn && !inExt && sampled.size === 1) origin = [...sampled][0];
+          return { key, origin, total: r.total, sample: r.items };
         } catch {
           if (attempt === 0) {
             await new Promise((r) => setTimeout(r, 500));
@@ -1228,9 +1252,15 @@ export function buildPanelsFromCategories(
 
 export function listLibraryCategories(
   type: AssetType,
+  origin?: MaterialOrigin,
 ): Promise<{ categories: string[] }> {
+  const qs = new URLSearchParams({ type });
+  // 带上 origin 就只拿这一区的目录。服务端 2026-08-08 起支持；旧码会静默忽略它，
+  // 那种情况下三个列表相同，下面的归属判定会把每个目录判成「混来源」——
+  // 结果是目录不分给任何一区，宁可少显示也不会把开源件标进「OceanLeo 自有」。
+  if (origin) qs.set("origin", origin);
   return getJson<{ categories: string[] }>(
-    `/v1/assets/library/categories?type=${encodeURIComponent(type)}`,
+    `/v1/assets/library/categories?${qs.toString()}`,
   );
 }
 

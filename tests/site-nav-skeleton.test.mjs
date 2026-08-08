@@ -272,6 +272,40 @@ test("分区件数取自服务端报的 total，不是前端数出来的", () =>
   assert.match(CHROME, /zoneTotal\(index, "first-party"\)/, "页签上的件数不是从索引来的");
 });
 
+test("目录归属先信服务端的两张目录表，采样只是兜底", () => {
+  // 服务端 2026-08-08 起支持 `/library/categories?origin=`，所以「这个目录属于
+  // 哪一区」是**问出来的**，不再靠采样推断。
+  assert.match(
+    ASSETS,
+    /listLibraryCategories\(type, "first-party"\)/,
+    "没有向服务端要「自有」那一区的目录表",
+  );
+  assert.match(
+    ASSETS,
+    /listLibraryCategories\(type, "external"\)/,
+    "没有向服务端要「开源已入库」那一区的目录表",
+  );
+  assert.match(
+    ASSETS,
+    /if \(inOwn !== inExt\) origin = inOwn \? "first-party" : "external"/,
+    "归属不是按两张目录表的成员关系判的",
+  );
+  // 旧码静默忽略 origin ⇒ 两张表一字不差。那是「网关没筛」，不是「目录都混来源」，
+  // 认不出来的话三分区会一个目录都分不出去。
+  assert.match(
+    ASSETS,
+    /\[\.\.\.ownKeys\]\.every\(\(k\) => extKeys\.has\(k\)\)/,
+    "没有识别「网关忽略了 origin 参数」这种情况",
+  );
+  // 不分区的那一发省掉了：整张货架的目录就是两张表的并集，而 vector 这种
+  // 四万件的类型每发都要翻 41 页，多打一发实测会把连接打断。
+  assert.doesNotMatch(
+    ASSETS,
+    /listLibraryCategories\(type\),/,
+    "又多打了一发不分区的目录请求",
+  );
+});
+
 test("件数是准数时不再打「≥」，偏小时必须打", () => {
   // incomplete 的意思是「件数可能偏小」。服务端报准数时，采样掉一个目录只少一块
   // 目录砖、件数仍然是准的，所以那种情况不该再吓唬用户说「至少」。
