@@ -130,20 +130,30 @@ interface LibraryResult {
 }
 
 /**
- * 服务端**还没有** `origin` 筛选参数。
+ * 服务端**已经有** `origin` 筛选参数了（W7 落地，见 `signals/W7-backend-done.md`）。
  *
- * `[实测 2026-08-07 W8]` 给 `/v1/assets/library/search` 传 `&origin=first-party`
- * 会被 FastAPI 静默忽略，`total` 一个不变（image 173→173、vector 40607→40607）。
- * 要加的地方在 `oceanleo/backend` 的三个文件里，**不在 W8 的边界内**，
- * 已写信号 `signals/W8-origin-filter-and-real-counts.md` 请父指派。
+ * 上一版这里是 `false`：那时给 `/v1/assets/library/search` 传 `&origin=first-party`
+ * 会被 FastAPI 静默忽略（`total` 一个不变），所以只能靠「`category` 窄查
+ * ＋ 逐件按 `item.origin` 硬过滤」凑出分区，代价是**一页会被过滤得比 page_size 少**。
  *
- * 所以这一版按来源取数靠两件事：**服务端已有的 `category` 参数**做窄查，
- * 加上**逐件按 `item.origin` 硬过滤**兜底。
+ * `[实测 2026-08-08 W8]` 本机跑 W7 的新码（`oceanleo/backend` 已提交未部署，
+ * `uvicorn main:app --port 8931 --lifespan off`，连的是同一个真库）：
  *
- * 网关加上那个参数之后，把这里改成 `true` 即可：请求会直接带上 `origin=`，
- * 目录采样与按目录扇出的搜索全部自动退化成一发普通查询。**切换成本就是这一行。**
+ * ```
+ * type=image                     total=173
+ * type=image&origin=first-party  total=170
+ * type=image&origin=external     total=3      170+3=173
+ * origin=bogus                   HTTP 400（不再静默忽略）
+ * ```
+ *
+ * 十个库内类型逐项对上 `signals/W8-origin-filter-and-real-counts.md` 那张表
+ * （自有合计 457 = image 170 + chart 44 + ppt 243）。**所以这里翻成 `true`。**
+ *
+ * 注意：线上 `api.oceanleo.com` 跑的仍是旧码，在它上面这个参数还是被忽略。
+ * 那种情况下**逐件硬过滤仍然兜得住**（结果是少显示几件，绝不会错标来源），
+ * 所以这个开关翻成 `true` 在新旧两边都不会把开源件标成 OceanLeo 自有。
  */
-export const ORIGIN_FILTER_IS_SERVER_SIDE = false;
+export const ORIGIN_FILTER_IS_SERVER_SIDE = true;
 
 // Search our SELF-OWNED hoarded library (platform_assets, served from OSS) ONLY.
 // 除实时搜索分区外的所有栏目都只查我们自己囤到 OSS 的素材——用户在这些栏目里

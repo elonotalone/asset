@@ -238,13 +238,12 @@ test("旧的 /open 与 /series 只剩重定向，不再是独立入口", () => {
   assert.equal(fallbackTypeFor("series", "audio"), "ppt");
 });
 
-test("按来源取数：服务端还没有 origin 筛选，所以逐件硬过滤必须在", () => {
-  // 网关传了 origin 会被静默忽略（实测），所以这个开关必须是 false —— 一旦有人
-  // 误改成 true 而后端还没跟上，「OceanLeo 自有」里会混进开源件。
+test("按来源取数：服务端筛选已开，但逐件硬过滤仍然必须在", () => {
+  // W7 的 origin 参数已落地（本机新码实测 image 173 = 170 + 3），所以开关是 true。
   assert.match(
     ASSETS,
-    /export const ORIGIN_FILTER_IS_SERVER_SIDE = false/,
-    "服务端还没有 origin 筛选，这个开关不能是 true",
+    /export const ORIGIN_FILTER_IS_SERVER_SIDE = true/,
+    "服务端 origin 筛选已就绪，这个开关该是 true",
   );
   assert.match(
     ASSETS,
