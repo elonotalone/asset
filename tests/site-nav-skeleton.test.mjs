@@ -263,9 +263,24 @@ test("按来源取数：服务端筛选已开，但逐件硬过滤仍然必须�
 });
 
 test("分区件数取自服务端报的 total，不是前端数出来的", () => {
-  assert.match(ASSETS, /totalByOrigin\[c\.origin\] \+= c\.total/, "件数不是按服务端 total 累加的");
+  // 首选：服务端按 origin 直接报的准数（一区一发查询）。
+  assert.match(ASSETS, /async function fetchTotalsByOrigin/, "没有直接问服务端要分区件数");
+  assert.match(ASSETS, /totalByOrigin: serverTotals \?\? summed/, "件数没有优先用服务端的准数");
+  // 兜底：服务端筛不了时，仍然按服务端每个目录报的 total 累加，不是前端数行数。
+  assert.match(ASSETS, /summed\[c\.origin\] \+= c\.total/, "兜底件数不是按服务端 total 累加的");
   assert.match(ASSETS, /export function zoneTotal/, "没有对外给出分区件数");
   assert.match(CHROME, /zoneTotal\(index, "first-party"\)/, "页签上的件数不是从索引来的");
+});
+
+test("件数是准数时不再打「≥」，偏小时必须打", () => {
+  // incomplete 的意思是「件数可能偏小」。服务端报准数时，采样掉一个目录只少一块
+  // 目录砖、件数仍然是准的，所以那种情况不该再吓唬用户说「至少」。
+  assert.match(
+    ASSETS,
+    /incomplete: dropped > 0 && serverTotals === null/,
+    "服务端报了准数还在说件数偏小",
+  );
+  assert.match(CHROME, /counts\?\.incomplete \? "≥" : ""/, "页签没有在件数偏小时标出来");
 });
 
 test("开关是包在 AssetLibrary 外面的一层壳，没有改 AssetLibrary", () => {

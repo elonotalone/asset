@@ -252,19 +252,48 @@ export interface TypeOriginIndex {
   /** 取索引时出错了（网关不可用）。UI 要把它和「真的没货」区分开。 */
   failed: boolean;
   /**
-   * 有目录没采成（重试后仍然失败）。
+   * 分区件数**可能偏小**，UI 要说「至少这么多」而不是报一个假的确数。
    *
    * `[实测 2026-08-07 W8]` `api.oceanleo.com` 会间歇性返回 503
    * `control-plane-unavailable`（台账 §B4/§G：线上与开发挤在同一台机上，归 W11）。
-   * 采样掉一个目录 = 那个目录的件数没算进分区件数 ⇒ **页面上的数字会偏小**。
-   * 所以这里如实标出来，让 UI 说「至少这么多」而不是报一个假的确数。
+   * 采样掉一个目录，在**按目录累加**的算法下 = 那个目录的件数没算进分区件数。
+   *
+   * `countsFromServer` 为 true 时件数不是累加出来的，采样掉一个目录只少一块目录砖，
+   * **件数仍是准的**，所以这一位是 false。
    */
   incomplete: boolean;
+  /**
+   * 件数是服务端按 `origin` 直接报的（一发查询一个准数），
+   * 而不是把各目录的 total 按采样归属累加出来的。
+   */
+  countsFromServer: boolean;
 }
 
 const SAMPLE_PER_CATEGORY = 6;
 
 const originIndexCache = new Map<AssetType, Promise<TypeOriginIndex>>();
+
+/**
+ * 直接问服务端：这个类型下每种来源各多少件。**两发查询，两个准数。**
+ *
+ * 服务端还没有 `origin` 筛选时（`ORIGIN_FILTER_IS_SERVER_SIDE = false`，
+ * 比如打到还没部署新码的线上网关）返回 `null`，件数退回按目录累加的老算法。
+ * 这两发本身失败也返回 `null` —— 件数少一种算法而已，不该把整个索引判死。
+ */
+async function fetchTotalsByOrigin(
+  type: AssetType,
+): Promise<Record<MaterialOrigin, number> | null> {
+  if (!ORIGIN_FILTER_IS_SERVER_SIDE) return null;
+  try {
+    const [own, ext] = await Promise.all([
+      searchAssets({ q: "", type, page: 1, pageSize: 4, origin: "first-party" }),
+      searchAssets({ q: "", type, page: 1, pageSize: 4, origin: "external" }),
+    ]);
+    return { "first-party": own.total || 0, external: ext.total || 0 };
+  } catch {
+    return null;
+  }
+}
 
 async function buildTypeOriginIndex(type: AssetType): Promise<TypeOriginIndex> {
   const empty: TypeOriginIndex = {
@@ -275,19 +304,23 @@ async function buildTypeOriginIndex(type: AssetType): Promise<TypeOriginIndex> {
     mixedCategories: [],
     failed: false,
     incomplete: false,
+    countsFromServer: false,
   };
 
   let keys: string[] = [];
   let shelfTotal = 0;
+  let serverTotals: Record<MaterialOrigin, number> | null = null;
   try {
-    const [cats, whole] = await Promise.all([
+    const [cats, whole, byOrigin] = await Promise.all([
       listLibraryCategories(type),
       // 该类型的货架总数。用来判断某一区是不是独占了全部货
       // （独占时搜索可以一发到底，不必按目录扇出）。
       searchAssets({ q: "", type, page: 1, pageSize: 4 }),
+      fetchTotalsByOrigin(type),
     ]);
     keys = cats.categories || [];
     shelfTotal = whole.total || 0;
+    serverTotals = byOrigin;
   } catch {
     return { ...empty, failed: true };
   }
@@ -330,21 +363,24 @@ async function buildTypeOriginIndex(type: AssetType): Promise<TypeOriginIndex> {
   );
 
   const categories = sampled.filter((c): c is ZoneCategory => c !== null);
-  const totalByOrigin: Record<MaterialOrigin, number> = {
+  // 老算法：按采样判出的归属，把各目录的 total 累加起来。
+  // 服务端能直接报数时它就只是个兜底 —— 采样掉目录会让它偏小，服务端的准数不会。
+  const summed: Record<MaterialOrigin, number> = {
     "first-party": 0,
     external: 0,
   };
   for (const c of categories) {
-    if (c.origin) totalByOrigin[c.origin] += c.total;
+    if (c.origin) summed[c.origin] += c.total;
   }
   return {
     type,
     categories,
     shelfTotal,
-    totalByOrigin,
+    totalByOrigin: serverTotals ?? summed,
     mixedCategories: categories.filter((c) => !c.origin).map((c) => c.key),
     failed: false,
-    incomplete: dropped > 0,
+    incomplete: dropped > 0 && serverTotals === null,
+    countsFromServer: serverTotals !== null,
   };
 }
 
@@ -395,11 +431,12 @@ export function zoneOwnsWholeShelf(
  *
  * 走哪条路由取决于这一区在本类型货架上的占比：
  *
+ * - **服务端能按 origin 筛** → 一发查询到底，本区的货一件不多一件不少。
  * - 指定了目录 → 一发窄查（目录本身就是纯的）。
- * - 这一区占了全部 → 一发普通查（`ORIGIN_FILTER_IS_SERVER_SIDE` 之前也不会串味）。
- * - 否则 → **按本区目录并发扇出再合并**。不这么做的话，区内搜索会被另一区的件
- *   把整页占满然后被过滤成空 —— 例如「图片」有 170 件自有、3 件开源已入库，
- *   在开源已入库区搜东西会明明有货却一件都出不来。
+ * - 这一区占了全部 → 一发普通查（不会串味）。
+ * - 否则 → **按本区目录并发扇出再合并**。这是服务端还不能按 origin 筛时的老路：
+ *   不扇出的话，区内搜索会被另一区的件把整页占满然后被过滤成空 —— 例如「图片」
+ *   有 170 件自有、3 件开源已入库，在开源已入库区搜东西会明明有货却一件都出不来。
  *
  * 无论走哪条路，返回前都按 origin 逐件过滤一遍。
  */
@@ -440,7 +477,12 @@ export async function searchAssetsInZone(params: {
       category: extra.category,
     });
 
-  if (category || seriesId || zoneOwnsWholeShelf(index, origin)) {
+  if (
+    ORIGIN_FILTER_IS_SERVER_SIDE ||
+    category ||
+    seriesId ||
+    zoneOwnsWholeShelf(index, origin)
+  ) {
     return one({ category });
   }
 
