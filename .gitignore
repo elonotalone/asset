@@ -36,3 +36,7 @@ next-env.d.ts
 
 # 模板缩略图管线本地产物（真身在 OSS assets/template-thumb/）
 scripts/.thumb-out/
+
+# 500 站产物（W4 校验器每次重新生成）
+/out-sites/
+/scratch/
