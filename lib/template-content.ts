@@ -6,6 +6,8 @@
 // 行业兜底模板补全，保证 105 个子类都有完整、可读、行业相关的中文内容。
 
 import { Industry, SubCategory, TemplateMeta } from "./template-taxonomy";
+import { dnaFor, type SectionKind } from "./template-dna";
+import { copyForSectionKinds } from "./template-i18n";
 import { REFINED_CONTENT } from "./template-content-refined";
 
 export interface NavItem {
@@ -606,6 +608,22 @@ function testimonialsFor(subLabel: string): Testimonial[] {
   ];
 }
 
+function availableSectionKinds(meta: TemplateMeta): Set<SectionKind> {
+  const dna = dnaFor(meta.slug, meta.industryKey, meta.variant);
+  return new Set(Object.values(dna.layout.sections).flat());
+}
+
+function mapCopyStrings<T>(value: T, rewrite: (text: string) => string): T {
+  if (typeof value === "string") return rewrite(value) as T;
+  if (Array.isArray(value)) return value.map((item) => mapCopyStrings(item, rewrite)) as T;
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, item]) => [key, mapCopyStrings(item, rewrite)]),
+    ) as T;
+  }
+  return value;
+}
+
 /** 把 taxonomy 的一个模板元数据，补全成一份完整可渲染的中文站点内容。 */
 export function buildContent(
   meta: TemplateMeta,
@@ -618,7 +636,7 @@ export function buildContent(
   const refined = REFINED_CONTENT[sub.key] ?? CONTENT[sub.key] ?? {};
   const brand = `${sub.label}${suffixFor(industry.key)}`;
 
-  return {
+  const content: SiteContent = {
     brand,
     nav: refined.nav ?? DEFAULT_NAV,
     heroTitle: refined.heroTitle ?? defaultHeroTitle(sub.label, industry.key),
@@ -629,7 +647,7 @@ export function buildContent(
     aboutBody: refined.aboutBody ?? fb.about(sub.label),
     featuresTitle: refined.featuresTitle ?? "为什么选择我们",
     featuresSubtitle:
-      refined.featuresSubtitle ?? "六大核心优势，让每一次合作都安心放心。",
+      refined.featuresSubtitle ?? `专注${sub.label}的六项选择理由。`,
     features: refined.features ?? featuresFor(sub.label),
     servicesTitle: refined.servicesTitle ?? "我们的服务",
     servicesSubtitle:
@@ -642,12 +660,16 @@ export function buildContent(
     ctaSubtitle:
       refined.ctaSubtitle ?? "现在就联系我们，获取专属方案与报价。",
     ctaButton: refined.ctaButton ?? "免费咨询",
-    contactPhone: refined.contactPhone ?? "400-888-8888",
-    contactEmail: refined.contactEmail ?? `hello@${sub.key}.example.com`,
-    contactAddress: refined.contactAddress ?? "上海市浦东新区世纪大道 100 号",
+    // 联系方式统一保持一眼可辨的示例值，不能让模板替商家声称一个真实地点或号码。
+    contactPhone: "（示例）400-000-0000",
+    contactEmail: `hello@${sub.key}.example.com`,
+    contactAddress: `示例地址 · ${sub.label}服务区`,
     footerSlogan:
       refined.footerSlogan ?? `${brand} · 以专业与诚信，服务每一位客户。`,
   };
+
+  const availableKinds = availableSectionKinds(meta);
+  return mapCopyStrings(content, (text) => copyForSectionKinds(text, availableKinds, "zh"));
 }
 
 function suffixFor(industryKey: string): string {

@@ -15,8 +15,9 @@
 import { Industry, SubCategory, TemplateMeta } from "./template-taxonomy";
 import { buildContent, SiteContent, Feature, ServiceItem, Stat, Testimonial } from "./template-content";
 import { buildExt, ExtContent, CaseItem, NewsItem, TeamMember, ProductItem, MenuGroup, FaqItem, PricingPlan, ProcessStep } from "./template-content-ext";
+import { dnaFor, type SectionKind } from "./template-dna";
 import { hashStr } from "./hash";
-import { Bi, bi, subEn, UI } from "./template-i18n";
+import { Bi, bi, copyForSectionKinds, subEn, UI } from "./template-i18n";
 
 // ————————————————————————————————————————————————————————————
 // 双语数据结构（与 SiteContent / ExtContent 同形，字段换成 Bi 或 Bi 列表）
@@ -151,30 +152,54 @@ function aboutEn(subKey: string, industryKey: string): string[] {
 
 function servicesEn(subKey: string, industryKey: string): { name: string; desc: string }[] {
   const s = subEn(subKey, industryKey);
+  const subject = s.toLowerCase();
   return [
-    { name: `${s} Consulting`, desc: "Tailored solutions from experienced advisors." },
-    { name: "Custom Solutions", desc: "Designed around your goals and budget." },
-    { name: "Quality Assurance", desc: "Strict standards at every step." },
-    { name: "Dedicated Support", desc: "One-on-one follow-through, client first." },
+    { name: `${s} Consulting`, desc: `Practical advice shaped around your ${subject} goals.` },
+    { name: "Custom Solutions", desc: `${s} delivery matched to your goals and budget.` },
+    { name: "Quality Assurance", desc: `${s} work checked carefully at every step.` },
+    { name: "Dedicated Support", desc: `Dedicated support throughout your ${subject} work.` },
   ];
 }
 
 const FEATURES_EN: { title: string; desc: (s: string) => string }[] = [
   { title: "Expert Team", desc: (s) => `A seasoned ${s.toLowerCase()} team — experienced and dependable.` },
-  { title: "Quality Assured", desc: () => "Rigorous quality control, refined in every detail." },
-  { title: "Fast Response", desc: () => "Quick to respond, making collaboration effortless." },
-  { title: "Caring Service", desc: () => "One-on-one follow-through — service first, client always." },
-  { title: "Integrity", desc: () => "Honest, transparent and compliant — trusted long term." },
-  { title: "Always Innovating", desc: () => "Following trends and innovating to lead the industry." },
+  { title: "Quality Assured", desc: (s) => `${s} work checked against clear standards at every step.` },
+  { title: "Fast Response", desc: (s) => `Prompt ${s.toLowerCase()} support keeps decisions moving.` },
+  { title: "Caring Service", desc: (s) => `One contact follows your ${s.toLowerCase()} needs from start to finish.` },
+  { title: "Integrity", desc: (s) => `Clear terms and honest guidance for every ${s.toLowerCase()} engagement.` },
+  { title: "Always Improving", desc: (s) => `Current ${s.toLowerCase()} practice, refined through every delivery.` },
 ];
 
 const STAT_LABELS_EN = ["Years in Industry", "Clients Served", "Satisfaction", "Response"];
 
 const TESTIMONIALS_EN: { name: string; role: string; text: (s: string) => string }[] = [
   { name: "Mr. Chen", role: "Business Client", text: (s) => `Their ${s.toLowerCase()} work was highly professional — reassuring from first talk to delivery.` },
-  { name: "Ms. Li", role: "Long-term Partner", text: () => "Great attitude, fast response, results beyond expectations. We'll keep working with them." },
-  { name: "Mr. Wang", role: "Repeat Customer", text: () => "Solid quality, fair prices, a reliable team — highly recommended!" },
+  { name: "Ms. Li", role: "Long-term Partner", text: (s) => `The ${s.toLowerCase()} service stayed responsive and clear, with results beyond our expectations.` },
+  { name: "Mr. Wang", role: "Repeat Customer", text: (s) => `Reliable ${s.toLowerCase()} quality, fair terms and thoughtful follow-through.` },
 ];
+
+function availableSectionKinds(meta: TemplateMeta): Set<SectionKind> {
+  const dna = dnaFor(meta.slug, meta.industryKey, meta.variant);
+  return new Set(Object.values(dna.layout.sections).flat());
+}
+
+function mapBiCopy<T>(value: T, availableKinds: ReadonlySet<SectionKind>): T {
+  if (Array.isArray(value)) return value.map((item) => mapBiCopy(item, availableKinds)) as T;
+  if (!value || typeof value !== "object") return value;
+  if (
+    "zh" in value && "en" in value &&
+    typeof value.zh === "string" && typeof value.en === "string"
+  ) {
+    return {
+      ...value,
+      zh: copyForSectionKinds(value.zh, availableKinds, "zh"),
+      en: copyForSectionKinds(value.en, availableKinds, "en"),
+    } as T;
+  }
+  return Object.fromEntries(
+    Object.entries(value).map(([key, item]) => [key, mapBiCopy(item, availableKinds)]),
+  ) as T;
+}
 
 // ————————————————————————————————————————————————————————————
 // 合成双语 SiteContent
@@ -211,7 +236,7 @@ export function buildBiContent(
   const aboutEnArr = aboutEn(sk, ik);
   const aboutBody: Bi[] = zh.aboutBody.map((t, i) => bi(t, aboutEnArr[i % aboutEnArr.length]));
 
-  return {
+  const content: BiContent = {
     brand: bi(zh.brand, brandEn(sk, ik)),
     heroTitle: bi(zh.heroTitle, heroTitleEn(sk, ik)),
     heroSubtitle: bi(zh.heroSubtitle, sloganEn(sk, ik)),
@@ -220,7 +245,7 @@ export function buildBiContent(
     aboutTitle: bi(zh.aboutTitle, UI.about.en),
     aboutBody,
     featuresTitle: bi(zh.featuresTitle, UI.secFeatures.en),
-    featuresSubtitle: bi(zh.featuresSubtitle, UI.secFeaturesSub.en),
+    featuresSubtitle: bi(zh.featuresSubtitle, `${subEn(sk, ik)} expertise, in six practical strengths.`),
     features,
     servicesTitle: bi(zh.servicesTitle, UI.secServices.en),
     servicesSubtitle: bi(zh.servicesSubtitle, `Comprehensive ${subEn(sk, ik).toLowerCase()} services for all your needs.`),
@@ -229,13 +254,15 @@ export function buildBiContent(
     testimonialsTitle: bi(zh.testimonialsTitle, "What Clients Say"),
     testimonials,
     ctaTitle: bi(zh.ctaTitle, `Start your ${subEn(sk, ik).toLowerCase()} journey`),
-    ctaSubtitle: bi(zh.ctaSubtitle, "Contact us now for a tailored plan and quote."),
+    ctaSubtitle: bi(zh.ctaSubtitle, `Ask for a ${subEn(sk, ik).toLowerCase()} plan shaped around your needs.`),
     ctaButton: bi(zh.ctaButton, "Free Consultation"),
     contactPhone: zh.contactPhone,
     contactEmail: zh.contactEmail,
-    contactAddress: bi(zh.contactAddress, "100 Century Ave, Pudong, Shanghai"),
+    contactAddress: bi(zh.contactAddress, `Sample address · ${subEn(sk, ik)} service area`),
     footerSlogan: bi(zh.footerSlogan, `${brandEn(sk, ik)} · Serving every client with expertise and integrity.`),
   };
+
+  return mapBiCopy(content, availableSectionKinds(meta));
 }
 
 // ————————————————————————————————————————————————————————————
