@@ -45,7 +45,10 @@ import {
   buildBiContent,
   buildBiExt,
 } from "./template-content-bi";
-import { renderSignatureSection } from "./template-engine-signature";
+import {
+  type SignatureSectionKind,
+  renderSignatureSection,
+} from "./template-engine-signature";
 
 // ————————————————————————————————————————————————————————————
 // 渲染上下文（一次渲染共享）
@@ -1125,7 +1128,12 @@ function renderMarquee(ctx: Ctx): string {
 }
 
 /** 首页的招牌结构由装明确指定；内页仍保留业务章节，避免为了风格丢掉菜单/产品等内容。 */
-const HOME_SKIN_BLOCKS: Partial<Record<SkinKey, Partial<Record<SectionKind, SectionKind>>>> = {
+type VisualSectionKind = SectionKind | SignatureSectionKind;
+
+const HOME_SKIN_BLOCKS: Partial<Record<SkinKey, Partial<Record<SectionKind, VisualSectionKind>>>> = {
+  paper: {
+    features: "sigPaperIndex",
+  },
   editorial: {
     hero: "sigEditorialHero",
     features: "sigEditorialFeature",
@@ -1138,6 +1146,7 @@ const HOME_SKIN_BLOCKS: Partial<Record<SkinKey, Partial<Record<SectionKind, Sect
   },
   brutalist: {
     hero: "sigBrutalHero",
+    services: "sigBrutalCards",
     cta: "sigStickerCta",
   },
   neon: {
@@ -1149,6 +1158,19 @@ const HOME_SKIN_BLOCKS: Partial<Record<SkinKey, Partial<Record<SectionKind, Sect
     about: "sigFsSplit",
     services: "sigFsPanel",
   },
+  nature: {
+    features: "sigNatureTrail",
+  },
+  sand: {
+    features: "sigSandWorkshop",
+  },
+  navy: {
+    features: "sigNavyBriefing",
+  },
+  glass: {
+    features: "sigGlassGrid",
+    cta: "sigCodeWindow",
+  },
 };
 
 /** 构成可以继承旧骨架的板块位置，但旧 sig 名不能把某一套装的视觉泄漏给别的装。 */
@@ -1158,7 +1180,7 @@ const SEMANTIC_KIND_BY_SIGNATURE: Partial<Record<SectionKind, SectionKind>> = {
   sigEditorialGallery: "services",
   sigPullQuote: "testimonials",
   sigNeonHero: "hero",
-  sigGlassGrid: "services",
+  sigGlassGrid: "features",
   sigNeonStats: "stats",
   sigCodeWindow: "cta",
   sigFsIntro: "hero",
@@ -1173,10 +1195,14 @@ const SEMANTIC_KIND_BY_SIGNATURE: Partial<Record<SectionKind, SectionKind>> = {
 
 function renderSection(ctx: Ctx, kind: SectionKind, pageLabel: string): string {
   const semanticKind = SEMANTIC_KIND_BY_SIGNATURE[kind] ?? kind;
-  const visualKind =
+  const configuredKind =
     ctx.pageKey === "home"
       ? HOME_SKIN_BLOCKS[ctx.skin.key]?.[semanticKind] ?? semanticKind
       : semanticKind;
+  // 代码窗口只适合技术类站点；玻璃装在商业、家居、零售站上仍用普通 CTA。
+  const visualKind = configuredKind === "sigCodeWindow" && ctx.meta.industryKey !== "tech"
+    ? semanticKind
+    : configuredKind;
   const html = (() => {
   switch (visualKind) {
     case "hero": return renderHero(ctx);

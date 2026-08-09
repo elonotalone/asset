@@ -326,11 +326,16 @@ function paletteForSkin(skin: Skin, variant: number): PaletteV2 {
 }
 
 const SIGNATURE_SKINS = new Set<SkinKey>([
+  "paper",
   "editorial",
   "bento",
   "brutalist",
   "neon",
   "fullscreen",
+  "nature",
+  "sand",
+  "navy",
+  "glass",
 ]);
 
 export function dnaFor(

@@ -74,24 +74,44 @@ test("十套装各自带有配色之外的结构证据", () => {
     glass: /backdrop-filter:blur\(18px\)/,
   };
   const homeBlocks = {
+    paper: "sigPaperIndex",
     editorial: "sigEditorialHero",
     bento: "sigBentoHero",
     brutalist: "sigBrutalHero",
     neon: "sigNeonHero",
     fullscreen: "sigFsIntro",
+    nature: "sigNatureTrail",
+    sand: "sigSandWorkshop",
+    navy: "sigNavyBriefing",
+    glass: "sigGlassGrid",
   };
 
   for (const [skinKey, sample] of samplesBySkin()) {
     const { html, css } = emit(sample);
     assert.match(css, evidence[skinKey], `${skinKey}: 缺少结构级差异`);
-    if (homeBlocks[skinKey]) {
-      assert.match(
-        html,
-        new RegExp(`data-skin-block="${homeBlocks[skinKey]}"`),
-        `${skinKey}: 首页没有使用自己的招牌结构`,
-      );
+    assert.match(
+      html,
+      new RegExp(`data-skin-block="${homeBlocks[skinKey]}"`),
+      `${skinKey}: 首页没有使用自己的招牌结构`,
+    );
+  }
+});
+
+test("玻璃代码窗口只出现在技术行业", () => {
+  let technicalGlassSites = 0;
+  for (const meta of allTemplates()) {
+    const dna = dnaFor(meta.slug, meta.industryKey, meta.variant);
+    if (dna.skin.key !== "glass") continue;
+    const found = subByKey(meta.subKey);
+    const html = emitStandaloneSite(meta, found.ind, found.sub).files.find((file) => file.path === "index.html")?.text ?? "";
+    if (meta.industryKey === "tech") {
+      technicalGlassSites += 1;
+      assert.match(html, /data-skin-block="sigCodeWindow"/, `${meta.slug}: 技术玻璃站缺代码窗口`);
+    } else {
+      assert.doesNotMatch(html, /data-skin-block="sigCodeWindow"/, `${meta.slug}: 非技术站混入代码窗口`);
     }
   }
+  assert.ok(technicalGlassSites > 0, "没有技术玻璃站覆盖代码窗口判据");
 });
 
 test("霓虹与全屏叙事是整站深底，且正文令牌保持可读", () => {

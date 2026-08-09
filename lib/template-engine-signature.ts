@@ -1,8 +1,8 @@
 // 特色家族专属章节渲染器（模板专区 v3「脱胎换骨」）。
 //
 // 每个 sig* 章节都是一套**独立视觉语汇**，不复用通用引擎的卡片/网格观感，目的是
-// 让 editorial / neon-tech / fullscreen-scroll / bento / brutalist 五个家族「一眼
-// 可辨」，而非「换排列 + 换字」。配色/圆角/字体/特效已由各家族的 signature 字段钉死
+// 让十套装都能「一眼可辨」，而非「换排列 + 换字」。配色/圆角/字体/特效已由各套装
+// 的 signature 字段钉死
 // （见 template-dna.ts），这里只负责排版结构与该家族的招牌元素。
 //
 // 复用引擎导出的 esc / img / heading / btnPrimary / sectionPad / svgIcon / subName。
@@ -20,38 +20,41 @@ import {
   subName,
 } from "./template-engine";
 
+export const SIGNATURE_RENDERER_KEYS = [
+  "sigPaperIndex",
+  "sigEditorialHero",
+  "sigEditorialFeature",
+  "sigEditorialGallery",
+  "sigPullQuote",
+  "sigNeonHero",
+  "sigGlassGrid",
+  "sigNeonStats",
+  "sigCodeWindow",
+  "sigFsIntro",
+  "sigFsPanel",
+  "sigFsSplit",
+  "sigBentoHero",
+  "sigBentoFeatures",
+  "sigBrutalHero",
+  "sigBrutalCards",
+  "sigStickerCta",
+  "sigNatureTrail",
+  "sigSandWorkshop",
+  "sigNavyBriefing",
+] as const;
+
+export type SignatureSectionKind = (typeof SIGNATURE_RENDERER_KEYS)[number];
+
 // ═══════════════════════════════════════════════════════════════════
 // 路由：把 sig* 章节分派到对应渲染器。
 // ═══════════════════════════════════════════════════════════════════
 export function renderSignatureSection(
   ctx: Ctx,
-  kind: SectionKind,
+  kind: SectionKind | SignatureSectionKind,
   pageLabel: string,
 ): string {
-  switch (kind) {
-    // editorial
-    case "sigEditorialHero": return sigEditorialHero(ctx);
-    case "sigEditorialFeature": return sigEditorialFeature(ctx);
-    case "sigEditorialGallery": return sigEditorialGallery(ctx);
-    case "sigPullQuote": return sigPullQuote(ctx);
-    // neon-tech
-    case "sigNeonHero": return sigNeonHero(ctx);
-    case "sigGlassGrid": return sigGlassGrid(ctx);
-    case "sigNeonStats": return sigNeonStats(ctx);
-    case "sigCodeWindow": return sigCodeWindow(ctx);
-    // fullscreen-scroll
-    case "sigFsIntro": return sigFsIntro(ctx);
-    case "sigFsPanel": return sigFsPanel(ctx, pageLabel);
-    case "sigFsSplit": return sigFsSplit(ctx);
-    // bento
-    case "sigBentoHero": return sigBentoHero(ctx);
-    case "sigBentoFeatures": return sigBentoFeatures(ctx);
-    // brutalist
-    case "sigBrutalHero": return sigBrutalHero(ctx);
-    case "sigBrutalCards": return sigBrutalCards(ctx);
-    case "sigStickerCta": return sigStickerCta(ctx);
-    default: return "";
-  }
+  const renderer = SIGNATURE_RENDERERS[kind as SignatureSectionKind];
+  return renderer ? renderer(ctx, pageLabel) : "";
 }
 
 // small helper：段落内的引导 kicker（子类名 · 品牌）。
@@ -155,15 +158,15 @@ function sigNeonHero(ctx: Ctx): string {
 
 function sigGlassGrid(ctx: Ctx): string {
   const { c, p } = ctx;
-  const items = c.services.length ? c.services : c.features.map((f) => ({ name: f.title, desc: f.desc }));
-  const cards = items.slice(0, 6).map((it, i) => `<div class="leo-glass p-6 transition hover:-translate-y-1" style="border-radius:${ctx.R.card}">
-    <div class="flex h-11 w-11 items-center justify-center leo-neon-edge" style="border-radius:${ctx.R.btn};color:${p.primary}">${svgIcon(GLYPHS[i % GLYPHS.length], p.primary, 22)}</div>
-    <h3 class="mt-4 font-semibold" style="color:${p.ink}">${esc(it.name)}</h3>
+  const cards = c.features.slice(0, 6).map((it, i) => `<div class="p-6 transition hover:-translate-y-1" style="background:linear-gradient(145deg,#ffffffc7,#ffffff63);border:1px solid #ffffffd9;box-shadow:0 18px 45px ${p.primary}16,inset 0 1px 0 #fff;border-radius:${ctx.R.card};backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)">
+    <div class="flex h-11 w-11 items-center justify-center" style="background:#ffffffa8;border:1px solid #fff;box-shadow:0 8px 22px ${p.primary}18;border-radius:${ctx.R.btn};color:${p.primary}">${svgIcon(it.icon || GLYPHS[i % GLYPHS.length], p.primary, 22)}</div>
+    <h3 class="mt-4 font-semibold" style="color:${p.ink}">${esc(it.title)}</h3>
     <p class="mt-2 text-sm leading-relaxed" style="color:${p.sub}">${esc(it.desc)}</p>
   </div>`).join("");
-  return `<section class="relative" style="background:${p.soft};${sectionPad(ctx)}">
+  return `<section class="relative overflow-hidden" style="background:linear-gradient(145deg,${p.soft},#fff);${sectionPad(ctx)}">
+    <div class="absolute" style="width:24rem;height:24rem;right:-8rem;top:-10rem;border-radius:9999px;background:${p.primary}22;filter:blur(35px)"></div>
     <div class="relative max-w-6xl mx-auto px-6">
-      ${headingDark(ctx, c.servicesTitle, c.servicesSubtitle)}
+      ${heading(ctx, c.featuresTitle, c.featuresSubtitle)}
       <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">${cards}</div>
     </div>
   </section>`;
@@ -197,7 +200,7 @@ function sigCodeWindow(ctx: Ctx): string {
       ${headingDark(ctx, c.ctaTitle, c.ctaSubtitle, "left")}
       <div class="mt-6">${btnPrimary(ctx, c.ctaButton)}</div>
     </div>
-    <div class="leo-neon-edge overflow-hidden" style="border-radius:${ctx.R.card};background:#00000055">
+    <div class="overflow-hidden" style="border:1px solid ${p.primary}55;box-shadow:0 20px 60px ${p.primary}22,inset 0 0 30px ${p.primary}0f;border-radius:${ctx.R.card};background:#111827">
       <div class="flex items-center gap-2 px-4 py-3" style="border-bottom:1px solid ${p.primary}22">
         <span style="width:11px;height:11px;border-radius:9999px;background:#ff5f56"></span>
         <span style="width:11px;height:11px;border-radius:9999px;background:#ffbd2e"></span>
@@ -376,3 +379,101 @@ function sigStickerCta(ctx: Ctx): string {
     </div>
   </div></section>`;
 }
+
+// ═══════════════════════════════════════════════════════════════════
+// F6 — paper（素白）：六栏索引墙，靠留白与竖向细线建立秩序，不借卡片造层级。
+// ═══════════════════════════════════════════════════════════════════
+function sigPaperIndex(ctx: Ctx): string {
+  const { c, p } = ctx;
+  const columns = c.features.slice(0, 6).map((feature, i) => `<div class="px-5 py-6" style="flex:1 0 10rem;border-left:1px solid ${p.ink}26;min-height:15rem">
+    <div class="text-xs tracking-widest" style="color:${p.sub}">${String(i + 1).padStart(2, "0")} / 06</div>
+    <h3 class="mt-10 text-lg font-semibold" style="color:${p.ink}">${esc(feature.title)}</h3>
+    <p class="mt-4 text-sm leading-relaxed" style="color:${p.sub}">${esc(feature.desc)}</p>
+  </div>`).join("");
+  return `<section style="background:#fff;${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">
+    <div class="flex flex-col md:flex-row justify-between gap-6" style="border-bottom:1px solid ${p.ink}33;padding-bottom:2rem">
+      <div><div class="text-xs tracking-widest uppercase" style="color:${p.sub}">${esc(kicker(ctx))}</div><h2 class="mt-4" style="font-size:clamp(2rem,4vw,3.4rem);font-weight:650;letter-spacing:-.02em;color:${p.ink}">${esc(c.featuresTitle)}</h2></div>
+      <p class="max-w-md text-sm leading-relaxed" style="color:${p.sub}">${esc(c.featuresSubtitle)}</p>
+    </div>
+    <div class="mt-10 flex overflow-x-auto" style="border-right:1px solid ${p.ink}26">${columns}</div>
+  </div></section>`;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// F7 — nature（自然）：沿一条生长路径错落排布的圆润叶片节点。
+// ═══════════════════════════════════════════════════════════════════
+function sigNatureTrail(ctx: Ctx): string {
+  const { c, p } = ctx;
+  const leaves = c.features.slice(0, 6).map((feature, i) => `<div class="relative p-6" style="${i % 2 ? "margin-top:2.5rem;" : ""}background:#ffffffb8;border:1px solid ${p.primary}26;border-radius:${i % 2 ? "4rem 1.5rem 4rem 1.5rem" : "1.5rem 4rem 1.5rem 4rem"};box-shadow:0 16px 38px ${p.primary}12">
+    <div class="flex h-12 w-12 items-center justify-center" style="background:${p.soft};border:1px solid ${p.primary}30;border-radius:50% 50% 46% 54%">${svgIcon(feature.icon || GLYPHS[i % GLYPHS.length], p.primary, 22)}</div>
+    <h3 class="mt-5 text-lg font-semibold" style="color:${p.ink}">${esc(feature.title)}</h3>
+    <p class="mt-2 text-sm leading-relaxed" style="color:${p.sub}">${esc(feature.desc)}</p>
+  </div>`).join("");
+  return `<section class="relative overflow-hidden" style="background:${p.soft};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">
+    <div class="grid lg:grid-cols-2 gap-10 items-start">
+      <div><div class="text-xs tracking-widest uppercase" style="color:${p.primary}">${esc(kicker(ctx))}</div><h2 class="mt-4" style="font-family:Georgia,'Songti SC',serif;font-size:clamp(2rem,4vw,3.2rem);line-height:1.12;color:${p.ink}">${esc(c.featuresTitle)}</h2><p class="mt-5 leading-relaxed" style="color:${p.sub}">${esc(c.featuresSubtitle)}</p><div class="mt-8" style="width:5rem;height:2px;background:${p.primary}"></div></div>
+      <div class="relative"><div class="absolute" style="left:50%;top:1rem;bottom:1rem;width:1px;background:linear-gradient(${p.primary}00,${p.primary}55,${p.primary}00)"></div><div class="relative grid sm:grid-cols-2 gap-5">${leaves}</div></div>
+    </div>
+  </div></section>`;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// F8 — sand（暖砂）：手作台上的叠纸工单，虚线装订与轻微错位保留手工痕迹。
+// ═══════════════════════════════════════════════════════════════════
+function sigSandWorkshop(ctx: Ctx): string {
+  const { c, p } = ctx;
+  const rows = c.features.slice(0, 6).map((feature, i) => `<div class="grid gap-4 py-5" style="grid-template-columns:3.25rem minmax(0,1fr);border-bottom:1px dashed ${p.ink}38">
+    <div class="flex h-9 w-9 items-center justify-center text-xs font-bold" style="border:1px solid ${p.ink}55;border-radius:9999px;color:${p.ink}">${String(i + 1).padStart(2, "0")}</div>
+    <div><h3 class="font-semibold" style="color:${p.ink}">${esc(feature.title)}</h3><p class="mt-1 text-sm leading-relaxed" style="color:${p.sub}">${esc(feature.desc)}</p></div>
+  </div>`).join("");
+  return `<section style="background:${p.soft};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">
+    <div class="grid lg:grid-cols-12 gap-10 items-center">
+      <div class="lg:col-span-4"><div class="text-xs tracking-widest uppercase" style="color:${p.primary}">${esc(kicker(ctx))}</div><h2 class="mt-4" style="font-family:Georgia,'Songti SC',serif;font-size:clamp(2.1rem,4.2vw,3.5rem);line-height:1.08;color:${p.ink}">${esc(c.featuresTitle)}</h2><p class="mt-5 leading-relaxed" style="color:${p.sub}">${esc(c.featuresSubtitle)}</p></div>
+      <div class="relative lg:col-span-8" style="padding:1rem">
+        <div class="absolute inset-0" style="background:${p.primary}16;border:1px solid ${p.primary}25;transform:rotate(2.2deg)"></div>
+        <div class="absolute inset-0" style="background:#fff8;border:1px solid ${p.ink}18;transform:rotate(-1.4deg)"></div>
+        <div class="relative p-8" style="background:#fffdf7;border:1px solid ${p.ink}2e;box-shadow:0 20px 45px ${p.ink}12">${rows}</div>
+      </div>
+    </div>
+  </div></section>`;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// F9 — navy（深蓝）：左侧编号导轨 + 横向简报表，像一页决策看板而非卡片墙。
+// ═══════════════════════════════════════════════════════════════════
+function sigNavyBriefing(ctx: Ctx): string {
+  const { c, p } = ctx;
+  const rows = c.features.slice(0, 6).map((feature, i) => `<div class="grid md:grid-cols-3 gap-4 items-start py-6" style="border-top:1px solid #ffffff24">
+    <div><div class="text-xs tracking-widest" style="color:${p.accent}">BRIEF / ${String(i + 1).padStart(2, "0")}</div><h3 class="mt-3 text-lg font-semibold text-white">${esc(feature.title)}</h3></div>
+    <p class="md:col-span-2 text-sm leading-relaxed" style="color:#ffffffb8">${esc(feature.desc)}</p>
+  </div>`).join("");
+  return `<section style="background:${p.ink};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">
+    <div class="grid lg:grid-cols-2 gap-8">
+      <div style="border-left:4px solid ${p.primary};padding-left:1.5rem"><div class="text-xs tracking-widest uppercase" style="color:${p.accent}">${esc(kicker(ctx))}</div><h2 class="mt-5 text-white" style="font-size:clamp(2rem,4vw,3.2rem);line-height:1.08;font-weight:750">${esc(c.featuresTitle)}</h2><p class="mt-5 text-sm leading-relaxed" style="color:#ffffffa8">${esc(c.featuresSubtitle)}</p></div>
+      <div style="border-bottom:1px solid #ffffff24">${rows}</div>
+    </div>
+  </div></section>`;
+}
+
+const SIGNATURE_RENDERERS = {
+  sigPaperIndex,
+  sigEditorialHero,
+  sigEditorialFeature,
+  sigEditorialGallery,
+  sigPullQuote,
+  sigNeonHero,
+  sigGlassGrid,
+  sigNeonStats,
+  sigCodeWindow,
+  sigFsIntro,
+  sigFsPanel,
+  sigFsSplit,
+  sigBentoHero,
+  sigBentoFeatures,
+  sigBrutalHero,
+  sigBrutalCards,
+  sigStickerCta,
+  sigNatureTrail,
+  sigSandWorkshop,
+  sigNavyBriefing,
+} satisfies Record<SignatureSectionKind, (ctx: Ctx, pageLabel: string) => string>;
