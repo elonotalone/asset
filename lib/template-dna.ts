@@ -206,17 +206,23 @@ export function mainPageKey(industryKey: string, subKey?: string): MainPageKey {
   return "services";
 }
 
+/** 作品页沿用已有 gallery 板块；其余主营页的页面 key 与板块 kind 同名。 */
+export function mainSectionKind(mainKey: MainPageKey): SectionKind {
+  return mainKey === "works" ? "gallery" : mainKey;
+}
+
 function layoutForShape(shapeKey: ShapeKey, mainKey: MainPageKey): LayoutFamily {
   const shape = shapeByKey(shapeKey);
   const pages = shape.pages.map((page) => (page === "main" ? mainKey : page)) as PageKey[];
   const blueprint = SHAPE_SECTION_BLUEPRINTS[shapeKey];
+  const mainKind = mainSectionKind(mainKey);
   const sections: Record<string, SectionKind[]> = {};
 
   for (const semanticPage of shape.pages) {
     const pageKey = semanticPage === "main" ? mainKey : semanticPage;
     const sequence = blueprint[semanticPage];
     sections[pageKey] = sequence.map((section) =>
-      section === "main" ? mainKey : section,
+      section === "main" ? mainKind : section,
     ) as SectionKind[];
   }
 

@@ -19,6 +19,7 @@ import {
   SHAPE_SECTION_BLUEPRINTS,
   dnaFor,
   mainPageKey,
+  mainSectionKind,
 } from "../lib/template-dna.ts";
 import {
   ALL_SUB_KEYS,
@@ -81,6 +82,7 @@ test("500 件站点逐页使用所属构成的唯一板块序列", () => {
   for (const meta of allTemplates()) {
     const dna = dnaFor(meta.slug, meta.industryKey, meta.variant);
     const mainKey = mainPageKey(meta.industryKey, meta.subKey);
+    const mainKind = mainSectionKind(mainKey);
     const expectedPages = dna.shape.pages.map((page) => page === "main" ? mainKey : page);
     assert.deepEqual(dna.layout.pages, expectedPages, `${meta.slug} 页面顺序`);
 
@@ -88,7 +90,7 @@ test("500 件站点逐页使用所属构成的唯一板块序列", () => {
     for (const semanticPage of dna.shape.pages) {
       const actualPage = semanticPage === "main" ? mainKey : semanticPage;
       const expectedSections = blueprint[semanticPage].map((section) =>
-        section === "main" ? mainKey : section,
+        section === "main" ? mainKind : section,
       );
       assert.deepEqual(
         dna.layout.sections[actualPage],
