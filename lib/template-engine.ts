@@ -34,6 +34,7 @@ import {
   effectsStyles,
   type AccentFx,
 } from "./template-effects";
+import { SKINS, type Skin, type SkinKey } from "./template-skins";
 import { chartTitle, type Lang, secTitle, ui, UI, pickLang, subEn } from "./template-i18n";
 import {
   type BiContent,
@@ -56,6 +57,8 @@ export interface Ctx {
   dna: TemplateDNA;
   p: PaletteV2;
   fx: AccentFx;
+  /** 当前整套外观。渲染结构只按它分派，不再从 slug 猜样子。 */
+  skin: Skin;
   R: ReturnType<typeof radiusTokens>;
   D: ReturnType<typeof densityTokens>;
   /** 表面色令牌（浅/深两态）——见 surfaceTokens()。通用渲染器用它取代写死的
@@ -126,6 +129,48 @@ export function surfaceTokens(dna: TemplateDNA): SurfaceTokens {
     borderStrong: "#00000022",
     inputBg: "#fff",
     inputBorder: "#0000001f",
+  };
+}
+
+/**
+ * DNA 必须完整落在一套已批准的装上。这里故意逐维核对，不能只凭 palette 猜装，
+ * 否则圆角、疏密或特效残留随机值时，页面仍会披着合法名字蒙混过去。
+ */
+export function skinForDna(dna: TemplateDNA): Skin {
+  const found = SKINS.find(
+    (candidate) =>
+      candidate.palettes.includes(dna.palette.key) &&
+      candidate.radius === dna.radius &&
+      candidate.density === dna.density &&
+      candidate.font === dna.font &&
+      candidate.fx === dna.accentFx &&
+      candidate.dark === dna.forceDark,
+  );
+  if (!found) {
+    throw new Error(
+      `模板长相没有完整落在已批准套装：palette=${dna.palette.key}, radius=${dna.radius}, density=${dna.density}, font=${dna.font}, fx=${dna.accentFx}, dark=${dna.forceDark}`,
+    );
+  }
+  return found;
+}
+
+/**
+ * 全屏叙事的表中钉死了 glacier + dark。glacier 本身是浅色配色，所以深色维度由
+ * 渲染层解释为同色相的夜间表面；key 与 DNA 都不变，正文则获得足够对比度。
+ */
+export function visualPaletteForSkin(dna: TemplateDNA, activeSkin: Skin): PaletteV2 {
+  if (activeSkin.key !== "fullscreen") return dna.palette;
+  return {
+    ...dna.palette,
+    primary: "#7dd3fc",
+    primaryDark: "#38bdf8",
+    gradFrom: "#07111d",
+    gradTo: "#253449",
+    soft: "#0b111b",
+    ink: "#f8fafc",
+    sub: "#cbd5e1",
+    accent: "#bae6fd",
+    heroDark: true,
   };
 }
 
@@ -256,13 +301,21 @@ function revealCls(kind: SectionKind): string {
   return "leo-reveal";
 }
 
-function wrapSectionReveal(html: string, kind: SectionKind): string {
-  if (kind === "hero" || kind === "logos") return html;
+function wrapSectionReveal(
+  html: string,
+  kind: SectionKind,
+  visualKind: SectionKind = kind,
+): string {
+  const marked = html.replace(
+    /<section(?=\s|>)/,
+    `<section data-section-kind="${kind}" data-skin-block="${visualKind}"`,
+  );
+  if (kind === "hero" || kind === "logos") return marked;
   const cls = revealCls(kind);
-  if (html.includes('class="')) {
-    return html.replace(/<section class="/, `<section class="${cls} `);
+  if (marked.includes('class="')) {
+    return marked.replace(/<section([^>]*) class="/, `<section$1 class="${cls} `);
   }
-  return html.replace("<section ", `<section class="${cls}" `);
+  return marked.replace("<section ", `<section class="${cls}" `);
 }
 
 // ————————————————————————————————————————————————————————————
@@ -1095,9 +1148,61 @@ function renderMarquee(ctx: Ctx): string {
   return `<section style="background:${p.soft}"><style>@keyframes leoMq{from{transform:translateX(0)}to{transform:translateX(-50%)}}.leo-mq-track{display:flex;width:max-content;animation:leoMq 26s linear infinite}.leo-mq-track:hover{animation-play-state:paused}</style><div class="py-12 overflow-hidden"><p class="text-center text-sm font-medium mb-6" style="color:${p.sub}">${ctx.u("chosenBy")} ${esc(ctx.c.brand)}</p><div class="leo-mq-track">${row}${row}</div></div></section>`;
 }
 
+/** 首页的招牌结构由装明确指定；内页仍保留业务章节，避免为了风格丢掉菜单/产品等内容。 */
+const HOME_SKIN_BLOCKS: Partial<Record<SkinKey, Partial<Record<SectionKind, SectionKind>>>> = {
+  editorial: {
+    hero: "sigEditorialHero",
+    features: "sigEditorialFeature",
+    services: "sigEditorialGallery",
+    testimonials: "sigPullQuote",
+  },
+  bento: {
+    hero: "sigBentoHero",
+    features: "sigBentoFeatures",
+  },
+  brutalist: {
+    hero: "sigBrutalHero",
+    cta: "sigStickerCta",
+  },
+  neon: {
+    hero: "sigNeonHero",
+    stats: "sigNeonStats",
+  },
+  fullscreen: {
+    hero: "sigFsIntro",
+    about: "sigFsSplit",
+    services: "sigFsPanel",
+  },
+};
+
+/** 构成可以继承旧骨架的板块位置，但旧 sig 名不能把某一套装的视觉泄漏给别的装。 */
+const SEMANTIC_KIND_BY_SIGNATURE: Partial<Record<SectionKind, SectionKind>> = {
+  sigEditorialHero: "hero",
+  sigEditorialFeature: "features",
+  sigEditorialGallery: "services",
+  sigPullQuote: "testimonials",
+  sigNeonHero: "hero",
+  sigGlassGrid: "services",
+  sigNeonStats: "stats",
+  sigCodeWindow: "cta",
+  sigFsIntro: "hero",
+  sigFsPanel: "services",
+  sigFsSplit: "about",
+  sigBentoHero: "hero",
+  sigBentoFeatures: "features",
+  sigBrutalHero: "hero",
+  sigBrutalCards: "services",
+  sigStickerCta: "cta",
+};
+
 function renderSection(ctx: Ctx, kind: SectionKind, pageLabel: string): string {
+  const semanticKind = SEMANTIC_KIND_BY_SIGNATURE[kind] ?? kind;
+  const visualKind =
+    ctx.pageKey === "home"
+      ? HOME_SKIN_BLOCKS[ctx.skin.key]?.[semanticKind] ?? semanticKind
+      : semanticKind;
   const html = (() => {
-  switch (kind) {
+  switch (visualKind) {
     case "hero": return renderHero(ctx);
     case "stats": return renderStats(ctx);
     case "about": return renderAbout(ctx);
@@ -1122,10 +1227,10 @@ function renderSection(ctx: Ctx, kind: SectionKind, pageLabel: string): string {
     case "marquee": return renderMarquee(ctx);
     default:
       // v3 特色家族专属章节（sig*）走独立渲染模块。
-      return renderSignatureSection(ctx, kind, pageLabel);
+      return renderSignatureSection(ctx, visualKind, pageLabel);
   }
   })();
-  return wrapSectionReveal(html, kind);
+  return wrapSectionReveal(html, kind, visualKind);
 }
 
 // ————————————————————————————————————————————————————————————
@@ -1143,9 +1248,10 @@ function makeCtx(
   c: SiteContent,
   ext: ExtContent,
   dna: TemplateDNA,
+  activeSkin: Skin,
+  p: PaletteV2,
   lang: Lang,
 ): Ctx {
-  const p = dna.palette;
   const ctx: Ctx = {
     meta,
     c,
@@ -1153,6 +1259,7 @@ function makeCtx(
     dna,
     p,
     fx: dna.accentFx,
+    skin: activeSkin,
     R: radiusTokens(dna),
     D: densityTokens(dna),
     S: surfaceTokens(dna),
@@ -1170,7 +1277,18 @@ function makeCtx(
 function renderBody(ctx: Ctx, dna: TemplateDNA): string {
   const layout: LayoutFamily = dna.layout;
   const pages = layout.pages;
-  const navVariant = hashStr(ctx.meta.slug + ":nav") % 2;
+  const navVariant: Record<SkinKey, number> = {
+    paper: 0,
+    editorial: 1,
+    bento: 0,
+    brutalist: 1,
+    neon: 1,
+    fullscreen: 0,
+    nature: 0,
+    sand: 1,
+    navy: 1,
+    glass: 0,
+  };
   const pagesHtml = pages
     .map((pk, idx) => {
       const kinds = layout.sections[pk] ?? ["pageHeader", "cta"];
@@ -1180,7 +1298,7 @@ function renderBody(ctx: Ctx, dna: TemplateDNA): string {
       return `<div data-page="${pk}"${idx === 0 ? "" : ' hidden style="display:none"'}>${inner}</div>`;
     })
     .join("\n");
-  return `${navBar(ctx, pages, navVariant)}
+  return `${navBar(ctx, pages, navVariant[ctx.skin.key])}
 <main>${pagesHtml}</main>
 ${footer(ctx, pages)}`;
 }
@@ -1197,21 +1315,22 @@ export function renderTemplate(
   defaultLang: Lang = "zh",
   photoBase: PhotoBase = "preview",
 ): RenderResult {
-  const p = dna.palette;
+  const activeSkin = skinForDna(dna);
+  const p = visualPaletteForSkin(dna, activeSkin);
   const layout: LayoutFamily = dna.layout;
   const pages = layout.pages;
 
-  const ctxZh = makeCtx(meta, flattenContent(biContent, "zh"), flattenExt(biExt, "zh"), dna, "zh");
-  const ctxEn = makeCtx(meta, flattenContent(biContent, "en"), flattenExt(biExt, "en"), dna, "en");
+  const ctxZh = makeCtx(meta, flattenContent(biContent, "zh"), flattenExt(biExt, "zh"), dna, activeSkin, p, "zh");
+  const ctxEn = makeCtx(meta, flattenContent(biContent, "en"), flattenExt(biExt, "en"), dna, activeSkin, p, "en");
   const bodyZh = resolvePhotos(renderBody(ctxZh, dna), meta, dna, photoBase);
   const bodyEn = resolvePhotos(renderBody(ctxEn, dna), meta, dna, photoBase);
 
   const titleZh = `${esc(biContent.brand.zh)} · ${esc(meta.subLabel)}官网`;
   const titleEn = `${esc(biContent.brand.en)} · ${esc(subEn(meta.subKey, meta.industryKey))}`;
-  const bodyBg = dna.forceDark ? p.soft : "#fff";
+  const bodyBg = activeSkin.dark ? p.soft : "#fff";
 
   const html = `<!DOCTYPE html>
-<html lang="${defaultLang === "en" ? "en" : "zh-CN"}" data-lang="${defaultLang}">
+<html lang="${defaultLang === "en" ? "en" : "zh-CN"}" data-lang="${defaultLang}" data-skin="${activeSkin.key}">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -1229,10 +1348,10 @@ export function renderTemplate(
   /* 双语：默认显示 defaultLang，另一语言容器隐藏；开关切换 */
   [data-langroot]{display:none}
   [data-langroot].leo-lang-on{display:block}
-  ${effectsStyles(p)}
+  ${effectsStyles(p, activeSkin.fx, activeSkin.key)}
 </style>
 </head>
-<body>
+<body data-skin="${activeSkin.key}">
 <div data-langroot="zh"${defaultLang === "zh" ? ' class="leo-lang-on"' : ""}>${bodyZh}</div>
 <div data-langroot="en"${defaultLang === "en" ? ' class="leo-lang-on"' : ""}>${bodyEn}</div>
 <script>

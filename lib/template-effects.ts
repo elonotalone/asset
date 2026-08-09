@@ -2,6 +2,7 @@
 // 由 slug + DNA 确定性选取，每个模板至少有一种专属动效组合。
 
 import type { PaletteV2 } from "./template-dna";
+import type { SkinKey } from "./template-skins";
 import { hashStr } from "./hash";
 
 export type AccentFx =
@@ -51,7 +52,7 @@ export function accentFxFor(slug: string, layoutKey: string): AccentFx {
 }
 
 /** 注入到 <head> 的全局动效 CSS（配色 token 来自当前模板 palette）。 */
-export function effectsStyles(p: PaletteV2): string {
+function legacyEffectsStyles(p: PaletteV2): string {
   return `
   /* —— 渐变流动（hero / CTA / 页头） —— */
   .leo-grad-anim{
@@ -263,6 +264,139 @@ export function effectsStyles(p: PaletteV2): string {
     .leo-confetti i,.leo-sparkle i,.leo-stripes{animation:none!important}
     .leo-reveal{opacity:1;transform:none}
   }`;
+}
+
+function baseRuntimeStyles(p: PaletteV2): string {
+  return `
+  .leo-grad-anim{background-size:220% 220%;animation:leoGradShift 9s ease-in-out infinite}
+  @keyframes leoGradShift{0%{background-position:0% 42%}50%{background-position:100% 58%}100%{background-position:0% 42%}}
+  .leo-reveal{opacity:0;transform:translateY(32px);transition:opacity .75s cubic-bezier(.22,1,.36,1),transform .75s cubic-bezier(.22,1,.36,1)}
+  .leo-reveal.leo-from-left{transform:translateX(-36px)}
+  .leo-reveal.leo-from-right{transform:translateX(36px)}
+  .leo-reveal.leo-scale{transform:scale(.94)}
+  .leo-reveal.leo-in{opacity:1;transform:none}
+  .leo-card{transition:transform .35s cubic-bezier(.22,1,.36,1),box-shadow .35s ease}
+  .leo-card:hover{transform:translateY(-6px);box-shadow:0 20px 40px ${p.primary}22}
+  .leo-btn-shine{position:relative;overflow:hidden}
+  .leo-btn-shine::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.35) 50%,transparent 60%);transform:translateX(-120%);animation:leoShine 4s ease-in-out infinite}
+  @keyframes leoShine{0%,55%{transform:translateX(-120%)}75%,100%{transform:translateX(120%)}}
+  .leo-stat-num{display:inline-block;animation:leoPop .6s cubic-bezier(.22,1,.36,1) both}
+  @keyframes leoPop{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
+  .leo-marquee{display:flex;width:max-content;animation:leoMarquee 28s linear infinite}
+  @keyframes leoMarquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  .leo-kenburns{animation:leoKen 22s ease-in-out infinite alternate}
+  @keyframes leoKen{from{transform:scale(1)}to{transform:scale(1.08)}}
+  @media (prefers-reduced-motion:reduce){.leo-grad-anim,.leo-marquee,.leo-kenburns,.leo-btn-shine::after{animation:none!important}.leo-reveal{opacity:1;transform:none}}`;
+}
+
+function floatingStyles(): string {
+  return `.leo-orb{position:absolute;border-radius:9999px;filter:blur(48px);pointer-events:none;animation:leoFloat 12s ease-in-out infinite}.leo-orb-2{animation-delay:-4s;animation-duration:15s}.leo-orb-3{animation-delay:-7s;animation-duration:18s}@keyframes leoFloat{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(12px,-18px) scale(1.06)}66%{transform:translate(-10px,14px) scale(.94)}}`;
+}
+
+/** 只发当前装实际会用到的装饰规则，避免每个下载站夹带整套特效库。 */
+export function accentStyles(p: PaletteV2, fx: AccentFx): string {
+  switch (fx) {
+    case "orbs":
+      return floatingStyles();
+    case "mesh":
+      return `${floatingStyles()}.leo-grid-deco{position:absolute;inset:0;pointer-events:none;opacity:.12;background-image:linear-gradient(${p.primary}55 1px,transparent 1px),linear-gradient(90deg,${p.primary}55 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse 80% 70% at 50% 40%,#000 20%,transparent 75%)}`;
+    case "grid":
+      return `.leo-grid-deco{position:absolute;inset:0;pointer-events:none;opacity:.12;background-image:linear-gradient(${p.primary}55 1px,transparent 1px),linear-gradient(90deg,${p.primary}55 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse 80% 70% at 50% 40%,#000 20%,transparent 75%)}`;
+    case "beams":
+      return `.leo-beam{position:absolute;width:2px;height:140%;top:-20%;left:30%;background:linear-gradient(180deg,transparent,${p.accent}88,transparent);transform:rotate(25deg);animation:leoBeam 6s ease-in-out infinite;pointer-events:none}@keyframes leoBeam{0%,100%{opacity:.25;transform:rotate(25deg) translateY(0)}50%{opacity:.55;transform:rotate(25deg) translateY(8%)}}`;
+    case "waves":
+      return `.leo-wave{position:absolute;bottom:0;left:0;right:0;height:80px;pointer-events:none;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 1200 120'%3E%3Cpath fill='${encodeURIComponent(p.soft)}' d='M0,64 C300,120 500,0 600,48 C700,96 900,32 1200,64 L1200,120 L0,120 Z'/%3E%3C/svg%3E") center bottom/cover no-repeat;animation:leoWave 8s ease-in-out infinite alternate}@keyframes leoWave{from{transform:translateX(-2%)}to{transform:translateX(2%)}}`;
+    case "dots":
+      return "";
+    case "rings":
+      return `@keyframes leoFloat{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(12px,-18px) scale(1.06)}66%{transform:translate(-10px,14px) scale(.94)}}`;
+    case "neon-grid":
+      return `${floatingStyles()}.leo-neon-grid{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(${p.primary}22 1px,transparent 1px),linear-gradient(90deg,${p.primary}22 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse 90% 80% at 50% 30%,#000 10%,transparent 78%);animation:leoGridPan 20s linear infinite}@keyframes leoGridPan{from{background-position:0 0}to{background-position:44px 44px}}.leo-neon-glow{text-shadow:0 0 6px ${p.primary}88,0 0 20px ${p.primary}55}.leo-neon-edge{border:1px solid ${p.primary}55;box-shadow:0 0 0 1px ${p.primary}22,0 0 24px ${p.primary}22,inset 0 0 22px ${p.primary}10}.leo-glass{background:rgba(255,255,255,.06);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.12)}`;
+    case "noise":
+      return `.leo-noise::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.05;background-image:url("data:image/svg+xml,%3Csvg width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}`;
+    case "spotlight":
+      return `.leo-spotlight{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle 60% at 50% 0%,${p.primary}22,transparent 60%)}`;
+    case "aurora":
+      return `.leo-aurora{position:absolute;inset:0;pointer-events:none;overflow:hidden;filter:blur(10px)}.leo-aurora::before,.leo-aurora::after{content:"";position:absolute;inset:-40%;background:radial-gradient(40% 55% at 25% 30%,${p.primary}66,transparent 60%),radial-gradient(45% 60% at 75% 35%,${p.gradTo}59,transparent 62%),radial-gradient(50% 55% at 55% 78%,${p.accent}4d,transparent 60%);animation:leoAurora 18s ease-in-out infinite;mix-blend-mode:screen}.leo-aurora::after{animation-duration:26s;animation-direction:reverse;opacity:.7}@keyframes leoAurora{0%,100%{transform:translate3d(0,0,0) rotate(0deg) scale(1)}33%{transform:translate3d(3%,-4%,0) rotate(6deg) scale(1.08)}66%{transform:translate3d(-4%,3%,0) rotate(-5deg) scale(1.04)}}`;
+    case "blobs":
+      return `${floatingStyles()}.leo-blob{position:absolute;pointer-events:none;filter:blur(26px);opacity:.5;animation:leoBlobMorph 16s ease-in-out infinite,leoFloat 18s ease-in-out infinite}@keyframes leoBlobMorph{0%,100%{border-radius:42% 58% 63% 37%/45% 42% 58% 55%}50%{border-radius:58% 42% 38% 62%/58% 55% 45% 42%}}`;
+    case "constellation":
+      return `.leo-constellation{position:absolute;inset:0;pointer-events:none;opacity:.5;background-image:radial-gradient(${p.accent}cc 1.4px,transparent 1.6px),radial-gradient(${p.primary}99 1px,transparent 1.4px);background-size:52px 52px,88px 88px;background-position:0 0,26px 26px;animation:leoConstel 40s linear infinite;mask-image:radial-gradient(ellipse 85% 75% at 50% 40%,#000 30%,transparent 80%)}@keyframes leoConstel{from{background-position:0 0,26px 26px}to{background-position:52px 52px,114px 114px}}`;
+    case "shimmer":
+      return `.leo-sheen{position:absolute;inset:0;pointer-events:none;overflow:hidden}.leo-sheen::after{content:"";position:absolute;top:-50%;left:-60%;width:50%;height:200%;background:linear-gradient(105deg,transparent,rgba(255,255,255,.22),transparent);transform:rotate(8deg);animation:leoSheen 6.5s ease-in-out infinite}@keyframes leoSheen{0%,60%{left:-60%}100%{left:130%}}`;
+    case "confetti":
+      return `.leo-confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden}.leo-confetti i{position:absolute;top:-12%;width:9px;height:14px;opacity:.85;border-radius:2px;animation:leoConfFall linear infinite}@keyframes leoConfFall{0%{transform:translateY(-20%) rotate(0deg)}100%{transform:translateY(120vh) rotate(540deg)}}`;
+    case "sparkle":
+      return `.leo-sparkle{position:absolute;inset:0;pointer-events:none}.leo-sparkle i{position:absolute;width:14px;height:14px;background:radial-gradient(${p.accent},transparent 62%);animation:leoTwinkle 3.2s ease-in-out infinite}.leo-sparkle i::before{content:"";position:absolute;inset:0;background:conic-gradient(from 0deg,transparent,${p.accent},transparent,${p.accent},transparent);clip-path:polygon(50% 0,58% 42%,100% 50%,58% 58%,50% 100%,42% 58%,0 50%,42% 42%)}@keyframes leoTwinkle{0%,100%{opacity:.15;transform:scale(.6)}50%{opacity:1;transform:scale(1)}}`;
+    case "stripes":
+      return `.leo-stripes{position:absolute;inset:0;pointer-events:none;opacity:.12;background:repeating-linear-gradient(45deg,${p.primary} 0 18px,transparent 18px 40px);animation:leoStripes 3s linear infinite;mask-image:linear-gradient(180deg,#000,transparent 85%)}@keyframes leoStripes{from{background-position:0 0}to{background-position:57px 0}}`;
+    case "none":
+      return "";
+  }
+}
+
+/** 每套装自己的结构规则；这里只返回当前一套，不把十套 CSS 一起发给站点。 */
+export function skinStyles(p: PaletteV2, skinKey: SkinKey): string {
+  const marker = `/* skin:${skinKey} */`;
+  switch (skinKey) {
+    case "paper":
+      return `${marker}
+html[data-skin="paper"]{--skin-content-width:68rem;background:#fbfbf8}html[data-skin="paper"] body{background:#fbfbf8!important}html[data-skin="paper"] header{background:rgba(251,251,248,.96)!important;box-shadow:none!important}html[data-skin="paper"] [data-section-kind]{background:#fbfbf8!important;border-bottom:1px solid #0f172a14}html[data-skin="paper"] [data-section-kind]>[class*="max-w-"]{max-width:var(--skin-content-width)}html[data-skin="paper"] [data-section-kind] [style*="box-shadow"]{box-shadow:none!important}html[data-skin="paper"] [data-section-kind] [style*="border-radius"]{border-radius:6px!important}`;
+    case "editorial":
+      return `${marker}
+html[data-skin="editorial"]{--skin-reading-width:58rem;background:#fff}html[data-skin="editorial"] header{position:relative!important;background:#fff!important;border-top:5px solid ${p.ink}}html[data-skin="editorial"] [data-page]:not([data-page="home"]) [data-section-kind]>[class*="max-w-"]{max-width:var(--skin-reading-width)}html[data-skin="editorial"] [data-section-kind]{border-bottom:1px solid ${p.ink}26}html[data-skin="editorial"] h1,html[data-skin="editorial"] h2{letter-spacing:-.035em;line-height:1.02!important}html[data-skin="editorial"] [data-section-kind] [style*="border-radius"]{border-radius:0!important}html[data-skin="editorial"] [data-section-kind] [style*="box-shadow"]{box-shadow:none!important}.leo-noise::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}`;
+    case "bento":
+      return `${marker}
+html[data-skin="bento"]{--skin-tile-radius:32px;background:${p.soft}}html[data-skin="bento"] body{background:${p.soft}!important}html[data-skin="bento"] [data-page]:not([data-page="home"]){padding:18px}html[data-skin="bento"] [data-page]:not([data-page="home"])>[data-section-kind]{width:min(72rem,calc(100% - 12px));margin:18px auto;border:1px solid ${p.primary}18;border-radius:var(--skin-tile-radius);box-shadow:0 18px 50px #0f172a12;overflow:hidden}html[data-skin="bento"] [data-section-kind] [style*="border-radius"]{border-radius:22px!important}@media(max-width:640px){html[data-skin="bento"] [data-page]:not([data-page="home"]){padding:8px}html[data-skin="bento"] [data-page]:not([data-page="home"])>[data-section-kind]{margin:10px auto;border-radius:22px}}`;
+    case "brutalist":
+      return `${marker}
+html[data-skin="brutalist"]{--skin-rule:3px solid ${p.ink};background:${p.soft}}html[data-skin="brutalist"] header{position:relative!important;background:${p.soft}!important;border:var(--skin-rule)!important;border-left:0!important;border-right:0!important}html[data-skin="brutalist"] [data-section-kind]{border-bottom:var(--skin-rule)}html[data-skin="brutalist"] [data-section-kind] [style*="border-radius"],html[data-skin="brutalist"] a,html[data-skin="brutalist"] button{border-radius:0!important}html[data-skin="brutalist"] [data-section-kind] [style*="box-shadow"]{box-shadow:7px 7px 0 ${p.ink}!important}html[data-skin="brutalist"] h1,html[data-skin="brutalist"] h2,html[data-skin="brutalist"] h3{text-transform:uppercase;letter-spacing:-.025em}.leo-hard-shadow{box-shadow:7px 7px 0 ${p.ink}}.leo-hard-shadow-primary{box-shadow:7px 7px 0 ${p.primary}}`;
+    case "neon":
+      return `${marker}
+html[data-skin="neon"]{color-scheme:dark;background:#05070c}html[data-skin="neon"] body{background:#05070c!important}html[data-skin="neon"] header{background:rgba(5,7,12,.9)!important;border-color:${p.primary}38!important}html[data-skin="neon"] [data-section-kind]{background:${p.soft}!important;border-bottom:1px solid ${p.primary}24}html[data-skin="neon"] [data-section-kind]>[class*="max-w-"]{position:relative}html[data-skin="neon"] [data-section-kind] [style*="border:"]{border-color:${p.primary}40!important}html[data-skin="neon"] footer{border-top:1px solid ${p.primary}55;box-shadow:0 -18px 60px ${p.primary}12}`;
+    case "fullscreen":
+      return `${marker}
+html[data-skin="fullscreen"]{color-scheme:dark;background:#0b111b}html[data-skin="fullscreen"] body{background:#0b111b!important}html[data-skin="fullscreen"] header{background:rgba(11,17,27,.88)!important;border-color:#ffffff1f!important}html[data-skin="fullscreen"] [data-page="home"]{height:calc(100vh - 4rem);overflow-y:auto;scroll-snap-type:y mandatory;overscroll-behavior:contain}html[data-skin="fullscreen"] [data-page="home"]>[data-section-kind]{min-height:100%;scroll-snap-align:start;scroll-snap-stop:always}html[data-skin="fullscreen"] [data-page]:not([data-page="home"])>[data-section-kind]{background:#0b111b!important;border-bottom:1px solid #ffffff17}html[data-skin="fullscreen"] footer{background:#06090f!important}@media(max-width:640px){html[data-skin="fullscreen"] [data-page="home"]{height:auto;overflow:visible;scroll-snap-type:none}html[data-skin="fullscreen"] [data-page="home"]>[data-section-kind]{min-height:82vh}}`;
+    case "nature":
+      return `${marker}
+html[data-skin="nature"]{--skin-organic-radius:clamp(28px,5vw,64px);background:#f3f7f0}html[data-skin="nature"] body{background:#f3f7f0!important}html[data-skin="nature"] header{background:rgba(243,247,240,.92)!important}html[data-skin="nature"] [data-page]>[data-section-kind]:nth-child(even){width:min(74rem,calc(100% - 32px));margin:24px auto;border-radius:var(--skin-organic-radius);overflow:hidden}html[data-skin="nature"] [data-section-kind] img:not([class*="absolute"]){border-radius:42% 58% 48% 52%/54% 43% 57% 46%!important}html[data-skin="nature"] [data-section-kind] h2::after{content:"";display:block;width:52px;height:3px;margin:16px auto 0;background:${p.primary};border-radius:999px}`;
+    case "sand":
+      return `${marker}
+html[data-skin="sand"]{--skin-craft-width:70rem;background:#f7efe3}html[data-skin="sand"] body{background:radial-gradient(circle at 12% 18%,${p.primary}0c 0 2px,transparent 3px) 0 0/26px 26px,#f7efe3!important}html[data-skin="sand"] header{position:relative!important;background:#f7efe3f2!important;border-bottom:1px solid ${p.primary}33!important}html[data-skin="sand"] [data-page]>[data-section-kind]:not([data-section-kind="hero"]){width:min(var(--skin-craft-width),calc(100% - 36px));margin:28px auto;border:1px solid ${p.primary}24;box-shadow:10px 12px 0 ${p.primary}0b;overflow:hidden}html[data-skin="sand"] [data-page]>[data-section-kind]:nth-child(even){transform:rotate(-.18deg)}html[data-skin="sand"] [data-section-kind] img:not([class*="absolute"]){border-radius:48% 48% 10px 10px!important}`;
+    case "navy":
+      return `${marker}
+html[data-skin="navy"]{--skin-navy:${p.gradFrom};background:#f5f7fb}html[data-skin="navy"] body{background:#f5f7fb!important}html[data-skin="navy"] header{background:var(--skin-navy)!important;color:#fff;border:0!important;border-bottom:4px solid ${p.primary}!important}html[data-skin="navy"] header nav{color:#fff!important}html[data-skin="navy"] [data-section-kind]:not([data-section-kind="hero"]):not([data-section-kind="pageHeader"])>[class*="max-w-"]{border-left:4px solid ${p.primary};padding-left:clamp(1.5rem,4vw,3rem)}html[data-skin="navy"] [data-section-kind] [style*="border-radius"]{border-radius:2px!important}html[data-skin="navy"] [data-section-kind]{border-bottom:1px solid #0f172a1f}`;
+    case "glass":
+      return `${marker}
+html[data-skin="glass"]{--skin-glass:rgba(255,255,255,.58);background:${p.soft}}html[data-skin="glass"] body{background:radial-gradient(circle at 15% 12%,${p.primary}30,transparent 32%),radial-gradient(circle at 86% 28%,${p.gradTo}35,transparent 30%),linear-gradient(145deg,#f8fbff,${p.soft}) fixed!important}html[data-skin="glass"] header{background:rgba(255,255,255,.58)!important;border-color:#ffffffaa!important;box-shadow:0 12px 40px #4c1d9510}html[data-skin="glass"] [data-page]>[data-section-kind]{width:min(74rem,calc(100% - 36px));margin:24px auto;border:1px solid #ffffffb8;border-radius:30px;box-shadow:0 24px 70px #4c1d9517;overflow:hidden;background:var(--skin-glass)!important;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}html[data-skin="glass"] [data-section-kind] [style*="background:"]{background-color:rgba(255,255,255,.28)!important}@media(max-width:640px){html[data-skin="glass"] [data-page]>[data-section-kind]{width:calc(100% - 20px);margin:12px auto;border-radius:22px}}`;
+  }
+}
+
+function accentReducedMotionStyles(fx: AccentFx): string {
+  const selectors: Partial<Record<AccentFx, string>> = {
+    orbs: ".leo-orb",
+    mesh: ".leo-orb",
+    beams: ".leo-beam",
+    waves: ".leo-wave",
+    "neon-grid": ".leo-neon-grid,.leo-orb",
+    aurora: ".leo-aurora::before,.leo-aurora::after",
+    blobs: ".leo-blob,.leo-orb",
+    constellation: ".leo-constellation",
+    shimmer: ".leo-sheen::after",
+    confetti: ".leo-confetti i",
+    sparkle: ".leo-sparkle i",
+    stripes: ".leo-stripes",
+  };
+  const selector = selectors[fx];
+  return selector
+    ? `@media (prefers-reduced-motion:reduce){${selector}{animation:none!important}}`
+    : "";
+}
+
+/** 注入到 head 的基础动效 + 当前特效 + 当前装，三者都不联网。 */
+export function effectsStyles(p: PaletteV2, fx: AccentFx, skinKey: SkinKey): string {
+  void legacyEffectsStyles;
+  return `${baseRuntimeStyles(p)}\n${accentStyles(p, fx)}\n${skinStyles(p, skinKey)}\n${accentReducedMotionStyles(fx)}`;
 }
 
 /** Hero / CTA / 页头背后的装饰 HTML（按 accentFx 不同）。 */
