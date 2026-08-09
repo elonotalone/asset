@@ -8,8 +8,8 @@
 // 不解析任何 HTML。
 //
 // 边界：本文件**只读**上游模块（taxonomy / dna / 内容包 / 图片池 / i18n），不 import
-// `template-engine.ts`，也不改它一行 —— asset 站 `/templates/[slug]` 的 HTML 预览
-// 输出因此逐字节不变。
+// `template-engine.ts`。需要与 HTML 预览一致的数据（例如图表曲线）下沉到共享纯函数，
+// 两端分别读取，不从已经渲染的 HTML 反推。
 //
 // 变体号与引擎同源：`variantOf(kind,count) = (hashStr(slug+":sec:"+kind+":"+pageKey)
 // + dna.styleSeed) % count`，与 `makeCtx()` 里那行一致；每个 SectionIR 都带
@@ -44,7 +44,8 @@ import {
 import type { SiteContent } from "./template-content";
 import type { ExtContent } from "./template-content-ext";
 import type { Industry, SubCategory, TemplateMeta } from "./template-taxonomy";
-import { chartTitle, UI, secTitle, subEn, ui, type Lang } from "./template-i18n";
+import { UI, secTitle, subEn, ui } from "./template-i18n";
+import { chartSeriesFor } from "./template-chart-data";
 
 // ————————————————————————————————————————————————————————————
 // IR 类型
@@ -765,38 +766,10 @@ function irNews(ctx: IrCtx): ReturnType<Extractor> {
   };
 }
 
-/** 与引擎 `chartData()` 同一份确定性数据（同 hash 同轮换，不解析 SVG）。 */
-function chartFor(ctx: IrCtx, lang: Lang): { labels: string[]; values: number[]; unit: string; title: string; insight: string } {
-  const en = lang === "en";
-  const slug = ctx.meta.slug;
-  const h = hashStr(slug + ":chartdata");
-  const year = 2023;
-  const kindPick = h % 3;
-  const labels = Array.from({ length: 4 }, (_, i) => (en ? `${year + i}` : `${year + i}年`));
-  const base = 40 + (h % 50);
-  const values = labels.map((_, i) => {
-    const wobble = (hashStr(slug + ":cv" + i) % 18) - 4;
-    return Math.max(8, Math.round(base * (1 + 0.32 * i) + wobble));
-  });
-  const units = en ? ["K USD", "orders", "clients", "visits"] : ["万元", "单", "家", "人次"];
-  const unit = units[kindPick % units.length];
-  const growth = Math.round(((values[3] - values[0]) / values[0]) * 100);
-  const sName = en ? subEn(ctx.meta.subKey, ctx.meta.industryKey) : ctx.meta.subLabel;
-  return {
-    labels,
-    values,
-    unit,
-    title: chartTitle(ctx.meta.industryKey, ctx.meta.subLabel, ctx.meta.subKey, lang),
-    insight: en
-      ? `Around ${growth}% cumulative growth over four years — the ${sName.toLowerCase()} sector stays strong.`
-      : `近四年${unit === "万元" ? "营收" : "业务量"}累计增长约 ${growth}%，${ctx.meta.subLabel}赛道保持强劲势头。`,
-  };
-}
-
 function irChart(ctx: IrCtx): ReturnType<Extractor> {
   const v = ctx.variantOf("chart", 3);
-  const dz = chartFor(ctx, "zh");
-  const de = chartFor(ctx, "en");
+  const dz = chartSeriesFor(ctx.meta, "zh");
+  const de = chartSeriesFor(ctx.meta, "en");
   const blocks = dz.labels.map((lb, i) => ({
     key: `point-${i + 1}`,
     slots: [

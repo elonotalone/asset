@@ -35,7 +35,8 @@ import {
   type AccentFx,
 } from "./template-effects";
 import { SKINS, type Skin, type SkinKey } from "./template-skins";
-import { chartTitle, type Lang, secTitle, ui, UI, pickLang, subEn } from "./template-i18n";
+import { type Lang, secTitle, ui, UI, pickLang, subEn } from "./template-i18n";
+import { chartSeriesFor } from "./template-chart-data";
 import {
   type BiContent,
   type BiExt,
@@ -1013,37 +1014,10 @@ function renderPageHeader(ctx: Ctx, label: string): string {
 // v2.2 新章节：chart（内联 SVG 数据图表）/ timeline（里程碑）/ marquee（徽标带）
 // ————————————————————————————————————————————————————————————
 
-/** 从 slug+salt 派生一组确定性「业务数据」（幅度合理、递增趋势为主）。 */
-function chartData(ctx: Ctx): { labels: string[]; values: number[]; unit: string; title: string; insight: string } {
-  const en = ctx.lang === "en";
-  const h = hashStr(ctx.meta.slug + ":chartdata");
-  const year = 2023;
-  const kindPick = h % 3;
-  const labels = Array.from({ length: 4 }, (_, i) => (en ? `${year + i}` : `${year + i}年`));
-  const base = 40 + (h % 50);
-  const values = labels.map((_, i) => {
-    const wobble = (hashStr(ctx.meta.slug + ":cv" + i) % 18) - 4;
-    return Math.max(8, Math.round(base * (1 + 0.32 * i) + wobble));
-  });
-  const units = en ? ["K USD", "orders", "clients", "visits"] : ["万元", "单", "家", "人次"];
-  const unit = units[kindPick % units.length];
-  const growth = Math.round(((values[3] - values[0]) / values[0]) * 100);
-  const sName = subName(ctx);
-  return {
-    labels,
-    values,
-    unit,
-    title: chartTitle(ctx.meta.industryKey, ctx.meta.subLabel, ctx.meta.subKey, ctx.lang),
-    insight: en
-      ? `Around ${growth}% cumulative growth over four years — the ${sName.toLowerCase()} sector stays strong.`
-      : `近四年${unit === "万元" ? "营收" : "业务量"}累计增长约 ${growth}%，${esc(ctx.meta.subLabel)}赛道保持强劲势头。`,
-  };
-}
-
 function renderChart(ctx: Ctx): string {
   const { p, R } = ctx;
   const v = ctx.variantOf("chart", 3);
-  const d = chartData(ctx);
+  const d = chartSeriesFor(ctx.meta, ctx.lang);
   const W = 640, H = 320, PADX = 56, PADY = 42;
   const vmax = Math.max(...d.values) * 1.15;
   let svg = "";
@@ -1090,7 +1064,7 @@ function renderChart(ctx: Ctx): string {
     const legend = d.labels.map((lb, i) => `<g transform="translate(340,${86 + i * 44})"><rect width="16" height="16" rx="4" fill="${cols[i % 4]}"/><text x="26" y="13" font-size="14" fill="${p.ink}">${lb} · ${Math.round((d.values[i] / total) * 100)}%</text></g>`).join("");
     svg = `<svg viewBox="0 0 ${W} 320" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">${arcs}<text x="${cx}" y="${cy + 6}" text-anchor="middle" font-size="22" font-weight="800" fill="${p.ink}">${total}${d.unit}</text>${legend}</svg>`;
   }
-  return `<section style="background:${ctx.S.page};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, d.title, `${ctx.u("chartUnit")}：${d.unit} · ${ctx.u("chartNote")}`)}<div class="mt-10 grid md:grid-cols-3 gap-10 items-center"><div class="md:col-span-2 p-6" style="background:${p.soft};border:1px solid ${ctx.S.border};border-radius:${R.card}">${svg}</div><div><div style="width:40px;height:4px;background:${p.primary};border-radius:2px"></div><p class="mt-4 leading-relaxed" style="color:${p.ink};font-weight:600">${d.insight}</p><p class="mt-3 text-sm leading-relaxed" style="color:${p.sub}">${ctx.u("chartFootnote")}</p></div></div></div></section>`;
+  return `<section style="background:${ctx.S.page};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, d.title, `${ctx.u("chartUnit")}：${d.unit} · ${ctx.u("chartNote")}`)}<div class="mt-10 grid md:grid-cols-3 gap-10 items-center"><div class="md:col-span-2 p-6" style="background:${p.soft};border:1px solid ${ctx.S.border};border-radius:${R.card}">${svg}</div><div><div style="width:40px;height:4px;background:${p.primary};border-radius:2px"></div><p class="mt-4 leading-relaxed" style="color:${p.ink};font-weight:600">${esc(d.insight)}</p><p class="mt-3 text-sm leading-relaxed" style="color:${p.sub}">${ctx.u("chartFootnote")}</p></div></div></div></section>`;
 }
 
 function renderTimeline(ctx: Ctx): string {
