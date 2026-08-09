@@ -293,9 +293,9 @@ function newsTitleEn(s: string, i: number): string {
     `${s} trends to watch in H1 2026`,
     `How we turned a ${s.toLowerCase()} project into a benchmark`,
     `5 practical tips every ${s.toLowerCase()} professional should know`,
-    `Client interview: what changed after choosing us`,
+    `${s} client interview: what changed after delivery`,
     `Team leveled up — our ${s.toLowerCase()} capabilities just got better`,
-    `New offerings launched — book a trial today`,
+    `New ${s.toLowerCase()} offering launched — request an introduction`,
   ];
   return pool[i % pool.length];
 }
@@ -313,7 +313,7 @@ export function buildBiExt(
   const rot = <T,>(arr: T[], s: number, i: number): T => arr[(s + i) % arr.length];
 
   const cases: BiCase[] = zh.cases.map((c: CaseItem, i) => ({
-    title: bi(c.title, `${rot(tagsEn, seed, i)} Project · Vol. ${i + 1}`),
+    title: bi(c.title, `${sEn} · ${rot(tagsEn, seed, i)} Project ${i + 1}`),
     tag: bi(c.tag, rot(tagsEn, seed + 3, i)),
     desc: bi(c.desc, `Delivered an end-to-end ${sEn.toLowerCase()} solution with clear gains in key metrics and strong word-of-mouth.`),
   }));
@@ -345,11 +345,26 @@ export function buildBiExt(
   }));
 
   const faqEn: { q: string; a: string }[] = [
-    { q: `What's your ${sEn.toLowerCase()} service process?`, a: "From consultation and design to signing, execution and review — a dedicated contact keeps progress transparent." },
-    { q: "How is pricing set — is customization available?", a: "We offer both standard packages and custom plans, flexibly combined to your budget and goals. Quote first, then execute." },
-    { q: "How long is the typical turnaround?", a: `A standard ${sEn.toLowerCase()} project delivers in 7–15 business days; rush jobs can be prioritized.` },
-    { q: "How are after-sales and warranty handled?", a: "We provide free maintenance and issue response within the warranty period; long-term clients get dedicated benefits." },
-    { q: "Can we see past cases first?", a: "Of course — the Cases page shows representative projects, or ask an advisor for a fuller portfolio." },
+    {
+      q: `What's your ${sEn.toLowerCase()} service process?`,
+      a: `${sEn} work moves from consultation and design through delivery, with one contact keeping progress clear.`,
+    },
+    {
+      q: `How is ${sEn.toLowerCase()} pricing set?`,
+      a: `${sEn} plans can match different goals and budgets, with the quote agreed before work begins.`,
+    },
+    {
+      q: `How long does a ${sEn.toLowerCase()} project take?`,
+      a: `A standard ${sEn.toLowerCase()} project takes 7–15 business days, with priority scheduling discussed up front.`,
+    },
+    {
+      q: `What support follows ${sEn.toLowerCase()} delivery?`,
+      a: `${sEn} support terms are written into the plan, including response times and any maintenance period.`,
+    },
+    {
+      q: `Can I review examples of ${sEn.toLowerCase()} work?`,
+      a: `Yes — ask for a fictional ${sEn.toLowerCase()} sample that matches the scope you are considering.`,
+    },
   ];
   const faq: BiFaq[] = zh.faq.map((f: FaqItem, i) => ({
     q: bi(f.q, faqEn[i % faqEn.length].q),
@@ -370,10 +385,10 @@ export function buildBiExt(
   }));
 
   const processEn = [
-    { title: "Consultation", desc: "Understand your goals, budget and timeline; define scope and expectations." },
+    { title: "Consultation", desc: `Start each ${sEn.toLowerCase()} engagement by clarifying goals, budget, scope and timing.` },
     { title: "Design", desc: `Tailor a ${sEn.toLowerCase()} plan, refined until you're satisfied.` },
-    { title: "Execution", desc: "Our team follows through — transparent progress, controlled milestones." },
-    { title: "Delivery & Review", desc: "Deliver results and review outcomes; keep optimizing for the long term." },
+    { title: "Execution", desc: `A dedicated ${sEn.toLowerCase()} contact keeps progress visible and decisions moving.` },
+    { title: "Delivery & Review", desc: `Close each ${sEn.toLowerCase()} delivery with a results review and clear next steps.` },
   ];
   const process: BiProcess[] = zh.process.map((s: ProcessStep, i) => ({
     step: s.step,
@@ -381,7 +396,8 @@ export function buildBiExt(
     desc: bi(s.desc, processEn[i % processEn.length].desc),
   }));
 
-  return { cases, news, team, products, menu, faq, pricing, process, logos: zh.logos };
+  const content: BiExt = { cases, news, team, products, menu, faq, pricing, process, logos: zh.logos };
+  return mapBiCopy(content, availableSectionKinds(meta));
 }
 
 // ————————————————————————————————————————————————————————————

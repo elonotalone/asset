@@ -4,7 +4,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { buildBiContent } from "../lib/template-content-bi.ts";
+import { buildBiContent, buildBiExt } from "../lib/template-content-bi.ts";
 import { dnaFor } from "../lib/template-dna.ts";
 import {
   UI,
@@ -37,13 +37,13 @@ function sectionKindsFor(meta) {
 
 // BiContent keeps visible prose in { zh, en } pairs. Standalone strings are
 // phone/email values, stat numbers or SVG paths, none of which are sentences.
-function visibleStrings(value, lang, out = [], field = "") {
+function visibleStrings(value, lang, out = [], field = "", includePlain = true) {
   if (typeof value === "string") {
-    if (field !== "icon") out.push(value.trim());
+    if (includePlain && field !== "icon") out.push(value.trim());
     return out;
   }
   if (Array.isArray(value)) {
-    for (const item of value) visibleStrings(item, lang, out, field);
+    for (const item of value) visibleStrings(item, lang, out, field, includePlain);
     return out;
   }
   if (!value || typeof value !== "object") return out;
@@ -51,7 +51,7 @@ function visibleStrings(value, lang, out = [], field = "") {
     out.push(value[lang].trim());
     return out;
   }
-  for (const [key, item] of Object.entries(value)) visibleStrings(item, lang, out, key);
+  for (const [key, item] of Object.entries(value)) visibleStrings(item, lang, out, key, includePlain);
   return out;
 }
 
@@ -62,10 +62,12 @@ function isCountedSentence(text) {
   return !hasHan && /[A-Za-z]/.test(text) && [...text].length >= 24;
 }
 
-function ownSiteStrings(meta, content, kinds) {
+function ownSiteStrings(meta, content, ext, kinds) {
   const strings = [
     ...visibleStrings(content, "zh"),
     ...visibleStrings(content, "en"),
+    // W3a owns the Chinese extension pools; W3b owns their English rendering.
+    ...visibleStrings(ext, "en", [], "", false),
   ];
   for (const kind of SECTION_TITLE_KINDS) {
     if (!kinds.has(kind)) continue;
@@ -87,7 +89,10 @@ test("all 500 site-copy bundles are deterministic and use fictional contacts", (
     const { ind, sub } = taxonomyFor(meta);
     const first = buildBiContent(meta, ind, sub);
     const second = buildBiContent(meta, ind, sub);
+    const firstExt = buildBiExt(meta, meta.industryKey, meta.subLabel, meta.subKey);
+    const secondExt = buildBiExt(meta, meta.industryKey, meta.subLabel, meta.subKey);
     assert.deepEqual(second, first, `${meta.slug}: same slug changed its copy`);
+    assert.deepEqual(secondExt, firstExt, `${meta.slug}: same slug changed its extension copy`);
     assert.equal(first.contactPhone, `示例号码 · ${meta.slug}`, `${meta.slug}: phone is not an obvious sample`);
     assert.match(first.contactEmail, /^[a-z0-9-]+@[a-z0-9-]+\.example\.com$/i, `${meta.slug}: email is not on example.com`);
     assert.match(first.contactAddress.zh, /^示例地址 · /, `${meta.slug}: zh address looks real`);
@@ -100,8 +105,9 @@ test("no long sentence from W3b appears in more than 25 sites", (t) => {
   for (const meta of ALL) {
     const { ind, sub } = taxonomyFor(meta);
     const content = buildBiContent(meta, ind, sub);
+    const ext = buildBiExt(meta, meta.industryKey, meta.subLabel, meta.subKey);
     const kinds = sectionKindsFor(meta);
-    const sentences = new Set(ownSiteStrings(meta, content, kinds).filter(isCountedSentence));
+    const sentences = new Set(ownSiteStrings(meta, content, ext, kinds).filter(isCountedSentence));
     for (const sentence of sentences) {
       const slugs = sitesBySentence.get(sentence) ?? [];
       slugs.push(meta.slug);
@@ -155,9 +161,13 @@ test("site copy has zero words for sections absent from its selected layout", (t
   for (const meta of ALL) {
     const { ind, sub } = taxonomyFor(meta);
     const content = buildBiContent(meta, ind, sub);
+    const ext = buildBiExt(meta, meta.industryKey, meta.subLabel, meta.subKey);
     const kinds = sectionKindsFor(meta);
     for (const [lang, lexicon] of [["zh", KIND_ONLY_WORDS], ["en", KIND_ONLY_WORDS_EN]]) {
-      const strings = visibleStrings(content, lang);
+      const strings = [
+        ...visibleStrings(content, lang),
+        ...visibleStrings(ext, lang, [], "", false),
+      ];
       for (const kind of SECTION_TITLE_KINDS) {
         if (!kinds.has(kind)) continue;
         const heading = secTitle(kind, meta.industryKey, lang);
