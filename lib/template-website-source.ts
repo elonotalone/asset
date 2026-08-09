@@ -152,6 +152,8 @@ function ownerPortrait(lang: Lang, kind: "team" | "testimonial"): VirtualImage {
 interface EmitCtx {
   structure: TemplateStructureIR;
   lang: Lang;
+  /** 当前正在发射的页面名，用于把项目/房源等业务 CTA 与商品加购分开。 */
+  pageLabel: string;
   /** 图片 keyword（拿不到 url 时 website 侧的第一方图床兜底关键词）。 */
   keyword: string;
   /** 当前配置内的图片序号；zh/en 分别从 0 开始，因而两份配置引用同一组文件。 */
@@ -165,6 +167,15 @@ function headTitle(section: SectionIR, ctx: EmitCtx): string {
 }
 function headSub(section: SectionIR, ctx: EmitCtx): string {
   return txt(section.slots, "subtitle", ctx.lang);
+}
+
+function productCtaLabel(ctx: EmitCtx): string {
+  const inquiryPages = new Set([
+    "项目", "拍品", "房源", "车辆",
+    "Projects", "Auction Lots", "Listings", "Vehicles",
+  ]);
+  if (inquiryPages.has(ctx.pageLabel)) return ctx.lang === "en" ? "View Details" : "咨询详情";
+  return ctx.lang === "en" ? "Add to Cart" : "加入购物车";
 }
 
 /**
@@ -280,7 +291,7 @@ const BUILDERS: Record<WebsiteSectionType, ContentBuilder> = {
   products: (s, ctx) => ({
     title: headTitle(s, ctx),
     subtitle: headSub(s, ctx),
-    ctaLabel: ctx.lang === "en" ? "Add to Cart" : "加入购物车",
+    ctaLabel: productCtaLabel(ctx),
     items: blocksOf(s, "items").map((b) => ({
       name: txt(b.slots, "title", ctx.lang),
       price: txt(b.slots, "price", ctx.lang),
@@ -309,7 +320,7 @@ const BUILDERS: Record<WebsiteSectionType, ContentBuilder> = {
     title: headTitle(s, ctx),
     subtitle: headSub(s, ctx),
     items: blocksOf(s, "items").map((b, i) => ({
-      caption: `${headTitle(s, ctx)} ${i + 1}`,
+      caption: txt(b.slots, "title", ctx.lang) || `${headTitle(s, ctx)} ${i + 1}`,
       image: imageOf(ctx, headTitle(s, ctx)),
     })),
   }),
@@ -562,6 +573,7 @@ function footerSection(structure: TemplateStructureIR, lang: Lang, id: string): 
 }
 
 function emitPage(page: PageIR, structure: TemplateStructureIR, ctx: EmitCtx): VirtualPageOut {
+  ctx.pageLabel = pick(page.label, ctx.lang);
   const perType = new Map<WebsiteSectionType, number>();
   const nextId = (type: WebsiteSectionType): string => {
     const n = (perType.get(type) ?? 0) + 1;
@@ -601,6 +613,7 @@ export function buildWebsiteSourceConfig(structure: TemplateStructureIR, lang: L
   const ctx: EmitCtx = {
     structure,
     lang,
+    pageLabel: "",
     keyword: lang === "en" ? structure.sub.labelEn : structure.sub.label,
     photoCursor: 0,
   };

@@ -25,10 +25,12 @@ import {
   PAGE_LABEL,
   RADIUS_TOKENS,
   dnaFor,
+  mainPageKey,
   type PageKey,
   type SectionKind,
   type TemplateDNA,
 } from "./template-dna";
+import { mainPageLabel } from "./template-skins";
 import { poolFallbackPhoto, poolPhoto } from "./template-photo-pool";
 import { sitePhotoPath } from "./template-photo-local";
 import {
@@ -204,6 +206,7 @@ interface IrCtx {
   en: { c: SiteContent; ext: ExtContent };
   pageKey: PageKey;
   pageLabel: BiText;
+  mainPageKey: PageKey;
   variantOf: (kind: SectionKind, count: number) => number;
   /** 行业化 section 标题（双语成对）。 */
   st: (kind: "cases" | "team" | "process" | "products" | "gallery" | "news") => {
@@ -218,6 +221,51 @@ interface IrCtx {
 
 function bi(zh: string, en: string): BiText {
   return { zh, en };
+}
+
+const MAIN_PAGE_LABEL_EN: Readonly<Record<string, string>> = {
+  作品: "Work",
+  服务: "Services",
+  商品: "Goods",
+  课程: "Courses",
+  菜单: "Menu",
+  产品: "Products",
+  项目: "Projects",
+  拍品: "Auction Lots",
+  客房: "Rooms",
+  线路: "Tours",
+  房源: "Listings",
+  车辆: "Vehicles",
+};
+
+function mainLabel(meta: TemplateMeta): BiText {
+  const zh = mainPageLabel(meta.industryKey, meta.subKey);
+  return bi(zh, MAIN_PAGE_LABEL_EN[zh] ?? "Offerings");
+}
+
+function onMainPage(ctx: IrCtx): boolean {
+  return ctx.pageKey === ctx.mainPageKey;
+}
+
+function mainSubtitle(ctx: IrCtx): BiText {
+  const subjectZh = ctx.subName.zh;
+  const subjectEn = ctx.subName.en;
+  const byLabel: Readonly<Record<string, BiText>> = {
+    作品: bi(`${subjectZh}的代表作品与创作成果`, `Selected ${subjectEn} work and creative outcomes`),
+    服务: bi(`${subjectZh}可提供的核心服务`, `Core ${subjectEn} services`),
+    商品: bi(`${subjectZh}的示例商品与参考价格`, `Sample ${subjectEn} goods and reference prices`),
+    课程: bi(`${subjectZh}的课程方向与学习内容`, `${subjectEn} courses and learning topics`),
+    菜单: bi(`${subjectZh}的具体菜品与示例价格`, `${subjectEn} dishes and sample prices`),
+    产品: bi(`${subjectZh}的核心产品与规格示例`, `Core ${subjectEn} products and sample specifications`),
+    项目: bi(`${subjectZh}的代表项目`, `Representative ${subjectEn} projects`),
+    拍品: bi(`${subjectZh}的示例拍品`, `Sample ${subjectEn} auction lots`),
+    客房: bi(`${subjectZh}的房型与适住选择`, `${subjectEn} room types and stay options`),
+    线路: bi(`${subjectZh}的目的地与行程选择`, `${subjectEn} destinations and itineraries`),
+    房源: bi(`${subjectZh}的可租房源示例`, `Sample ${subjectEn} rental listings`),
+    车辆: bi(`${subjectZh}的可租车型示例`, `Sample ${subjectEn} rental vehicles`),
+  };
+  return byLabel[ctx.pageLabel.zh]
+    ?? bi(`${subjectZh}的主营内容`, `Core ${subjectEn} offerings`);
 }
 
 /** 与引擎 `img()` 完全一致的图片解析（同一 seed 公式、同一图池、同一兜底）。 */
@@ -430,6 +478,7 @@ function irServices(ctx: IrCtx): ReturnType<Extractor> {
   const { zh, en } = ctx;
   const v = ctx.variantOf("services", 4);
   const withImage = v === 0 || v === 1; // v2 编号列表、v3 图标卡都不用配图
+  const main = onMainPage(ctx);
   const blocks = pairs(zh.c.services, en.c.services).map(([z, e], i) => {
     const slots: SlotIR[] = [
       text("title", "heading", bi(z.name, e.name)),
@@ -450,8 +499,12 @@ function irServices(ctx: IrCtx): ReturnType<Extractor> {
       columns: v === 2 ? 1 : 4,
     }),
     slots: [
-      text("title", "heading", bi(zh.c.servicesTitle, en.c.servicesTitle)),
-      rich("subtitle", "subheading", bi(zh.c.servicesSubtitle, en.c.servicesSubtitle)),
+      text("title", "heading", main ? ctx.pageLabel : bi(zh.c.servicesTitle, en.c.servicesTitle)),
+      rich(
+        "subtitle",
+        "subheading",
+        main ? mainSubtitle(ctx) : bi(zh.c.servicesSubtitle, en.c.servicesSubtitle),
+      ),
     ],
     groups: [{ name: "items", blocks }],
   };
@@ -460,6 +513,7 @@ function irServices(ctx: IrCtx): ReturnType<Extractor> {
 function irProducts(ctx: IrCtx): ReturnType<Extractor> {
   const v = ctx.variantOf("products", 3);
   const st = ctx.st("products");
+  const main = onMainPage(ctx);
   const blocks = pairs(ctx.zh.ext.products, ctx.en.ext.products).map(([z, e], i) => ({
     key: `product-${i + 1}`,
     slots: [
@@ -473,12 +527,18 @@ function irProducts(ctx: IrCtx): ReturnType<Extractor> {
     variant: v,
     variantCount: 3,
     intent: intent(ctx, { surface: v === 1 ? "soft" : "page", align: v === 2 ? "left" : "center", hasMedia: true, columns: 4 }),
-    slots: [text("title", "heading", st.title), ...(st.sub ? [rich("subtitle", "subheading", st.sub)] : [])],
+    slots: [
+      text("title", "heading", main ? ctx.pageLabel : st.title),
+      ...(main
+        ? [rich("subtitle", "subheading", mainSubtitle(ctx))]
+        : st.sub ? [rich("subtitle", "subheading", st.sub)] : []),
+    ],
     groups: [{ name: "items", blocks }],
   };
 }
 
 function irMenu(ctx: IrCtx): ReturnType<Extractor> {
+  const main = onMainPage(ctx);
   const blocks = pairs(ctx.zh.ext.menu, ctx.en.ext.menu).map(([z, e], gi) => ({
     key: `menu-group-${gi + 1}`,
     slots: [text("title", "heading", bi(z.group, e.group))],
@@ -496,7 +556,10 @@ function irMenu(ctx: IrCtx): ReturnType<Extractor> {
     variant: 0,
     variantCount: 1,
     intent: intent(ctx, { surface: "soft", columns: 2 }),
-    slots: [text("title", "heading", ctx.u("secMenu")), rich("subtitle", "subheading", ctx.u("secMenuSub"))],
+    slots: [
+      text("title", "heading", main ? ctx.pageLabel : ctx.u("secMenu")),
+      rich("subtitle", "subheading", main ? mainSubtitle(ctx) : ctx.u("secMenuSub")),
+    ],
     groups: [{ name: "groups", blocks }],
   };
 }
@@ -504,17 +567,31 @@ function irMenu(ctx: IrCtx): ReturnType<Extractor> {
 function irGallery(ctx: IrCtx): ReturnType<Extractor> {
   const v = ctx.variantOf("gallery", 3);
   const st = ctx.st("gallery");
+  const main = onMainPage(ctx);
   // 图数与 renderGallery 各变体一致：v0 = 6 张、v1 = 1 大 + 4、v2 = 8 张横滚。
   const count = v === 1 ? 5 : v === 2 ? 8 : 6;
-  const blocks = Array.from({ length: count }, (_, i) => ({
-    key: `shot-${i + 1}`,
-    slots: [image(ctx, "image", 60 + i)],
-  }));
+  const blocks = Array.from({ length: count }, (_, i) => {
+    const z = ctx.zh.ext.cases[i % ctx.zh.ext.cases.length];
+    const e = ctx.en.ext.cases[i % ctx.en.ext.cases.length] ?? z;
+    return {
+      key: `shot-${i + 1}`,
+      slots: [
+        text("title", "heading", bi(z.title, e.title)),
+        rich("description", "body", bi(z.desc, e.desc)),
+        image(ctx, "image", 60 + i),
+      ],
+    };
+  });
   return {
     variant: v,
     variantCount: 3,
     intent: intent(ctx, { surface: v === 2 ? "soft" : "page", align: v === 2 ? "left" : "center", hasMedia: true, columns: v === 2 ? 0 : 3 }),
-    slots: [text("title", "heading", st.title), ...(st.sub ? [rich("subtitle", "subheading", st.sub)] : [])],
+    slots: [
+      text("title", "heading", main ? ctx.pageLabel : st.title),
+      ...(main
+        ? [rich("subtitle", "subheading", mainSubtitle(ctx))]
+        : st.sub ? [rich("subtitle", "subheading", st.sub)] : []),
+    ],
     groups: [{ name: "items", blocks }],
   };
 }
@@ -1258,6 +1335,8 @@ export function buildTemplateStructure(
   const zh = { c: flattenContent(biContent, "zh"), ext: flattenExt(biExt, "zh") };
   const en = { c: flattenContent(biContent, "en"), ext: flattenExt(biExt, "en") };
   const subLabelEn = subEn(meta.subKey, meta.industryKey);
+  const siteMainPageKey = mainPageKey(meta.industryKey, meta.subKey);
+  const siteMainLabel = mainLabel(meta);
 
   const ctx: IrCtx = {
     meta,
@@ -1266,6 +1345,7 @@ export function buildTemplateStructure(
     en,
     pageKey: "home",
     pageLabel: bi(PAGE_LABEL.home, ui("home", "en")),
+    mainPageKey: siteMainPageKey,
     variantOf: (kind, count) => (hashStr(meta.slug + ":sec:" + kind + ":" + ctx.pageKey) + dna.styleSeed) % count,
     st: (kind) => {
       const z = secTitle(kind, meta.industryKey, "zh");
@@ -1279,7 +1359,9 @@ export function buildTemplateStructure(
   const pageKeys = dna.layout.pages;
   const pages: PageIR[] = pageKeys.map((pk) => {
     ctx.pageKey = pk;
-    const label = bi(PAGE_LABEL[pk], ui(pk as keyof typeof UI, "en"));
+    const label = pk === siteMainPageKey
+      ? siteMainLabel
+      : bi(PAGE_LABEL[pk], ui(pk as keyof typeof UI, "en"));
     ctx.pageLabel = label;
     const kinds = dna.layout.sections[pk] ?? (["pageHeader", "cta"] as SectionKind[]);
     const perKind = new Map<string, number>();
@@ -1354,7 +1436,7 @@ export function buildTemplateStructure(
       accentFx: dna.accentFx,
       isSignature: dna.isSignature,
     },
-    nav: pageKeys.map((pk) => ({ key: pk, path: pagePath(pk), label: bi(PAGE_LABEL[pk], ui(pk as keyof typeof UI, "en")) })),
+    nav: pages.map((page) => ({ key: page.key, path: page.path, label: page.label })),
     pages,
     totals: {
       pages: pages.length,
