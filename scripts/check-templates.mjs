@@ -14,7 +14,7 @@ import {
 import { dirname, extname, isAbsolute, join, posix, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { missingClasses } from "../lib/template-css.ts";
+import { CSS_ASSET_PATH, missingClasses } from "../lib/template-css.ts";
 import { dnaFor } from "../lib/template-dna.ts";
 import { emitStandaloneSite } from "../lib/template-emit-site.ts";
 import { IMAGE_SLOT_POLICY } from "../lib/template-image-policy.ts";
@@ -382,6 +382,10 @@ function inspectStandalone(site, emitted, siteDir) {
     declaredPaths = new Set(emitted.files.map((file) => file.path.replaceAll("\\", "/")));
   }
 
+  if (!declaredPaths.has(CSS_ASSET_PATH) || !existsSync(join(siteDir, CSS_ASSET_PATH))) {
+    addFailure(site, "generationFailure", `standalone site is missing shipped stylesheet ${CSS_ASSET_PATH}`);
+  }
+
   const htmlParts = [];
   for (const file of emitted.files) {
     scanExternalFile(site, "standalone", file);
@@ -478,7 +482,8 @@ function aggregateWorst(sites, photoOffenders, sharedOffenders) {
       externalUrls.get(url).add(site.slug);
     }
     for (const detail of site.failures.emptyPictureSlot) {
-      const kind = detail.match(/\/(?:[^/]+)\/([a-z-]+)-\d+\./)?.[1] ?? detail.split(/[.: ]/, 1)[0];
+      const sectionIds = [...detail.matchAll(/\/([a-z-]+)-\d+\./g)];
+      const kind = sectionIds.at(-1)?.[1] ?? "emitted-file reference";
       if (!emptyKinds.has(kind)) emptyKinds.set(kind, new Set());
       emptyKinds.get(kind).add(site.slug);
     }
@@ -576,7 +581,7 @@ function selfTest() {
   });
   assert.equal(dominance?.count, 2);
   assert.equal(fake.failures.photoDominance.size, 1);
-  console.log("check-templates self-test: 8 assertions passed");
+  console.log("check-templates self-test: core assertions passed");
 }
 
 function main() {
