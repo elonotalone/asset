@@ -9,9 +9,12 @@ import test from "node:test";
 import {
   INDUSTRY_SKINS,
   MAIN_PAGE_LABEL_BY_SUB,
+  SHAPE_FLOOR,
+  SHAPE_FLOOR_BY_SUB,
   SHAPES,
   SKINS,
   mainPageLabel,
+  shapeFloor,
   skinsFor,
 } from "../lib/template-skins.ts";
 import {
@@ -67,14 +70,49 @@ test("21 个骨架收敛为父级钉死的 4 种构成", () => {
   assert.deepEqual([...used].sort(), ["s3", "s4", "s5", "s6"]);
 });
 
-test("每个子类的前四个变体依次覆盖 3/4/5/6 页", () => {
-  const bySub = new Map();
+test("500 件站点都从所属子类下限向上分布，没有一件被压小", () => {
+  const shapeOrder = SHAPES.map((shape) => shape.key);
+  const firstBySub = new Map();
+
   for (const meta of allTemplates()) {
-    if (!bySub.has(meta.subKey)) bySub.set(meta.subKey, []);
-    bySub.get(meta.subKey).push(dnaFor(meta.slug, meta.industryKey, meta.variant).shape.key);
+    const floor = shapeFloor(meta.industryKey, meta.subKey);
+    const actual = dnaFor(meta.slug, meta.industryKey, meta.variant).shape.key;
+    assert.ok(
+      shapeOrder.indexOf(actual) >= shapeOrder.indexOf(floor),
+      `${meta.slug}: 下限 ${floor}，实际 ${actual}`,
+    );
+    if (!firstBySub.has(meta.subKey)) firstBySub.set(meta.subKey, { floor, actual });
   }
-  for (const [subKey, shapes] of bySub) {
-    assert.deepEqual(shapes.slice(0, 4), ["s3", "s4", "s5", "s6"], subKey);
+
+  for (const [subKey, row] of firstBySub) {
+    assert.equal(row.actual, row.floor, `${subKey} 没有从自己的下限起步`);
+  }
+});
+
+test("构成下限覆盖 105 个真实子类，且没有无效行业、幽灵键或未知档位", () => {
+  const knownShapes = new Set(SHAPES.map((shape) => shape.key));
+  const knownIndustries = new Set(INDUSTRIES.map((industry) => industry.key));
+  const realSubs = new Set(ALL_SUB_KEYS);
+
+  assert.deepEqual(
+    Object.keys(SHAPE_FLOOR).filter((key) => !knownIndustries.has(key)),
+    [],
+  );
+  assert.deepEqual(
+    INDUSTRIES.map((industry) => industry.key).filter((key) => !SHAPE_FLOOR[key]),
+    [],
+  );
+  assert.deepEqual(
+    Object.keys(SHAPE_FLOOR_BY_SUB).filter((key) => !realSubs.has(key)),
+    [],
+  );
+  for (const floor of [...Object.values(SHAPE_FLOOR), ...Object.values(SHAPE_FLOOR_BY_SUB)]) {
+    assert.ok(knownShapes.has(floor), `未知构成下限 ${floor}`);
+  }
+  for (const industry of INDUSTRIES) {
+    for (const sub of industry.subs) {
+      assert.ok(knownShapes.has(shapeFloor(industry.key, sub.key)), sub.key);
+    }
   }
 });
 

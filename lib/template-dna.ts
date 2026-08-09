@@ -11,6 +11,7 @@ import {
   SKINS,
   mainPageLabel,
   shape as shapeByKey,
+  shapeForSite,
   skin as skinByKey,
   skinsFor,
   type Shape,
@@ -339,7 +340,7 @@ export function dnaFor(
   _defaultPaletteFamily?: string,
 ): TemplateDNA {
   const subKey = slug.replace(/-\d+$/, "");
-  const shape = shapeForVariant(variant);
+  const shape = shapeForSite(industryKey, variant, subKey);
   const skin = skinForVariant(industryKey, variant);
   const palette = paletteForSkin(skin, variant);
   const layout = layoutForShape(shape.key, mainPageKey(industryKey, subKey));
