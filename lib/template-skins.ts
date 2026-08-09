@@ -100,7 +100,41 @@ export const SHAPE_FLOOR: Record<string, ShapeKey> = {
  * 是正式机构，需要 6 页；通用行业整体 3 页，但里面也有正经企业站。
  * 105 个子类逐个过一遍，例外写在这里。
  */
-export const SHAPE_FLOOR_BY_SUB: Record<string, ShapeKey> = {};
+export const SHAPE_FLOOR_BY_SUB: Record<string, ShapeKey> = {
+  // 商业行业整体按正式官网处理；这些专业服务靠案例取信，但不要求持续资讯页。
+  registration: "s5",
+  accounting: "s5",
+  trademark: "s5",
+  law: "s5",
+
+  // 医学美容是医疗机构，不是普通美容门店。
+  "medical-beauty": "s6",
+
+  // 教育靠课程与成果取信；政府、协会和商会仍沿用组织机构的六页下限。
+  school: "s5",
+  training: "s5",
+
+  // 明确叫“公司”的科技企业需要可持续更新的正式官网。
+  "tech-company": "s6",
+
+  // 生活行业默认靠案例；商品门店与小型到店/上门服务四页即可说清。
+  bridal: "s4",
+  cleaning: "s4",
+  "car-care": "s4",
+  "photo-print": "s4",
+  moving: "s4",
+  pets: "s4",
+  flowers: "s4",
+
+  // 医院和齿科是医疗机构，不能跟食品、茶酒和药品零售共用四页下限。
+  hospital: "s6",
+  dental: "s6",
+
+  // 出口贸易与通用企业是正式企业站；通用商城仍是商品型站。
+  "export-trade": "s6",
+  enterprise: "s6",
+  mall: "s4",
+};
 
 const SHAPE_ORDER: ShapeKey[] = ["s3", "s4", "s5", "s6"];
 

@@ -116,6 +116,41 @@ test("构成下限覆盖 105 个真实子类，且没有无效行业、幽灵键
   }
 });
 
+test("逐项复核后的子类例外完整钉死，典型业务落在规格要求的档位", () => {
+  assert.deepEqual(SHAPE_FLOOR_BY_SUB, {
+    registration: "s5",
+    accounting: "s5",
+    trademark: "s5",
+    law: "s5",
+    "medical-beauty": "s6",
+    school: "s5",
+    training: "s5",
+    "tech-company": "s6",
+    bridal: "s4",
+    cleaning: "s4",
+    "car-care": "s4",
+    "photo-print": "s4",
+    moving: "s4",
+    pets: "s4",
+    flowers: "s4",
+    hospital: "s6",
+    dental: "s6",
+    "export-trade": "s6",
+    enterprise: "s6",
+    mall: "s4",
+  });
+
+  assert.equal(shapeFloor("grocery", "hospital"), "s6", "医院必须是正式官网");
+  assert.equal(shapeFloor("life", "wedding"), "s5", "婚庆必须保留案例页");
+  assert.equal(shapeFloor("business", "realestate"), "s6", "房地产必须是正式官网");
+  assert.equal(shapeFloor("general", "personal"), "s3", "个人主页从三页起步");
+  assert.equal(shapeFloor("general", "landing"), "s3", "活动单页从三页起步");
+  assert.equal(shapeFloor("business", "law"), "s5", "律所必须保留案例页");
+  assert.equal(shapeFloor("org", "school"), "s5", "教育必须保留成果页");
+  assert.equal(shapeFloor("life", "moving"), "s4", "小型服务需要主营页");
+  assert.equal(shapeFloor("general", "enterprise"), "s6", "企业必须是正式官网");
+});
+
 test("500 件站点逐页使用所属构成的唯一板块序列", () => {
   for (const meta of allTemplates()) {
     const dna = dnaFor(meta.slug, meta.industryKey, meta.variant);
