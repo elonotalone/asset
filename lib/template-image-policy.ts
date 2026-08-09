@@ -1,12 +1,14 @@
 // 「哪些位置必须有图」—— 发射器与校验器共用的一张表（W2 拥有，W4 只读）。
 //
 // 缺陷背景：接口 B 的 22 种板块每种都声明了图片槽，但发射器只有 9 处真给了图，
-// 其余 15 处写死 NO_IMAGE。货架上看过去，三分之二该有照片的位置是空的。
+// 其余 15 处写死 NO_IMAGE。不能反过来把 22 种板块都塞满图库照片：引擎本来只画
+// 图标、数字、表格或渐变底的地方，硬塞一张背景照同样是缺陷。
 //
 // 判定原则：以 asset 引擎（lib/template-engine.ts）渲染出来的样子为准 ——
 // 引擎在这类板块里画照片的，就是「设计要图」，必须给真图；
-// 引擎不画照片、给图反而是编造的（例如合作方 logo 墙、页脚品牌标），标 optional
-// 并写明理由。空槽本身保留（用户仍可在编辑器里自己塞图）。
+// 引擎不画照片、给图反而是装饰噪声或编造事实的，标 optional 并写明理由。
+// 人物位单独从严：团队与评价人的图库脸会冒充真实员工/客户，所以即使旧引擎画过
+// stock photo，也必须留成有明确换图提示的空槽，等站点所有者放自己的真实照片。
 //
 // W2 落地时按板块逐条复核并改这张表；W4 校验器读它决定「空槽算不算缺陷」。
 
@@ -25,22 +27,22 @@ export const IMAGE_SLOT_POLICY: Record<WebsiteSectionType, ImageSlotPolicy> = {
   about: { rule: "required", why: "团队/门店/现场实拍，撑起「我们是谁」" },
   services: { rule: "required", why: "每项服务一张场景图" },
   products: { rule: "required", why: "每件商品一张图" },
-  menu: { rule: "required", why: "菜品图" },
+  menu: { rule: "optional", why: "引擎画的是分组价目表，不渲染菜品照片" },
   gallery: { rule: "required", why: "图集本体就是图" },
   cases: { rule: "required", why: "每个案例一张成果图" },
-  team: { rule: "required", why: "成员头像位" },
+  team: { rule: "optional", why: "成员头像必须由站点所有者换成真实团队照，不能拿图库人物冒充员工" },
   news: { rule: "required", why: "每条资讯一张封面图" },
-  testimonials: { rule: "required", why: "评价人头像位" },
-  "feature-grid": { rule: "required", why: "特色区配图" },
-  stats: { rule: "required", why: "数字区背景图" },
-  pricing: { rule: "required", why: "套餐区配图" },
-  process: { rule: "required", why: "流程区配图" },
-  timeline: { rule: "required", why: "历程区配图" },
-  chart: { rule: "required", why: "图表区配图" },
-  faq: { rule: "required", why: "问答区配图" },
-  cta: { rule: "required", why: "行动号召区背景图" },
-  contact: { rule: "required", why: "联系区门店/地图区位图" },
-  "page-header": { rule: "required", why: "栏目头 banner" },
+  testimonials: { rule: "optional", why: "评价人头像必须由站点所有者提供，图库人物会编造客户背书" },
+  "feature-grid": { rule: "optional", why: "引擎画的是图标卡，不渲染照片" },
+  stats: { rule: "optional", why: "引擎画的是数字带或渐变带，不渲染背景照片" },
+  pricing: { rule: "optional", why: "引擎画的是套餐卡和价目行，不渲染照片" },
+  process: { rule: "optional", why: "引擎画的是编号、箭头或步骤卡，不渲染照片" },
+  timeline: { rule: "optional", why: "引擎画的是节点与连线，不渲染照片" },
+  chart: { rule: "optional", why: "引擎自己画 SVG 数据图，不需要装饰照片" },
+  faq: { rule: "optional", why: "引擎画的是问答卡，不渲染背景照片" },
+  cta: { rule: "optional", why: "引擎画的是渐变或描边行动卡，不渲染背景照片" },
+  contact: { rule: "optional", why: "引擎画的是联系资料和表单，不渲染门店或地图照片" },
+  "page-header": { rule: "optional", why: "引擎画的是渐变、面包屑或下划线栏目头，不渲染 banner 照片" },
   logos: { rule: "optional", why: "合作方是文字标，塞照片等于编造合作关系" },
   footer: { rule: "optional", why: "页脚位只放品牌字标，我们没有客户的品牌图形" },
 };
