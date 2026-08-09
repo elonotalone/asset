@@ -49,11 +49,11 @@ const MAX_DETAIL_LENGTH = 260;
 /**
  * True UI chrome only. Every entry carries its justification next to it so a
  * reviewer can audit the whole allowlist without looking elsewhere.
- *
- * Deliberately empty today: the current repeated controls are shorter than the
- * fixed 8-zh/24-en thresholds, and product copy must not be excused as chrome.
  */
-const UI_CHROME_ALLOWLIST = new Map();
+const UI_CHROME_ALLOWLIST = new Map([
+  // 与示例电话号码一样，这是提示站点所有者替换字段的编辑指令，不是展示给顾客的价格文案。
+  ["zh:示例 ¥10000", "Editable sample-price chrome instructing the site owner to replace the value."],
+]);
 
 function newSiteResult(slug) {
   return {
