@@ -33,14 +33,15 @@ import { renderTemplateBilingual } from "../lib/template-engine.ts";
 
 const ALL = allTemplates();
 
-/** 确定性抽样（覆盖每个布局家族 + 每个 sig 家族，不靠随机）。 */
+/** 确定性抽样：收敛后差异全在构成×装上，逐个组合各取一站，不靠随机。 */
 function sample() {
-  const byLayout = new Map();
+  const byCombo = new Map();
   for (const meta of ALL) {
     const dna = dnaFor(meta.slug, meta.industryKey, meta.variant);
-    if (!byLayout.has(dna.layout.key)) byLayout.set(dna.layout.key, meta);
+    const key = `${dna.shape.key}|${dna.skin.key}`;
+    if (!byCombo.has(key)) byCombo.set(key, meta);
   }
-  return [...byLayout.values()];
+  return [...byCombo.values()];
 }
 
 function withTaxonomy(meta) {

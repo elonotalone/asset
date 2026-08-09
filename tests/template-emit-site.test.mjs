@@ -13,11 +13,13 @@ import { GET, generateStaticParams } from "../app/templates/[slug]/route.ts";
 
 const PROJECT_ROOT = new URL("..", import.meta.url).pathname;
 
+// 收敛后差异只剩构成与装两根轴，按版式家族取样只能拿到 4 个站，覆盖不了判据。
 function samplesByLayout() {
   const samples = new Map();
   for (const meta of allTemplates()) {
-    const layout = dnaFor(meta.slug, meta.industryKey, meta.variant).layout.key;
-    if (!samples.has(layout)) samples.set(layout, meta);
+    const dna = dnaFor(meta.slug, meta.industryKey, meta.variant);
+    const key = `${dna.shape.key}|${dna.skin.key}`;
+    if (!samples.has(key)) samples.set(key, meta);
   }
   return [...samples.values()];
 }
