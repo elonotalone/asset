@@ -661,7 +661,7 @@ export function buildContent(
       refined.ctaSubtitle ?? "现在就联系我们，获取专属方案与报价。",
     ctaButton: refined.ctaButton ?? "免费咨询",
     // 联系方式统一保持一眼可辨的示例值，不能让模板替商家声称一个真实地点或号码。
-    contactPhone: "（示例）400-000-0000",
+    contactPhone: `示例号码 · ${meta.slug}`,
     contactEmail: `hello@${sub.key}.example.com`,
     contactAddress: `示例地址 · ${sub.label}服务区`,
     footerSlogan:

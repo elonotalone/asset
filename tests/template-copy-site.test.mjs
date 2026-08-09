@@ -37,9 +37,13 @@ function sectionKindsFor(meta) {
 
 // BiContent keeps visible prose in { zh, en } pairs. Standalone strings are
 // phone/email values, stat numbers or SVG paths, none of which are sentences.
-function visibleStrings(value, lang, out = []) {
+function visibleStrings(value, lang, out = [], field = "") {
+  if (typeof value === "string") {
+    if (field !== "icon") out.push(value.trim());
+    return out;
+  }
   if (Array.isArray(value)) {
-    for (const item of value) visibleStrings(item, lang, out);
+    for (const item of value) visibleStrings(item, lang, out, field);
     return out;
   }
   if (!value || typeof value !== "object") return out;
@@ -47,14 +51,15 @@ function visibleStrings(value, lang, out = []) {
     out.push(value[lang].trim());
     return out;
   }
-  for (const item of Object.values(value)) visibleStrings(item, lang, out);
+  for (const [key, item] of Object.entries(value)) visibleStrings(item, lang, out, key);
   return out;
 }
 
 function isCountedSentence(text) {
-  const zhChars = text.match(/[\u3400-\u9fff]/g)?.length ?? 0;
-  if (zhChars >= 8) return true;
-  return zhChars === 0 && /[A-Za-z]/.test(text) && [...text].length >= 24;
+  const compact = text.replace(/\s+/g, "");
+  const hasHan = /\p{Script=Han}/u.test(text);
+  if (hasHan && [...compact].length >= 8) return true;
+  return !hasHan && /[A-Za-z]/.test(text) && [...text].length >= 24;
 }
 
 function ownSiteStrings(meta, content, kinds) {
@@ -83,7 +88,7 @@ test("all 500 site-copy bundles are deterministic and use fictional contacts", (
     const first = buildBiContent(meta, ind, sub);
     const second = buildBiContent(meta, ind, sub);
     assert.deepEqual(second, first, `${meta.slug}: same slug changed its copy`);
-    assert.equal(first.contactPhone, "（示例）400-000-0000", `${meta.slug}: phone is not an obvious sample`);
+    assert.equal(first.contactPhone, `示例号码 · ${meta.slug}`, `${meta.slug}: phone is not an obvious sample`);
     assert.match(first.contactEmail, /^[a-z0-9-]+@[a-z0-9-]+\.example\.com$/i, `${meta.slug}: email is not on example.com`);
     assert.match(first.contactAddress.zh, /^示例地址 · /, `${meta.slug}: zh address looks real`);
     assert.match(first.contactAddress.en, /^Sample address · /, `${meta.slug}: en address looks real`);
@@ -112,6 +117,16 @@ test("no long sentence from W3b appears in more than 25 sites", (t) => {
   assert.deepEqual(
     failures.map(([sentence, slugs]) => ({ sentence, count: slugs.length, sample: slugs.slice(0, 3) })),
     [],
+  );
+  assert.equal(
+    isCountedSentence(`${UI.chartUnit.zh}：万元 · ${UI.chartNote.zh}`),
+    false,
+    "chart unit + note recombine into a counted zh sentence",
+  );
+  assert.equal(
+    isCountedSentence(`${UI.chartUnit.en}: revenue · ${UI.chartNote.en}`),
+    false,
+    "chart unit + note recombine into a counted en sentence",
   );
 });
 
