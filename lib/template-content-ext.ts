@@ -174,7 +174,7 @@ export function buildExt(
   const pricing: PricingPlan[] = [
     {
       name: "起步协作",
-      price: `示例 ¥${(2 + (seed % 4)) * 1000}`,
+      price: `示例 ¥${(2 + (seed % 4)) * 1000} · ${subLabel}`,
       unit: "/ 参考",
       features: [
         `${subLabel}${pick(pool.themes, slug, "price-theme", 0)}梳理`,
@@ -186,7 +186,7 @@ export function buildExt(
     },
     {
       name: "完整协作",
-      price: `示例 ¥${(8 + (seed % 6)) * 1000}`,
+      price: `示例 ¥${(8 + (seed % 6)) * 1000} · ${subLabel}`,
       unit: "/ 参考",
       features: [
         `${subLabel}${pick(pool.themes, slug, "price-theme", 1)}展开`,
