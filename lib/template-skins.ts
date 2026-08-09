@@ -63,6 +63,64 @@ export const SHAPES: Shape[] = [
   },
 ];
 
+// —— 构成下限：一个站凭什么落到某一档 ————————————————————
+
+/**
+ * 构成不能靠掷骰子分配。第一版规格漏了这条，实施时只能沿用
+ * `SHAPES[variant % 4]`，结果 500 个站里 224 个被分到更小的构成、36 个从六页
+ * 掉到三页 —— 医院、婚庆、房地产这些本该是正式官网的都被压成了三页名片。
+ * 这撞了「六页内容不能塞进三页」这条红线。
+ *
+ * 规则：构成由这门生意实际需要几页决定。每个行业给下限，子类可覆盖；同一子类
+ * 的多个变体在下限之上分布到相邻档位（让同行业的货架有大小可挑），但任何一个
+ * 站都不得低于它的下限。
+ */
+export const SHAPE_FLOOR: Record<string, ShapeKey> = {
+  // 靠案例和作品说话，没有案例页就不成立
+  media: "s5",
+  life: "s5",
+  tech: "s5",
+  hardware: "s5",
+  logistics: "s5",
+  // 正式官网：要资讯持续更新，规模本身就是信任的一部分
+  business: "s6",
+  org: "s6",
+  industry: "s6",
+  // 有主打（商品/菜单/服务）但不需要案例页
+  fashion: "s4",
+  food: "s4",
+  home: "s4",
+  grocery: "s4",
+  // 通用行业里混着个人主页和单品落地页，下限交给子类
+  general: "s3",
+};
+
+/**
+ * 子类级覆盖。行业下限是粗粒度的：食品行业整体 4 页够用，但医药保健里的医院
+ * 是正式机构，需要 6 页；通用行业整体 3 页，但里面也有正经企业站。
+ * 105 个子类逐个过一遍，例外写在这里。
+ */
+export const SHAPE_FLOOR_BY_SUB: Record<string, ShapeKey> = {};
+
+const SHAPE_ORDER: ShapeKey[] = ["s3", "s4", "s5", "s6"];
+
+export function shapeFloor(industryKey: string, subKey?: string): ShapeKey {
+  if (subKey && SHAPE_FLOOR_BY_SUB[subKey]) return SHAPE_FLOOR_BY_SUB[subKey];
+  return SHAPE_FLOOR[industryKey] ?? "s4";
+}
+
+/**
+ * 同子类的第 variant 个变体落在哪一档：从下限起，在 [下限..s6] 之间循环。
+ * 下限是 s5 的子类，它的 5 个变体就在 5 页和 6 页之间交替，永远不会掉到 4 页。
+ */
+export function shapeForSite(industryKey: string, variant: number, subKey?: string): Shape {
+  const floor = shapeFloor(industryKey, subKey);
+  const from = SHAPE_ORDER.indexOf(floor);
+  const pool = SHAPE_ORDER.slice(from);
+  const key = pool[Math.abs(variant - 1) % pool.length];
+  return shape(key);
+}
+
 // —— 装 ————————————————————————————————————————————————
 
 export type SkinKey =
