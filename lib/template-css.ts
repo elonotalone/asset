@@ -1,12 +1,15 @@
-// 模板站自带样式表（不联网）—— 接口占位，实现由 W1a 落地。
+// 模板站自带样式表（不联网）。
 //
-// 今天每个产物 <head> 里挂 https://cdn.tailwindcss.com：断网打开就是一堵黑字白底。
-// 这里承接「把用到的那一小撮 utility 类离线生成好，跟着产物一起发」的能力：
-// scripts/build-template-css.mjs 用 tailwindcss v3（与 Play CDN 同版本语义）
-// 扫描 500 个站实际用到的类名，生成 lib/generated/tailwind-utilities.css 并入库；
-// 运行期只做「按本站用到的类名筛规则」，不跑编译器、不联网。
-//
-// 契约稳定：W1b（发射器）与 W4（校验器）都只依赖下面四个导出。
+// scripts/build-template-css.mjs 用 Tailwind v3 扫描全部模板，把 preflight 与 utility
+// 规则按原级联顺序写进生成物。运行期只查表、筛选本站真正用到的规则：不读文件，
+// 不跑编译器，也不联网。
+
+import {
+  TAILWIND_CLASS_NAMES,
+  TAILWIND_MARKER_CLASSES,
+  TAILWIND_PREFLIGHT,
+  TAILWIND_RULES,
+} from "./generated/tailwind-utilities";
 
 /** 产物里样式表的相对路径。 */
 export const CSS_ASSET_PATH = "assets/site.css";
@@ -14,27 +17,52 @@ export const CSS_ASSET_PATH = "assets/site.css";
 /** 从一段 HTML 里取出全部 class 名（含 hover:/md: 前缀与 [] 任意值）。 */
 export function classNamesIn(html: string): Set<string> {
   const out = new Set<string>();
-  for (const m of html.matchAll(/class="([^"]*)"/g)) {
-    for (const c of m[1].split(/\s+/)) if (c) out.add(c);
+  for (const match of html.matchAll(/(?:^|\s)class\s*=\s*(?:"([^"]*)"|'([^']*)')/g)) {
+    const value = match[1] ?? match[2] ?? "";
+    for (const className of value.split(/\s+/)) {
+      if (className) out.add(className);
+    }
   }
   return out;
 }
 
+const GENERATED_CLASSES = new Set<string>(TAILWIND_CLASS_NAMES);
+const MARKER_CLASSES = new Set<string>(TAILWIND_MARKER_CLASSES);
+
 /**
- * 生成表：类名 → 该类的 CSS 规则。W1a 落地前是空表，于是 `missingClasses()`
- * 会把全部类名报成缺失 —— 校验器因此红着，正是当前真实状态，不假装通过。
+ * 页面自己的 <style> 仍承载 leo-*、nav-link 等非 Tailwind 类。它们已经随 HTML
+ * 发出，不应被漂移检查误报为缺 utility；只认 CSS 选择器里的合法类名。
  */
-const RULES: Record<string, string> = {};
-const PREFLIGHT = "";
+function classesDefinedInline(html: string): Set<string> {
+  const out = new Set<string>();
+  for (const style of html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style\s*>/gi)) {
+    const css = style[1].replace(/\/\*[\s\S]*?\*\//g, "");
+    for (const match of css.matchAll(/\.(-?[_a-zA-Z]+[_a-zA-Z0-9-]*)/g)) {
+      out.add(match[1]);
+    }
+  }
+  return out;
+}
 
 /** 该 HTML 需要的完整样式表：preflight + 它用到的 utility 规则。 */
 export function utilitiesFor(html: string): string {
-  const used = [...classNamesIn(html)].sort();
-  const body = used.map((c) => RULES[c]).filter(Boolean).join("\n");
-  return PREFLIGHT + (PREFLIGHT && body ? "\n" : "") + body;
+  const used = classNamesIn(html);
+  const body = TAILWIND_RULES
+    .filter(([classNames]) => classNames.some((className) => used.has(className)))
+    .map(([, css]) => css)
+    .join("\n");
+  return TAILWIND_PREFLIGHT + (TAILWIND_PREFLIGHT && body ? "\n" : "") + body;
 }
 
 /** 生成表里查无此类的类名（校验器用；正常应为空数组）。 */
 export function missingClasses(html: string): string[] {
-  return [...classNamesIn(html)].filter((c) => !RULES[c]).sort();
+  const inline = classesDefinedInline(html);
+  return [...classNamesIn(html)]
+    .filter(
+      (className) =>
+        !GENERATED_CLASSES.has(className) &&
+        !MARKER_CLASSES.has(className) &&
+        !inline.has(className),
+    )
+    .sort();
 }
