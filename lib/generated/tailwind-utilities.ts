@@ -1930,8 +1930,45 @@ export const TAILWIND_CLASS_NAMES = [
   "z-30"
 ] as const;
 
-export const TAILWIND_MARKER_CLASSES = ["group","peer"] as const;
+export const TEMPLATE_INLINE_CLASS_NAMES = [
+  "active",
+  "leo-aurora",
+  "leo-beam",
+  "leo-blob",
+  "leo-btn-shine",
+  "leo-card",
+  "leo-confetti",
+  "leo-constellation",
+  "leo-from-left",
+  "leo-glass",
+  "leo-grad-anim",
+  "leo-grid-deco",
+  "leo-hard-shadow",
+  "leo-in",
+  "leo-kenburns",
+  "leo-lang-on",
+  "leo-marquee",
+  "leo-mq-track",
+  "leo-neon-edge",
+  "leo-neon-glow",
+  "leo-neon-grid",
+  "leo-noise",
+  "leo-orb",
+  "leo-orb-2",
+  "leo-orb-3",
+  "leo-reveal",
+  "leo-scale",
+  "leo-sheen",
+  "leo-sparkle",
+  "leo-spotlight",
+  "leo-stat-num",
+  "leo-stripes",
+  "leo-wave",
+  "nav-link"
+] as const;
 
-export const TAILWIND_SOURCE_PROBE_SHA256 = "860eb9756780627f02ad309ceb4e8dc84b46fa4d6cd3bf0fc16bcce95a1ca81e";
+export const TAILWIND_MARKER_CLASSES = [] as const;
+
+export const TAILWIND_SOURCE_PROBE_SHA256 = "3ad9c806a54d979336e408aff9bc4ea6ad42670fdcf000bb30b3bfd48c72923d";
 
 export const TAILWIND_FULL_CSS = TAILWIND_PREFLIGHT + (TAILWIND_RULES.length ? "\n" + TAILWIND_RULES.map(([, css]) => css).join("\n") : "");

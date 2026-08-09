@@ -67,6 +67,12 @@ test("各布局家族与配色样本的全部类都有样式", () => {
   }
 });
 
+test("内联自定义样式拆到 site.css 后仍不会误报缺类", () => {
+  const html = render(allTemplates()[0]);
+  const detachedHtml = html.replace(/<style\b[^>]*>[\s\S]*?<\/style\s*>/gi, "");
+  assert.deepEqual(missingClasses(detachedHtml), []);
+});
+
 test("单站样式离线且明显小于全量生成表", () => {
   const html = render(allTemplates()[0]);
   const css = utilitiesFor(html);

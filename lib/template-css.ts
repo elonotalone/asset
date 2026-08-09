@@ -5,6 +5,7 @@
 // 不跑编译器，也不联网。
 
 import {
+  TEMPLATE_INLINE_CLASS_NAMES,
   TAILWIND_CLASS_NAMES,
   TAILWIND_MARKER_CLASSES,
   TAILWIND_PREFLIGHT,
@@ -28,6 +29,7 @@ export function classNamesIn(html: string): Set<string> {
 
 const GENERATED_CLASSES = new Set<string>(TAILWIND_CLASS_NAMES);
 const MARKER_CLASSES = new Set<string>(TAILWIND_MARKER_CLASSES);
+const TEMPLATE_INLINE_CLASSES = new Set<string>(TEMPLATE_INLINE_CLASS_NAMES);
 
 /**
  * 页面自己的 <style> 仍承载 leo-*、nav-link 等非 Tailwind 类。它们已经随 HTML
@@ -62,6 +64,7 @@ export function missingClasses(html: string): string[] {
       (className) =>
         !GENERATED_CLASSES.has(className) &&
         !MARKER_CLASSES.has(className) &&
+        !TEMPLATE_INLINE_CLASSES.has(className) &&
         !inline.has(className),
     )
     .sort();

@@ -34,7 +34,7 @@ const TAILWIND_CLI = join(dirname(TAILWIND_PACKAGE), "lib/cli.js");
 
 // Tailwind 的 group/peer 是变体锚点，本身故意没有独立声明。只有实际出现在 HTML
 // 且编译器未生成规则的锚点才可列在这里；其它漏项一律让构建失败。
-const MARKER_CLASSES = ["group", "peer"];
+const ALLOWED_MARKER_CLASSES = new Set(["group", "peer"]);
 
 function sha256(text) {
   return createHash("sha256").update(text).digest("hex");
@@ -183,7 +183,7 @@ function splitCss(css) {
 function sourceProbeHash(tempDir) {
   const css = runTailwind({
     inputCss: "@tailwind utilities;\n",
-    content: join(ROOT, "lib/template-engine.ts"),
+    content: join(ROOT, "lib/{template-engine,template-effects}.ts"),
     tempDir,
     name: "source-probe",
   });
@@ -214,7 +214,14 @@ function renderAll(tempDir) {
   return rendered;
 }
 
-function artifactSource({ preflight, rules, classNames, sourceHash }) {
+function artifactSource({
+  preflight,
+  rules,
+  classNames,
+  inlineClassNames,
+  markerClassNames,
+  sourceHash,
+}) {
   const fullCssExpression =
     'TAILWIND_PREFLIGHT + (TAILWIND_RULES.length ? "\\n" + TAILWIND_RULES.map(([, css]) => css).join("\\n") : "")';
   return `// 此文件由 scripts/build-template-css.mjs 生成；请勿手改。\n` +
@@ -222,7 +229,8 @@ function artifactSource({ preflight, rules, classNames, sourceHash }) {
     `export const TAILWIND_PREFLIGHT = ${JSON.stringify(preflight)};\n\n` +
     `export const TAILWIND_RULES = ${JSON.stringify(rules, null, 2)} as const;\n\n` +
     `export const TAILWIND_CLASS_NAMES = ${JSON.stringify(classNames, null, 2)} as const;\n\n` +
-    `export const TAILWIND_MARKER_CLASSES = ${JSON.stringify(MARKER_CLASSES)} as const;\n\n` +
+    `export const TEMPLATE_INLINE_CLASS_NAMES = ${JSON.stringify(inlineClassNames, null, 2)} as const;\n\n` +
+    `export const TAILWIND_MARKER_CLASSES = ${JSON.stringify(markerClassNames)} as const;\n\n` +
     `export const TAILWIND_SOURCE_PROBE_SHA256 = ${JSON.stringify(sourceHash)};\n\n` +
     `export const TAILWIND_FULL_CSS = ${fullCssExpression};\n`;
 }
@@ -240,12 +248,20 @@ export function buildArtifact() {
     const { preflight, rules } = splitCss(rawCss);
     const compiledClasses = new Set(rules.flatMap(([classNames]) => classNames));
     const usedClasses = new Set(rendered.flatMap(({ html }) => [...classesInHtml(html)]));
-    const markerClasses = new Set(MARKER_CLASSES);
+    const inlineClasses = new Set();
+    const markerClasses = new Set();
 
     const missing = [];
     for (const { slug, lang, html } of rendered) {
       const inline = inlineClassesInHtml(html);
       for (const className of classesInHtml(html)) {
+        if (inline.has(className)) inlineClasses.add(className);
+        if (
+          !compiledClasses.has(className) &&
+          ALLOWED_MARKER_CLASSES.has(className)
+        ) {
+          markerClasses.add(className);
+        }
         if (
           !compiledClasses.has(className) &&
           !markerClasses.has(className) &&
@@ -261,7 +277,16 @@ export function buildArtifact() {
 
     const sourceHash = sourceProbeHash(tempDir);
     const classNames = [...compiledClasses].sort();
-    const artifact = artifactSource({ preflight, rules, classNames, sourceHash });
+    const inlineClassNames = [...inlineClasses].sort();
+    const markerClassNames = [...markerClasses].sort();
+    const artifact = artifactSource({
+      preflight,
+      rules,
+      classNames,
+      inlineClassNames,
+      markerClassNames,
+      sourceHash,
+    });
     const fullCss = preflight + (rules.length ? `\n${rules.map(([, css]) => css).join("\n")}` : "");
     return {
       artifact,
