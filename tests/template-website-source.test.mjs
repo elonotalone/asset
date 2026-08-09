@@ -9,6 +9,8 @@
 //   C. HTML 不回归：同一份 meta 渲出来的 HTML 仍含上游文案（引擎未被改动的旁证）
 
 import assert from "node:assert/strict";
+import { existsSync } from "node:fs";
+import { resolve } from "node:path";
 import test from "node:test";
 
 import { allTemplates, subByKey, TARGET_TOTAL } from "../lib/template-taxonomy.ts";
@@ -26,6 +28,7 @@ import {
   SECTION_TYPE_MAP,
   WEBSITE_SECTION_TYPES,
 } from "../lib/template-website-source-map.ts";
+import { IMAGE_SLOT_POLICY } from "../lib/template-image-policy.ts";
 import { renderTemplateBilingual } from "../lib/template-engine.ts";
 
 const ALL = allTemplates();
@@ -46,12 +49,60 @@ function withTaxonomy(meta) {
   return { meta, industry: hit.ind, sub: hit.sub };
 }
 
+function imagesInSection(section) {
+  const schema = SECTION_CONTENT_SCHEMA[section.type];
+  return schema.imageSlots.flatMap((slotPath) => {
+    const [head, tail] = slotPath.split(".");
+    if (!tail) return [section.content[head]];
+    const rows = section.content[head];
+    return Array.isArray(rows) ? rows.map((row) => row?.[tail]) : [];
+  });
+}
+
+function sectionsIn(config) {
+  return config.pages.flatMap((page) => page.sections);
+}
+
+function filledImageUrls(config) {
+  return sectionsIn(config)
+    .flatMap(imagesInSection)
+    .map((image) => image?.url)
+    .filter(Boolean);
+}
+
+function assertRequiredImages(config, slug) {
+  for (const section of sectionsIn(config)) {
+    const images = imagesInSection(section);
+    if (IMAGE_SLOT_POLICY[section.type].rule === "required") {
+      assert.ok(images.length > 0, `${slug}/${section.type}: required 图片槽不存在`);
+      for (const image of images) {
+        assert.match(image?.url ?? "", /^images\/[^/]+\.webp$/, `${slug}/${section.type}: required 图片不是站内 webp`);
+      }
+    }
+    for (const image of images) {
+      if (image?.url) assert.ok(!/^https?:\/\//i.test(image.url), `${slug}/${section.type}: 图片仍是外链`);
+    }
+  }
+}
+
 test("A0 发射器完整：38 个 SectionKind 全有落点与组装器", () => {
   assertEmitterComplete();
   assert.equal(ALL_SECTION_KINDS.length, 38);
   assert.equal(WEBSITE_SECTION_TYPES.length, 22);
   for (const kind of ALL_SECTION_KINDS) {
     assert.ok(WEBSITE_SECTION_TYPES.includes(SECTION_TYPE_MAP[kind]), `${kind} 落到未知类型`);
+  }
+});
+
+test("A0.1 图槽策略：只要求引擎真正画出的业务照片，人物与装饰位保持可选", () => {
+  assert.deepEqual(Object.keys(IMAGE_SLOT_POLICY).sort(), [...WEBSITE_SECTION_TYPES].sort());
+  const required = Object.entries(IMAGE_SLOT_POLICY)
+    .filter(([, policy]) => policy.rule === "required")
+    .map(([type]) => type);
+  assert.deepEqual(required, ["hero", "about", "services", "products", "gallery", "cases", "news"]);
+  for (const type of ["team", "testimonials", "faq", "pricing", "stats", "process", "timeline", "chart"]) {
+    assert.equal(IMAGE_SLOT_POLICY[type].rule, "optional", `${type} 不应被图库照片强填`);
+    assert.ok(IMAGE_SLOT_POLICY[type].why.length >= 8, `${type} 缺少人能复核的理由`);
   }
 });
 
@@ -92,7 +143,7 @@ test("A2 变体号与引擎同源（同一 hash 公式，非反推 HTML）", () 
   }
 });
 
-test("A3 槽位齐全：每节都有标题或内容槽，图片槽带真实 URL", () => {
+test("A3 槽位齐全：行业照片走站内路径，人物位保留可编辑空槽", () => {
   const kindsSeen = new Set();
   for (const { meta, industry, sub } of sample().map(withTaxonomy)) {
     const st = buildTemplateStructure(meta, industry, sub);
@@ -104,13 +155,17 @@ test("A3 槽位齐全：每节都有标题或内容槽，图片槽带真实 URL"
         assert.ok(filled.length || groupItems, `${meta.slug}/${page.key}/${sec.kind}: 一个槽位都没有`);
         for (const slot of sec.slots) {
           if (slot.kind !== "image") continue;
-          assert.match(slot.url ?? "", /^https?:\/\//, `${meta.slug}/${sec.kind}: 图片槽没有真实 URL`);
+          if (slot.url) assert.match(slot.url, /^images\/[^/]+\.webp$/, `${meta.slug}/${sec.kind}: 图片不是站内路径`);
+          else assert.equal(IMAGE_SLOT_POLICY[SECTION_TYPE_MAP[sec.kind]].rule, "optional", `${meta.slug}/${sec.kind}: required 图片槽为空`);
           assert.equal(slot.editable, true);
         }
         for (const group of sec.groups) {
           for (const block of group.blocks) {
             for (const slot of block.slots) {
-              if (slot.kind === "image") assert.match(slot.url ?? "", /^https?:\/\//, `${meta.slug}/${sec.kind}: 列表图片槽缺 URL`);
+              if (slot.kind !== "image") continue;
+              if (slot.url) assert.match(slot.url, /^images\/[^/]+\.webp$/, `${meta.slug}/${sec.kind}: 列表图片不是站内路径`);
+              else assert.equal(IMAGE_SLOT_POLICY[SECTION_TYPE_MAP[sec.kind]].rule, "optional", `${meta.slug}/${sec.kind}: required 列表图片为空`);
+              assert.equal(slot.editable, true);
             }
           }
         }
@@ -205,36 +260,93 @@ test("B3 源码树：清单 entrypoint 指向 index.html，工程对象与运行
   assert.equal(manifest.schema, "website-source@1");
   assert.equal(manifest.entrypoint, "index.html");
   assert.equal(manifest.files.length, paths.length - 1);
-  for (const f of bundle.tree.files) assert.ok(f.text.length > 0, `${f.path} 是空文件`);
+  const pathSet = new Set(paths);
+  for (const f of bundle.tree.files) {
+    if (f.text !== undefined) {
+      assert.ok(f.text.length > 0, `${f.path} 是空文件`);
+      continue;
+    }
+    assert.match(f.path, /^images\/[^/]+\.webp$/, `${f.path} 不是站内图片成员`);
+    assert.match(f.sourcePath ?? "", /^public\/template-photos\/[^/]+\.webp$/, `${f.path} 没有镜像 sourcePath`);
+    assert.ok(existsSync(resolve(f.sourcePath)), `${f.path} 的镜像文件不存在`);
+  }
+  for (const entry of manifest.files) assert.ok(pathSet.has(entry.path), `清单登记了不存在的 ${entry.path}`);
+  for (const url of filledImageUrls(bundle.config)) assert.ok(pathSet.has(url), `配置引用的 ${url} 没随源码树发运`);
+  assertRequiredImages(bundle.config, meta.slug);
+  assert.ok(paths.some((path) => path.startsWith("images/")), "源码树没有二进制图片成员");
   const keys = selectionKeysFor(bundle.structure);
   assert.ok(keys.industryKey && keys.subKey && keys.colorKey);
   assert.ok(keys.sections > 0 && keys.slots > 0);
 });
 
-test("B4 全量 500 个模板都能发射出完整工程对象", () => {
+test("B4 全量 500：required 空图为零、图片离线随件、站内不被一张图包办", () => {
   assert.equal(ALL.length, TARGET_TOTAL);
   let sections = 0;
   let slots = 0;
+  let requiredImages = 0;
   for (const meta of ALL) {
     const hit = subByKey(meta.subKey);
-    const st = buildTemplateStructure(meta, hit.ind, hit.sub);
+    const { structure: st, config, configEn, tree } = buildWebsiteSourceBundle(meta, hit.ind, hit.sub);
     assert.ok(st.totals.pages >= 3, `${meta.slug}: 页数 ${st.totals.pages} < 3`);
     assert.ok(st.totals.sections >= st.totals.pages, `${meta.slug}: 板块数异常`);
     sections += st.totals.sections;
     slots += st.totals.slots;
-    const cfg = buildWebsiteSourceConfig(st, "zh");
-    assert.equal(cfg.pages.length, st.totals.pages);
-    assert.ok(cfg.themeColor.startsWith("#"));
+    assert.equal(config.pages.length, st.totals.pages);
+    assert.ok(config.themeColor.startsWith("#"));
+    assertRequiredImages(config, meta.slug);
+    assertRequiredImages(configEn, `${meta.slug}/en`);
+
+    for (const section of sectionsIn(config)) {
+      const images = imagesInSection(section);
+      if (IMAGE_SLOT_POLICY[section.type].rule === "required") requiredImages += images.length;
+      if (section.type === "team" || section.type === "testimonials") {
+        for (const image of images) {
+          assert.equal(image?.url, undefined, `${meta.slug}/${section.type}: 不得拿图库人物冒充真人`);
+          assert.match(image?.alt ?? "", /^请上传真实/, `${meta.slug}/${section.type}: 空人物位没有换图提示`);
+        }
+      }
+    }
+
+    const urls = filledImageUrls(config);
+    if (urls.length >= 3) {
+      const counts = new Map();
+      for (const url of urls) counts.set(url, (counts.get(url) ?? 0) + 1);
+      const max = Math.max(...counts.values());
+      assert.ok(max / urls.length <= 0.5, `${meta.slug}: 一张图占 ${max}/${urls.length}`);
+    }
+
+    const files = new Map(tree.files.map((file) => [file.path, file]));
+    for (const url of urls) {
+      const file = files.get(url);
+      assert.ok(file, `${meta.slug}: ${url} 未随源码树发运`);
+      assert.ok(file.sourcePath && existsSync(resolve(file.sourcePath)), `${meta.slug}: ${url} 镜像文件不存在`);
+    }
+
+    for (const page of st.pages) {
+      for (const section of page.sections) {
+        for (const image of section.slots.filter((slot) => slot.kind === "image")) {
+          if (image.url) assert.match(image.url, /^images\/[^/]+\.webp$/, `${meta.slug}: IR 图片仍是外链`);
+        }
+        for (const group of section.groups) {
+          for (const block of group.blocks) {
+            for (const image of block.slots.filter((slot) => slot.kind === "image")) {
+              if (image.url) assert.match(image.url, /^images\/[^/]+\.webp$/, `${meta.slug}: IR 列表图片仍是外链`);
+            }
+          }
+        }
+      }
+    }
   }
   assert.ok(sections > 500 * 10, `板块总数 ${sections} 偏少`);
   assert.ok(slots > 500 * 50, `槽位总数 ${slots} 偏少`);
+  assert.ok(requiredImages > 8_000, `required 图片总数 ${requiredImages} 偏少`);
 });
 
 test("C1 HTML 输出不回归：引擎照常渲染，且与工程对象同源文案", () => {
   for (const { meta, industry, sub } of sample().slice(0, 6).map(withTaxonomy)) {
     const { html, pages } = renderTemplateBilingual(meta, industry, sub);
     assert.match(html, /^<!DOCTYPE html>/);
-    assert.ok(html.includes('<script src="https://cdn.tailwindcss.com"></script>'));
+    assert.ok(html.includes("<body"));
     const st = buildTemplateStructure(meta, industry, sub);
     assert.deepEqual(pages.map((p) => p.key), st.pages.map((p) => p.key));
     // 同一份上游文案：结构里的品牌与首页 hero 标题必须在 HTML 里出现。

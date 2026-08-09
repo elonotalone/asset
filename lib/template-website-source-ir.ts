@@ -30,6 +30,7 @@ import {
   type TemplateDNA,
 } from "./template-dna";
 import { poolFallbackPhoto, poolPhoto } from "./template-photo-pool";
+import { sitePhotoPath } from "./template-photo-local";
 import {
   buildBiContent,
   buildBiExt,
@@ -78,7 +79,7 @@ export interface SlotIR {
   text?: BiText;
   /** 多值文本槽（kind="list"）。 */
   texts?: BiText[];
-  /** 图片槽的 URL（自托管 OSS 行业图池，与引擎 `img()` 同一 seed 公式）。 */
+  /** 图片槽在下载站点内的相对路径；空值表示等待所有者提供真实图片。 */
   url?: string;
   /** 图片槽在模板内的图序号（引擎 `img(ctx, i, …)` 的 i；用于交叉核对）。 */
   imageIndex?: number;
@@ -270,7 +271,11 @@ function listSlot(name: string, role: SlotRole, zh: string[], en: string[]): Slo
   };
 }
 function image(ctx: IrCtx, name: string, i: number): SlotIR {
-  return { name, kind: "image", role: "media", url: photoFor(ctx, i), imageIndex: i, editable: true };
+  return { name, kind: "image", role: "media", url: sitePhotoPath(photoFor(ctx, i)), imageIndex: i, editable: true };
+}
+/** 人物等不能由图库代填的可编辑图片位：保留槽位，不编造 URL。 */
+function emptyImage(name = "image"): SlotIR {
+  return { name, kind: "image", role: "media", editable: true };
 }
 function icon(name: string, path: string): SlotIR {
   return { name, kind: "icon", role: "decor", iconPath: path, editable: true };
@@ -545,7 +550,8 @@ function irTeam(ctx: IrCtx): ReturnType<Extractor> {
     slots: [
       text("title", "heading", bi(z.name, e.name)),
       text("role", "label", bi(z.role, e.role)),
-      image(ctx, "image", 100 + i),
+      // 图库人物不能冒充站点所有者的真实员工；给编辑器留空头像位。
+      emptyImage(),
       ...(v === 2
         ? [
             rich(
@@ -617,6 +623,8 @@ function irTestimonials(ctx: IrCtx): ReturnType<Extractor> {
       rich("quote", "body", bi(z.text, e.text)),
       text("title", "label", bi(z.name, e.name)),
       text("role", "meta", bi(z.role, e.role)),
+      // 客户头像同样必须由所有者提供，不能用 stock face 编造背书。
+      emptyImage(),
     ],
   }));
   return {

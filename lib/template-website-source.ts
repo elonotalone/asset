@@ -13,6 +13,9 @@
 
 import type { Lang } from "./template-i18n";
 import type { Industry, SubCategory, TemplateMeta } from "./template-taxonomy";
+import { hashStr } from "./hash";
+import { MIRROR_PUBLIC_DIR, SITE_IMAGE_DIR, sitePhotoPath } from "./template-photo-local";
+import { poolFallbackPhoto, poolPhoto } from "./template-photo-pool";
 import {
   ALL_SECTION_KINDS,
   buildTemplateStructure,
@@ -121,13 +124,26 @@ function iconOf(slots: SlotIR[], name = "icon"): string {
 function blocksOf(section: SectionIR, name: string): BlockIR[] {
   return (section.groups.find((g) => g.name === name)?.blocks ?? []).slice(0, LIMITS.arrayMax);
 }
-function imageOf(slots: SlotIR[], keyword: string, alt: string, name = "image"): VirtualImage {
-  const s = findSlot(slots, name);
-  if (!s?.url) return { keyword: "", alt: "" };
-  return { keyword, alt, url: s.url };
+function imageOf(ctx: EmitCtx, alt: string): VirtualImage {
+  // 接口 B 按 section type 渲染，不保留 asset 的「同类无图变体」分支；凡是策略判定为
+  // 真正照片位的 builder 都从行业子类池取图。起点随 slug 固定，随后顺序轮换，既稳定
+  // 又保证一个站里前三张不会撞成同一张。
+  const seed = hashStr(`${ctx.structure.slug}:website-source-photo`) + ctx.photoCursor;
+  ctx.photoCursor += 1;
+  const url = poolPhoto(ctx.structure.sub.key, seed) || poolFallbackPhoto(seed);
+  if (!url) return { keyword: "", alt: "" };
+  return { keyword: ctx.keyword, alt, url: sitePhotoPath(url) };
 }
 /** 无图槽的节：槽位仍然在位（可编辑），但不凭空发明图片（url 为空即不渲染）。 */
 const NO_IMAGE: VirtualImage = { keyword: "", alt: "" };
+
+/** 人物照片必须由站点所有者提供；keyword/alt 是编辑器与空态共同显示的换图提示。 */
+function ownerPortrait(lang: Lang, kind: "team" | "testimonial"): VirtualImage {
+  const label = lang === "en"
+    ? kind === "team" ? "Upload a real team photo" : "Upload a real customer photo"
+    : kind === "team" ? "请上传真实团队照片" : "请上传真实客户照片";
+  return { keyword: label, alt: label };
+}
 
 // ————————————————————————————————————————————————————————————
 // 每个 website 类型的 content 组装（接口 B §5 的字段名逐个对齐）
@@ -138,6 +154,8 @@ interface EmitCtx {
   lang: Lang;
   /** 图片 keyword（拿不到 url 时 website 侧的第一方图床兜底关键词）。 */
   keyword: string;
+  /** 当前配置内的图片序号；zh/en 分别从 0 开始，因而两份配置引用同一组文件。 */
+  photoCursor: number;
 }
 
 type ContentBuilder = (section: SectionIR, ctx: EmitCtx) => Record<string, unknown>;
@@ -189,7 +207,7 @@ const BUILDERS: Record<WebsiteSectionType, ContentBuilder> = {
     primaryCtaHref: href(s.slots, "primaryCta", "/contact"),
     secondaryCtaLabel: txt(s.slots, "secondaryCta", ctx.lang),
     secondaryCtaHref: href(s.slots, "secondaryCta", "/services"),
-    image: imageOf(s.slots, ctx.keyword, headTitle(s, ctx)),
+    image: imageOf(ctx, headTitle(s, ctx)),
   }),
 
   stats: (s, ctx) => ({
@@ -245,7 +263,7 @@ const BUILDERS: Record<WebsiteSectionType, ContentBuilder> = {
     title: headTitle(s, ctx),
     body: aboutBody(s, ctx),
     bullets: aboutBullets(s, ctx),
-    image: imageOf(s.slots, ctx.keyword, headTitle(s, ctx)),
+    image: imageOf(ctx, headTitle(s, ctx)),
   }),
 
   services: (s, ctx) => ({
@@ -255,7 +273,7 @@ const BUILDERS: Record<WebsiteSectionType, ContentBuilder> = {
       name: txt(b.slots, "title", ctx.lang),
       description: txt(b.slots, "description", ctx.lang),
       icon: iconOf(b.slots),
-      image: imageOf(b.slots, ctx.keyword, txt(b.slots, "title", ctx.lang)),
+      image: imageOf(ctx, txt(b.slots, "title", ctx.lang)),
     })),
   }),
 
@@ -267,7 +285,7 @@ const BUILDERS: Record<WebsiteSectionType, ContentBuilder> = {
       name: txt(b.slots, "title", ctx.lang),
       price: txt(b.slots, "price", ctx.lang),
       note: txt(b.slots, "badge", ctx.lang),
-      image: imageOf(b.slots, ctx.keyword, txt(b.slots, "title", ctx.lang)),
+      image: imageOf(ctx, txt(b.slots, "title", ctx.lang)),
     })),
   }),
 
@@ -292,7 +310,7 @@ const BUILDERS: Record<WebsiteSectionType, ContentBuilder> = {
     subtitle: headSub(s, ctx),
     items: blocksOf(s, "items").map((b, i) => ({
       caption: `${headTitle(s, ctx)} ${i + 1}`,
-      image: imageOf(b.slots, ctx.keyword, headTitle(s, ctx)),
+      image: imageOf(ctx, headTitle(s, ctx)),
     })),
   }),
 
@@ -305,7 +323,7 @@ const BUILDERS: Record<WebsiteSectionType, ContentBuilder> = {
       description: txt(b.slots, "description", ctx.lang),
       linkLabel: txt(b.slots, "linkLabel", ctx.lang),
       href: findSlot(b.slots, "linkLabel") ? href(b.slots, "linkLabel", "/cases") : "",
-      image: imageOf(b.slots, ctx.keyword, txt(b.slots, "title", ctx.lang)),
+      image: imageOf(ctx, txt(b.slots, "title", ctx.lang)),
     })),
   }),
 
@@ -316,7 +334,7 @@ const BUILDERS: Record<WebsiteSectionType, ContentBuilder> = {
       name: txt(b.slots, "title", ctx.lang),
       role: txt(b.slots, "role", ctx.lang),
       bio: txt(b.slots, "description", ctx.lang),
-      image: imageOf(b.slots, ctx.keyword, txt(b.slots, "title", ctx.lang)),
+      image: ownerPortrait(ctx.lang, "team"),
     })),
   }),
 
@@ -338,7 +356,7 @@ const BUILDERS: Record<WebsiteSectionType, ContentBuilder> = {
       quote: txt(b.slots, "quote", ctx.lang),
       name: txt(b.slots, "title", ctx.lang),
       role: txt(b.slots, "role", ctx.lang),
-      image: NO_IMAGE,
+      image: ownerPortrait(ctx.lang, "testimonial"),
     })),
   }),
 
@@ -374,7 +392,7 @@ const BUILDERS: Record<WebsiteSectionType, ContentBuilder> = {
       title: txt(b.slots, "title", ctx.lang),
       excerpt: txt(b.slots, "excerpt", ctx.lang),
       href: "/news",
-      image: imageOf(b.slots, ctx.keyword, txt(b.slots, "title", ctx.lang)),
+      image: imageOf(ctx, txt(b.slots, "title", ctx.lang)),
     })),
   }),
 
@@ -580,7 +598,12 @@ function fontFor(font: string): "sans" | "serif" | "mono" {
 /** 结构 IR → 一份 `VirtualSiteConfig`（单语言；双语走两份文件）。 */
 export function buildWebsiteSourceConfig(structure: TemplateStructureIR, lang: Lang = "zh"): VirtualSiteConfigOut {
   const t = structure.theme;
-  const ctx: EmitCtx = { structure, lang, keyword: lang === "en" ? structure.sub.labelEn : structure.sub.label };
+  const ctx: EmitCtx = {
+    structure,
+    lang,
+    keyword: lang === "en" ? structure.sub.labelEn : structure.sub.label,
+    photoCursor: 0,
+  };
   const pages = structure.pages.slice(0, LIMITS.pagesMax).map((p) => emitPage(p, structure, ctx));
   return {
     siteName: pick(structure.brand, lang),
@@ -607,7 +630,10 @@ export function buildWebsiteSourceConfig(structure: TemplateStructureIR, lang: L
 export interface SourceFile {
   path: string;
   mediaType: string;
-  text: string;
+  /** 文本成员直接带内容；二进制图片不给 text。 */
+  text?: string;
+  /** 二进制成员在仓库里的镜像源，物化调用方按字节复制。 */
+  sourcePath?: string;
 }
 
 export interface SourceTree {
@@ -687,6 +713,10 @@ export const RUNTIME_JS = String.raw`// OceanLeo website-source@1 runtime ——
   function img(desc, cls) {
     if (!desc || !desc.url) return null;
     return h("img", { src: desc.url, alt: str(desc.alt), loading: "lazy", class: cls || "" });
+  }
+  function portrait(desc) {
+    if (desc && desc.url) return img(desc, "cover");
+    return h("div", { class: "photo-slot", text: str(desc && (desc.alt || desc.keyword)) || "Upload photo" });
   }
   function icon(pathData) {
     if (!pathData) return null;
@@ -826,7 +856,7 @@ export const RUNTIME_JS = String.raw`// OceanLeo website-source@1 runtime ——
     team: function (c) {
       return [heading(c), cards(c.members, function (m) {
         return h("div", { class: "member" }, [
-          m.image && m.image.url ? h("div", { class: "avatar" }, img(m.image, "cover")) : null,
+          h("div", { class: "avatar" }, portrait(m.image)),
           t("h3", null, m.name),
           t("p", "role", m.role),
           t("p", "sub", m.bio),
@@ -846,7 +876,10 @@ export const RUNTIME_JS = String.raw`// OceanLeo website-source@1 runtime ——
       return [heading(c), cards(c.items, function (q) {
         return h("blockquote", { class: "card" }, [
           h("p", { text: "“" + str(q.quote) + "”" }),
-          h("footer", null, [h("b", { text: q.name }), " · " + str(q.role)]),
+          h("footer", { class: "quote-author" }, [
+            h("span", { class: "avatar avatar-sm" }, portrait(q.image)),
+            h("span", null, [h("b", { text: q.name }), " · " + str(q.role)]),
+          ]),
         ]);
       }, "grid grid-3")];
     },
@@ -1103,10 +1136,14 @@ img.cover,.logo-img{display:block;width:100%;height:100%;object-fit:cover}
 .menu-row b{color:var(--primary)}
 .member{text-align:center}
 .member .avatar{width:9rem;height:9rem;margin:0 auto 1rem}
+.avatar .photo-slot{width:100%;height:100%}
+.avatar-sm{display:inline-flex;width:3.25rem!important;height:3.25rem!important;flex:0 0 auto;margin:0!important}
+.photo-slot{display:flex;align-items:center;justify-content:center;padding:.65rem;border:1px dashed #88888866;border-radius:var(--radius);background:#88888812;color:inherit;font-size:.72rem;line-height:1.25;text-align:center}
 .role{color:var(--primary);font-size:.9rem;margin:.2rem 0}
 .step-no{display:inline-block;font-size:1.6rem;font-weight:800;color:var(--primary);opacity:.35}
 blockquote{margin:0}
 blockquote footer{margin-top:.9rem;font-size:.85rem;opacity:.75}
+.quote-author{display:flex;align-items:center;gap:.7rem;text-align:left}
 .faq-list{display:grid;gap:.7rem}
 details{border:1px solid #8888881f;border-radius:var(--radius);padding:1rem 1.15rem}
 summary{cursor:pointer;font-weight:600}
@@ -1142,12 +1179,44 @@ function manifestFor(files: SourceFile[], sha256: (text: string) => string, byte
     files: files.map((f) => ({
       path: f.path,
       dependencyPath: f.path,
-      sha256: sha256(f.text),
-      byteSize: byteLen(f.text),
+      // lib 保持 fs-free：文本可在这里计算摘要；图片的真实字节由 sourcePath 交给
+      // 物化调用方复制，不能拿路径字符串伪造 sha/byteSize，所以二进制项如实省略。
+      ...(f.text !== undefined ? { sha256: sha256(f.text), byteSize: byteLen(f.text) } : {}),
       mediaType: f.mediaType,
       fileMode: 0o100644,
     })),
   };
+}
+
+/** 从工程对象与结构证据里找出全部站内图片引用；只认本地 images/ 前缀。 */
+function referencedImagePaths(...roots: unknown[]): string[] {
+  const found = new Set<string>();
+  const visit = (value: unknown): void => {
+    if (typeof value === "string") {
+      if (value.startsWith(`${SITE_IMAGE_DIR}/`)) found.add(value);
+      return;
+    }
+    if (Array.isArray(value)) {
+      for (const item of value) visit(item);
+      return;
+    }
+    if (value && typeof value === "object") {
+      for (const item of Object.values(value as Record<string, unknown>)) visit(item);
+    }
+  };
+  for (const root of roots) visit(root);
+  return [...found].sort();
+}
+
+function imageSourceFiles(...roots: unknown[]): SourceFile[] {
+  return referencedImagePaths(...roots).map((path) => {
+    const fileName = path.slice(`${SITE_IMAGE_DIR}/`.length);
+    return {
+      path,
+      mediaType: "image/webp",
+      sourcePath: `${MIRROR_PUBLIC_DIR}/${fileName}`,
+    };
+  });
 }
 
 function indexHtml(structure: TemplateStructureIR, lang: Lang): string {
@@ -1216,7 +1285,8 @@ function readme(structure: TemplateStructureIR): string {
 python3 -m http.server 8080
 \`\`\`
 
-页面用 \`fetch\` 读工程对象，需通过 HTTP 打开（直接双击 \`${ENTRY_HTML}\` 不会渲染）。
+页面用 \`fetch\` 读工程对象，需启动上面的本地服务后打开 \`localhost:8080\`
+（直接双击 \`${ENTRY_HTML}\` 不会渲染）。
 
 > \`${MANIFEST_PATH}\` 是平台侧文件清单（校验用），不参与渲染，删掉不影响部署。
 `;
@@ -1271,6 +1341,9 @@ export function buildWebsiteSourceBundle(
       text: `${JSON.stringify(structure, null, 2)}\n`,
     });
   }
+  // 工程对象与结构证据里引用到的每张图都随站点发运；去重后用 sourcePath 交给
+  // node 调用方复制真实字节，lib 本身不碰 fs。
+  siteFiles.push(...imageSourceFiles(structure, config, configEn));
   const sha = opts.sha256;
   const len = opts.byteLen ?? ((t: string) => new TextEncoder().encode(t).length);
   const manifest = manifestFor(siteFiles, sha ?? (() => ""), len);
