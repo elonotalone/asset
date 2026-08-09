@@ -8,6 +8,7 @@ import {
   copyFileSync,
   existsSync,
   mkdirSync,
+  readFileSync,
   rmSync,
   writeFileSync,
 } from "node:fs";
@@ -17,6 +18,8 @@ import { fileURLToPath } from "node:url";
 import { CSS_ASSET_PATH, missingClasses } from "../lib/template-css.ts";
 import { dnaFor } from "../lib/template-dna.ts";
 import { emitStandaloneSite } from "../lib/template-emit-site.ts";
+import { HOME_SKIN_BLOCKS } from "../lib/template-engine.ts";
+import { SIGNATURE_RENDERER_KEYS } from "../lib/template-engine-signature.ts";
 import { IMAGE_SLOT_POLICY } from "../lib/template-image-policy.ts";
 import { KIND_ONLY_WORDS, KIND_ONLY_WORDS_EN } from "../lib/template-kind-lexicon.ts";
 import {
@@ -42,6 +45,7 @@ const REPORT_PATH = join(OUTPUT_ROOT, "report.json");
 export const SHARED_SENTENCE_MAX_SITES = 25;
 export const CHINESE_TEXT_MIN_CHARACTERS = 8;
 export const ENGLISH_TEXT_MIN_CHARACTERS = 24;
+export const STRUCTURAL_SAMENESS_MAX_RATIO = 0.25;
 
 export const CHECKS = [
   ["externalRequest", "external request"],
@@ -54,6 +58,7 @@ export const CHECKS = [
   ["skinConvergence", "skin convergence"],
   ["skinAdmission", "skin admission"],
   ["skinDistinguishability", "skin distinguishability"],
+  ["signatureReachability", "signature reachability"],
 ];
 
 const CHECK_LABEL = Object.fromEntries(CHECKS);
@@ -259,6 +264,121 @@ export function indistinguishableSkinPairs(
     }
   }
   return failures;
+}
+
+export function signatureBlocksInHtml(html) {
+  return new Set(
+    [...String(html).matchAll(/data-skin-block=(?:"|')(sig[A-Za-z0-9]+)(?:"|')/g)]
+      .map((match) => match[1]),
+  );
+}
+
+export function signatureRendererNames(source) {
+  return new Set(
+    [...String(source).matchAll(/\bfunction\s+(sig[A-Z][A-Za-z0-9]*)\s*\(/g)]
+      .map((match) => match[1]),
+  );
+}
+
+export function newSignatureReachability() {
+  return {
+    byRenderer: new Map(),
+    bySkin: new Map(),
+    signatureFreeSlugs: [],
+  };
+}
+
+export function inspectSignatureSite(site, meta, skinKey, html, state) {
+  const blocks = signatureBlocksInHtml(html);
+  const configured = new Set(
+    Object.values(HOME_SKIN_BLOCKS[skinKey] ?? {}).filter((kind) => String(kind).startsWith("sig")),
+  );
+  if (!state.bySkin.has(skinKey)) {
+    state.bySkin.set(skinKey, { totalSites: 0, signatureSites: 0, blocks: new Map() });
+  }
+  const skinRow = state.bySkin.get(skinKey);
+  skinRow.totalSites += 1;
+
+  if (!blocks.size) {
+    state.signatureFreeSlugs.push(meta.slug);
+    addFailure(site, "signatureReachability", `skin ${skinKey} rendered no dedicated data-skin-block marker`);
+    return blocks;
+  }
+
+  skinRow.signatureSites += 1;
+  for (const block of blocks) {
+    if (!configured.has(block)) {
+      addFailure(site, "signatureReachability", `skin ${skinKey} rendered unowned signature ${block}`);
+    }
+    if (!state.byRenderer.has(block)) state.byRenderer.set(block, new Set());
+    state.byRenderer.get(block).add(meta.slug);
+    if (!skinRow.blocks.has(block)) skinRow.blocks.set(block, new Set());
+    skinRow.blocks.get(block).add(meta.slug);
+  }
+  return blocks;
+}
+
+export function structuralSamenessIssue(signatureFreeSites, totalSites = TARGET_TOTAL) {
+  const rate = totalSites ? signatureFreeSites / totalSites : 1;
+  if (rate <= STRUCTURAL_SAMENESS_MAX_RATIO) return null;
+  return `structural sameness ${signatureFreeSites}/${totalSites} (${(rate * 100).toFixed(1)}%) exceeds ${(STRUCTURAL_SAMENESS_MAX_RATIO * 100).toFixed(0)}%`;
+}
+
+function finalizeSignatureReachability(globalFailures, state) {
+  const source = readFileSync(join(PROJECT_ROOT, "lib/template-engine-signature.ts"), "utf8");
+  const declaredFunctions = signatureRendererNames(source);
+  const registered = new Set(SIGNATURE_RENDERER_KEYS);
+
+  for (const name of declaredFunctions) {
+    if (!registered.has(name)) {
+      addGlobalFailure(globalFailures, "signatureReachability", `${name} exists but is absent from SIGNATURE_RENDERER_KEYS`);
+    }
+    if (!state.byRenderer.has(name)) {
+      addGlobalFailure(globalFailures, "signatureReachability", `${name} renderer is unreachable in the 500 emitted sites`);
+    }
+  }
+  for (const name of registered) {
+    if (!declaredFunctions.has(name)) {
+      addGlobalFailure(globalFailures, "signatureReachability", `${name} is registered without a sig* renderer function`);
+    }
+  }
+  for (const skin of SKINS) {
+    const configured = Object.values(HOME_SKIN_BLOCKS[skin.key] ?? {})
+      .filter((kind) => String(kind).startsWith("sig"));
+    const row = state.bySkin.get(skin.key);
+    if (!configured.length) {
+      addGlobalFailure(globalFailures, "signatureReachability", `skin ${skin.key} has no configured signature block`);
+    }
+    if (!row?.signatureSites) {
+      addGlobalFailure(globalFailures, "signatureReachability", `skin ${skin.key} signature never appears in emitted HTML`);
+    }
+  }
+  const sameness = structuralSamenessIssue(state.signatureFreeSlugs.length);
+  if (sameness) addGlobalFailure(globalFailures, "signatureReachability", sameness);
+}
+
+function signatureCoverageReport(state) {
+  return {
+    structuralSameness: {
+      siteCount: state.signatureFreeSlugs.length,
+      rate: state.signatureFreeSlugs.length / TARGET_TOTAL,
+      maximumRate: STRUCTURAL_SAMENESS_MAX_RATIO,
+      slugs: [...state.signatureFreeSlugs].sort(),
+    },
+    bySkin: SKINS.map((skin) => {
+      const row = state.bySkin.get(skin.key) ?? { totalSites: 0, signatureSites: 0, blocks: new Map() };
+      return {
+        skinKey: skin.key,
+        totalSites: row.totalSites,
+        signatureSites: row.signatureSites,
+        blocks: [...row.blocks].map(([block, slugs]) => ({ block, siteCount: slugs.size })).sort((a, b) => a.block.localeCompare(b.block)),
+      };
+    }),
+    byRenderer: SIGNATURE_RENDERER_KEYS.map((block) => ({
+      block,
+      siteCount: state.byRenderer.get(block)?.size ?? 0,
+    })),
+  };
 }
 
 function inside(base, candidate) {
@@ -717,6 +837,7 @@ function aggregateWorst(sites, photoOffenders, sharedOffenders, globalFailures) 
     skinConvergence: top(skinFailures),
     skinAdmission: top(admissionFailures),
     skinDistinguishability: [...globalFailures.skinDistinguishability].map((value) => ({ value, siteCount: 0 })),
+    signatureReachability: [...globalFailures.signatureReachability].map((value) => ({ value, siteCount: 0 })),
   };
 }
 
@@ -745,6 +866,7 @@ function printHumanReport(report, full) {
     ["skin convergence", report.worst.skinConvergence],
     ["skin admission", report.worst.skinAdmission],
     ["skin distinguishability", report.worst.skinDistinguishability],
+    ["signature reachability", report.worst.signatureReachability],
   ];
   for (const [label, entries] of groups) {
     console.log(`${label}:`);
@@ -831,6 +953,7 @@ function main() {
   const globalFailures = newGlobalFailures();
   const runsBySite = new Map();
   const photoOffenders = [];
+  const signatureReachability = newSignatureReachability();
 
   for (const pair of indistinguishableSkinPairs()) {
     addGlobalFailure(globalFailures, "skinDistinguishability", pair.detail);
@@ -892,6 +1015,7 @@ function main() {
     }
 
     if (html) {
+      inspectSignatureSite(site, meta, templateDna?.skin?.key ?? "<missing>", html, signatureReachability);
       runsBySite.set(meta.slug, sentenceRunsIn(html));
       try {
         inspectCrossKind(site, html, kindsFor(meta, industry));
@@ -899,11 +1023,13 @@ function main() {
         addFailure(site, "generationFailure", `cross-kind inspection: ${error instanceof Error ? error.message : String(error)}`);
       }
     } else {
+      inspectSignatureSite(site, meta, templateDna?.skin?.key ?? "<missing>", "", signatureReachability);
       runsBySite.set(meta.slug, new Map());
     }
   }
 
   const sharedOffenders = finalizeSharedSentences(sites, runsBySite);
+  finalizeSignatureReachability(globalFailures, signatureReachability);
   const summary = summarize(sites, globalFailures);
   const cleanSites = [...sites.values()].filter((site) => CHECKS.every(([key]) => site.failures[key].size === 0)).length;
   const globalIssueCount = Object.values(globalFailures).reduce((total, failures) => total + failures.size, 0);
@@ -919,6 +1045,7 @@ function main() {
       photoDominanceMaxRatio: 0.5,
       photoDominanceMinImages: 3,
       minimumSkinDifferences: MIN_SKIN_DIFFERENCES,
+      structuralSamenessMaxRatio: STRUCTURAL_SAMENESS_MAX_RATIO,
     },
     approvedShapeKeys: SHAPES.map((entry) => entry.key),
     approvedSkinKeys: SKINS.map((entry) => entry.key),
@@ -931,6 +1058,7 @@ function main() {
     globalFailures: Object.fromEntries(CHECKS.map(([key]) => [key, [...globalFailures[key]]])),
     worst: aggregateWorst(sites, photoOffenders, sharedOffenders, globalFailures),
     sharedSentenceOffenders: sharedOffenders,
+    signatureCoverage: signatureCoverageReport(signatureReachability),
     sites: [...sites.values()].map(serializableSite),
   };
   writeFileSync(REPORT_PATH, `${JSON.stringify(report, null, 2)}\n`, "utf8");

@@ -1130,7 +1130,7 @@ function renderMarquee(ctx: Ctx): string {
 /** 首页的招牌结构由装明确指定；内页仍保留业务章节，避免为了风格丢掉菜单/产品等内容。 */
 type VisualSectionKind = SectionKind | SignatureSectionKind;
 
-const HOME_SKIN_BLOCKS: Partial<Record<SkinKey, Partial<Record<SectionKind, VisualSectionKind>>>> = {
+export const HOME_SKIN_BLOCKS: Partial<Record<SkinKey, Partial<Record<SectionKind, VisualSectionKind>>>> = {
   paper: {
     features: "sigPaperIndex",
   },

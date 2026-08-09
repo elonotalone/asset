@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 
 import {
@@ -6,13 +7,20 @@ import {
   CHINESE_TEXT_MIN_CHARACTERS,
   ENGLISH_TEXT_MIN_CHARACTERS,
   SHARED_SENTENCE_MAX_SITES,
+  STRUCTURAL_SAMENESS_MAX_RATIO,
   indistinguishableSkinPairs,
   inspectGate2Site,
+  inspectSignatureSite,
   matchingSkinsForDna,
+  newSignatureReachability,
   newSiteResult,
   shapeForPages,
+  signatureBlocksInHtml,
+  signatureRendererNames,
   skinDimensionMismatches,
+  structuralSamenessIssue,
 } from "../scripts/check-templates.mjs";
+import { SIGNATURE_RENDERER_KEYS } from "../lib/template-engine-signature.ts";
 import {
   MIN_SKIN_DIFFERENCES,
   SHAPES,
@@ -33,7 +41,7 @@ function dnaForSkin(candidate, pages = SHAPES[0].pages) {
   };
 }
 
-test("验收门保留第一批六项并追加第二批四项", () => {
+test("验收门保留第一批六项并追加第二批五项", () => {
   assert.deepEqual(
     CHECKS.map(([key]) => key),
     [
@@ -47,6 +55,7 @@ test("验收门保留第一批六项并追加第二批四项", () => {
       "skinConvergence",
       "skinAdmission",
       "skinDistinguishability",
+      "signatureReachability",
     ],
   );
   assert.equal(TARGET_TOTAL, 500);
@@ -54,6 +63,7 @@ test("验收门保留第一批六项并追加第二批四项", () => {
   assert.equal(CHINESE_TEXT_MIN_CHARACTERS, 8);
   assert.equal(ENGLISH_TEXT_MIN_CHARACTERS, 24);
   assert.equal(MIN_SKIN_DIFFERENCES, 3);
+  assert.equal(STRUCTURAL_SAMENESS_MAX_RATIO, 0.25);
 });
 
 test("构成只接受 SHAPES 的四个完整页面序列", () => {
@@ -118,4 +128,42 @@ test("十套装两两达到固定的 MIN_SKIN_DIFFERENCES，近似套装会被�
   assert.equal(failures[0].left, "fixture-a");
   assert.equal(failures[0].right, "fixture-b");
   assert.equal(failures[0].differences.length, 0);
+});
+
+test("招牌门只认专属 data-skin-block，并守住 25% 结构雷同线", () => {
+  assert.deepEqual(
+    [...signatureBlocksInHtml('<section data-skin-block="sigPaperIndex"></section><i class="leo-hard-shadow"></i>')],
+    ["sigPaperIndex"],
+  );
+
+  const state = newSignatureReachability();
+  const valid = newSiteResult("paper-valid");
+  inspectSignatureSite(
+    valid,
+    { slug: "paper-valid" },
+    "paper",
+    '<section data-section-kind="features" data-skin-block="sigPaperIndex"></section>',
+    state,
+  );
+  assert.equal(valid.failures.signatureReachability.size, 0);
+
+  const missing = newSiteResult("paper-missing");
+  inspectSignatureSite(
+    missing,
+    { slug: "paper-missing" },
+    "paper",
+    '<section data-section-kind="features" data-skin-block="features"></section>',
+    state,
+  );
+  assert.equal(missing.failures.signatureReachability.size, 1);
+  assert.equal(structuralSamenessIssue(125, 500), null);
+  assert.match(structuralSamenessIssue(126, 500), /126\/500.*exceeds 25%/);
+});
+
+test("每个 sig* 函数都登记在可达性清单", () => {
+  const source = readFileSync(new URL("../lib/template-engine-signature.ts", import.meta.url), "utf8");
+  assert.deepEqual(
+    [...signatureRendererNames(source)].sort(),
+    [...SIGNATURE_RENDERER_KEYS].sort(),
+  );
 });
