@@ -20,6 +20,13 @@ import { emitStandaloneSite } from "../lib/template-emit-site.ts";
 import { IMAGE_SLOT_POLICY } from "../lib/template-image-policy.ts";
 import { KIND_ONLY_WORDS, KIND_ONLY_WORDS_EN } from "../lib/template-kind-lexicon.ts";
 import {
+  MIN_SKIN_DIFFERENCES,
+  SHAPES,
+  SKINS,
+  skinDifferences,
+  skinsFor,
+} from "../lib/template-skins.ts";
+import {
   INDUSTRIES,
   TARGET_TOTAL,
   countForSub,
@@ -32,13 +39,21 @@ const PROJECT_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const OUTPUT_ROOT = join(PROJECT_ROOT, "out-sites");
 const REPORT_PATH = join(OUTPUT_ROOT, "report.json");
 
-const CHECKS = [
+export const SHARED_SENTENCE_MAX_SITES = 25;
+export const CHINESE_TEXT_MIN_CHARACTERS = 8;
+export const ENGLISH_TEXT_MIN_CHARACTERS = 24;
+
+export const CHECKS = [
   ["externalRequest", "external request"],
   ["emptyPictureSlot", "empty picture slot"],
   ["photoDominance", "one photo doing the whole site"],
   ["sharedSentence", "shared sentence"],
   ["crossKindLeak", "cross-kind wording leak"],
   ["generationFailure", "generation failure"],
+  ["shapeConvergence", "shape convergence"],
+  ["skinConvergence", "skin convergence"],
+  ["skinAdmission", "skin admission"],
+  ["skinDistinguishability", "skin distinguishability"],
 ];
 
 const CHECK_LABEL = Object.fromEntries(CHECKS);
@@ -55,16 +70,195 @@ const UI_CHROME_ALLOWLIST = new Map([
   ["zh:示例 ¥10000", "Editable sample-price chrome instructing the site owner to replace the value."],
 ]);
 
-function newSiteResult(slug) {
+export function newSiteResult(slug) {
   return {
     slug,
     failures: Object.fromEntries(CHECKS.map(([key]) => [key, new Set()])),
   };
 }
 
+function newGlobalFailures() {
+  return Object.fromEntries(CHECKS.map(([key]) => [key, new Set()]));
+}
+
+function addGlobalFailure(globalFailures, check, detail) {
+  const clean = String(detail).replace(/\s+/g, " ").trim();
+  globalFailures[check].add(clean || CHECK_LABEL[check]);
+}
+
 function addFailure(site, check, detail) {
   const clean = String(detail).replace(/\s+/g, " ").trim();
   site.failures[check].add(clean || CHECK_LABEL[check]);
+}
+
+function firstDefined(...values) {
+  return values.find((value) => value !== undefined && value !== null);
+}
+
+export function pagesFromDna(dna) {
+  const pages = firstDefined(dna?.shape?.pages, dna?.layout?.pages);
+  return Array.isArray(pages) ? pages.map((page) => String(page)) : [];
+}
+
+export function shapeForPages(pages, shapes = SHAPES) {
+  if (!Array.isArray(pages)) return null;
+  return shapes.find((candidate) => (
+    candidate.pages.length === pages.length
+    && candidate.pages.every((page, index) => page === pages[index])
+  )) ?? null;
+}
+
+function inspectShapePages(site, pages, surface) {
+  const matchedShape = shapeForPages(pages);
+  if (!matchedShape) {
+    addFailure(
+      site,
+      "shapeConvergence",
+      `${surface} pages are outside SHAPES: [${pages.join(", ") || "<missing>"}]`,
+    );
+  }
+  return matchedShape;
+}
+
+function inspectRenderedShapePages(site, pages, expectedPages, surface) {
+  const matches = pages.length === expectedPages.length
+    && expectedPages.every((page, index) => page === pages[index]);
+  if (!matches) {
+    addFailure(
+      site,
+      "shapeConvergence",
+      `${surface} pages=[${pages.join(", ") || "<missing>"}], expected=[${expectedPages.join(", ") || "<missing>"}]`,
+    );
+  }
+}
+
+function pageKeysInHtml(html) {
+  const keys = [];
+  const seen = new Set();
+  for (const match of String(html).matchAll(/\bdata-page\s*=\s*["']([^"']+)["']/gi)) {
+    const key = decodeHtml(match[1]).trim();
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    keys.push(key);
+  }
+  return keys;
+}
+
+export function skinDimensionsFromDna(dna) {
+  const nested = dna?.skin && typeof dna.skin === "object" ? dna.skin : {};
+  return {
+    palette: firstDefined(dna?.palette?.key, dna?.paletteKey, nested?.palette?.key, nested?.paletteKey),
+    radius: firstDefined(dna?.radius, nested?.radius),
+    density: firstDefined(dna?.density, nested?.density),
+    font: firstDefined(dna?.font, nested?.font),
+    fx: firstDefined(dna?.accentFx, dna?.fx, nested?.accentFx, nested?.fx),
+    dark: firstDefined(dna?.forceDark, dna?.dark, nested?.forceDark, nested?.dark),
+  };
+}
+
+export function skinDimensionMismatches(dna, candidate) {
+  const actual = skinDimensionsFromDna(dna);
+  const mismatches = [];
+  if (!candidate.palettes.includes(actual.palette)) mismatches.push("配色");
+  if (actual.radius !== candidate.radius) mismatches.push("圆角");
+  if (actual.font !== candidate.font) mismatches.push("字体");
+  if (actual.density !== candidate.density) mismatches.push("疏密");
+  if (actual.fx !== candidate.fx) mismatches.push("装饰");
+  if (actual.dark !== candidate.dark) mismatches.push("明暗");
+  return mismatches;
+}
+
+export function matchingSkinsForDna(dna, skins = SKINS) {
+  return skins.filter((candidate) => skinDimensionMismatches(dna, candidate).length === 0);
+}
+
+function declaredSkinKey(dna, meta) {
+  return firstDefined(
+    typeof dna?.skin === "string" ? dna.skin : dna?.skin?.key,
+    dna?.skinKey,
+    meta?.skinKey,
+  );
+}
+
+function formatSkinDimensions(dna) {
+  const actual = skinDimensionsFromDna(dna);
+  return [
+    `配色=${actual.palette ?? "<missing>"}`,
+    `圆角=${actual.radius ?? "<missing>"}`,
+    `字体=${actual.font ?? "<missing>"}`,
+    `疏密=${actual.density ?? "<missing>"}`,
+    `装饰=${actual.fx ?? "<missing>"}`,
+    `明暗=${actual.dark ?? "<missing>"}`,
+  ].join(", ");
+}
+
+export function inspectGate2Site(site, meta, dna, surface = "DNA") {
+  const pages = pagesFromDna(dna);
+  const matchedShape = inspectShapePages(site, pages, surface);
+
+  const declaredKey = declaredSkinKey(dna, meta);
+  const declaredSkin = declaredKey === undefined
+    ? null
+    : SKINS.find((candidate) => candidate.key === declaredKey) ?? null;
+  const exactMatches = matchingSkinsForDna(dna);
+  let selectedSkin = declaredSkin;
+
+  if (declaredKey !== undefined && !declaredSkin) {
+    addFailure(site, "skinConvergence", `${surface} declares unknown skin ${declaredKey}; ${formatSkinDimensions(dna)}`);
+  } else if (declaredSkin) {
+    const mismatches = skinDimensionMismatches(dna, declaredSkin);
+    if (mismatches.length) {
+      addFailure(
+        site,
+        "skinConvergence",
+        `${surface} skin ${declaredSkin.key} drifts in ${mismatches.join("/")}; ${formatSkinDimensions(dna)}`,
+      );
+    }
+  } else if (exactMatches.length === 0) {
+    addFailure(site, "skinConvergence", `${surface} look matches no SKINS entry; ${formatSkinDimensions(dna)}`);
+  } else {
+    [selectedSkin] = exactMatches;
+  }
+
+  const allowed = skinsFor(meta.industryKey);
+  if (!selectedSkin) {
+    addFailure(
+      site,
+      "skinAdmission",
+      `${surface} cannot resolve an admitted skin for industry ${meta.industryKey}; allowed=[${allowed.join(", ")}]`,
+    );
+  } else if (!allowed.includes(selectedSkin.key)) {
+    addFailure(
+      site,
+      "skinAdmission",
+      `${surface} skin ${selectedSkin.key} is not admitted for ${meta.industryKey}; allowed=[${allowed.join(", ")}]`,
+    );
+  }
+
+  return {
+    shapeKey: matchedShape?.key ?? null,
+    skinKey: selectedSkin?.key ?? null,
+  };
+}
+
+export function indistinguishableSkinPairs(
+  skins = SKINS,
+  minimumDifferences = MIN_SKIN_DIFFERENCES,
+) {
+  const failures = [];
+  for (let left = 0; left < skins.length; left += 1) {
+    for (let right = left + 1; right < skins.length; right += 1) {
+      const differences = skinDifferences(skins[left], skins[right]);
+      if (differences.length >= minimumDifferences) continue;
+      failures.push({
+        left: skins[left].key,
+        right: skins[right].key,
+        differences,
+        detail: `${skins[left].key}/${skins[right].key} differ in ${differences.length}/${minimumDifferences} required dimensions (${differences.join(", ") || "none"})`,
+      });
+    }
+  }
+  return failures;
 }
 
 function inside(base, candidate) {
@@ -177,9 +371,9 @@ function sentenceRunsIn(html) {
       const compact = display.replace(/\s+/g, "");
       const hasHan = /\p{Script=Han}/u.test(display);
       const hasLatin = /[A-Za-z]/.test(display);
-      if (hasHan && Array.from(compact).length >= 8) {
+      if (hasHan && Array.from(compact).length >= CHINESE_TEXT_MIN_CHARACTERS) {
         out.set(`zh:${display}`, { lang: "zh", canonical: display, display });
-      } else if (!hasHan && hasLatin && Array.from(display).length >= 24) {
+      } else if (!hasHan && hasLatin && Array.from(display).length >= ENGLISH_TEXT_MIN_CHARACTERS) {
         const canonical = display.toLocaleLowerCase("en-US");
         out.set(`en:${canonical}`, { lang: "en", canonical, display });
       }
@@ -437,7 +631,7 @@ function finalizeSharedSentences(sites, runsBySite) {
   }
 
   const offenders = [...appearances.values()]
-    .filter((entry) => entry.slugs.size > 25 && !UI_CHROME_ALLOWLIST.has(`${entry.lang}:${entry.canonical}`))
+    .filter((entry) => entry.slugs.size > SHARED_SENTENCE_MAX_SITES && !UI_CHROME_ALLOWLIST.has(`${entry.lang}:${entry.canonical}`))
     .sort((a, b) => b.slugs.size - a.slugs.size || a.canonical.localeCompare(b.canonical));
 
   for (const entry of offenders) {
@@ -452,13 +646,16 @@ function finalizeSharedSentences(sites, runsBySite) {
   }));
 }
 
-function summarize(sites) {
+function summarize(sites, globalFailures) {
   return Object.fromEntries(CHECKS.map(([key, label]) => {
     const failed = [...sites.values()].filter((site) => site.failures[key].size > 0);
+    const globalIssueCount = globalFailures[key].size;
     return [key, {
       label,
       siteCount: failed.length,
-      issueCount: failed.reduce((total, site) => total + site.failures[key].size, 0),
+      issueCount: failed.reduce((total, site) => total + site.failures[key].size, 0) + globalIssueCount,
+      globalIssueCount,
+      slugs: failed.map((site) => site.slug),
     }];
   }));
 }
@@ -471,10 +668,13 @@ function serializableSite(site) {
   };
 }
 
-function aggregateWorst(sites, photoOffenders, sharedOffenders) {
+function aggregateWorst(sites, photoOffenders, sharedOffenders, globalFailures) {
   const externalUrls = new Map();
   const emptyKinds = new Map();
   const leakedWords = new Map();
+  const shapeFailures = new Map();
+  const skinFailures = new Map();
+  const admissionFailures = new Map();
   for (const site of sites.values()) {
     for (const detail of site.failures.externalRequest) {
       const url = detail.match(/https?:\/\/\S+/)?.[0] ?? detail;
@@ -492,6 +692,16 @@ function aggregateWorst(sites, photoOffenders, sharedOffenders) {
       if (!leakedWords.has(word)) leakedWords.set(word, new Set());
       leakedWords.get(word).add(site.slug);
     }
+    for (const [check, target] of [
+      ["shapeConvergence", shapeFailures],
+      ["skinConvergence", skinFailures],
+      ["skinAdmission", admissionFailures],
+    ]) {
+      for (const detail of site.failures[check]) {
+        if (!target.has(detail)) target.set(detail, new Set());
+        target.get(detail).add(site.slug);
+      }
+    }
   }
   const top = (map, limit = 10) => [...map.entries()]
     .map(([value, slugs]) => ({ value, siteCount: slugs.size }))
@@ -503,7 +713,18 @@ function aggregateWorst(sites, photoOffenders, sharedOffenders) {
     photoDominance: photoOffenders.sort((a, b) => b.ratio - a.ratio || a.slug.localeCompare(b.slug)).slice(0, 10),
     sharedSentences: sharedOffenders.slice(0, 15).map(({ slugs: _slugs, ...entry }) => entry),
     crossKindLeaks: top(leakedWords),
+    shapeConvergence: top(shapeFailures),
+    skinConvergence: top(skinFailures),
+    skinAdmission: top(admissionFailures),
+    skinDistinguishability: [...globalFailures.skinDistinguishability].map((value) => ({ value, siteCount: 0 })),
   };
+}
+
+function slugSummary(count, full) {
+  if (!count.slugs.length) return count.globalIssueCount ? " — global failure only" : "";
+  const shown = full ? count.slugs : count.slugs.slice(0, 12);
+  const remaining = count.slugs.length - shown.length;
+  return ` — sites: ${shown.join(", ")}${remaining ? `, … (+${remaining})` : ""}`;
 }
 
 function printHumanReport(report, full) {
@@ -520,6 +741,10 @@ function printHumanReport(report, full) {
     ["one photo doing the whole site", report.worst.photoDominance.map((x) => ({ value: `${x.slug}: ${x.count}/${x.total} ${x.url}`, siteCount: 1 }))],
     ["shared sentence", report.worst.sharedSentences.map((x) => ({ value: `${x.lang}: ${x.text}`, siteCount: x.siteCount }))],
     ["cross-kind wording leak", report.worst.crossKindLeaks],
+    ["shape convergence", report.worst.shapeConvergence],
+    ["skin convergence", report.worst.skinConvergence],
+    ["skin admission", report.worst.skinAdmission],
+    ["skin distinguishability", report.worst.skinDistinguishability],
   ];
   for (const [label, entries] of groups) {
     console.log(`${label}:`);
@@ -547,7 +772,7 @@ function printHumanReport(report, full) {
   console.log("\nFinal gate counts");
   for (const [key, label] of CHECKS) {
     const count = report.summary[key];
-    console.log(`- ${label}: ${count.siteCount} failing sites (${count.issueCount} issues)`);
+    console.log(`- ${label}: ${count.siteCount} failing sites (${count.issueCount} issues)${slugSummary(count, full)}`);
   }
   console.log(`Report: out-sites/report.json`);
   console.log(`${report.cleanSites}/${report.totalSites} sites clean; exit code ${report.exitCode}; ${report.shippable ? "SHIPPABLE" : "NOT SHIPPABLE"}`);
@@ -603,13 +828,26 @@ function main() {
   mkdirSync(OUTPUT_ROOT, { recursive: true });
 
   const sites = new Map(entries.map(({ meta }) => [meta.slug, newSiteResult(meta.slug)]));
+  const globalFailures = newGlobalFailures();
   const runsBySite = new Map();
   const photoOffenders = [];
+
+  for (const pair of indistinguishableSkinPairs()) {
+    addGlobalFailure(globalFailures, "skinDistinguishability", pair.detail);
+  }
 
   for (const { meta, industry, sub } of entries) {
     const site = sites.get(meta.slug);
     const siteDir = join(OUTPUT_ROOT, meta.slug);
     let html = "";
+    let templateDna = null;
+
+    try {
+      templateDna = dnaFor(meta.slug, meta.industryKey, meta.variant, industry.color);
+      inspectGate2Site(site, meta, templateDna);
+    } catch (error) {
+      addFailure(site, "generationFailure", `shape/skin inspection: ${error instanceof Error ? error.message : String(error)}`);
+    }
 
     try {
       const emitted = emitStandaloneSite(meta, industry, sub);
@@ -617,15 +855,35 @@ function main() {
         throw new Error("emitStandaloneSite returned an invalid EmittedSite");
       }
       html = inspectStandalone(site, emitted, siteDir);
+      inspectRenderedShapePages(site, pageKeysInHtml(html), templateDna?.layout?.pages ?? [], "standalone");
     } catch (error) {
       addFailure(site, "generationFailure", `standalone generation: ${error instanceof Error ? error.stack ?? error.message : String(error)}`);
     }
 
     try {
       const bundle = buildWebsiteSourceBundle(meta, industry, sub);
-      if (!bundle?.config || !bundle?.configEn || !Array.isArray(bundle?.tree?.files)) {
+      if (!bundle?.structure || !bundle?.config || !bundle?.configEn || !Array.isArray(bundle?.tree?.files)) {
         throw new Error("buildWebsiteSourceBundle returned an invalid bundle");
       }
+      const sourceTheme = bundle.structure.theme ?? {};
+      inspectGate2Site(site, meta, {
+        shape: templateDna?.shape,
+        layout: { pages: (bundle.structure.pages ?? []).map((page) => page.key) },
+        skin: sourceTheme.skin,
+        skinKey: sourceTheme.skinKey,
+        palette: { key: sourceTheme.paletteKey },
+        radius: sourceTheme.radius,
+        density: sourceTheme.density,
+        font: sourceTheme.font,
+        accentFx: sourceTheme.accentFx,
+        forceDark: sourceTheme.forceDark,
+      }, "website-source");
+      inspectRenderedShapePages(
+        site,
+        (bundle.structure.pages ?? []).map((page) => String(page.key)),
+        templateDna?.layout?.pages ?? [],
+        "website-source",
+      );
       for (const file of bundle.tree.files) scanExternalFile(site, "website-source", file);
       const dominance = inspectWebsiteImages(site, bundle.config);
       if (dominance) photoOffenders.push({ slug: meta.slug, ...dominance });
@@ -646,27 +904,32 @@ function main() {
   }
 
   const sharedOffenders = finalizeSharedSentences(sites, runsBySite);
-  const summary = summarize(sites);
+  const summary = summarize(sites, globalFailures);
   const cleanSites = [...sites.values()].filter((site) => CHECKS.every(([key]) => site.failures[key].size === 0)).length;
-  const shippable = cleanSites === TARGET_TOTAL;
+  const globalIssueCount = Object.values(globalFailures).reduce((total, failures) => total + failures.size, 0);
+  const shippable = cleanSites === TARGET_TOTAL && globalIssueCount === 0;
   const report = {
     schema: "template-static-gate@1",
     generatedAt: new Date().toISOString(),
     thresholds: {
       totalSites: 500,
-      sharedSentenceMaxSites: 25,
-      chineseTextMinCharacters: 8,
-      englishTextMinCharacters: 24,
+      sharedSentenceMaxSites: SHARED_SENTENCE_MAX_SITES,
+      chineseTextMinCharacters: CHINESE_TEXT_MIN_CHARACTERS,
+      englishTextMinCharacters: ENGLISH_TEXT_MIN_CHARACTERS,
       photoDominanceMaxRatio: 0.5,
       photoDominanceMinImages: 3,
+      minimumSkinDifferences: MIN_SKIN_DIFFERENCES,
     },
+    approvedShapeKeys: SHAPES.map((entry) => entry.key),
+    approvedSkinKeys: SKINS.map((entry) => entry.key),
     allowlist: [...UI_CHROME_ALLOWLIST].map(([text, justification]) => ({ text, justification })),
     totalSites: TARGET_TOTAL,
     cleanSites,
     shippable,
     exitCode: shippable ? 0 : 1,
     summary,
-    worst: aggregateWorst(sites, photoOffenders, sharedOffenders),
+    globalFailures: Object.fromEntries(CHECKS.map(([key]) => [key, [...globalFailures[key]]])),
+    worst: aggregateWorst(sites, photoOffenders, sharedOffenders, globalFailures),
     sharedSentenceOffenders: sharedOffenders,
     sites: [...sites.values()].map(serializableSite),
   };
@@ -677,4 +940,4 @@ function main() {
   process.exitCode = report.exitCode;
 }
 
-main();
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main();
