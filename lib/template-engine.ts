@@ -27,6 +27,7 @@ import {
 } from "./template-dna";
 import { hashStr } from "./hash";
 import { poolPhoto, poolFallbackPhoto } from "./template-photo-pool";
+import { photoHref, type PhotoBase } from "./template-photo-local";
 import {
   decorLayer,
   effectsScript,
@@ -157,17 +158,30 @@ export function photoFallback(seed: number, _w = 1200, _h = 800): string {
   void _h;
   return poolFallbackPhoto(seed);
 }
-// <img> 的 onerror：OSS 主图偶发拉不到时，换成 fallback 池的另一张 OSS 图；
-// 再失败才隐藏。全程只在自家 CDN 内兜底，绝不回退到第三方随机图。
-function imgFallbackAttr(seed: number): string {
-  const fb = poolFallbackPhoto(seed + 7);
-  const esc = fb.replace(/'/g, "&#39;");
-  return ` onerror="if(this.dataset.fb){this.style.visibility='hidden'}else{this.dataset.fb=1;this.src='${esc}'}"`;
-}
 export function img(ctx: Ctx, i: number, w: number, h: number, cls = "", extra = ""): string {
-  const seed = ctx.dna.imgSeed + i * 13;
-  const src = poolPhoto(ctx.meta.subKey, seed) || poolFallbackPhoto(seed);
-  return `<img src="${src}"${imgFallbackAttr(seed)} alt="" loading="lazy" class="${cls}" style="${extra}"/>`;
+  // 某些章节会先构造多个版式候选，再只返回其中一个。如果在这里用调用次数
+  // 选图，被丢弃的候选也会消耗图池位置。因此先放占位符，待真实 body 定稿后
+  // 再按实际出现顺序逐张填图。i/w/h 保留在签名中，不改各版式调用点。
+  void ctx;
+  void i;
+  void w;
+  void h;
+  return `<img src="__LEO_PHOTO__" alt="" loading="lazy" class="${cls}" style="${extra}"/>`;
+}
+
+function resolvePhotos(
+  html: string,
+  meta: TemplateMeta,
+  dna: TemplateDNA,
+  photoBase: PhotoBase,
+): string {
+  let cursor = 0;
+  return html.replace(/src="__LEO_PHOTO__"/g, () => {
+    const seed = dna.imgSeed + cursor;
+    cursor += 1;
+    const source = poolPhoto(meta.subKey, seed) || poolFallbackPhoto(seed);
+    return `src="${photoHref(source, photoBase)}"`;
+  });
 }
 
 // ————————————————————————————————————————————————————————————
@@ -307,11 +321,11 @@ function langToggleBtn(ctx: Ctx): string {
   return `<button type="button" data-lang-toggle title="切换语言 / Switch language" class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold transition hover:opacity-80" style="border:1px solid ${p.primary}55;color:${p.primary};border-radius:${R.btn}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>${esc(label)}</button>`;
 }
 
-/** 一键下载源码按钮：跳到 ?download=1 触发浏览器另存 HTML。 */
+/** 一键下载源码按钮：跳到 ?download=1 下载完整站点 ZIP。 */
 function downloadBtn(ctx: Ctx): string {
   const { p, R } = ctx;
   const label = ctx.u("langToggle") === "EN" ? "源码" : "Code";
-  const title = ctx.lang === "en" ? "Download this template's source (.html)" : "下载本模板源码（.html）";
+  const title = ctx.lang === "en" ? "Download this template site (.zip)" : "下载本模板站点（.zip）";
   return `<a href="?download=1" download data-download title="${esc(title)}" class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-white transition hover:opacity-90" style="background:${p.primary};border-radius:${R.btn}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>${esc(label)}</a>`;
 }
 
@@ -1184,6 +1198,7 @@ export function renderTemplate(
   biExt: BiExt,
   dna: TemplateDNA,
   defaultLang: Lang = "zh",
+  photoBase: PhotoBase = "preview",
 ): RenderResult {
   const p = dna.palette;
   const layout: LayoutFamily = dna.layout;
@@ -1191,8 +1206,8 @@ export function renderTemplate(
 
   const ctxZh = makeCtx(meta, flattenContent(biContent, "zh"), flattenExt(biExt, "zh"), dna, "zh");
   const ctxEn = makeCtx(meta, flattenContent(biContent, "en"), flattenExt(biExt, "en"), dna, "en");
-  const bodyZh = renderBody(ctxZh, dna);
-  const bodyEn = renderBody(ctxEn, dna);
+  const bodyZh = resolvePhotos(renderBody(ctxZh, dna), meta, dna, photoBase);
+  const bodyEn = resolvePhotos(renderBody(ctxEn, dna), meta, dna, photoBase);
 
   const titleZh = `${esc(biContent.brand.zh)} · ${esc(meta.subLabel)}官网`;
   const titleEn = `${esc(biContent.brand.en)} · ${esc(subEn(meta.subKey, meta.industryKey))}`;
@@ -1205,7 +1220,6 @@ export function renderTemplate(
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>${defaultLang === "en" ? titleEn : titleZh}</title>
 <meta name="description" content="${esc(defaultLang === "en" ? biContent.heroSubtitle.en : biContent.heroSubtitle.zh)}"/>
-<script src="https://cdn.tailwindcss.com"></script>
 <style>
   html{scroll-behavior:smooth}
   body{font-family:${FONT_STACK[dna.font]};color:${p.ink};background:${bodyBg}}
@@ -1292,6 +1306,7 @@ export function renderTemplateBilingual(
   sub: SubCategory,
   defaultLang: Lang = "zh",
   devOverride?: { fx?: AccentFx; heroV?: number },
+  photoBase: PhotoBase = "preview",
 ): RenderResult {
   let dna = dnaFor(meta.slug, meta.industryKey, meta.variant);
   // 仅供本地开发预览：覆盖装饰特效 / hero 变体，用于逐一 review v4 新特效与 hero 版式。
@@ -1301,5 +1316,5 @@ export function renderTemplateBilingual(
   else _heroVOverride = null;
   const biContent = buildBiContent(meta, industry, sub);
   const biExt = buildBiExt(meta, meta.industryKey, meta.subLabel, meta.subKey);
-  return renderTemplate(meta, biContent, biExt, dna, defaultLang);
+  return renderTemplate(meta, biContent, biExt, dna, defaultLang, photoBase);
 }

@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+
 import {
   INDUSTRIES,
   countForSub,
@@ -5,6 +7,9 @@ import {
   templateBySlug,
 } from "@/lib/template-taxonomy";
 import { renderTemplateBilingual } from "@/lib/template-engine";
+import { utilitiesFor } from "@/lib/template-css";
+import { emitStandaloneSite } from "@/lib/template-emit-site";
+import { createSiteZip } from "@/lib/site-zip";
 import type { Lang } from "@/lib/template-i18n";
 
 // /templates/<slug> 直接返回**完整独立**的网站 HTML 文档（Content-Type:
@@ -19,8 +24,7 @@ import type { Lang } from "@/lib/template-i18n";
 // v3：
 //  - 产物本身**中英双语**（页内「中/EN」开关，离线可切）。`?lang=en` 让首屏直接
 //    英文（用于英文语境深链 / 站内 iframe 传参）。
-//  - `?download=1` 加 Content-Disposition: attachment，浏览器直接把这份自包含
-//    HTML 另存为 `<slug>.html`（一键下载源码，A 档）。
+//  - `?download=1` 把 HTML / CSS / JS / 本地图片打成 `<slug>.zip`，断网也可打开。
 
 // 全部模板在构建期静态生成 → 详情页纯静态、秒开、可深链。
 export function generateStaticParams() {
@@ -75,18 +79,47 @@ export async function GET(
         }
       : undefined;
 
-  const { html } = renderTemplateBilingual(meta, found.ind, found.sub, defaultLang, devOverride);
-
-  const headers: Record<string, string> = {
-    "content-type": "text/html; charset=utf-8",
-    "cache-control":
-      "public, max-age=0, s-maxage=86400, stale-while-revalidate=604800",
-  };
   if (download) {
-    // 一键下载源码：让浏览器把这份自包含 HTML 另存为文件而非直接渲染。
-    headers["content-disposition"] = `attachment; filename="${slug}.html"`;
-    headers["cache-control"] = "public, max-age=0, s-maxage=86400";
+    const site = emitStandaloneSite(meta, found.ind, found.sub, { defaultLang });
+    const entries = await Promise.all(
+      site.files.map(async (file) => {
+        if (file.text !== undefined) return { path: file.path, data: file.text };
+        if (!file.sourcePath || file.sourcePath.startsWith("/") || file.sourcePath.includes("..")) {
+          throw new Error(`${slug}: invalid source path for ${file.path}`);
+        }
+        return { path: file.path, data: await readFile(`${process.cwd()}/${file.sourcePath}`) };
+      }),
+    );
+    const archive = createSiteZip(entries);
+    return new Response(archive, {
+      status: 200,
+      headers: {
+        "content-type": "application/zip",
+        "content-disposition": `attachment; filename="${slug}.zip"`,
+        "cache-control": "public, max-age=0, s-maxage=86400",
+      },
+    });
   }
 
-  return new Response(html, { status: 200, headers });
+  const { html: renderedHtml } = renderTemplateBilingual(
+    meta,
+    found.ind,
+    found.sub,
+    defaultLang,
+    devOverride,
+    "preview",
+  );
+  const utilityCss = utilitiesFor(renderedHtml).trim();
+  const html = utilityCss
+    ? renderedHtml.replace("<style>", `<style>\n${utilityCss}\n`)
+    : renderedHtml;
+
+  return new Response(html, {
+    status: 200,
+    headers: {
+      "content-type": "text/html; charset=utf-8",
+      "cache-control":
+        "public, max-age=0, s-maxage=86400, stale-while-revalidate=604800",
+    },
+  });
 }

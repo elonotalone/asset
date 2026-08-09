@@ -14,6 +14,10 @@
 import type { Industry, SubCategory, TemplateMeta } from "./template-taxonomy";
 import type { Lang } from "./template-i18n";
 import { renderTemplateBilingual } from "./template-engine";
+import { CSS_ASSET_PATH, utilitiesFor } from "./template-css";
+import { MIRROR_PUBLIC_DIR, SITE_IMAGE_DIR } from "./template-photo-local";
+
+const JS_ASSET_PATH = "assets/site.js";
 
 export interface EmittedFile {
   /** 站点目录内的相对路径，如 `index.html` / `assets/site.css` / `images/x.webp`。 */
@@ -35,21 +39,92 @@ export interface EmitOptions {
   defaultLang?: Lang;
 }
 
-/**
- * 发射一个完整站点目录。产物内不得出现任何 http:// 或 https:// 资源引用。
- *
- * 占位实现：仍然只吐当前引擎那份 HTML（带 CDN 与 OSS 图），
- * 因此 W4 校验器会如实报出外链 —— 这就是修复前的真实状态。
- */
+function detachStyles(html: string): { html: string; styles: string[] } {
+  const styles: string[] = [];
+  return {
+    html: html.replace(/<style\b[^>]*>([\s\S]*?)<\/style>/gi, (_whole, css: string) => {
+      styles.push(css.trim());
+      return "";
+    }),
+    styles,
+  };
+}
+
+function detachScripts(html: string): { html: string; scripts: string[] } {
+  const scripts: string[] = [];
+  return {
+    html: html.replace(
+      /<script\b([^>]*)>([\s\S]*?)<\/script>/gi,
+      (whole, attrs: string, js: string) => {
+        if (/\bsrc\s*=/i.test(attrs)) return whole;
+        scripts.push(js.trim());
+        return "";
+      },
+    ),
+    scripts,
+  };
+}
+
+function assertNoExternalUrl(slug: string, file: EmittedFile): void {
+  if (!file.text) return;
+  const withoutSvgNamespace = file.text.replace(
+    /xmlns=(["'])http:\/\/www\.w3\.org\/2000\/svg\1/g,
+    "",
+  );
+  if (/https?:\/\//i.test(withoutSvgNamespace)) {
+    throw new Error(`${slug}: external URL survived in ${file.path}`);
+  }
+}
+
+/** 发射一个完整站点目录。产物内不得出现任何外部资源引用。 */
 export function emitStandaloneSite(
   meta: TemplateMeta,
   industry: Industry,
   sub: SubCategory,
   opts: EmitOptions = {},
 ): EmittedSite {
-  const { html } = renderTemplateBilingual(meta, industry, sub, opts.defaultLang ?? "zh");
+  const { html: renderedHtml } = renderTemplateBilingual(
+    meta,
+    industry,
+    sub,
+    opts.defaultLang ?? "zh",
+    undefined,
+    "site",
+  );
+  const utilityCss = utilitiesFor(renderedHtml).trim();
+  const detachedStyles = detachStyles(renderedHtml);
+  const detachedScripts = detachScripts(detachedStyles.html);
+
+  const css = [utilityCss, ...detachedStyles.styles].filter(Boolean).join("\n\n") + "\n";
+  const js = detachedScripts.scripts.filter(Boolean).join("\n\n") + "\n";
+  const indexHtml = detachedScripts.html
+    .replace("</head>", `<link rel="stylesheet" href="${CSS_ASSET_PATH}"/>\n</head>`)
+    .replace("</body>", `<script src="${JS_ASSET_PATH}"></script>\n</body>`);
+
+  const imagePrefix = `${SITE_IMAGE_DIR}/`;
+  const imagePaths = new Set<string>();
+  for (const match of indexHtml.matchAll(/<img\b[^>]*\bsrc=(["'])(.*?)\1/gi)) {
+    const path = match[2];
+    if (!path.startsWith(imagePrefix) || path.includes("..")) {
+      throw new Error(`${meta.slug}: non-local image path ${path || "(empty)"}`);
+    }
+    imagePaths.add(path);
+  }
+
+  const files: EmittedFile[] = [
+    { path: "index.html", mediaType: "text/html", text: indexHtml },
+    { path: CSS_ASSET_PATH, mediaType: "text/css", text: css },
+    { path: JS_ASSET_PATH, mediaType: "text/javascript", text: js },
+    ...[...imagePaths].sort().map((path) => ({
+      path,
+      mediaType: "image/webp",
+      sourcePath: `${MIRROR_PUBLIC_DIR}/${path.slice(imagePrefix.length)}`,
+    })),
+  ];
+  for (const file of files) assertNoExternalUrl(meta.slug, file);
+
   return {
     slug: meta.slug,
-    files: [{ path: "index.html", mediaType: "text/html", text: html }],
+    files,
   };
 }
