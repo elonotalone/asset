@@ -256,7 +256,62 @@ export const MAIN_PAGE_LABEL: Record<string, string> = {
  * 子类级覆盖。食品行业默认叫「菜单」，但酒店和旅游服务卖的不是菜 —— 这类
  * 例外写在这里，由接手的实施者按子类补全。
  */
-export const MAIN_PAGE_LABEL_BY_SUB: Record<string, string> = {};
+export const MAIN_PAGE_LABEL_BY_SUB: Record<string, string> = {
+  // 传媒：顾问、会展与印刷卖的是服务或产品，不是作品集。
+  "pr-consulting": "服务",
+  "gift-custom": "商品",
+  exhibition: "服务",
+  printing: "产品",
+
+  // 商业：地产与拍卖的主营对象比笼统的「服务」更具体。
+  realestate: "项目",
+  pawn: "拍品",
+
+  // 时尚分类里混有到店服务。
+  hairsalon: "服务",
+  nails: "服务",
+  slimming: "服务",
+  "medical-beauty": "服务",
+
+  // 组织分类只有学校和培训机构以课程为主营。
+  government: "服务",
+  association: "服务",
+  chamber: "服务",
+
+  // 科技公司与互联网产品站以产品为主营，建站公司仍沿用行业默认「服务」。
+  internet: "产品",
+  "tech-company": "产品",
+
+  // 生活分类同时包含作品型、商品型和上门/到店服务型业务。
+  bridal: "商品",
+  cleaning: "服务",
+  "car-care": "服务",
+  "photo-print": "服务",
+  moving: "服务",
+  pets: "服务",
+  flowers: "商品",
+
+  // 餐饮保留「菜单」；住宿、旅行和签证不能被叫作菜单。
+  farmstay: "客房",
+  resort: "客房",
+  hotel: "客房",
+  "travel-agency": "线路",
+  "local-tour": "线路",
+  visa: "服务",
+
+  // 环保回收的主营是回收服务，不是产品目录。
+  recycling: "服务",
+
+  // 食品/医药分类里的医院和齿科是诊疗服务。
+  hospital: "服务",
+  dental: "服务",
+
+  // 租赁站展示可租对象；通用分类里的商城与个人页也要回到各自业务语言。
+  "house-rent": "房源",
+  "car-rent": "车辆",
+  mall: "商品",
+  personal: "作品",
+};
 
 // —— 查表 ————————————————————————————————————————————————
 
