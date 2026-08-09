@@ -162,8 +162,8 @@ type BlueprintSection = SectionKind | "main";
  * 每种构成唯一的板块蓝图。「main」是主营内容占位，装配时和主营页一起替换成
  * services/products/menu/works。这样行业叫法不同，结构顺序仍只有 4 套。
  *
- * 来源：s3 继承 fullscreen-scroll；s4 继承 portfolio；s5 是 corporate 去掉 news；
- * s6 继承 corporate。这里不按行业、slug 或 skin 分叉。
+ * 来源：s3 继承 fullscreen-scroll；s4 继承 portfolio；s5 继承 agency（服务页映射
+ * 主营、作品页映射案例）；s6 继承 corporate。这里不按行业、slug 或 skin 分叉。
  */
 export const SHAPE_SECTION_BLUEPRINTS: Record<
   ShapeKey,
@@ -181,10 +181,10 @@ export const SHAPE_SECTION_BLUEPRINTS: Record<
     contact: ["pageHeader", "contact"],
   },
   s5: {
-    home: ["hero", "marquee", "about", "main", "stats", "cases", "cta"],
-    main: ["pageHeader", "main", "process", "faq", "cta"],
-    cases: ["pageHeader", "cases", "chart", "testimonials", "cta"],
-    about: ["pageHeader", "about", "timeline", "team", "cta"],
+    home: ["hero", "gallery", "main", "marquee", "testimonials", "cta"],
+    main: ["pageHeader", "main", "process", "pricing", "cta"],
+    cases: ["pageHeader", "gallery", "cases", "cta"],
+    about: ["pageHeader", "about", "team", "logos", "cta"],
     contact: ["pageHeader", "contact"],
   },
   s6: {
