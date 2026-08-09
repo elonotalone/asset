@@ -57,7 +57,13 @@ test("物流、沙龙等业务使用各自可信的单位、量级与曲线", ()
   assert.notEqual(freight.insight, salon.insight);
 
   const yearSpans = new Set(ALL.map((meta) => chartSeriesFor(meta, "zh").labels.join("–")));
-  assert.equal(yearSpans.size, 6, "四年窗口没有覆盖六种已批准跨度");
+  assert.equal(yearSpans.size, 3, "四年窗口没有覆盖三种已批准跨度");
+
+  // 一张停在几年前的增长图，等于告诉访客这家店早就不做了。
+  for (const meta of ALL) {
+    const last = Number(chartSeriesFor(meta, "zh").labels.at(-1).replace(/\D/g, ""));
+    assert.ok(last >= 2024, `${meta.slug} 的图表停在 ${last} 年`);
+  }
 });
 
 test("环形图年份占比标签留有明显低于 25/500 的重复余量", () => {
@@ -70,7 +76,7 @@ test("环形图年份占比标签留有明显低于 25/500 的重复余量", () 
     const series = chartSeriesFor(meta, "zh");
     const total = series.values.reduce((sum, value) => sum + value, 0);
     const siteLabels = new Set(series.labels.map(
-      (label, index) => `${label} · ${Math.round((series.values[index] / total) * 100)}%`,
+      (label, index) => `${label} · ${(((series.values[index] / total) * 100).toFixed(1))}%`,
     ));
     for (const label of siteLabels) {
       if (!appearances.has(label)) appearances.set(label, []);

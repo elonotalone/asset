@@ -181,7 +181,8 @@ const SUBCATEGORY_PROFILES: Readonly<Record<string, ChartProfile>> = {
   },
 };
 
-const YEAR_STARTS = [2018, 2019, 2020, 2021, 2022, 2023] as const;
+// 每条曲线都必须落在最近几年：一张停在 2021 年的增长图，看上去就是这家店早已关门。
+const YEAR_STARTS = [2021, 2022, 2023] as const;
 
 function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value));

@@ -1061,7 +1061,7 @@ function renderChart(ctx: Ctx): string {
       a0 = a1;
       return `<path d="M${x1.toFixed(1)},${y1.toFixed(1)} A${r},${r} 0 ${large} 1 ${x2.toFixed(1)},${y2.toFixed(1)}" fill="none" stroke="${cols[i % 4]}" stroke-width="${sw}"/>`;
     }).join("");
-    const legend = d.labels.map((lb, i) => `<g transform="translate(340,${86 + i * 44})"><rect width="16" height="16" rx="4" fill="${cols[i % 4]}"/><text x="26" y="13" font-size="14" fill="${p.ink}">${lb} · ${Math.round((d.values[i] / total) * 100)}%</text></g>`).join("");
+    const legend = d.labels.map((lb, i) => `<g transform="translate(340,${86 + i * 44})"><rect width="16" height="16" rx="4" fill="${cols[i % 4]}"/><text x="26" y="13" font-size="14" fill="${p.ink}">${lb} · ${(((d.values[i] / total) * 100).toFixed(1))}%</text></g>`).join("");
     svg = `<svg viewBox="0 0 ${W} 320" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">${arcs}<text x="${cx}" y="${cy + 6}" text-anchor="middle" font-size="22" font-weight="800" fill="${p.ink}">${total}${d.unit}</text>${legend}</svg>`;
   }
   return `<section style="background:${ctx.S.page};${sectionPad(ctx)}"><div class="max-w-6xl mx-auto px-6">${heading(ctx, d.title, `${ctx.u("chartUnit")}：${d.unit} · ${ctx.u("chartNote")}`)}<div class="mt-10 grid md:grid-cols-3 gap-10 items-center"><div class="md:col-span-2 p-6" style="background:${p.soft};border:1px solid ${ctx.S.border};border-radius:${R.card}">${svg}</div><div><div style="width:40px;height:4px;background:${p.primary};border-radius:2px"></div><p class="mt-4 leading-relaxed" style="color:${p.ink};font-weight:600">${esc(d.insight)}</p><p class="mt-3 text-sm leading-relaxed" style="color:${p.sub}">${ctx.u("chartFootnote")}</p></div></div></div></section>`;
