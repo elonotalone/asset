@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   CHECKS,
   CHINESE_TEXT_MIN_CHARACTERS,
+  ENGLISH_TEXT_MIN_CHARACTERS,
   SHARED_SENTENCE_MAX_SITES,
   indistinguishableSkinPairs,
   inspectGate2Site,
@@ -51,6 +52,7 @@ test("验收门保留第一批六项并追加第二批四项", () => {
   assert.equal(TARGET_TOTAL, 500);
   assert.equal(SHARED_SENTENCE_MAX_SITES, 25);
   assert.equal(CHINESE_TEXT_MIN_CHARACTERS, 8);
+  assert.equal(ENGLISH_TEXT_MIN_CHARACTERS, 24);
   assert.equal(MIN_SKIN_DIFFERENCES, 3);
 });
 
