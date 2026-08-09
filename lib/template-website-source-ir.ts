@@ -42,7 +42,7 @@ import {
 import type { SiteContent } from "./template-content";
 import type { ExtContent } from "./template-content-ext";
 import type { Industry, SubCategory, TemplateMeta } from "./template-taxonomy";
-import { UI, secTitle, subEn, ui, type Lang } from "./template-i18n";
+import { chartTitle, UI, secTitle, subEn, ui, type Lang } from "./template-i18n";
 
 // ————————————————————————————————————————————————————————————
 // IR 类型
@@ -702,9 +702,6 @@ function chartFor(ctx: IrCtx, lang: Lang): { labels: string[]; values: number[];
     return Math.max(8, Math.round(base * (1 + 0.32 * i) + wobble));
   });
   const units = en ? ["K USD", "orders", "clients", "visits"] : ["万元", "单", "家", "人次"];
-  const titles = en
-    ? ["Steady business growth", "Rising delivery volume", "Expanding client base", "Record service visits"]
-    : ["业务规模持续增长", "服务交付量逐年攀升", "合作客户稳步扩大", "服务人次连年新高"];
   const unit = units[kindPick % units.length];
   const growth = Math.round(((values[3] - values[0]) / values[0]) * 100);
   const sName = en ? subEn(ctx.meta.subKey, ctx.meta.industryKey) : ctx.meta.subLabel;
@@ -712,7 +709,7 @@ function chartFor(ctx: IrCtx, lang: Lang): { labels: string[]; values: number[];
     labels,
     values,
     unit,
-    title: titles[h % titles.length],
+    title: chartTitle(ctx.meta.industryKey, ctx.meta.subLabel, ctx.meta.subKey, lang),
     insight: en
       ? `Around ${growth}% cumulative growth over four years — the ${sName.toLowerCase()} sector stays strong.`
       : `近四年${unit === "万元" ? "营收" : "业务量"}累计增长约 ${growth}%，${ctx.meta.subLabel}赛道保持强劲势头。`,

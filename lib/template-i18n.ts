@@ -300,6 +300,32 @@ export function subEn(subKey: string, industryKey: string): string {
   return SUB_EN[subKey] ?? INDUSTRY_EN[industryKey] ?? "Business";
 }
 
+// 图表标题不能只在少量通用句之间轮换：相邻模板常属于同一行业，货架上会立刻撞句。
+// 一级行业决定真正适合该类生意的指标，子类名则把标题落到当前商家；两者共同参与，
+// 使标题既像为这门生意写的，也把同句出现量稳定限制在单个子类的模板数内。
+const CHART_TREND_BY_INDUSTRY: Readonly<Record<string, Bi>> = {
+  media: bi("项目交付量保持增长", "project delivery keeps growing"),
+  business: bi("服务规模稳步扩大", "service activity keeps expanding"),
+  fashion: bi("市场关注度稳步上升", "market interest keeps rising"),
+  org: bi("服务覆盖面持续拓展", "service reach continues to expand"),
+  tech: bi("方案交付量逐年增长", "solution delivery keeps growing"),
+  life: bi("服务需求稳步上升", "service demand keeps rising"),
+  food: bi("接待与预订量持续增长", "visits and bookings keep growing"),
+  industry: bi("生产交付量稳中有升", "production and delivery keep growing"),
+  home: bi("产品成交量逐年增长", "product orders keep growing"),
+  grocery: bi("产品供应量持续增长", "supply volume keeps growing"),
+  hardware: bi("产品与设备交付量稳步提升", "product and equipment delivery keeps growing"),
+  logistics: bi("履约业务量连年增长", "fulfillment volume keeps growing"),
+  general: bi("业务进展持续向好", "business activity keeps improving"),
+};
+
+/** 当前行业与子类专属的示例图表标题。 */
+export function chartTitle(industryKey: string, subLabel: string, subKey: string, lang: Lang): string {
+  const trend = CHART_TREND_BY_INDUSTRY[industryKey] ?? CHART_TREND_BY_INDUSTRY.general;
+  const subject = lang === "en" ? subEn(subKey, industryKey) : subLabel;
+  return lang === "en" ? `${subject}: ${trend.en}` : `${subject}：${trend.zh}`;
+}
+
 // ————————————————————————————————————————————————————————————
 // UI 词条中英词典（导航 / 按钮 / 通用短语）
 // ————————————————————————————————————————————————————————————

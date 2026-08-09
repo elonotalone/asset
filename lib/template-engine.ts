@@ -34,7 +34,7 @@ import {
   effectsStyles,
   type AccentFx,
 } from "./template-effects";
-import { type Lang, secTitle, ui, UI, pickLang, subEn } from "./template-i18n";
+import { chartTitle, type Lang, secTitle, ui, UI, pickLang, subEn } from "./template-i18n";
 import {
   type BiContent,
   type BiExt,
@@ -973,9 +973,6 @@ function chartData(ctx: Ctx): { labels: string[]; values: number[]; unit: string
     return Math.max(8, Math.round(base * (1 + 0.32 * i) + wobble));
   });
   const units = en ? ["K USD", "orders", "clients", "visits"] : ["万元", "单", "家", "人次"];
-  const titles = en
-    ? ["Steady business growth", "Rising delivery volume", "Expanding client base", "Record service visits"]
-    : ["业务规模持续增长", "服务交付量逐年攀升", "合作客户稳步扩大", "服务人次连年新高"];
   const unit = units[kindPick % units.length];
   const growth = Math.round(((values[3] - values[0]) / values[0]) * 100);
   const sName = subName(ctx);
@@ -983,7 +980,7 @@ function chartData(ctx: Ctx): { labels: string[]; values: number[]; unit: string
     labels,
     values,
     unit,
-    title: titles[h % titles.length],
+    title: chartTitle(ctx.meta.industryKey, ctx.meta.subLabel, ctx.meta.subKey, ctx.lang),
     insight: en
       ? `Around ${growth}% cumulative growth over four years — the ${sName.toLowerCase()} sector stays strong.`
       : `近四年${unit === "万元" ? "营收" : "业务量"}累计增长约 ${growth}%，${esc(ctx.meta.subLabel)}赛道保持强劲势头。`,

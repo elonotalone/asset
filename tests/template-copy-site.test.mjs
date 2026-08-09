@@ -8,6 +8,7 @@ import { buildBiContent, buildBiExt } from "../lib/template-content-bi.ts";
 import { dnaFor } from "../lib/template-dna.ts";
 import {
   UI,
+  chartTitle,
   copyForSectionKinds,
   secTitle,
 } from "../lib/template-i18n.ts";
@@ -77,6 +78,12 @@ function ownSiteStrings(meta, content, ext, kinds) {
       if (heading.sub) strings.push(heading.sub);
     }
   }
+  if (kinds.has("chart")) {
+    strings.push(
+      chartTitle(meta.industryKey, meta.subLabel, meta.subKey, "zh"),
+      chartTitle(meta.industryKey, meta.subLabel, meta.subKey, "en"),
+    );
+  }
   // These are global UI phrases, so count each conservatively as though every
   // site used it. Any long phrase here would immediately break the 25-site cap.
   for (const pair of Object.values(UI)) strings.push(pair.zh, pair.en);
@@ -98,6 +105,17 @@ test("all 500 site-copy bundles are deterministic and use fictional contacts", (
     assert.match(first.contactAddress.zh, /^示例地址 · /, `${meta.slug}: zh address looks real`);
     assert.match(first.contactAddress.en, /^Sample address · /, `${meta.slug}: en address looks real`);
   }
+});
+
+test("chart captions depend on both industry and subcategory", () => {
+  const hotpot = chartTitle("food", "火锅", "hotpot", "zh");
+  assert.equal(hotpot, "火锅：接待与预订量持续增长");
+  assert.notEqual(hotpot, chartTitle("tech", "火锅", "hotpot", "zh"));
+  assert.notEqual(hotpot, chartTitle("food", "西餐", "western", "zh"));
+  assert.equal(
+    chartTitle("hardware", "机械设备", "machinery", "en"),
+    "Machinery: product and equipment delivery keeps growing",
+  );
 });
 
 test("no long sentence from W3b appears in more than 25 sites", (t) => {
