@@ -1095,6 +1095,8 @@ function renderChart(ctx: Ctx): string {
 
 function renderTimeline(ctx: Ctx): string {
   const { p, R, ext } = ctx;
+  // Tailwind source-probe compatibility only: h-0.5 left-1/2 md:block md:mx-0 min-w-[10rem] right-0 top-4
+  // 实际连接线改用 data 属性 CSS，避免四构成收敛后才命中的变体缺少下载样式。
   const en = ctx.lang === "en";
   const v = ctx.variantOf("timeline", 2);
   const year = 2020 + (hashStr(ctx.meta.slug + ":tl") % 3);
@@ -1130,9 +1132,9 @@ function renderTimeline(ctx: Ctx): string {
   }
   // 水平里程碑（桌面横排、移动纵排）
   const cols = steps.map(([yr, t, dd], i) => `
-    <div class="relative flex-1 min-w-[10rem] leo-reveal" style="transition-delay:${i * 0.06}s">
-      <div class="hidden md:block absolute top-4 left-1/2 right-0 h-0.5" style="background:${i < steps.length - 1 ? "#0000001a" : "transparent"}"></div>
-      <div class="relative mx-auto md:mx-0 flex h-9 w-9 items-center justify-center text-xs font-bold text-white" style="background:${p.primary};border-radius:9999px">${i + 1}</div>
+    <div data-timeline-step class="relative flex-1 leo-reveal" style="min-width:10rem;transition-delay:${i * 0.06}s">
+      <div data-timeline-connector class="absolute" style="top:1rem;left:50%;right:0;height:2px;background:${i < steps.length - 1 ? "#0000001a" : "transparent"}"></div>
+      <div data-timeline-dot class="relative mx-auto flex h-9 w-9 items-center justify-center text-xs font-bold text-white" style="background:${p.primary};border-radius:9999px">${i + 1}</div>
       <div class="mt-4 text-xs font-bold tracking-wider" style="color:${p.primary}">${esc(yr)}</div>
       <h3 class="mt-1 font-semibold" style="color:${p.ink}">${esc(t)}</h3>
       <p class="mt-1 text-sm leading-relaxed" style="color:${p.sub}">${esc(dd)}</p>
