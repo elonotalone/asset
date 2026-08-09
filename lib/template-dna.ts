@@ -171,25 +171,25 @@ export const SHAPE_SECTION_BLUEPRINTS: Record<
   Record<string, readonly BlueprintSection[]>
 > = {
   s3: {
-    home: ["sigFsIntro", "sigFsPanel", "sigFsSplit", "sigFsPanel", "cta"],
+    home: ["sigFsIntro", "features", "sigFsPanel", "sigFsSplit", "sigFsPanel", "cta"],
     about: ["pageHeader", "about", "gallery", "team", "cta"],
     contact: ["pageHeader", "contact"],
   },
   s4: {
-    home: ["hero", "gallery", "about", "cta"],
+    home: ["hero", "features", "gallery", "about", "cta"],
     main: ["pageHeader", "main", "cases", "testimonials", "cta"],
     about: ["pageHeader", "about", "stats", "main", "cta"],
     contact: ["pageHeader", "contact"],
   },
   s5: {
-    home: ["hero", "gallery", "main", "marquee", "testimonials", "cta"],
+    home: ["hero", "features", "gallery", "main", "marquee", "testimonials", "cta"],
     main: ["pageHeader", "main", "process", "pricing", "cta"],
     cases: ["pageHeader", "gallery", "cases", "cta"],
     about: ["pageHeader", "about", "team", "logos", "cta"],
     contact: ["pageHeader", "contact"],
   },
   s6: {
-    home: ["hero", "marquee", "about", "main", "stats", "cases", "cta"],
+    home: ["hero", "marquee", "features", "about", "main", "stats", "cases", "cta"],
     main: ["pageHeader", "main", "process", "faq", "cta"],
     cases: ["pageHeader", "cases", "chart", "testimonials", "cta"],
     about: ["pageHeader", "about", "timeline", "team", "cta"],

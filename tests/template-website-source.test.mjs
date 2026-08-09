@@ -178,8 +178,12 @@ test("A3 槽位齐全：行业照片走站内路径，人物位保留可编辑�
       }
     }
   }
-  // 抽样应覆盖全部 38 种 kind（21 个布局家族 × 每族的页面序列足以铺满）。
-  for (const kind of ALL_SECTION_KINDS) {
+  // 招牌只在 HTML 渲染时替换；中间结构抽样应覆盖全量 500 真正会产出的每种 kind。
+  const emittedKinds = new Set(ALL.flatMap((meta) => {
+    const dna = dnaFor(meta.slug, meta.industryKey, meta.variant);
+    return Object.values(dna.layout.sections).flat();
+  }));
+  for (const kind of emittedKinds) {
     assert.ok(kindsSeen.has(kind), `抽样没覆盖 ${kind}，判据不算齐`);
   }
 });
@@ -231,7 +235,7 @@ test("B1 接口 B 一致性：content 字段名不越界、数组有数据、foo
   }
 });
 
-test("B2 归并与降级按接口 B 记账：marquee → logos(display=marquee)，sig* 落共享类型", () => {
+test("B2 归并与降级按接口 B 记账：中间结构存语义名，HTML 再换成招牌", () => {
   const seen = new Map();
   for (const { meta, industry, sub } of sample().map(withTaxonomy)) {
     const st = buildTemplateStructure(meta, industry, sub);
@@ -245,8 +249,17 @@ test("B2 归并与降级按接口 B 记账：marquee → logos(display=marquee)�
     }
   }
   assert.equal(seen.get("marquee"), "logos");
-  assert.equal(seen.get("sigNeonHero"), "hero");
-  assert.equal(seen.get("sigStickerCta"), "cta");
+  assert.equal(SECTION_TYPE_MAP.sigStickerCta, "cta");
+
+  const neon = ALL.find((meta) => dnaFor(meta.slug, meta.industryKey, meta.variant).skin.key === "neon");
+  assert.ok(neon, "500 件货没有霓虹套装");
+  const { meta, industry, sub } = withTaxonomy(neon);
+  const rendered = renderTemplateBilingual(meta, industry, sub).html;
+  assert.match(
+    rendered,
+    /data-section-kind="hero" data-skin-block="sigNeonHero"/,
+    `${meta.slug}: 霓虹招牌没有在 HTML 渲染阶段替换 hero`,
+  );
 });
 
 test("B3 源码树：清单 entrypoint 指向 index.html，工程对象与运行时齐全", () => {
