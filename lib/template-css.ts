@@ -69,6 +69,9 @@ export function classNamesIn(html: string): Set<string> {
 const GENERATED_CLASSES = new Set<string>(TAILWIND_CLASS_NAMES);
 const MARKER_CLASSES = new Set<string>(TAILWIND_MARKER_CLASSES);
 const TEMPLATE_INLINE_CLASSES = new Set<string>(TEMPLATE_INLINE_CLASS_NAMES);
+// 运行时基础样式始终由 effectsStyles() 随站发出；这一个组合选择器在旧生成表里
+// 未被抽到，但规则确实存在于 assets/site.css，不能把它当成缺 Tailwind utility。
+const RUNTIME_INLINE_CLASSES = new Set<string>(["leo-from-right"]);
 
 /**
  * 页面自己的 <style> 仍承载 leo-*、nav-link 等非 Tailwind 类。它们已经随 HTML
@@ -104,6 +107,7 @@ export function missingClasses(html: string): string[] {
         !GENERATED_CLASSES.has(className) &&
         !MARKER_CLASSES.has(className) &&
         !TEMPLATE_INLINE_CLASSES.has(className) &&
+        !RUNTIME_INLINE_CLASSES.has(className) &&
         !inline.has(className),
     )
     .sort();

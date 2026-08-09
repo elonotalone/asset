@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { dnaFor } from "../lib/template-dna.ts";
+import { missingClasses } from "../lib/template-css.ts";
 import { emitStandaloneSite } from "../lib/template-emit-site.ts";
 import { skinForDna } from "../lib/template-engine.ts";
 import { SKINS } from "../lib/template-skins.ts";
@@ -38,6 +39,7 @@ test("每件站只发自己的一套装与一个特效，不夹带另外九套�
     const { html, css, site } = emit(sample);
     assert.match(html, new RegExp(`<html[^>]+data-skin="${skinKey}"`));
     assert.match(html, /data-section-kind="[^"]+" data-skin-block="[^"]+"/);
+    assert.deepEqual(missingClasses(html), [], `${sample.meta.slug}: 拆分样式后仍有漏类`);
     assert.deepEqual(
       [...css.matchAll(/\/\* skin:([a-z]+) \*\//g)].map((match) => match[1]),
       [skinKey],
