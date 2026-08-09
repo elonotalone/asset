@@ -8,6 +8,11 @@
 
 import { hashStr } from "./hash";
 import { copyPoolFor } from "./content-pools/industry-copy";
+import {
+  MENU_GROUPS_BY_SUB,
+  PRODUCT_NOUNS_BY_SUB,
+  WORK_TITLES_BY_SUB,
+} from "./content-pools/main-offerings";
 
 export interface CaseItem {
   title: string;
@@ -62,7 +67,7 @@ export interface ExtContent {
   logos: string[];
 }
 
-function rot<T>(arr: T[], seed: number, i: number): T {
+function rot<T>(arr: readonly T[], seed: number, i: number): T {
   return arr[(seed + i) % arr.length];
 }
 
@@ -79,12 +84,16 @@ export function buildExt(
   slug: string,
   industryKey: string,
   subLabel: string,
+  subKey = "",
 ): ExtContent {
   const seed = hashStr(slug + ":ext");
   const pool = copyPoolFor(industryKey);
+  const workTitles = WORK_TITLES_BY_SUB[subKey];
 
   const cases: CaseItem[] = Array.from({ length: 6 }, (_, i) => ({
-    title: `${subLabel} · ${pick(pool.themes, slug, "case-title", i)}演示`,
+    title: workTitles
+      ? `${subLabel} · ${rot(workTitles, seed, i)}演示`
+      : `${subLabel} · ${pick(pool.themes, slug, "case-title", i)}演示`,
     tag: pick(pool.themes, slug, "case-tag", i),
     desc: `本条${subLabel}演示内容聚焦${pick(pool.themes, slug, "case-theme", i)}，通过${pick(pool.actions, slug, "case-action", i)}推进，并以${pick(pool.evidence, slug, "case-evidence", i)}呈现结果。`,
   }));
@@ -102,29 +111,42 @@ export function buildExt(
   }));
 
   // 商品、菜单只会由相应 section 消费；名称和金额均明确标为演示内容。
+  // 子类目录存在时，卡片先说清「卖的到底是什么」，不再把行业做事动作当成货。
   const priceBase = 39 + (seed % 60);
+  const productNouns = PRODUCT_NOUNS_BY_SUB[subKey];
   const products: ProductItem[] = Array.from({ length: 8 }, (_, i) => ({
-    name: `${subLabel}演示·${pick(pool.offerings, slug, "product", i)}`,
+    name: productNouns
+      ? `${subLabel}演示·${rot(productNouns, seed, i)}·${i < 4 ? "甲款" : "乙款"}`
+      : `${subLabel}演示·${pick(pool.offerings, slug, "product", i)}`,
     price: `示例 ¥${priceBase + i * 30}`,
     note: i % 2 === 0 ? "展示样品" : "信息待改",
   }));
 
-  const menu: MenuGroup[] = [
-    {
-      group: "示例搭配",
-      items: Array.from({ length: 4 }, (_, i) => ({
-        name: `${subLabel}演示·${pick(pool.offerings, slug, "menu-a", i)}`,
-        price: `示例 ¥${28 + ((seed + i) % 40)}`,
-      })),
-    },
-    {
-      group: "更多示例",
-      items: Array.from({ length: 4 }, (_, i) => ({
-        name: `${subLabel}演示·${pick(pool.offerings, slug, "menu-b", i + 4)}`,
-        price: `示例 ¥${18 + ((seed + i * 2) % 30)}`,
-      })),
-    },
-  ];
+  const menuCatalog = MENU_GROUPS_BY_SUB[subKey];
+  const menu: MenuGroup[] = menuCatalog
+    ? menuCatalog.map((group, groupIndex) => ({
+        group: group.name.zh,
+        items: group.items.map((_, itemIndex) => ({
+          name: `${subLabel}演示·${rot(group.items, seed + groupIndex, itemIndex).zh}`,
+          price: `示例 ¥${18 + ((seed + groupIndex * 11 + itemIndex * 3) % 42)}`,
+        })),
+      }))
+    : [
+        {
+          group: "示例搭配",
+          items: Array.from({ length: 4 }, (_, i) => ({
+            name: `${subLabel}演示·${pick(pool.offerings, slug, "menu-a", i)}`,
+            price: `示例 ¥${28 + ((seed + i) % 40)}`,
+          })),
+        },
+        {
+          group: "更多示例",
+          items: Array.from({ length: 4 }, (_, i) => ({
+            name: `${subLabel}演示·${pick(pool.offerings, slug, "menu-b", i + 4)}`,
+            price: `示例 ¥${18 + ((seed + i * 2) % 30)}`,
+          })),
+        },
+      ];
 
   const faq: FaqItem[] = [
     {

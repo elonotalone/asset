@@ -15,6 +15,11 @@
 import { Industry, SubCategory, TemplateMeta } from "./template-taxonomy";
 import { buildContent, SiteContent, Feature, ServiceItem, Stat, Testimonial } from "./template-content";
 import { buildExt, ExtContent, CaseItem, NewsItem, TeamMember, ProductItem, MenuGroup, FaqItem, PricingPlan, ProcessStep } from "./template-content-ext";
+import {
+  MENU_GROUPS_BY_SUB,
+  PRODUCT_NOUNS_BY_SUB,
+  WORK_TITLES_BY_SUB,
+} from "./content-pools/main-offerings";
 import { dnaFor, type SectionKind } from "./template-dna";
 import { hashStr } from "./hash";
 import { Bi, bi, copyForSectionKinds, subEn, UI } from "./template-i18n";
@@ -306,14 +311,22 @@ export function buildBiExt(
   subLabelZh: string,
   subKey: string,
 ): BiExt {
-  const zh: ExtContent = buildExt(meta.slug, industryKey, subLabelZh);
+  const zh: ExtContent = buildExt(meta.slug, industryKey, subLabelZh, subKey);
   const sEn = subEn(subKey, industryKey);
   const seed = hashStr(meta.slug + ":ext");
   const tagsEn = CASE_TAGS_EN[industryKey] ?? CASE_TAGS_EN.general;
-  const rot = <T,>(arr: T[], s: number, i: number): T => arr[(s + i) % arr.length];
+  const rot = <T,>(arr: readonly T[], s: number, i: number): T => arr[(s + i) % arr.length];
+  const workTitles = WORK_TITLES_BY_SUB[subKey];
+  const productNouns = PRODUCT_NOUNS_BY_SUB[subKey];
+  const menuCatalog = MENU_GROUPS_BY_SUB[subKey];
 
   const cases: BiCase[] = zh.cases.map((c: CaseItem, i) => ({
-    title: bi(c.title, `${sEn} · ${rot(tagsEn, seed, i)} Project ${i + 1}`),
+    title: bi(
+      c.title,
+      workTitles
+        ? `${sEn} · Selected Work ${i + 1}`
+        : `${sEn} · ${rot(tagsEn, seed, i)} Project ${i + 1}`,
+    ),
     tag: bi(c.tag, rot(tagsEn, seed + 3, i)),
     desc: bi(c.desc, `Delivered an end-to-end ${sEn.toLowerCase()} solution with clear gains in key metrics and strong word-of-mouth.`),
   }));
@@ -331,15 +344,25 @@ export function buildBiExt(
   }));
 
   const products: BiProduct[] = zh.products.map((p: ProductItem, i) => ({
-    name: bi(p.name, `${sEn} Select ${String.fromCharCode(65 + i)}`),
+    name: bi(
+      p.name,
+      productNouns
+        ? `${sEn} · Sample Product ${String.fromCharCode(65 + i)}`
+        : `${sEn} Select ${String.fromCharCode(65 + i)}`,
+    ),
     price: p.price,
     note: bi(p.note, i % 2 === 0 ? "Best Seller" : "New"),
   }));
 
   const menu: BiMenuGroup[] = zh.menu.map((g: MenuGroup, gi) => ({
-    group: bi(g.group, gi === 0 ? "Signature" : "Popular Picks"),
+    group: bi(g.group, menuCatalog?.[gi]?.name.en ?? (gi === 0 ? "Signature" : "Popular Picks")),
     items: g.items.map((it, i) => ({
-      name: bi(it.name, `${gi === 0 ? "Signature" : "Popular"} ${sEn} ·${i + 1}`),
+      name: bi(
+        it.name,
+        menuCatalog?.[gi]
+          ? `${sEn} sample · ${rot(menuCatalog[gi].items, seed + gi, i).en}`
+          : `${gi === 0 ? "Signature" : "Popular"} ${sEn} ·${i + 1}`,
+      ),
       price: it.price,
     })),
   }));
