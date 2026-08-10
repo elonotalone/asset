@@ -16,12 +16,13 @@ import type { Density, FontKind, PageKey, Radius } from "./template-dna";
 // —— 页面构成 ——————————————————————————————————————————————
 
 export type ShapeKey = "s3" | "s4" | "s5" | "s6";
+export type ShapePageRole = "home" | "main" | "cases" | "about" | "news" | "contact";
 
 export interface Shape {
   key: ShapeKey;
   label: string;
   /** 导航顺序。`main` 是「主营」占位，实际页名由 mainPageLabel() 按行业给出。 */
-  pages: (PageKey | "main")[];
+  pages: ShapePageRole[];
   /** 货架上这一档卖给谁。 */
   forWhom: string;
 }
@@ -62,6 +63,54 @@ export const SHAPES: Shape[] = [
     forWhom: "要持续更新的正式官网",
   },
 ];
+
+/**
+ * 构成轴使用的稳定页面角色。`main` 最终会解析成当前行业的 services/products/menu/works，
+ * 其余角色与 website 工程对象的 page key 同名。
+ */
+const SHAPE_PAGE_ROLES: ShapePageRole[] = ["home", "main", "cases", "about", "news", "contact"];
+
+/**
+ * 换构成时每类原页面应落到目标构成的哪类页面。
+ *
+ * 构成变小不等于内容消失：目标没有资讯/案例/主营页时，整页板块按原顺序并入最近仍
+ * 存在的业务展示页。website 侧只搬 section，不重写 section content；因此六页换成
+ * 较小但仍高于行业下限的构成时，原字句和图片槽仍全部存在。
+ */
+export const SHAPE_CONTENT_PLACEMENT: Record<ShapeKey, Record<ShapePageRole, ShapePageRole>> = {
+  s3: {
+    home: "home",
+    main: "home",
+    cases: "home",
+    about: "about",
+    news: "home",
+    contact: "contact",
+  },
+  s4: {
+    home: "home",
+    main: "main",
+    cases: "main",
+    about: "about",
+    news: "main",
+    contact: "contact",
+  },
+  s5: {
+    home: "home",
+    main: "main",
+    cases: "cases",
+    about: "about",
+    news: "cases",
+    contact: "contact",
+  },
+  s6: {
+    home: "home",
+    main: "main",
+    cases: "cases",
+    about: "about",
+    news: "news",
+    contact: "contact",
+  },
+};
 
 // —— 构成下限：一个站凭什么落到某一档 ————————————————————
 
@@ -302,6 +351,40 @@ export const SKINS: Skin[] = [
   },
 ];
 
+// —— 文案口吻 ——————————————————————————————————————————————
+
+export type CopyToneKey = "balanced" | "concise" | "promotional";
+
+export interface CopyTone {
+  key: CopyToneKey;
+  label: string;
+  description: string;
+}
+
+/**
+ * 文案轴只改变表达方式，不改变事实、页面、板块或槽位。现有逐子类精修文案属于
+ * balanced；另外两档由编辑器基于同一份原文生成展示值，原文始终保留，切回来不丢字。
+ */
+export const COPY_TONES: CopyTone[] = [
+  {
+    key: "balanced",
+    label: "自然",
+    description: "信息完整、语气克制，保留模板的行业原文",
+  },
+  {
+    key: "concise",
+    label: "精简",
+    description: "缩短表达、突出结论，不改变原文事实与槽位",
+  },
+  {
+    key: "promotional",
+    label: "推广",
+    description: "强化价值与行动引导，不改变原文事实与槽位",
+  },
+];
+
+export const DEFAULT_COPY_TONE: CopyToneKey = "balanced";
+
 // —— 红线：装不能偏离主题 ————————————————————————————————
 
 /**
@@ -429,6 +512,139 @@ export function skinsFor(industryKey: string): SkinKey[] {
 export function mainPageLabel(industryKey: string, subKey?: string): string {
   if (subKey && MAIN_PAGE_LABEL_BY_SUB[subKey]) return MAIN_PAGE_LABEL_BY_SUB[subKey];
   return MAIN_PAGE_LABEL[industryKey] ?? "服务";
+}
+
+// —— website-source@1 三轴元数据 ——————————————————————————
+
+export const TEMPLATE_AXES_SCHEMA = "oceanleo.template-axes@1" as const;
+
+export interface ShapeAxisPage {
+  /** 不随行业变化的语义角色。 */
+  role: ShapePageRole;
+  /** website 工程对象实际使用的 page key；main 已解析成行业页。 */
+  key: PageKey;
+}
+
+export interface ShapeAxisOption {
+  key: ShapeKey;
+  label: string;
+  forWhom: string;
+  pages: ShapeAxisPage[];
+  /** 原 page key → 目标 page key；搬整段 sections，禁止丢弃。 */
+  contentPlacement: Record<string, PageKey>;
+}
+
+export interface TemplateAxesMetadata {
+  schema: typeof TEMPLATE_AXES_SCHEMA;
+  identity: {
+    industry: { key: string; label: string };
+    sub: { key: string; label: string };
+  };
+  shape: {
+    current: ShapeAxisOption;
+    floor: ShapeKey;
+    /** 只含 floor 及以上构成。 */
+    options: ShapeAxisOption[];
+  };
+  skin: {
+    current: Skin;
+    /** 只含 INDUSTRY_SKINS 准入的外观，且带应用外观所需的全部令牌。 */
+    options: Skin[];
+  };
+  copy: {
+    current: CopyTone;
+    options: CopyTone[];
+    /** 编辑器必须保留原文，以非破坏方式派生口吻。 */
+    preservation: "preserve-source-text";
+  };
+}
+
+export interface TemplateAxesInput {
+  industry: { key: string; label: string };
+  sub: { key: string; label: string };
+  shapeKey: ShapeKey;
+  skinKey: SkinKey;
+  /** 当前行业“主营”页实际落到的 website page key。 */
+  mainPageKey: PageKey;
+  copyTone?: CopyToneKey;
+}
+
+function pageKeyForRole(role: ShapePageRole, mainPageKey: PageKey): PageKey {
+  return role === "main" ? mainPageKey : role;
+}
+
+function shapeAxisOption(value: Shape, mainPageKey: PageKey): ShapeAxisOption {
+  const placement = SHAPE_CONTENT_PLACEMENT[value.key];
+  return {
+    key: value.key,
+    label: value.label,
+    forWhom: value.forWhom,
+    pages: value.pages.map((role) => ({
+      role,
+      key: pageKeyForRole(role, mainPageKey),
+    })),
+    contentPlacement: Object.fromEntries(
+      SHAPE_PAGE_ROLES.map((sourceRole) => [
+        pageKeyForRole(sourceRole, mainPageKey),
+        pageKeyForRole(placement[sourceRole], mainPageKey),
+      ]),
+    ),
+  };
+}
+
+function copyTone(key: CopyToneKey): CopyTone {
+  const found = COPY_TONES.find((candidate) => candidate.key === key);
+  if (!found) throw new Error(`未知的文案口吻：${key}`);
+  return { ...found };
+}
+
+function skinAxisOption(value: Skin): Skin {
+  return { ...value, palettes: [...value.palettes] };
+}
+
+/**
+ * 把散落的构成、下限、外观准入与文案口吻汇成 website 只需读取一次的稳定对象。
+ * 当前值若违反下限/准入，直接拒绝发射，不能把非法组合带进编辑器。
+ */
+export function templateAxesFor(input: TemplateAxesInput): TemplateAxesMetadata {
+  const floor = shapeFloor(input.industry.key, input.sub.key);
+  const floorIndex = SHAPE_ORDER.indexOf(floor);
+  const shapeOptions = SHAPES
+    .slice(floorIndex)
+    .map((value) => shapeAxisOption(value, input.mainPageKey));
+  const currentShape = shapeOptions.find((candidate) => candidate.key === input.shapeKey);
+  if (!currentShape) {
+    throw new Error(`${input.sub.key}: 当前构成 ${input.shapeKey} 低于下限 ${floor}`);
+  }
+
+  const allowedSkinKeys = skinsFor(input.industry.key);
+  if (!allowedSkinKeys.includes(input.skinKey)) {
+    throw new Error(`${input.industry.key}: 当前外观 ${input.skinKey} 不在行业准入表`);
+  }
+  const skinOptions = allowedSkinKeys.map((key) => skinAxisOption(skin(key)));
+  const toneKey = input.copyTone ?? DEFAULT_COPY_TONE;
+
+  return {
+    schema: TEMPLATE_AXES_SCHEMA,
+    identity: {
+      industry: { ...input.industry },
+      sub: { ...input.sub },
+    },
+    shape: {
+      current: currentShape,
+      floor,
+      options: shapeOptions,
+    },
+    skin: {
+      current: skinOptions.find((candidate) => candidate.key === input.skinKey)!,
+      options: skinOptions,
+    },
+    copy: {
+      current: copyTone(toneKey),
+      options: COPY_TONES.map((candidate) => ({ ...candidate })),
+      preservation: "preserve-source-text",
+    },
+  };
 }
 
 /**
