@@ -14,6 +14,25 @@
 import type { Lang } from "./template-i18n";
 import type { Industry, SubCategory, TemplateMeta } from "./template-taxonomy";
 import { hashStr } from "./hash";
+import {
+  SHAPE_SECTION_BLUEPRINTS,
+  dnaFor,
+  mainPageKey,
+  mainSectionKind,
+  type PageKey,
+  type SectionKind,
+  type TemplateDNA,
+} from "./template-dna";
+import {
+  COPY_TONES,
+  SHAPES,
+  shape as shapeByKey,
+  shapeFloor,
+  templateAxesFor,
+  type CopyToneKey,
+  type ShapeKey,
+  type TemplateAxesMetadata,
+} from "./template-skins";
 import { MIRROR_PUBLIC_DIR, SITE_IMAGE_DIR, sitePhotoPath } from "./template-photo-local";
 import { poolFallbackPhoto, poolPhoto } from "./template-photo-pool";
 import {
@@ -39,6 +58,7 @@ export const WEBSITE_SOURCE_SCHEMA = "website-source@1";
 export const SITE_CONFIG_PATH = "site.json";
 export const SITE_CONFIG_EN_PATH = "site.en.json";
 export const STRUCTURE_PATH = "oceanleo.template-structure.json";
+export const TEMPLATE_AXES_PATH = "oceanleo.template-axes.json";
 export const MANIFEST_PATH = "oceanleo.website-source.json";
 export const ENTRY_HTML = "index.html";
 
@@ -634,6 +654,180 @@ export function buildWebsiteSourceConfig(structure: TemplateStructureIR, lang: L
     sections: pages[0]?.sections ?? [],
     pages,
   };
+}
+
+// ————————————————————————————————————————————————————————————
+// 三轴元数据（website 轻编辑器直接消费）
+// ————————————————————————————————————————————————————————————
+
+const COPY_NON_TEXT_KEYS = new Set([
+  "href",
+  "url",
+  "keyword",
+  "icon",
+  "iconPath",
+  "chartType",
+  "display",
+]);
+
+const COPY_CONCISE_KEYS = new Set([
+  "subtitle",
+  "description",
+  "body",
+  "bio",
+  "quote",
+  "excerpt",
+  "answer",
+  "footnote",
+  "note",
+  "insight",
+]);
+
+function copyFieldId(pageId: string, sectionId: string, path: string[]): string {
+  return `page:${pageId}/section:${sectionId}/content:${path.join(".")}`;
+}
+
+function isCopyField(path: string[], value: string): boolean {
+  if (!value.trim()) return false;
+  const lower = path.map((part) => part.toLowerCase());
+  const leaf = lower.at(-1) ?? "";
+  if (COPY_NON_TEXT_KEYS.has(leaf) || leaf.endsWith("href") || leaf.endsWith("url")) return false;
+  if (lower.includes("image")) return false;
+  return true;
+}
+
+function conciseCopy(value: string): string {
+  const limit = /[\u3400-\u9fff]/.test(value) ? 42 : 96;
+  const sentenceEnd = value.search(/[。！？；.!?;]/);
+  if (sentenceEnd >= 6 && sentenceEnd < value.length - 1) {
+    return value.slice(0, sentenceEnd + 1).trim();
+  }
+  const clauseEnd = value.search(/[，,：:]/);
+  if (clauseEnd >= 6 && clauseEnd < value.length - 1) {
+    return value.slice(0, clauseEnd).trim();
+  }
+  if (value.length <= limit) return value;
+  return `${value.slice(0, limit).trimEnd()}…`;
+}
+
+function toneCopy(value: string, path: string[], tone: CopyToneKey): string {
+  if (tone === "balanced") return value;
+  const leaf = path.at(-1) ?? "";
+  if (tone === "concise") {
+    return COPY_CONCISE_KEYS.has(leaf) ? conciseCopy(value) : value;
+  }
+  const isActionLabel = /^(?:primary|secondary|submit|contact|link)?(?:Cta)?Label$/i.test(leaf);
+  if (leaf === "title" || isActionLabel) {
+    return /[！!？?。.]$/.test(value) ? value : `${value}${/[\u3400-\u9fff]/.test(value) ? "！" : "!"}`;
+  }
+  return value;
+}
+
+/**
+ * 为三档口吻生成同一组稳定字段 id。只改人读文案，不把 href、图片 URL、icon 或渲染
+ * 控制字段混进文案轴；balanced 保留工程对象原字节，另两档只提供展示替换值。
+ */
+export function buildCopyToneFields(
+  config: VirtualSiteConfigOut,
+): Record<CopyToneKey, Record<string, string>> {
+  const result = Object.fromEntries(
+    COPY_TONES.map((tone) => [tone.key, {}]),
+  ) as Record<CopyToneKey, Record<string, string>>;
+
+  for (const page of config.pages) {
+    for (const section of page.sections) {
+      const visit = (value: unknown, path: string[]): void => {
+        if (typeof value === "string") {
+          if (!isCopyField(path, value)) return;
+          const id = copyFieldId(page.id, section.id, path);
+          for (const tone of COPY_TONES) {
+            result[tone.key][id] = toneCopy(value, path, tone.key);
+          }
+          return;
+        }
+        if (Array.isArray(value)) {
+          value.forEach((item, index) => visit(item, [...path, String(index)]));
+          return;
+        }
+        if (value && typeof value === "object") {
+          for (const [key, item] of Object.entries(value as Record<string, unknown>)) {
+            visit(item, [...path, key]);
+          }
+        }
+      };
+      visit(section.content, []);
+    }
+  }
+  return result;
+}
+
+function dnaForShape(meta: TemplateMeta, shapeKey: ShapeKey): TemplateDNA {
+  const base = dnaFor(meta.slug, meta.industryKey, meta.variant);
+  const selectedShape = shapeByKey(shapeKey);
+  const mainKey = mainPageKey(meta.industryKey, meta.subKey);
+  const mainKind = mainSectionKind(mainKey);
+  const pages: PageKey[] = [];
+  const sections: Record<string, SectionKind[]> = {};
+
+  for (const semanticPage of selectedShape.pages) {
+    const pageKey: PageKey = semanticPage === "main" ? mainKey : semanticPage;
+    pages.push(pageKey);
+    sections[pageKey] = SHAPE_SECTION_BLUEPRINTS[shapeKey][semanticPage].map((section) =>
+      section === "main" ? mainKind : section,
+    ) as SectionKind[];
+  }
+
+  return {
+    ...base,
+    shape: selectedShape,
+    layout: {
+      key: selectedShape.key,
+      label: selectedShape.label,
+      pages,
+      sections,
+    },
+  };
+}
+
+/**
+ * 每个可选构成都随件携带完整 VirtualSitePage；website 增页无需 import asset，也无需
+ * 解析 HTML。缩页由 contentPlacement 搬整段 section，回切历史由 website 工程对象保留。
+ */
+export function buildTemplateAxesMetadata(
+  meta: TemplateMeta,
+  industry: Industry,
+  sub: SubCategory,
+  structure: TemplateStructureIR,
+  config: VirtualSiteConfigOut,
+): TemplateAxesMetadata<VirtualPageOut> {
+  const floor = shapeFloor(meta.industryKey, meta.subKey);
+  const floorIndex = SHAPES.findIndex((candidate) => candidate.key === floor);
+  const pageTemplates: Partial<Record<ShapeKey, VirtualPageOut[]>> = {};
+
+  for (const option of SHAPES.slice(floorIndex)) {
+    if (option.key === structure.theme.shapeKey) {
+      pageTemplates[option.key] = config.pages;
+      continue;
+    }
+    const optionStructure = buildTemplateStructure(
+      meta,
+      industry,
+      sub,
+      dnaForShape(meta, option.key),
+    );
+    pageTemplates[option.key] = buildWebsiteSourceConfig(optionStructure, "zh").pages;
+  }
+
+  return templateAxesFor({
+    industry: structure.industry,
+    sub: { key: structure.sub.key, label: structure.sub.label },
+    shapeKey: structure.theme.shapeKey,
+    skinKey: structure.theme.skinKey,
+    mainPageKey: structure.mainPage.key,
+    variant: structure.variant,
+    pageTemplates,
+    copyFields: buildCopyToneFields(config),
+  });
 }
 
 // ————————————————————————————————————————————————————————————
@@ -1291,6 +1485,7 @@ function readme(structure: TemplateStructureIR): string {
 | \`assets/styles.css\` | 全部样式；主色/圆角/字体走 CSS 变量 |
 | \`assets/app.js\` | 按工程对象渲染 22 类板块 |
 | \`${STRUCTURE_PATH}\` | 结构中间表示（含每节变体号与槽位角色），供校验与二次生成 |
+| \`${TEMPLATE_AXES_PATH}\` | 轻编辑三轴（构成 / 外观 / 文案）的当前值、准入选项与确定性换轴数据 |
 
 ## 本地预览
 
@@ -1319,6 +1514,7 @@ export interface WebsiteSourceBundle {
   structure: TemplateStructureIR;
   config: VirtualSiteConfigOut;
   configEn: VirtualSiteConfigOut;
+  axes: TemplateAxesMetadata<VirtualPageOut>;
   tree: SourceTree;
 }
 
@@ -1339,10 +1535,12 @@ export function buildWebsiteSourceBundle(
   const structure = buildTemplateStructure(meta, industry, sub);
   const config = buildWebsiteSourceConfig(structure, "zh");
   const configEn = buildWebsiteSourceConfig(structure, "en");
+  const axes = buildTemplateAxesMetadata(meta, industry, sub, structure, config);
   const siteFiles: SourceFile[] = [
     { path: ENTRY_HTML, mediaType: "text/html", text: indexHtml(structure, lang) },
     { path: SITE_CONFIG_PATH, mediaType: "application/json", text: `${JSON.stringify(config, null, 2)}\n` },
     { path: SITE_CONFIG_EN_PATH, mediaType: "application/json", text: `${JSON.stringify(configEn, null, 2)}\n` },
+    { path: TEMPLATE_AXES_PATH, mediaType: "application/json", text: `${JSON.stringify(axes, null, 2)}\n` },
     { path: "assets/styles.css", mediaType: "text/css", text: RUNTIME_CSS },
     { path: "assets/app.js", mediaType: "text/javascript", text: RUNTIME_JS },
     { path: "README.md", mediaType: "text/markdown", text: readme(structure) },
@@ -1356,7 +1554,7 @@ export function buildWebsiteSourceBundle(
   }
   // 工程对象与结构证据里引用到的每张图都随站点发运；去重后用 sourcePath 交给
   // node 调用方复制真实字节，lib 本身不碰 fs。
-  siteFiles.push(...imageSourceFiles(structure, config, configEn));
+  siteFiles.push(...imageSourceFiles(structure, config, configEn, axes));
   const sha = opts.sha256;
   const len = opts.byteLen ?? ((t: string) => new TextEncoder().encode(t).length);
   const manifest = manifestFor(siteFiles, sha ?? (() => ""), len);
@@ -1367,7 +1565,7 @@ export function buildWebsiteSourceBundle(
       ...siteFiles,
     ],
   };
-  return { structure, config, configEn, tree };
+  return { structure, config, configEn, axes, tree };
 }
 
 /** 素材选材键（website / make 两站按行业 / 子类 / 色系挑模板时用这几维）。 */
@@ -1381,6 +1579,8 @@ export function selectionKeysFor(structure: TemplateStructureIR) {
     colorKey: structure.colorKey,
     paletteKey: structure.theme.paletteKey,
     paletteFamily: structure.theme.paletteFamily,
+    shapeKey: structure.theme.shapeKey,
+    skinKey: structure.theme.skinKey,
     layoutKey: structure.theme.layoutKey,
     layoutLabel: structure.theme.layoutLabel,
     isSignature: structure.theme.isSignature,

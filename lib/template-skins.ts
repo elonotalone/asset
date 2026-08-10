@@ -518,71 +518,82 @@ export function mainPageLabel(industryKey: string, subKey?: string): string {
 
 export const TEMPLATE_AXES_SCHEMA = "oceanleo.template-axes@1" as const;
 
-export interface ShapeAxisPage {
-  /** 不随行业变化的语义角色。 */
-  role: ShapePageRole;
-  /** website 工程对象实际使用的 page key；main 已解析成行业页。 */
-  key: PageKey;
-}
-
-export interface ShapeAxisOption {
+export interface ShapeAxisOption<TPage = unknown> {
   key: ShapeKey;
   label: string;
   forWhom: string;
-  pages: ShapeAxisPage[];
+  /** 不随行业变化的有序语义角色；website 用它显示三页/四页/五页/六页。 */
+  pages: ShapePageRole[];
+  /** 换到该构成时可直接装入工程对象的完整页面。 */
+  pageTemplates: TPage[];
   /** 原 page key → 目标 page key；搬整段 sections，禁止丢弃。 */
   contentPlacement: Record<string, PageKey>;
 }
 
-export interface TemplateAxesMetadata {
-  schema: typeof TEMPLATE_AXES_SCHEMA;
-  identity: {
-    industry: { key: string; label: string };
-    sub: { key: string; label: string };
-  };
-  shape: {
-    current: ShapeAxisOption;
-    floor: ShapeKey;
-    /** 只含 floor 及以上构成。 */
-    options: ShapeAxisOption[];
-  };
-  skin: {
-    current: Skin;
-    /** 只含 INDUSTRY_SKINS 准入的外观，且带应用外观所需的全部令牌。 */
-    options: Skin[];
-  };
-  copy: {
-    current: CopyTone;
-    options: CopyTone[];
-    /** 编辑器必须保留原文，以非破坏方式派生口吻。 */
-    preservation: "preserve-source-text";
-  };
+export interface SkinAxisOption extends Skin {
+  /** 同一 template variant 在这套装中确定性选中的配色。 */
+  paletteKey: string;
+  /** website 的全局 typography 只需要这两个映射，不另造字体轴。 */
+  headingFont: FontKind;
+  bodyFont: "sans";
 }
 
-export interface TemplateAxesInput {
+export interface CopyToneAxisOption extends CopyTone {
+  /** 稳定 editor field id → 该口吻的展示文案。 */
+  fields: Record<string, string>;
+}
+
+export interface TemplateAxesMetadata<TPage = unknown> {
+  schema: typeof TEMPLATE_AXES_SCHEMA;
+  industryKey: string;
+  subKey: string;
+  shapeKey: ShapeKey;
+  shapeFloorKey: ShapeKey;
+  skinKey: SkinKey;
+  copyToneKey: CopyToneKey;
+  /** 只含 floor 及以上构成。 */
+  shapes: ShapeAxisOption<TPage>[];
+  /** 只含 INDUSTRY_SKINS 准入的外观，且带应用外观所需的全部令牌。 */
+  skins: SkinAxisOption[];
+  /** INDUSTRY_SKINS 的原序投影，website 再做一次闭集校验。 */
+  allowedSkinKeys: SkinKey[];
+  copyTones: CopyToneAxisOption[];
+  /** 编辑器必须保留原文，以非破坏方式派生口吻。 */
+  copyPreservation: "preserve-source-text";
+  /** fields 的稳定 id 格式；页面/板块均用 id，不用易漂移的数组下标。 */
+  copyFieldIdFormat: "page:<page-id>/section:<section-id>/content:<dotted-path>";
+}
+
+export interface TemplateAxesInput<TPage = unknown> {
   industry: { key: string; label: string };
   sub: { key: string; label: string };
   shapeKey: ShapeKey;
   skinKey: SkinKey;
   /** 当前行业“主营”页实际落到的 website page key。 */
   mainPageKey: PageKey;
+  /** 与 dnaFor 相同的 1-based variant，用来在一套装的 palette 池内确定落点。 */
+  variant?: number;
   copyTone?: CopyToneKey;
+  pageTemplates?: Partial<Record<ShapeKey, TPage[]>>;
+  copyFields?: Partial<Record<CopyToneKey, Record<string, string>>>;
 }
 
 function pageKeyForRole(role: ShapePageRole, mainPageKey: PageKey): PageKey {
   return role === "main" ? mainPageKey : role;
 }
 
-function shapeAxisOption(value: Shape, mainPageKey: PageKey): ShapeAxisOption {
+function shapeAxisOption<TPage>(
+  value: Shape,
+  mainPageKey: PageKey,
+  pageTemplates: TPage[],
+): ShapeAxisOption<TPage> {
   const placement = SHAPE_CONTENT_PLACEMENT[value.key];
   return {
     key: value.key,
     label: value.label,
     forWhom: value.forWhom,
-    pages: value.pages.map((role) => ({
-      role,
-      key: pageKeyForRole(role, mainPageKey),
-    })),
+    pages: [...value.pages],
+    pageTemplates: [...pageTemplates],
     contentPlacement: Object.fromEntries(
       SHAPE_PAGE_ROLES.map((sourceRole) => [
         pageKeyForRole(sourceRole, mainPageKey),
@@ -598,20 +609,33 @@ function copyTone(key: CopyToneKey): CopyTone {
   return { ...found };
 }
 
-function skinAxisOption(value: Skin): Skin {
-  return { ...value, palettes: [...value.palettes] };
+function skinAxisOption(value: Skin, variant: number): SkinAxisOption {
+  const index = Math.max(0, Math.trunc(variant) - 1) % value.palettes.length;
+  return {
+    ...value,
+    palettes: [...value.palettes],
+    paletteKey: value.palettes[index],
+    headingFont: value.font,
+    bodyFont: "sans",
+  };
 }
 
 /**
  * 把散落的构成、下限、外观准入与文案口吻汇成 website 只需读取一次的稳定对象。
  * 当前值若违反下限/准入，直接拒绝发射，不能把非法组合带进编辑器。
  */
-export function templateAxesFor(input: TemplateAxesInput): TemplateAxesMetadata {
+export function templateAxesFor<TPage = unknown>(
+  input: TemplateAxesInput<TPage>,
+): TemplateAxesMetadata<TPage> {
   const floor = shapeFloor(input.industry.key, input.sub.key);
   const floorIndex = SHAPE_ORDER.indexOf(floor);
   const shapeOptions = SHAPES
     .slice(floorIndex)
-    .map((value) => shapeAxisOption(value, input.mainPageKey));
+    .map((value) => shapeAxisOption(
+      value,
+      input.mainPageKey,
+      input.pageTemplates?.[value.key] ?? [],
+    ));
   const currentShape = shapeOptions.find((candidate) => candidate.key === input.shapeKey);
   if (!currentShape) {
     throw new Error(`${input.sub.key}: 当前构成 ${input.shapeKey} 低于下限 ${floor}`);
@@ -621,29 +645,27 @@ export function templateAxesFor(input: TemplateAxesInput): TemplateAxesMetadata 
   if (!allowedSkinKeys.includes(input.skinKey)) {
     throw new Error(`${input.industry.key}: 当前外观 ${input.skinKey} 不在行业准入表`);
   }
-  const skinOptions = allowedSkinKeys.map((key) => skinAxisOption(skin(key)));
+  const skinOptions = allowedSkinKeys.map((key) => skinAxisOption(skin(key), input.variant ?? 1));
   const toneKey = input.copyTone ?? DEFAULT_COPY_TONE;
+  copyTone(toneKey);
 
   return {
     schema: TEMPLATE_AXES_SCHEMA,
-    identity: {
-      industry: { ...input.industry },
-      sub: { ...input.sub },
-    },
-    shape: {
-      current: currentShape,
-      floor,
-      options: shapeOptions,
-    },
-    skin: {
-      current: skinOptions.find((candidate) => candidate.key === input.skinKey)!,
-      options: skinOptions,
-    },
-    copy: {
-      current: copyTone(toneKey),
-      options: COPY_TONES.map((candidate) => ({ ...candidate })),
-      preservation: "preserve-source-text",
-    },
+    industryKey: input.industry.key,
+    subKey: input.sub.key,
+    shapeKey: currentShape.key,
+    shapeFloorKey: floor,
+    skinKey: skinOptions.find((candidate) => candidate.key === input.skinKey)!.key,
+    copyToneKey: toneKey,
+    shapes: shapeOptions,
+    skins: skinOptions,
+    allowedSkinKeys: [...allowedSkinKeys],
+    copyTones: COPY_TONES.map((candidate) => ({
+      ...candidate,
+      fields: { ...(input.copyFields?.[candidate.key] ?? {}) },
+    })),
+    copyPreservation: "preserve-source-text",
+    copyFieldIdFormat: "page:<page-id>/section:<section-id>/content:<dotted-path>",
   };
 }
 
