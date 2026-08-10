@@ -30,7 +30,7 @@ import {
   type SectionKind,
   type TemplateDNA,
 } from "./template-dna";
-import { mainPageLabel } from "./template-skins";
+import { mainPageLabel, type ShapeKey, type SkinKey } from "./template-skins";
 import { poolFallbackPhoto, poolPhoto } from "./template-photo-pool";
 import { sitePhotoPath } from "./template-photo-local";
 import {
@@ -152,8 +152,11 @@ export interface PageIR {
 }
 
 export interface ThemeIR {
+  shapeKey: ShapeKey;
   layoutKey: string;
   layoutLabel: string;
+  skinKey: SkinKey;
+  skinLabel: string;
   paletteKey: string;
   paletteLabel: string;
   paletteFamily: string;
@@ -190,6 +193,8 @@ export interface TemplateStructureIR {
   description: BiText;
   contact: { phone: string; email: string; address: BiText };
   footerSlogan: BiText;
+  /** 主营占位解析后的真实 website page key；即使当前 s3 没有主营页也保留。 */
+  mainPage: { key: PageKey; label: BiText };
   theme: ThemeIR;
   nav: { key: PageKey; path: string; label: BiText }[];
   pages: PageIR[];
@@ -1384,9 +1389,13 @@ export function buildTemplateStructure(
       address: bi(zh.c.contactAddress, en.c.contactAddress),
     },
     footerSlogan: bi(zh.c.footerSlogan, en.c.footerSlogan),
+    mainPage: { key: siteMainPageKey, label: siteMainLabel },
     theme: {
+      shapeKey: dna.shape.key,
       layoutKey: dna.layout.key,
       layoutLabel: dna.layout.label,
+      skinKey: dna.skin.key,
+      skinLabel: dna.skin.label,
       paletteKey: p.key,
       paletteLabel: p.label,
       paletteFamily: p.family,
