@@ -308,7 +308,9 @@ function revealCls(kind: SectionKind): string {
 function wrapSectionReveal(
   html: string,
   kind: SectionKind,
-  visualKind: SectionKind = kind,
+  // Home skins can paint a signature block (sig*) while the semantic kind stays
+  // a normal SectionKind — visualKind is wider than the DNA section union.
+  visualKind: SectionKind | SignatureSectionKind = kind,
 ): string {
   const marked = html.replace(
     /<section(?=\s|>)/,
