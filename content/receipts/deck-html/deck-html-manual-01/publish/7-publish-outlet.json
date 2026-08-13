@@ -1,0 +1,182 @@
+{
+  "shelf-row": {
+    "$object": "shelf-row@published",
+    "status": "published",
+    "title": "社区共享书屋落地手册：从选点到开放日",
+    "summary": "六周把一间 20 平方米的闲置房开成书屋：选点、分拣、上架、物料、值守、开放日，一页一步，每一步都是能照着做的动作，末页是打勾才算交付的检查清单。",
+    "tags": [
+      "html-deck",
+      "操作手册",
+      "步骤教程",
+      "blueprint"
+    ],
+    "download_kind": "artifact_rendition",
+    "preview_key": "assets/image/tpl-material/wo-h1-deck-html-manual-01-v1-0.webp",
+    "siteKey": "ppt",
+    "site_key": "ppt",
+    "appId": "public-lesson",
+    "app_id": "public-lesson",
+    "position": 6,
+    "id": "ppt-public-lesson-6",
+    "previewKey": "assets/image/tpl-material/wo-h1-deck-html-manual-01-v1-0.webp",
+    "ownerPrincipalId": "platform",
+    "owner_principal_id": "platform",
+    "artifactId": "7d63fbff-8376-4232-b7c6-dd2b06253ceb",
+    "artifact_id": "7d63fbff-8376-4232-b7c6-dd2b06253ceb",
+    "artifactRevisionId": "1bb64b2f-7127-4416-a063-8d2e8d1dc1c6",
+    "artifact_revision_id": "1bb64b2f-7127-4416-a063-8d2e8d1dc1c6",
+    "artifactType": "deck",
+    "artifact_type": "deck",
+    "downloadKind": "artifact_rendition"
+  },
+  "receipt": {
+    "schema": "oceanleo.publish-receipt/v1",
+    "gate": "publish",
+    "at": "2026-08-13T16:52:49.270Z",
+    "input": {
+      "orderId": "wo-h1-deck-html-manual-01-v1",
+      "itemIndex": 0,
+      "templateId": "ppt-public-lesson-6",
+      "artifactRevisionId": "1bb64b2f-7127-4416-a063-8d2e8d1dc1c6",
+      "contentDigest": "3b25d226f8af2392e4f626a9c4dd1469994d132ab2fb687ea85f0415b4546355",
+      "objects": [
+        "work-order",
+        "bill-of-materials",
+        "artifact-bytes",
+        "attested-artifact",
+        "shelf-row"
+      ],
+      "receiptKey": "66a0706bb2004f7a4efbd1405e792b9b10112bf4e5b24cfec1cc7c288f796dd7"
+    },
+    "passed": [
+      {
+        "checkId": "PUB-05",
+        "title": "许可档位在货架白名单里(读冻结值,不按 license_code 现算)",
+        "expected": "零义务档,直接过",
+        "actual": "first-party"
+      },
+      {
+        "checkId": "PUB-06",
+        "title": "署名/许可正文已随字节交付",
+        "expected": "无带义务原料,本条空转",
+        "actual": "0 件带义务原料(判据源:terms_snapshot.materials[]（第 6 步归并后的最终认定）)"
+      },
+      {
+        "checkId": "PUB-08",
+        "title": "成品自身可被独立取走(许可与来源三键)",
+        "expected": "成品自身可独立分发",
+        "actual": "standalone/byte-portable"
+      }
+    ],
+    "blocked": [],
+    "generatedBy": "scripts/material-infra/publish/shelf-writer.mjs",
+    "gitSha": "7f9c5db68",
+    "receiptDigest": "350f30058891990a9b32a8676a4654be2664fedf729219224603c5a88488ec9e"
+  },
+  "write-receipt": {
+    "schema": "oceanleo.shelf-write-receipt/v1",
+    "at": "2026-08-13T16:52:49.275Z",
+    "generatedBy": "scripts/material-infra/publish/shelf-writer.mjs",
+    "templateId": "ppt-public-lesson-6",
+    "artifactId": "7d63fbff-8376-4232-b7c6-dd2b06253ceb",
+    "artifactRevisionId": "1bb64b2f-7127-4416-a063-8d2e8d1dc1c6",
+    "gateReceiptDigest": "350f30058891990a9b32a8676a4654be2664fedf729219224603c5a88488ec9e",
+    "gateReceiptKey": "66a0706bb2004f7a4efbd1405e792b9b10112bf4e5b24cfec1cc7c288f796dd7",
+    "preconditions": {
+      "passed": true,
+      "checked": true
+    },
+    "written": {
+      "registry": true,
+      "contextsCreated": 0,
+      "bindingsCreated": 1,
+      "cover": {
+        "status": "uploaded",
+        "keys": {
+          "full": "assets/image/tpl-material/wo-h1-deck-html-manual-01-v1-0.webp",
+          "thumb": "assets/image/tpl-material/wo-h1-deck-html-manual-01-v1-0.thumb.webp"
+        },
+        "before": [
+          {
+            "purpose": "preview",
+            "key": "assets/image/tpl-material/wo-h1-deck-html-manual-01-v1-0.webp",
+            "head": {
+              "status": 404,
+              "bytes": 434,
+              "type": "application/xml"
+            }
+          },
+          {
+            "purpose": "thumbnail",
+            "key": "assets/image/tpl-material/wo-h1-deck-html-manual-01-v1-0.thumb.webp",
+            "head": {
+              "status": 404,
+              "bytes": 440,
+              "type": "application/xml"
+            }
+          }
+        ],
+        "after": [
+          {
+            "purpose": "preview",
+            "key": "assets/image/tpl-material/wo-h1-deck-html-manual-01-v1-0.webp",
+            "head": {
+              "status": 200,
+              "bytes": 20960,
+              "type": "image/webp"
+            }
+          },
+          {
+            "purpose": "thumbnail",
+            "key": "assets/image/tpl-material/wo-h1-deck-html-manual-01-v1-0.thumb.webp",
+            "head": {
+              "status": 200,
+              "bytes": 20960,
+              "type": "image/webp"
+            }
+          }
+        ],
+        "putCount": 2,
+        "missingDestinations": [
+          {
+            "purpose": "preview",
+            "key": "assets/image/tpl-material/wo-h1-deck-html-manual-01-v1-0.webp",
+            "head": {
+              "status": 404,
+              "bytes": 434,
+              "type": "application/xml"
+            }
+          },
+          {
+            "purpose": "thumbnail",
+            "key": "assets/image/tpl-material/wo-h1-deck-html-manual-01-v1-0.thumb.webp",
+            "head": {
+              "status": 404,
+              "bytes": 440,
+              "type": "application/xml"
+            }
+          }
+        ]
+      }
+    },
+    "verified": {
+      "ok": true,
+      "problems": []
+    },
+    "download": {
+      "url": "https://api.oceanleo.com/v1/template-materials/ppt-public-lesson-6/download",
+      "status": 200,
+      "contentType": "application/vnd.oceanleo.deck+json; charset=utf-8",
+      "receivedBytes": 17067,
+      "comparable": true,
+      "problems": [],
+      "recordedBytes": 17067,
+      "recordedSha256": "3b25d226f8af2392e4f626a9c4dd1469994d132ab2fb687ea85f0415b4546355",
+      "receivedSha256": "3b25d226f8af2392e4f626a9c4dd1469994d132ab2fb687ea85f0415b4546355"
+    },
+    "acceptance": {
+      "passed": [],
+      "blocked": []
+    }
+  }
+}

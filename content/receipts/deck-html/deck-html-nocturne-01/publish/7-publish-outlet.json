@@ -1,0 +1,182 @@
+{
+  "shelf-row": {
+    "$object": "shelf-row@published",
+    "status": "published",
+    "title": "夜间海岸观测：2026 年度影像汇报",
+    "summary": "一年 17 个观测夜的汇报：整页夜景压字，一页只讲一句话——哪三个浮标失联了、最值钱的六小时出现在什么时候、交班该提前多久。",
+    "tags": [
+      "html-deck",
+      "年度汇报",
+      "图像主导",
+      "neon"
+    ],
+    "download_kind": "artifact_rendition",
+    "preview_key": "assets/image/tpl-material/wo-h1-deck-html-nocturne-01-v1-0.webp",
+    "siteKey": "ppt",
+    "site_key": "ppt",
+    "appId": "year-summary",
+    "app_id": "year-summary",
+    "position": 6,
+    "id": "ppt-year-summary-6",
+    "previewKey": "assets/image/tpl-material/wo-h1-deck-html-nocturne-01-v1-0.webp",
+    "ownerPrincipalId": "platform",
+    "owner_principal_id": "platform",
+    "artifactId": "7e40ddbf-a4e5-4c51-8072-b8ff275c98b0",
+    "artifact_id": "7e40ddbf-a4e5-4c51-8072-b8ff275c98b0",
+    "artifactRevisionId": "55590698-12e1-4c08-9736-3637eda10b8c",
+    "artifact_revision_id": "55590698-12e1-4c08-9736-3637eda10b8c",
+    "artifactType": "deck",
+    "artifact_type": "deck",
+    "downloadKind": "artifact_rendition"
+  },
+  "receipt": {
+    "schema": "oceanleo.publish-receipt/v1",
+    "gate": "publish",
+    "at": "2026-08-13T16:51:22.662Z",
+    "input": {
+      "orderId": "wo-h1-deck-html-nocturne-01-v1",
+      "itemIndex": 0,
+      "templateId": "ppt-year-summary-6",
+      "artifactRevisionId": "55590698-12e1-4c08-9736-3637eda10b8c",
+      "contentDigest": "dd0b1edcb4e291fdaf074bf850036bf7117c29e565b0898aa9965a0bb8fb971f",
+      "objects": [
+        "work-order",
+        "bill-of-materials",
+        "artifact-bytes",
+        "attested-artifact",
+        "shelf-row"
+      ],
+      "receiptKey": "109dce9100c8df4d61355896aec6690d43ce5615bc24f75f9335d01fc402b911"
+    },
+    "passed": [
+      {
+        "checkId": "PUB-05",
+        "title": "许可档位在货架白名单里(读冻结值,不按 license_code 现算)",
+        "expected": "零义务档,直接过",
+        "actual": "first-party"
+      },
+      {
+        "checkId": "PUB-06",
+        "title": "署名/许可正文已随字节交付",
+        "expected": "无带义务原料,本条空转",
+        "actual": "0 件带义务原料(判据源:terms_snapshot.materials[]（第 6 步归并后的最终认定）)"
+      },
+      {
+        "checkId": "PUB-08",
+        "title": "成品自身可被独立取走(许可与来源三键)",
+        "expected": "成品自身可独立分发",
+        "actual": "standalone/byte-portable"
+      }
+    ],
+    "blocked": [],
+    "generatedBy": "scripts/material-infra/publish/shelf-writer.mjs",
+    "gitSha": "56320ba1a",
+    "receiptDigest": "0420a5c918477bb165bb4e4d50d0df9f6d5d9c263653ff58ad45b0fdd2d53f39"
+  },
+  "write-receipt": {
+    "schema": "oceanleo.shelf-write-receipt/v1",
+    "at": "2026-08-13T16:51:22.668Z",
+    "generatedBy": "scripts/material-infra/publish/shelf-writer.mjs",
+    "templateId": "ppt-year-summary-6",
+    "artifactId": "7e40ddbf-a4e5-4c51-8072-b8ff275c98b0",
+    "artifactRevisionId": "55590698-12e1-4c08-9736-3637eda10b8c",
+    "gateReceiptDigest": "0420a5c918477bb165bb4e4d50d0df9f6d5d9c263653ff58ad45b0fdd2d53f39",
+    "gateReceiptKey": "109dce9100c8df4d61355896aec6690d43ce5615bc24f75f9335d01fc402b911",
+    "preconditions": {
+      "passed": true,
+      "checked": true
+    },
+    "written": {
+      "registry": true,
+      "contextsCreated": 0,
+      "bindingsCreated": 1,
+      "cover": {
+        "status": "uploaded",
+        "keys": {
+          "full": "assets/image/tpl-material/wo-h1-deck-html-nocturne-01-v1-0.webp",
+          "thumb": "assets/image/tpl-material/wo-h1-deck-html-nocturne-01-v1-0.thumb.webp"
+        },
+        "before": [
+          {
+            "purpose": "preview",
+            "key": "assets/image/tpl-material/wo-h1-deck-html-nocturne-01-v1-0.webp",
+            "head": {
+              "status": 404,
+              "bytes": 436,
+              "type": "application/xml"
+            }
+          },
+          {
+            "purpose": "thumbnail",
+            "key": "assets/image/tpl-material/wo-h1-deck-html-nocturne-01-v1-0.thumb.webp",
+            "head": {
+              "status": 404,
+              "bytes": 442,
+              "type": "application/xml"
+            }
+          }
+        ],
+        "after": [
+          {
+            "purpose": "preview",
+            "key": "assets/image/tpl-material/wo-h1-deck-html-nocturne-01-v1-0.webp",
+            "head": {
+              "status": 200,
+              "bytes": 50692,
+              "type": "image/webp"
+            }
+          },
+          {
+            "purpose": "thumbnail",
+            "key": "assets/image/tpl-material/wo-h1-deck-html-nocturne-01-v1-0.thumb.webp",
+            "head": {
+              "status": 200,
+              "bytes": 50692,
+              "type": "image/webp"
+            }
+          }
+        ],
+        "putCount": 2,
+        "missingDestinations": [
+          {
+            "purpose": "preview",
+            "key": "assets/image/tpl-material/wo-h1-deck-html-nocturne-01-v1-0.webp",
+            "head": {
+              "status": 404,
+              "bytes": 436,
+              "type": "application/xml"
+            }
+          },
+          {
+            "purpose": "thumbnail",
+            "key": "assets/image/tpl-material/wo-h1-deck-html-nocturne-01-v1-0.thumb.webp",
+            "head": {
+              "status": 404,
+              "bytes": 442,
+              "type": "application/xml"
+            }
+          }
+        ]
+      }
+    },
+    "verified": {
+      "ok": true,
+      "problems": []
+    },
+    "download": {
+      "url": "https://api.oceanleo.com/v1/template-materials/ppt-year-summary-6/download",
+      "status": 200,
+      "contentType": "application/vnd.oceanleo.deck+json; charset=utf-8",
+      "receivedBytes": 9392,
+      "comparable": true,
+      "problems": [],
+      "recordedBytes": 9392,
+      "recordedSha256": "dd0b1edcb4e291fdaf074bf850036bf7117c29e565b0898aa9965a0bb8fb971f",
+      "receivedSha256": "dd0b1edcb4e291fdaf074bf850036bf7117c29e565b0898aa9965a0bb8fb971f"
+    },
+    "acceptance": {
+      "passed": [],
+      "blocked": []
+    }
+  }
+}

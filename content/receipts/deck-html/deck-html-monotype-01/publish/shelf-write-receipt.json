@@ -1,0 +1,106 @@
+{
+  "schema": "oceanleo.shelf-write-receipt/v1",
+  "at": "2026-08-13T16:52:43.480Z",
+  "generatedBy": "scripts/material-infra/publish/shelf-writer.mjs",
+  "templateId": "ppt-report-duty-6",
+  "artifactId": "aa2d4d9c-2360-4eb9-8d99-bcc56e3580e0",
+  "artifactRevisionId": "fe3bff44-2545-4e26-9d4f-f07b0137a6b9",
+  "gateReceiptDigest": "234c4d3bdd01d926628a01267a702eb07c7d1230ca8c798773c695d03b8dac6a",
+  "gateReceiptKey": "4d25f1e56991ff0fdc42949c5698fdd3d391df9df38bdaf11b623415c4974700",
+  "preconditions": {
+    "passed": true,
+    "checked": true
+  },
+  "written": {
+    "registry": true,
+    "contextsCreated": 0,
+    "bindingsCreated": 1,
+    "cover": {
+      "status": "uploaded",
+      "keys": {
+        "full": "assets/image/tpl-material/wo-h1-deck-html-monotype-01-v1-0.webp",
+        "thumb": "assets/image/tpl-material/wo-h1-deck-html-monotype-01-v1-0.thumb.webp"
+      },
+      "before": [
+        {
+          "purpose": "preview",
+          "key": "assets/image/tpl-material/wo-h1-deck-html-monotype-01-v1-0.webp",
+          "head": {
+            "status": 404,
+            "bytes": 436,
+            "type": "application/xml"
+          }
+        },
+        {
+          "purpose": "thumbnail",
+          "key": "assets/image/tpl-material/wo-h1-deck-html-monotype-01-v1-0.thumb.webp",
+          "head": {
+            "status": 404,
+            "bytes": 442,
+            "type": "application/xml"
+          }
+        }
+      ],
+      "after": [
+        {
+          "purpose": "preview",
+          "key": "assets/image/tpl-material/wo-h1-deck-html-monotype-01-v1-0.webp",
+          "head": {
+            "status": 200,
+            "bytes": 25050,
+            "type": "image/webp"
+          }
+        },
+        {
+          "purpose": "thumbnail",
+          "key": "assets/image/tpl-material/wo-h1-deck-html-monotype-01-v1-0.thumb.webp",
+          "head": {
+            "status": 200,
+            "bytes": 25050,
+            "type": "image/webp"
+          }
+        }
+      ],
+      "putCount": 2,
+      "missingDestinations": [
+        {
+          "purpose": "preview",
+          "key": "assets/image/tpl-material/wo-h1-deck-html-monotype-01-v1-0.webp",
+          "head": {
+            "status": 404,
+            "bytes": 436,
+            "type": "application/xml"
+          }
+        },
+        {
+          "purpose": "thumbnail",
+          "key": "assets/image/tpl-material/wo-h1-deck-html-monotype-01-v1-0.thumb.webp",
+          "head": {
+            "status": 404,
+            "bytes": 442,
+            "type": "application/xml"
+          }
+        }
+      ]
+    }
+  },
+  "verified": {
+    "ok": true,
+    "problems": []
+  },
+  "download": {
+    "url": "https://api.oceanleo.com/v1/template-materials/ppt-report-duty-6/download",
+    "status": 200,
+    "contentType": "application/vnd.oceanleo.deck+json; charset=utf-8",
+    "receivedBytes": 8695,
+    "comparable": true,
+    "problems": [],
+    "recordedBytes": 8695,
+    "recordedSha256": "9a62eb63cd76a62dfd53eb94f36baa17b4fda2c208712f23e26f5890c3b8ec9f",
+    "receivedSha256": "9a62eb63cd76a62dfd53eb94f36baa17b4fda2c208712f23e26f5890c3b8ec9f"
+  },
+  "acceptance": {
+    "passed": [],
+    "blocked": []
+  }
+}

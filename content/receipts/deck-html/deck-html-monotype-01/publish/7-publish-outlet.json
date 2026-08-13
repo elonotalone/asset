@@ -1,0 +1,182 @@
+{
+  "shelf-row": {
+    "$object": "shelf-row@published",
+    "status": "published",
+    "title": "会议成本备忘：一场全员周会，一年 1,880 小时",
+    "summary": "一份不用一张图的内部备忘：先把五类固定会议的人时账算清，再摆四条反对意见并逐条回应，最后给三处改动和一个复算日期。",
+    "tags": [
+      "html-deck",
+      "内部复盘",
+      "数据备忘",
+      "editorial"
+    ],
+    "download_kind": "artifact_rendition",
+    "preview_key": "assets/image/tpl-material/wo-h1-deck-html-monotype-01-v1-0.webp",
+    "siteKey": "ppt",
+    "site_key": "ppt",
+    "appId": "report-duty",
+    "app_id": "report-duty",
+    "position": 6,
+    "id": "ppt-report-duty-6",
+    "previewKey": "assets/image/tpl-material/wo-h1-deck-html-monotype-01-v1-0.webp",
+    "ownerPrincipalId": "platform",
+    "owner_principal_id": "platform",
+    "artifactId": "aa2d4d9c-2360-4eb9-8d99-bcc56e3580e0",
+    "artifact_id": "aa2d4d9c-2360-4eb9-8d99-bcc56e3580e0",
+    "artifactRevisionId": "fe3bff44-2545-4e26-9d4f-f07b0137a6b9",
+    "artifact_revision_id": "fe3bff44-2545-4e26-9d4f-f07b0137a6b9",
+    "artifactType": "deck",
+    "artifact_type": "deck",
+    "downloadKind": "artifact_rendition"
+  },
+  "receipt": {
+    "schema": "oceanleo.publish-receipt/v1",
+    "gate": "publish",
+    "at": "2026-08-13T16:52:43.475Z",
+    "input": {
+      "orderId": "wo-h1-deck-html-monotype-01-v1",
+      "itemIndex": 0,
+      "templateId": "ppt-report-duty-6",
+      "artifactRevisionId": "fe3bff44-2545-4e26-9d4f-f07b0137a6b9",
+      "contentDigest": "9a62eb63cd76a62dfd53eb94f36baa17b4fda2c208712f23e26f5890c3b8ec9f",
+      "objects": [
+        "work-order",
+        "bill-of-materials",
+        "artifact-bytes",
+        "attested-artifact",
+        "shelf-row"
+      ],
+      "receiptKey": "4d25f1e56991ff0fdc42949c5698fdd3d391df9df38bdaf11b623415c4974700"
+    },
+    "passed": [
+      {
+        "checkId": "PUB-05",
+        "title": "许可档位在货架白名单里(读冻结值,不按 license_code 现算)",
+        "expected": "零义务档,直接过",
+        "actual": "first-party"
+      },
+      {
+        "checkId": "PUB-06",
+        "title": "署名/许可正文已随字节交付",
+        "expected": "无带义务原料,本条空转",
+        "actual": "0 件带义务原料(判据源:terms_snapshot.materials[]（第 6 步归并后的最终认定）)"
+      },
+      {
+        "checkId": "PUB-08",
+        "title": "成品自身可被独立取走(许可与来源三键)",
+        "expected": "成品自身可独立分发",
+        "actual": "standalone/byte-portable"
+      }
+    ],
+    "blocked": [],
+    "generatedBy": "scripts/material-infra/publish/shelf-writer.mjs",
+    "gitSha": "7f9c5db68",
+    "receiptDigest": "234c4d3bdd01d926628a01267a702eb07c7d1230ca8c798773c695d03b8dac6a"
+  },
+  "write-receipt": {
+    "schema": "oceanleo.shelf-write-receipt/v1",
+    "at": "2026-08-13T16:52:43.480Z",
+    "generatedBy": "scripts/material-infra/publish/shelf-writer.mjs",
+    "templateId": "ppt-report-duty-6",
+    "artifactId": "aa2d4d9c-2360-4eb9-8d99-bcc56e3580e0",
+    "artifactRevisionId": "fe3bff44-2545-4e26-9d4f-f07b0137a6b9",
+    "gateReceiptDigest": "234c4d3bdd01d926628a01267a702eb07c7d1230ca8c798773c695d03b8dac6a",
+    "gateReceiptKey": "4d25f1e56991ff0fdc42949c5698fdd3d391df9df38bdaf11b623415c4974700",
+    "preconditions": {
+      "passed": true,
+      "checked": true
+    },
+    "written": {
+      "registry": true,
+      "contextsCreated": 0,
+      "bindingsCreated": 1,
+      "cover": {
+        "status": "uploaded",
+        "keys": {
+          "full": "assets/image/tpl-material/wo-h1-deck-html-monotype-01-v1-0.webp",
+          "thumb": "assets/image/tpl-material/wo-h1-deck-html-monotype-01-v1-0.thumb.webp"
+        },
+        "before": [
+          {
+            "purpose": "preview",
+            "key": "assets/image/tpl-material/wo-h1-deck-html-monotype-01-v1-0.webp",
+            "head": {
+              "status": 404,
+              "bytes": 436,
+              "type": "application/xml"
+            }
+          },
+          {
+            "purpose": "thumbnail",
+            "key": "assets/image/tpl-material/wo-h1-deck-html-monotype-01-v1-0.thumb.webp",
+            "head": {
+              "status": 404,
+              "bytes": 442,
+              "type": "application/xml"
+            }
+          }
+        ],
+        "after": [
+          {
+            "purpose": "preview",
+            "key": "assets/image/tpl-material/wo-h1-deck-html-monotype-01-v1-0.webp",
+            "head": {
+              "status": 200,
+              "bytes": 25050,
+              "type": "image/webp"
+            }
+          },
+          {
+            "purpose": "thumbnail",
+            "key": "assets/image/tpl-material/wo-h1-deck-html-monotype-01-v1-0.thumb.webp",
+            "head": {
+              "status": 200,
+              "bytes": 25050,
+              "type": "image/webp"
+            }
+          }
+        ],
+        "putCount": 2,
+        "missingDestinations": [
+          {
+            "purpose": "preview",
+            "key": "assets/image/tpl-material/wo-h1-deck-html-monotype-01-v1-0.webp",
+            "head": {
+              "status": 404,
+              "bytes": 436,
+              "type": "application/xml"
+            }
+          },
+          {
+            "purpose": "thumbnail",
+            "key": "assets/image/tpl-material/wo-h1-deck-html-monotype-01-v1-0.thumb.webp",
+            "head": {
+              "status": 404,
+              "bytes": 442,
+              "type": "application/xml"
+            }
+          }
+        ]
+      }
+    },
+    "verified": {
+      "ok": true,
+      "problems": []
+    },
+    "download": {
+      "url": "https://api.oceanleo.com/v1/template-materials/ppt-report-duty-6/download",
+      "status": 200,
+      "contentType": "application/vnd.oceanleo.deck+json; charset=utf-8",
+      "receivedBytes": 8695,
+      "comparable": true,
+      "problems": [],
+      "recordedBytes": 8695,
+      "recordedSha256": "9a62eb63cd76a62dfd53eb94f36baa17b4fda2c208712f23e26f5890c3b8ec9f",
+      "receivedSha256": "9a62eb63cd76a62dfd53eb94f36baa17b4fda2c208712f23e26f5890c3b8ec9f"
+    },
+    "acceptance": {
+      "passed": [],
+      "blocked": []
+    }
+  }
+}

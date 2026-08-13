@@ -1,0 +1,106 @@
+{
+  "schema": "oceanleo.shelf-write-receipt/v1",
+  "at": "2026-08-13T16:52:49.275Z",
+  "generatedBy": "scripts/material-infra/publish/shelf-writer.mjs",
+  "templateId": "ppt-public-lesson-6",
+  "artifactId": "7d63fbff-8376-4232-b7c6-dd2b06253ceb",
+  "artifactRevisionId": "1bb64b2f-7127-4416-a063-8d2e8d1dc1c6",
+  "gateReceiptDigest": "350f30058891990a9b32a8676a4654be2664fedf729219224603c5a88488ec9e",
+  "gateReceiptKey": "66a0706bb2004f7a4efbd1405e792b9b10112bf4e5b24cfec1cc7c288f796dd7",
+  "preconditions": {
+    "passed": true,
+    "checked": true
+  },
+  "written": {
+    "registry": true,
+    "contextsCreated": 0,
+    "bindingsCreated": 1,
+    "cover": {
+      "status": "uploaded",
+      "keys": {
+        "full": "assets/image/tpl-material/wo-h1-deck-html-manual-01-v1-0.webp",
+        "thumb": "assets/image/tpl-material/wo-h1-deck-html-manual-01-v1-0.thumb.webp"
+      },
+      "before": [
+        {
+          "purpose": "preview",
+          "key": "assets/image/tpl-material/wo-h1-deck-html-manual-01-v1-0.webp",
+          "head": {
+            "status": 404,
+            "bytes": 434,
+            "type": "application/xml"
+          }
+        },
+        {
+          "purpose": "thumbnail",
+          "key": "assets/image/tpl-material/wo-h1-deck-html-manual-01-v1-0.thumb.webp",
+          "head": {
+            "status": 404,
+            "bytes": 440,
+            "type": "application/xml"
+          }
+        }
+      ],
+      "after": [
+        {
+          "purpose": "preview",
+          "key": "assets/image/tpl-material/wo-h1-deck-html-manual-01-v1-0.webp",
+          "head": {
+            "status": 200,
+            "bytes": 20960,
+            "type": "image/webp"
+          }
+        },
+        {
+          "purpose": "thumbnail",
+          "key": "assets/image/tpl-material/wo-h1-deck-html-manual-01-v1-0.thumb.webp",
+          "head": {
+            "status": 200,
+            "bytes": 20960,
+            "type": "image/webp"
+          }
+        }
+      ],
+      "putCount": 2,
+      "missingDestinations": [
+        {
+          "purpose": "preview",
+          "key": "assets/image/tpl-material/wo-h1-deck-html-manual-01-v1-0.webp",
+          "head": {
+            "status": 404,
+            "bytes": 434,
+            "type": "application/xml"
+          }
+        },
+        {
+          "purpose": "thumbnail",
+          "key": "assets/image/tpl-material/wo-h1-deck-html-manual-01-v1-0.thumb.webp",
+          "head": {
+            "status": 404,
+            "bytes": 440,
+            "type": "application/xml"
+          }
+        }
+      ]
+    }
+  },
+  "verified": {
+    "ok": true,
+    "problems": []
+  },
+  "download": {
+    "url": "https://api.oceanleo.com/v1/template-materials/ppt-public-lesson-6/download",
+    "status": 200,
+    "contentType": "application/vnd.oceanleo.deck+json; charset=utf-8",
+    "receivedBytes": 17067,
+    "comparable": true,
+    "problems": [],
+    "recordedBytes": 17067,
+    "recordedSha256": "3b25d226f8af2392e4f626a9c4dd1469994d132ab2fb687ea85f0415b4546355",
+    "receivedSha256": "3b25d226f8af2392e4f626a9c4dd1469994d132ab2fb687ea85f0415b4546355"
+  },
+  "acceptance": {
+    "passed": [],
+    "blocked": []
+  }
+}

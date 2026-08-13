@@ -1,0 +1,51 @@
+{
+  "schema": "oceanleo.h1f2-shelf-publish-readback/v1",
+  "id": "deck-html-monotype-01",
+  "artifactId": "aa2d4d9c-2360-4eb9-8d99-bcc56e3580e0",
+  "artifactRevisionId": "fe3bff44-2545-4e26-9d4f-f07b0137a6b9",
+  "before": {
+    "shelfRows": 0,
+    "contextBindings": 0,
+    "note": "ingest/execute.mjs --verify-only at 2026-08-13T16:45Z, problems=[] identitySurplus=null"
+  },
+  "after": {
+    "shelfRowsActive": 1,
+    "shelfRowsAny": 1,
+    "shelfRow": {
+      "id": "ppt-report-duty-6",
+      "site_key": "ppt",
+      "app_id": "report-duty",
+      "position": 6,
+      "status": "published",
+      "artifact_type": "deck",
+      "download_kind": "artifact_rendition",
+      "preview_key": "assets/image/tpl-material/wo-h1-deck-html-monotype-01-v1-0.webp",
+      "owner_principal_id": "platform",
+      "artifact_id": "aa2d4d9c-2360-4eb9-8d99-bcc56e3580e0",
+      "artifact_revision_id": "fe3bff44-2545-4e26-9d4f-f07b0137a6b9"
+    },
+    "contextBindingsActive": 1,
+    "contextBinding": {
+      "binding_id": "295ebd01-1e0d-4dd1-881f-f00407326b48",
+      "context_id": "72cafc00-d736-513d-a90a-5a66494360b5",
+      "revision_id": "fe3bff44-2545-4e26-9d4f-f07b0137a6b9",
+      "rank": 6,
+      "binding_role": "template",
+      "external_context_id": "olctx:v1:ppt:app:report-duty",
+      "site_key": "ppt",
+      "app_id": "report-duty",
+      "kind": "app"
+    },
+    "headRevisionId": "fe3bff44-2545-4e26-9d4f-f07b0137a6b9",
+    "deliveryFamily": "html",
+    "sourceFormat": "oceanleo.deck.v1",
+    "runtimeUrl": "https://s-7e967a18f4e078e87d374566c8cb34de.oceanleo.app/embed",
+    "runtimePublished": "false",
+    "fullRendition": {
+      "format": "html",
+      "purpose": "full",
+      "blob_sha256": "66abbd67e34bbc85049f671f9fd45309603f05ddd47e1c514f280b87d54d2d0c",
+      "byte_size": 47170
+    }
+  }
+}

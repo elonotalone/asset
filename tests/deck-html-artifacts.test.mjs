@@ -76,6 +76,9 @@ test("three official HTML decks close source, preview, runtime and receipt bytes
   const resolverVerification = readJson(
     "content/receipts/deck-html/source-resolver-verification.json",
   );
+  const publishSummary = readJson(
+    "content/receipts/deck-html/shelf-publish-summary.json",
+  );
 
   assert.deepEqual(
     works.map((item) => item.id),
@@ -96,11 +99,21 @@ test("three official HTML decks close source, preview, runtime and receipt bytes
   );
   assert.equal(summary.count, 3);
   assert.equal(resolverVerification.ok, true);
+  assert.deepEqual(
+    publishSummary.items.map((item) => item.id),
+    IDS,
+  );
+  assert.equal(publishSummary.count, 3);
+  // F9 runtime publish 不归本席执行，货架发布也不许假装它已经发生。
+  assert.equal(publishSummary.runtimePublishExecuted, false);
+  assert.equal(publishSummary.blocker.id, "H1F2-RUNTIME-NOT-PUBLISHED");
 
   assert.equal(new Set(works.map((item) => item.styleId)).size, 3);
   assert.equal(new Set(summary.items.map((item) => item.purpose)).size, 3);
   const artifactIds = new Set();
   const revisionIds = new Set();
+  const shelfRowIds = new Set();
+  const contextIds = new Set();
 
   for (const work of works) {
     assert.equal(work.artifactType, "deck");
@@ -273,9 +286,76 @@ test("three official HTML decks close source, preview, runtime and receipt bytes
     assert.equal(resolverReadback.sourceSha256, repaired.source.sha256);
     assert.equal(resolverReadback.payloadResolverCount, receipt.sourceMedia.length);
     assert.equal(resolverReadback.media.length, receipt.sourceMedia.length);
+    const gate = readJson(
+      `content/receipts/deck-html/${work.id}/publish/gate-receipt.json`,
+    );
+    const written = readJson(
+      `content/receipts/deck-html/${work.id}/publish/shelf-write-receipt.json`,
+    );
+    const readback = readJson(
+      `content/receipts/deck-html/${work.id}/publish/shelf-readback.json`,
+    );
+    const outlet = readJson(
+      `content/receipts/deck-html/${work.id}/publish/7-publish-outlet.json`,
+    );
+    const published = publishSummary.items.find((item) => item.id === work.id);
+
+    assert.equal(gate.gate, "publish");
+    assert.deepEqual(gate.blocked, []);
+    assert.equal(gate.input.artifactRevisionId, repaired.revisionId);
+    assert.equal(written.artifactRevisionId, repaired.revisionId);
+    assert.equal(written.preconditions.passed, true);
+    assert.equal(written.verified.ok, true);
+    assert.deepEqual(written.verified.problems, []);
+    assert.equal(written.written.registry, true);
+    assert.deepEqual(
+      written.written.cover.after.map((entry) => entry.head.status),
+      [200, 200],
+    );
+    assert.equal(written.download.status, 200);
+    assert.deepEqual(written.download.problems, []);
+    assert.equal(
+      written.download.receivedSha256,
+      written.download.recordedSha256,
+    );
+    assert.equal(written.download.receivedSha256, repaired.source.sha256);
+    assert.equal(outlet["shelf-row"].$object, "shelf-row@published");
+    assert.equal(outlet["shelf-row"].status, "published");
+
+    // 修复前后的真实库读数：0 → 1，且不是靠静态卡片充数。
+    assert.equal(readback.before.shelfRows, 0);
+    assert.equal(readback.before.contextBindings, 0);
+    assert.equal(readback.after.shelfRowsActive, 1);
+    assert.equal(readback.after.shelfRowsAny, 1);
+    assert.equal(readback.after.contextBindingsActive, 1);
+    assert.equal(readback.after.headRevisionId, repaired.revisionId);
+    assert.equal(readback.after.contextBinding.revision_id, repaired.revisionId);
+    assert.equal(readback.after.shelfRow.artifact_revision_id, repaired.revisionId);
+    assert.equal(readback.after.shelfRow.artifact_type, "deck");
+    assert.equal(readback.after.shelfRow.status, "published");
+    assert.equal(readback.after.shelfRow.site_key, "ppt");
+    assert.equal(readback.after.deliveryFamily, "html");
+    assert.equal(readback.after.sourceFormat, "oceanleo.deck.v1");
+    assert.equal(readback.after.fullRendition.format, "html");
+    assert.equal(
+      readback.after.fullRendition.blob_sha256,
+      receipt.fullRendition.sha256,
+    );
+    // 查看入口只能是 F9 算出来的隔离域身份，不许手拼。
+    assert.equal(readback.after.runtimeUrl, planItem.entryUrl);
+    assert.equal(readback.after.runtimePublished, "false");
+
+    assert.equal(published.shelfRowId, readback.after.shelfRow.id);
+    assert.equal(published.contextBindingId, readback.after.contextBinding.binding_id);
+    assert.equal(published.runtime.published, false);
+    shelfRowIds.add(published.shelfRowId);
+    contextIds.add(published.contextId);
+
     artifactIds.add(repaired.artifactId);
     revisionIds.add(repaired.revisionId);
   }
   assert.equal(artifactIds.size, 3);
   assert.equal(revisionIds.size, 3);
+  assert.equal(shelfRowIds.size, 3);
+  assert.equal(contextIds.size, 3);
 });
