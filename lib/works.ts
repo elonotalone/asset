@@ -13,6 +13,7 @@ import path from "node:path";
 import {
   ARTIFACT_TYPE_LABELS,
   ARTIFACT_TYPE_ORDER,
+  deckDeliveryFamilyFrom,
   isActiveRuntimeUrl,
   isArtifactType,
   isViewKind,
@@ -54,13 +55,26 @@ export interface WorksCatalog {
 
 const WORKS_DIR = path.join(process.cwd(), "content", "works");
 const PUBLIC_DIR = path.join(process.cwd(), "public");
-const ACTIVE_RUNTIME_MANIFEST_PATH = path.join(
-  process.cwd(),
-  "content",
-  "active-runtime",
-  "manifest.game-website.json",
-);
-const ACTIVE_RUNTIME_PLAN_PATH = path.join(process.cwd(), "active-runtime-plan.json");
+const ACTIVE_RUNTIME_INPUTS = [
+  {
+    manifest: path.join(
+      process.cwd(),
+      "content",
+      "active-runtime",
+      "manifest.game-website.json",
+    ),
+    plan: path.join(process.cwd(), "active-runtime-plan.json"),
+  },
+  {
+    manifest: path.join(
+      process.cwd(),
+      "content",
+      "active-runtime",
+      "manifest.deck-html.json",
+    ),
+    plan: path.join(process.cwd(), "active-runtime-plan.deck-html.json"),
+  },
+] as const;
 const MAX_RUNTIME_JSON_BYTES = 1024 * 1024;
 const ACTIVE_RUNTIME_SCHEMA = "oceanleo.active-runtime-manifest.v1";
 const ACTIVE_RUNTIME_PLAN_SCHEMA = "oceanleo.active-runtime-plan.v1";
@@ -211,7 +225,7 @@ function sameRuntimeItem(left: ActiveRuntimeManifestItem, right: ActiveRuntimeMa
 }
 
 /**
- * F9 manifest fragment 决定哪些 game/website 有运行闭包，plan 侧车决定能不能打开。
+ * F9 manifest fragment 决定哪些主动成品有运行闭包，plan 侧车决定能不能打开。
  * 任一 item 缺失、重复、形状不闭合或 URL 歪掉时只关闭该 item，不猜 host、不回退本站。
  */
 export function activeRuntimeUrlsFrom(
@@ -265,6 +279,26 @@ export function activeRuntimeUrlsFrom(
   return urls;
 }
 
+/** 只把 F9 URL 交给与清单家族相符的主动成品；同 id 的其他 representation 不沾边。 */
+export function runtimeUrlForWork(
+  work: Pick<WorkEntry, "id" | "artifactType" | "deliveryFamily" | "sourceFile" | "view">,
+  urls: ReadonlyMap<string, string>,
+): string | undefined {
+  const runtime = urls.get(work.id);
+  if (!isActiveRuntimeUrl(runtime)) return undefined;
+  if (work.artifactType === "game") return work.view.kind === "game" ? runtime : undefined;
+  if (work.artifactType === "website") {
+    return work.view.kind === "website" ? runtime : undefined;
+  }
+  if (work.artifactType === "deck") {
+    return work.view.kind === "deck" &&
+      deckDeliveryFamilyFrom(work.deliveryFamily, work.sourceFile) === "html"
+      ? runtime
+      : undefined;
+  }
+  return undefined;
+}
+
 function readBoundedJson(absolutePath: string): unknown {
   try {
     const stat = lstatSync(absolutePath);
@@ -276,10 +310,23 @@ function readBoundedJson(absolutePath: string): unknown {
 }
 
 function loadActiveRuntimeUrls(): Map<string, string> {
-  return activeRuntimeUrlsFrom(
-    readBoundedJson(ACTIVE_RUNTIME_MANIFEST_PATH),
-    readBoundedJson(ACTIVE_RUNTIME_PLAN_PATH),
-  );
+  const merged = new Map<string, string>();
+  const collisions = new Set<string>();
+  for (const input of ACTIVE_RUNTIME_INPUTS) {
+    const urls = activeRuntimeUrlsFrom(
+      readBoundedJson(input.manifest),
+      readBoundedJson(input.plan),
+    );
+    for (const [id, url] of urls) {
+      if (merged.has(id)) {
+        merged.delete(id);
+        collisions.add(id);
+      } else if (!collisions.has(id)) {
+        merged.set(id, url);
+      }
+    }
+  }
+  return merged;
 }
 
 /** 站内绝对路径 → public 下的真实文件绝对路径。`..`、越界、查询串一律判失败。 */
@@ -445,6 +492,23 @@ function parseEntry(raw: unknown, file: string, problems: string[]): WorkEntry |
     problems.push(`artifactType=${JSON.stringify(e.artifactType)} 不在 14 类里`);
     return null;
   }
+  const deliveryFamily =
+    e.artifactType === "deck"
+      ? deckDeliveryFamilyFrom(e.deliveryFamily, file)
+      : null;
+  if (e.artifactType === "deck" && !deliveryFamily) {
+    problems.push(
+      `deck deliveryFamily=${JSON.stringify(e.deliveryFamily)} 与清单 ${file} 不一致`,
+    );
+    return null;
+  }
+  if (
+    e.artifactType !== "deck" &&
+    Object.prototype.hasOwnProperty.call(e, "deliveryFamily")
+  ) {
+    problems.push(`deliveryFamily 只允许用于 deck，收到 ${e.artifactType}`);
+    return null;
+  }
   if (!nonEmptyString(e.title)) {
     problems.push("title 缺失");
     return null;
@@ -474,10 +538,24 @@ function parseEntry(raw: unknown, file: string, problems: string[]): WorkEntry |
       return null;
     }
   }
+  if (e.artifactType === "deck" && deliveryFamily === "html") {
+    if (
+      view.kind !== "deck" ||
+      !view.source ||
+      view.src !== view.source ||
+      !view.pages?.length
+    ) {
+      problems.push(
+        "HTML deck 必须是 kind=deck，src/source 指向同一份结构稿，并带逐页静态预览",
+      );
+      return null;
+    }
+  }
 
   return {
     id: e.id,
     artifactType: e.artifactType,
+    ...(deliveryFamily ? { deliveryFamily } : {}),
     title: e.title,
     styleId: nonEmptyString(e.styleId) ? e.styleId : "",
     summary: nonEmptyString(e.summary) ? e.summary : "",
@@ -542,13 +620,8 @@ function readCatalog(): WorksCatalog {
         return;
       }
       seen.set(entry.id, file);
-      const runtime = runtimeUrls.get(entry.id);
-      if (
-        runtime &&
-        (entry.artifactType === "game" || entry.artifactType === "website")
-      ) {
-        entry.view.runtime = runtime;
-      }
+      const runtime = runtimeUrlForWork(entry, runtimeUrls);
+      if (runtime) entry.view.runtime = runtime;
       works.push(entry);
     });
   }

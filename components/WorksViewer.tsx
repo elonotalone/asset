@@ -725,6 +725,36 @@ function RuntimeAction({
   );
 }
 
+function HtmlDeckViewer({ work }: { work: WorkEntry }) {
+  const tt = useUI();
+  return (
+    <div className="flex flex-col gap-4">
+      {work.view.pages?.length ? (
+        <Pager pages={work.view.pages} title={work.title} />
+      ) : (
+        <Fallback work={work} reason="这份网页演示暂时没有逐页静态预览。" />
+      )}
+      <div className="flex flex-wrap items-center gap-2 rounded-xl border border-zinc-200 bg-white p-4">
+        <RuntimeAction
+          runtime={work.view.runtime}
+          label="播放网页版"
+          unavailable="网页版播放暂不可用"
+        />
+        {work.view.source ? (
+          <a
+            href={work.view.source}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50"
+          >
+            {tt("查看结构稿")}
+          </a>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
 function GameBriefViewer({ work, payload }: { work: WorkEntry; payload: WorkPayload }) {
   const body = (payload && typeof payload === "object" ? payload : {}) as Record<string, unknown>;
   const manifest = (body.manifest && typeof body.manifest === "object" ? body.manifest : {}) as Record<
@@ -1237,6 +1267,20 @@ export function WorksViewer({
       return <Fallback work={work} reason="这份表格打不开：既不是能解开的 .xlsx，也没有分页预览图。请下载后本地打开。" />;
 
     case "deck":
+      if (work.deliveryFamily === "html") return <HtmlDeckViewer work={work} />;
+      // 两样都有就让用户挑：原版式（预览图）保真，文字版可选可搜。
+      if (v.pages?.length && textView) {
+        return <PagesOrText pages={v.pages} title={work.title} text={textView} />;
+      }
+      if (v.pages?.length) return <Pager pages={v.pages} title={work.title} />;
+      if (textView) return textView;
+      return (
+        <Fallback
+          work={work}
+          reason="这一件的原件解不出可读正文（可能是扫描件或加密文档），也没有分页预览图。请下载后本地打开。"
+        />
+      );
+
     case "document":
     case "pdf":
       // 两样都有就让用户挑：原版式（预览图）保真，文字版可选可搜。

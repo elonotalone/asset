@@ -198,6 +198,8 @@ export type ArtifactType =
   | "single_file_image"
   | "video";
 
+export type DeckDeliveryFamily = "pptx" | "html";
+
 /** 列表页的分格顺序。清单片段文件名 = artifact type（`content/works/<type>.json`）。 */
 export const ARTIFACT_TYPE_ORDER: readonly ArtifactType[] = [
   "composite_image",
@@ -263,6 +265,22 @@ export interface MaterialFamily {
 }
 
 export const MATERIAL_FAMILIES: Readonly<Partial<Record<ArtifactType, readonly MaterialFamily[]>>> = {
+  deck: [
+    {
+      id: "pptx",
+      label: "PPTX 演示",
+      hint: "可下载、可继续编辑的 PowerPoint 演示文稿。",
+      prefixes: [],
+      files: ["deck.json"],
+    },
+    {
+      id: "html",
+      label: "HTML 网页演示",
+      hint: "自包含网页演示；站内看逐页静态预览，在隔离域新窗口播放。",
+      prefixes: [],
+      files: ["deck.html.json"],
+    },
+  ],
   composite_image: [
     {
       id: "resume",
@@ -308,10 +326,39 @@ export function familiesFor(type: ArtifactType): readonly MaterialFamily[] | nul
   return MATERIAL_FAMILIES[type] ?? null;
 }
 
+/**
+ * deck 的交付家族只认受控字段与清单文件名，二者冲突就失败关闭。
+ * `deck.json` 是存量 PPTX 清单；`deck.html.json` 是 HTML delivery 专属清单。
+ */
+export function deckDeliveryFamilyFrom(
+  deliveryFamily: unknown,
+  sourceFile: string,
+): DeckDeliveryFamily | null {
+  const declared =
+    deliveryFamily === undefined
+      ? null
+      : deliveryFamily === "pptx" || deliveryFamily === "html"
+        ? deliveryFamily
+        : undefined;
+  if (declared === undefined) return null;
+  const fromFile =
+    sourceFile === "deck.json"
+      ? "pptx"
+      : sourceFile === "deck.html.json"
+        ? "html"
+        : null;
+  if (declared && fromFile && declared !== fromFile) return null;
+  return declared ?? fromFile;
+}
+
 /** 一件成品属于哪一族：先看 `styleId` 前缀，再看 `id` 前缀，最后看它来自哪份片段。 */
 export function familyOf(work: WorkEntry): MaterialFamily {
   const families = familiesFor(work.artifactType);
   if (!families) return OTHER_FAMILY;
+  if (work.artifactType === "deck") {
+    const family = deckDeliveryFamilyFrom(work.deliveryFamily, work.sourceFile);
+    return families.find((candidate) => candidate.id === family) ?? OTHER_FAMILY;
+  }
   for (const key of [work.styleId, work.id]) {
     if (!key) continue;
     const hit = families.find((f) => f.prefixes.some((p) => key.startsWith(p)));
@@ -421,6 +468,8 @@ export interface WorkProduction {
 export interface WorkEntry {
   id: string;
   artifactType: ArtifactType;
+  /** deck 的交付 representation；只有受控的 pptx/html，且必须与片段文件名一致。 */
+  deliveryFamily?: DeckDeliveryFamily;
   title: string;
   /** 对应 `docs/design-guides/<artifact_type>/<styleId>.md` 那份版面指导。 */
   styleId: string;
