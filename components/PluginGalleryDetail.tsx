@@ -12,12 +12,13 @@ import {
   categoryLabel,
   type PluginEntry,
 } from "@/lib/plugin-gallery";
+import { PluginGalleryRunner } from "@/components/PluginGalleryRunner";
 
-// 一件工具的说明页。看得到能力说明、适用场景、输入输出、在哪儿能用，
-// 以及「凭什么说它已上线 / 还没实装」的可复核依据。
+// 一件工具的说明页。货架上有实物的，**页面第一屏就是那件工具本人**（受限沙箱里真跑）；
+// 没有实物的照旧只有说明：能力、场景、输入输出、在哪儿能用，以及「凭什么这么标」的依据。
 //
-// 这一页同样没有下载或安装入口：未实装的条目连「打开」都不给，
-// 因为它今天在任何 app 上都没有入口，给了就是把用户送去一个不存在的地方。
+// 这一页同样没有下载或安装入口：工具是打开就用的东西，不是能存到硬盘的素材。
+// 没有实物的条目连「打开」都不给，给了就是把用户送去一个不存在的地方。
 
 function Section({
   title,
@@ -49,9 +50,17 @@ function Bullets({ lines }: { lines: string[] }) {
   );
 }
 
-export function PluginGalleryDetail({ item }: { item: PluginEntry }) {
+export function PluginGalleryDetail({
+  item,
+  runtimeEntryPath = null,
+}: {
+  item: PluginEntry;
+  /** 可运行实例的入口地址（读盘结论，由页面传进来）；没有实物就是 null。 */
+  runtimeEntryPath?: string | null;
+}) {
   const tt = useUI();
   const shipped = item.status === "shipped";
+  const runnable = runtimeEntryPath !== null;
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6">
@@ -69,10 +78,10 @@ export function PluginGalleryDetail({ item }: { item: PluginEntry }) {
           </h1>
           <span
             className={`rounded-full px-3 py-1 text-xs font-medium ${
-              shipped ? "bg-white/25" : "bg-black/25"
+              runnable || shipped ? "bg-white/25" : "bg-black/25"
             }`}
           >
-            {tt(STATUS_LABELS[item.status])}
+            {runnable ? tt("现在就能试用") : tt(STATUS_LABELS[item.status])}
           </span>
         </div>
         <p className="mt-3 max-w-2xl text-sm leading-7 text-white/90">
@@ -89,6 +98,8 @@ export function PluginGalleryDetail({ item }: { item: PluginEntry }) {
       </header>
 
       <div className="mt-4 grid gap-4">
+        {runnable ? <PluginGalleryRunner item={item} entryPath={runtimeEntryPath} /> : null}
+
         <Section title="你能用它干什么">
           <Bullets lines={item.does} />
         </Section>
@@ -128,13 +139,20 @@ export function PluginGalleryDetail({ item }: { item: PluginEntry }) {
         <Section title="它现在到底能不能用">
           <p
             className={`inline-block rounded-full px-3 py-1 text-xs font-medium ${
-              shipped
+              runnable || shipped
                 ? "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200"
                 : "bg-amber-50 text-amber-700 ring-1 ring-amber-200"
             }`}
           >
-            {tt(STATUS_LABELS[item.status])}
+            {runnable ? tt("能用：这一页上面那一格就是它本人") : tt(STATUS_LABELS[item.status])}
           </p>
+          {/* 试用位与平台入口是两件事：能在这里试，不等于 app 里已经有它的入口。
+              两句都说，才不会把「能试」说成「已上线」。 */}
+          {runnable ? (
+            <p className="mt-2">
+              {tt("直接在上面那一格里输数据即可，不用登录，也不用先准备素材。")}
+            </p>
+          ) : null}
           <p className="mt-2">{tt(STATUS_HINTS[item.status])}</p>
           <p className="mt-2 text-xs leading-6 text-zinc-500">
             {tt("这么标的依据：")}
