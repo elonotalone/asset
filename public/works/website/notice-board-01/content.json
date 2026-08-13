@@ -18,6 +18,19 @@
       "2026 秋季"
     ]
   },
+  "layout": {
+    "navPosition": "none",
+    "firstScreen": "statement",
+    "bodyFlow": "long-scroll",
+    "palette": {
+      "ink": "#141210",
+      "ink-soft": "#5c5449",
+      "paper": "#fdfbf4",
+      "paper-alt": "#f3ecdb",
+      "rule": "#c9bfa8",
+      "accent": "#b3261e"
+    }
+  },
   "pages": [
     {
       "id": "notice",
