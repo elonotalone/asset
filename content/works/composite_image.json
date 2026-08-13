@@ -4,7 +4,7 @@
     "artifactType": "composite_image",
     "title": "资质先行风格简历 · 三甲医院 ICU 重症护理",
     "styleId": "resume-clinical",
-    "summary": "横向三段分区的重症护理简历：执业资质、临床能力、岗位经历各占一条主色浅底带，资质永远在最上面，每项能力后面都跟一个可核的量。证件照在右上角，正文白底黑字。",
+    "summary": "白底横向三段的重症护理简历：资质、临床能力、岗位经历顺序展开，证件照固定在右上角；主色只落在窄色带、图标、分隔线与 4 条能力自评条上，不把证照有效性画成百分比。",
     "cover": "/works/composite_image/resume-clinical-01.cover.webp",
     "view": {
       "kind": "design-document",
@@ -42,9 +42,9 @@
       "envelope": "oceanleo.design-document.v1",
       "bodyShape": "scene",
       "entrypoint": "design-document.json",
-      "sourceBytes": 28086,
-      "canonicalByteSize": 17702,
-      "indentOverheadBytes": 10384,
+      "sourceBytes": 43684,
+      "canonicalByteSize": 27756,
+      "indentOverheadBytes": 15928,
       "declaredAssets": [
         {
           "assetId": "portrait-nurse.webp",
@@ -98,11 +98,11 @@
       "declaredAssetCount": 8,
       "attributionCount": 11,
       "metrics": {
-        "elementCount": 77,
-        "elementTypeCount": 3,
-        "textElementCount": 61,
+        "elementCount": 98,
+        "elementTypeCount": 4,
+        "textElementCount": 63,
         "paletteColorCount": 6,
-        "distinctZCount": 77,
+        "distinctZCount": 98,
         "assetCount": 8,
         "titleLength": 24,
         "attributionCount": 11
