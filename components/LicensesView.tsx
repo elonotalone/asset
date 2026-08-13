@@ -1,5 +1,6 @@
 "use client";
 
+import { currentDomainProfile } from "@oceanleo/ui/contracts";
 import { useUI } from "@oceanleo/ui/i18n";
 
 // 授权说明页。
@@ -185,7 +186,7 @@ export function LicensesView() {
             )}
           </p>
           <a
-            href="https://oceanleo.com/legal/first-party-assets"
+            href={`${currentDomainProfile().portalOrigin}/legal/first-party-assets`}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-2 inline-block text-xs text-sky-700 hover:underline"

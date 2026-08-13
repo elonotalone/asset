@@ -1,5 +1,6 @@
 "use client";
 
+import { currentDomainProfile } from "@oceanleo/ui/contracts";
 import { useUI } from "@oceanleo/ui/i18n";
 
 // 产权与出处块。回答用户的三个问题：这东西是谁的、我能不能拿走、拿去用要背什么义务。
@@ -223,7 +224,8 @@ export function deriveProvenance(asset: ProvenanceAssetLike): ProvenanceFacts {
   };
 }
 
-export const FIRST_PARTY_TERMS_URL = "https://oceanleo.com/legal/first-party-assets";
+// 门户是按域名家族取的：境内页面要读境内那份法务条款，不能把用户送去境外门户。
+export const FIRST_PARTY_TERMS_URL = `${currentDomainProfile().portalOrigin}/legal/first-party-assets`;
 
 function Divider() {
   return <div className="my-2.5 h-px bg-zinc-200" />;

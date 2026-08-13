@@ -3,6 +3,10 @@
 // Asset library client — thin wrapper over the shared gateway's /v1/assets/*.
 // Browsing is PUBLIC (no token needed), so unlike other sites' gateway clients
 // these are unauthenticated GETs. The gateway holds every source key.
+import {
+  currentDomainProfile,
+  currentFamilySubsiteOrigin,
+} from "@oceanleo/ui/contracts";
 import { accessToken } from "@oceanleo/ui/lib/auth";
 import { assetPreviewUrl } from "@oceanleo/ui/lib";
 import {
@@ -1468,13 +1472,16 @@ export function shelfSiteLabel(siteKey: string): string {
 /**
  * 归属站的 origin。名册里没有的站返回 ""，调用方据此**不画**编辑按钮——
  * 猜一个 origin 出来只会得到一颗点开是 404 的按钮。
+ *
+ * 域名后缀不写死：`.com` 家族返回 `https://<host>.oceanleo.com`（与改前逐字相同），
+ * `.cn` 家族返回境内同名站。境内还没有的站 `currentFamilySubsiteOrigin()` 给
+ * `undefined`，一样返回 ""——宁可少一颗按钮，也不能把境内用户送去境外站重新登录。
  */
 export function shelfSiteOrigin(siteKey: string): string {
   const site = SHELF_SITE_BY_KEY.get(siteKey);
   if (!site) return "";
-  return site.host
-    ? `https://${site.host}.oceanleo.com`
-    : "https://oceanleo.com";
+  if (!site.host) return currentDomainProfile().portalOrigin;
+  return currentFamilySubsiteOrigin(site.host) || "";
 }
 
 /** 预览图直链。`previewKey` 已是绝对 https URL 时原样透传。 */

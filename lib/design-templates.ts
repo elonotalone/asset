@@ -16,16 +16,28 @@ export interface DesignTemplate {
   attributions: string[];
 }
 
+import {
+  currentDomainProfile,
+  currentFamilySubsiteOrigin,
+} from "@oceanleo/ui/contracts";
+
 import manifest from "@/public/design-templates/manifest.json";
 
 export const DESIGN_TEMPLATES: DesignTemplate[] = manifest as DesignTemplate[];
 
-/** design.oceanleo.com 的编辑器深链：把成品模板载入画布继续编辑。 */
+/**
+ * design 站的编辑器深链：把成品模板载入画布继续编辑。
+ *
+ * 编辑器与文档都取当前域名家族的那一份：境内页面必须落在境内 design 站、
+ * 拉境内素材站的文档，否则用户点「拿去编辑」就被送出境，而且那边的登录态还不通。
+ * 当前家族没有 design 站时返回 ""（不猜一个境外 origin 出来）。
+ */
 export function editUrl(t: DesignTemplate): string {
   // design 站读取 ?tplDoc=<绝对URL> 载入自包含文档（见 design 站 editor 载入逻辑）。
-  const base = "https://design.oceanleo.com/editor";
-  const docUrl = `https://asset.oceanleo.com${t.doc}`;
-  return `${base}?tplDoc=${encodeURIComponent(docUrl)}`;
+  const designOrigin = currentFamilySubsiteOrigin("design");
+  if (!designOrigin) return "";
+  const docUrl = `${currentDomainProfile().assetOrigin}${t.doc}`;
+  return `${designOrigin}/editor?tplDoc=${encodeURIComponent(docUrl)}`;
 }
 
 export function filterTemplates(
