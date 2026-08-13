@@ -40,5 +40,52 @@
       "canvas": "1240x3148",
       "license": null
     }
+  },
+  {
+    "id": "resume-creative-01",
+    "artifactType": "composite_image",
+    "title": "作品优先风格简历 · 品牌视觉设计岗",
+    "styleId": "resume-creative",
+    "summary": "非对称双栏、以三件真作品开场的设计师简历。左侧深靛身份栏通栏满高，右侧一大两小三个作品位，经历只写三段，页面下方留大片空。",
+    "cover": "/works/composite_image/resume-creative-01.cover.webp",
+    "view": {
+      "kind": "design-document",
+      "src": "/works/composite_image/resume-creative-01.json",
+      "assets": {
+        "plate-tidebook.webp": "/works/composite_image/media/plate-tidebook.webp",
+        "plate-saltwind.webp": "/works/composite_image/media/plate-saltwind.webp",
+        "plate-kiln.webp": "/works/composite_image/media/plate-kiln.webp"
+      }
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "envelope": "oceanleo.design-document.v1",
+      "bodyShape": "scene",
+      "entrypoint": "design-document.json",
+      "sourceBytes": 8808,
+      "canonicalByteSize": 5722,
+      "indentOverheadBytes": 3086,
+      "declaredAssetCount": 3,
+      "attributionCount": 4,
+      "metrics": {
+        "elementCount": 22,
+        "elementTypeCount": 3,
+        "textElementCount": 15,
+        "paletteColorCount": 4,
+        "distinctZCount": 22,
+        "assetCount": 3,
+        "titleLength": 18,
+        "attributionCount": 4
+      },
+      "canvas": "1240x1754",
+      "license": null
+    }
   }
 ]

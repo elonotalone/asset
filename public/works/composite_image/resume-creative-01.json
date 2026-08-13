@@ -1,0 +1,344 @@
+{
+  "schema": "oceanleo.design-document.v1",
+  "version": 1,
+  "title": "作品优先风格简历 · 品牌视觉设计岗",
+  "document": {
+    "width": 1240,
+    "height": 1754,
+    "background": "#F4EFE6",
+    "elements": [
+      {
+        "id": "paper",
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1754,
+        "z": 0,
+        "alt": "暖纸色底",
+        "decorative": true,
+        "fill": "#F4EFE6"
+      },
+      {
+        "id": "identity-bar",
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 360,
+        "height": 1754,
+        "z": 1,
+        "alt": "左侧深靛身份栏，通栏满高",
+        "decorative": true,
+        "fill": "#1F2340"
+      },
+      {
+        "id": "accent-mark",
+        "type": "rect",
+        "x": 40,
+        "y": 88,
+        "width": 44,
+        "height": 44,
+        "z": 2,
+        "alt": "橙色方块记号",
+        "decorative": true,
+        "fill": "#FF5A1F"
+      },
+      {
+        "id": "name",
+        "type": "text",
+        "x": 40,
+        "y": 176,
+        "width": 280,
+        "height": 127,
+        "z": 3,
+        "alt": "姓名",
+        "fill": "#F4EFE6",
+        "text": "苏漾",
+        "fontSizePx": 115
+      },
+      {
+        "id": "role",
+        "type": "text",
+        "x": 40,
+        "y": 331,
+        "width": 280,
+        "height": 93,
+        "z": 4,
+        "alt": "职位",
+        "fill": "#F4EFE6",
+        "text": "品牌视觉设计师\n艺术指导",
+        "fontSizePx": 32
+      },
+      {
+        "id": "pitch",
+        "type": "text",
+        "x": 40,
+        "y": 468,
+        "width": 280,
+        "height": 95,
+        "z": 5,
+        "alt": "一段自述",
+        "fill": "#F4EFE6",
+        "text": "做的是落到实物上的一整套：\n字、色、印记、包装、物料。\n交付前自己盯完打样。",
+        "fontSizePx": 21
+      },
+      {
+        "id": "contact",
+        "type": "text",
+        "x": 40,
+        "y": 1509,
+        "width": 280,
+        "height": 95,
+        "z": 6,
+        "alt": "联系方式",
+        "fill": "#F4EFE6",
+        "text": "su.yang@example.studio\n+86 137 0013 7788\n杭州",
+        "fontSizePx": 21
+      },
+      {
+        "id": "work-lead",
+        "type": "image",
+        "x": 428,
+        "y": 72,
+        "width": 740,
+        "height": 436,
+        "z": 7,
+        "alt": "潮汐手账三卷本书封与版心系统",
+        "assetId": "plate-tidebook.webp"
+      },
+      {
+        "id": "work-b",
+        "type": "image",
+        "x": 428,
+        "y": 536,
+        "width": 356,
+        "height": 267,
+        "z": 8,
+        "alt": "盐风咖啡单品豆包装与焙度色序",
+        "assetId": "plate-saltwind.webp"
+      },
+      {
+        "id": "work-c",
+        "type": "image",
+        "x": 812,
+        "y": 536,
+        "width": 356,
+        "height": 267,
+        "z": 9,
+        "alt": "窑火陶社圆形印记与最小使用尺寸规范",
+        "assetId": "plate-kiln.webp"
+      },
+      {
+        "id": "sec-jobs",
+        "type": "text",
+        "x": 428,
+        "y": 899,
+        "width": 740,
+        "height": 64,
+        "z": 10,
+        "alt": "区标题：经历",
+        "fill": "#2A2A2A",
+        "text": "经历",
+        "fontSizePx": 51
+      },
+      {
+        "id": "job-0-date",
+        "type": "text",
+        "x": 428,
+        "y": 985,
+        "width": 220,
+        "height": 32,
+        "z": 11,
+        "alt": "时间：2022 至今",
+        "fill": "#1F2340",
+        "text": "2022 至今",
+        "fontSizePx": 21
+      },
+      {
+        "id": "job-0-main",
+        "type": "text",
+        "x": 428,
+        "y": 1019,
+        "width": 740,
+        "height": 47,
+        "z": 12,
+        "alt": "屿见设计事务所 · 主案设计师",
+        "fill": "#2A2A2A",
+        "text": "屿见设计事务所 · 主案设计师",
+        "fontSizePx": 32
+      },
+      {
+        "id": "job-0-note",
+        "type": "text",
+        "x": 428,
+        "y": 1070,
+        "width": 740,
+        "height": 32,
+        "z": 13,
+        "alt": "带两人小组，年结项 11 套品牌，其中 6 套走到量产包装。",
+        "fill": "#2A2A2A",
+        "text": "带两人小组，年结项 11 套品牌，其中 6 套走到量产包装。",
+        "fontSizePx": 21
+      },
+      {
+        "id": "job-1-date",
+        "type": "text",
+        "x": 428,
+        "y": 1140,
+        "width": 220,
+        "height": 32,
+        "z": 14,
+        "alt": "时间：2020–2022",
+        "fill": "#1F2340",
+        "text": "2020–2022",
+        "fontSizePx": 21
+      },
+      {
+        "id": "job-1-main",
+        "type": "text",
+        "x": 428,
+        "y": 1174,
+        "width": 740,
+        "height": 47,
+        "z": 15,
+        "alt": "拾光文化 · 视觉设计师",
+        "fill": "#2A2A2A",
+        "text": "拾光文化 · 视觉设计师",
+        "fontSizePx": 32
+      },
+      {
+        "id": "job-1-note",
+        "type": "text",
+        "x": 428,
+        "y": 1225,
+        "width": 740,
+        "height": 32,
+        "z": 16,
+        "alt": "从书封做到周边，三卷本《潮汐手账》首印 2 万册售罄。",
+        "fill": "#2A2A2A",
+        "text": "从书封做到周边，三卷本《潮汐手账》首印 2 万册售罄。",
+        "fontSizePx": 21
+      },
+      {
+        "id": "job-2-date",
+        "type": "text",
+        "x": 428,
+        "y": 1295,
+        "width": 220,
+        "height": 32,
+        "z": 17,
+        "alt": "时间：2019–2020",
+        "fill": "#1F2340",
+        "text": "2019–2020",
+        "fontSizePx": 21
+      },
+      {
+        "id": "job-2-main",
+        "type": "text",
+        "x": 428,
+        "y": 1329,
+        "width": 740,
+        "height": 47,
+        "z": 18,
+        "alt": "自由接稿",
+        "fill": "#2A2A2A",
+        "text": "自由接稿",
+        "fontSizePx": 32
+      },
+      {
+        "id": "job-2-note",
+        "type": "text",
+        "x": 428,
+        "y": 1380,
+        "width": 740,
+        "height": 32,
+        "z": 19,
+        "alt": "本地咖啡与陶艺工作室的小体量识别，是上面两组作品的起点。",
+        "fill": "#2A2A2A",
+        "text": "本地咖啡与陶艺工作室的小体量识别，是上面两组作品的起点。",
+        "fontSizePx": 21
+      },
+      {
+        "id": "clients",
+        "type": "text",
+        "x": 428,
+        "y": 1468,
+        "width": 740,
+        "height": 32,
+        "z": 20,
+        "alt": "合作过的机构",
+        "fill": "#2A2A2A",
+        "text": "合作过：盐风咖啡、窑火陶社、拾光文化、屿见、云溪镇文旅",
+        "fontSizePx": 21
+      },
+      {
+        "id": "accent-tail",
+        "type": "rect",
+        "x": 428,
+        "y": 1534,
+        "width": 72,
+        "height": 10,
+        "z": 21,
+        "alt": "橙色收尾短块",
+        "decorative": true,
+        "fill": "#FF5A1F"
+      }
+    ]
+  },
+  "palette": [
+    "#F4EFE6",
+    "#1F2340",
+    "#FF5A1F",
+    "#2A2A2A"
+  ],
+  "assets": [
+    {
+      "id": "plate-tidebook.webp",
+      "sha256": "e88f1207a0533c463a28cc911a618753f4f23389d9e48d3c16df3d3d3abe3828",
+      "mediaType": "image/webp",
+      "byteSize": 53070,
+      "licenseCode": "CC0-1.0"
+    },
+    {
+      "id": "plate-saltwind.webp",
+      "sha256": "5ffd3cbb94a7ea624326bf2d99c492d89111627b92d0e195094d8f69a80b3b1d",
+      "mediaType": "image/webp",
+      "byteSize": 26702,
+      "licenseCode": "CC0-1.0"
+    },
+    {
+      "id": "plate-kiln.webp",
+      "sha256": "e8cf3238712be956f58c494c7b4e7631b766b761be546de5fc41c2d8cba62685",
+      "mediaType": "image/webp",
+      "byteSize": 46284,
+      "licenseCode": "CC0-1.0"
+    }
+  ],
+  "attribution": {
+    "entries": [
+      {
+        "text": "OceanLeo 第一方原创作品图（程序化绘制，见 _tools/media/portfolio-plates.mjs）",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "assetId": "plate-tidebook.webp"
+      },
+      {
+        "text": "OceanLeo 第一方原创作品图（程序化绘制，见 _tools/media/portfolio-plates.mjs）",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "assetId": "plate-saltwind.webp"
+      },
+      {
+        "text": "OceanLeo 第一方原创作品图（程序化绘制，见 _tools/media/portfolio-plates.mjs）",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "assetId": "plate-kiln.webp"
+      },
+      {
+        "text": "OceanLeo 第一方原创",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ]
+  }
+}
