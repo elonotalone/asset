@@ -4,14 +4,14 @@
   "files": [
     {
       "path": "index.html",
-      "blob_sha256": "b62a0541e7e828e13d8bcd5168945dcaa0cf60decc0a62f687ab362bdf3e45ff",
-      "byteSize": 8693,
+      "blob_sha256": "c53a312f8f9d9919c54ad7bf49984b99cbc7224558287c2b39371991b9cc2361",
+      "byteSize": 8726,
       "mediaType": "text/html"
     },
     {
       "path": "styles.css",
-      "blob_sha256": "f23d12707f7b09c348f77affb36ecbb31109ae86a0a0a24286002235ac50730e",
-      "byteSize": 3630,
+      "blob_sha256": "70ede16d3b69386cc2b4a3a1d3c102ca8881978ba24ce4b70d07a8aac8c7dc2b",
+      "byteSize": 3922,
       "mediaType": "text/css"
     },
     {
@@ -22,8 +22,8 @@
     },
     {
       "path": "content.json",
-      "blob_sha256": "449b177225df7f4765795db3d449b7fa8a5e8e151d767b1f8920f7dabd89f64b",
-      "byteSize": 6691,
+      "blob_sha256": "6b97e2e0a7ff29a1dd21598422a6acb4f9092c941ad884dbbefe42cc522eac65",
+      "byteSize": 6997,
       "mediaType": "application/json"
     }
   ]

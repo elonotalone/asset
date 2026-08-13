@@ -21,6 +21,20 @@
       "索引"
     ]
   },
+  "layout": {
+    "navPosition": "top",
+    "firstScreen": "statement",
+    "bodyFlow": "grid",
+    "gridColumns": 3,
+    "palette": {
+      "ink": "#1b1e20",
+      "ink-soft": "#6e767a",
+      "paper": "#f6f6f4",
+      "paper-alt": "#eeeeea",
+      "rule": "#e6e6e1",
+      "accent": "#2f6f5e"
+    }
+  },
   "pages": [
     {
       "id": "batch",

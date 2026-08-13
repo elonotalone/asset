@@ -1,12 +1,12 @@
 /* 由 asm-web 按内容定义的区块种类生成。区块种类来自 body.units[].kind,不是写死的清单。 */
 :root {
-  --ink: #16202a;
-  --ink-soft: #4a5b6b;
-  --paper: #ffffff;
-  --paper-alt: #f2f5f8;
-  --rule: #d6dee6;
-  --accent: #1f6feb;
-  --measure: 68ch;
+  --ink: #1b1e20;
+  --ink-soft: #6e767a;
+  --paper: #f6f6f4;
+  --paper-alt: #eeeeea;
+  --rule: #e6e6e1;
+  --accent: #2f6f5e;
+  --measure: 96ch;
   --gap: 1.5rem;
 }
 * { box-sizing: border-box; }
@@ -15,7 +15,7 @@ body {
   margin: 0;
   color: var(--ink);
   background: var(--paper);
-  font: 16px/1.7 'Noto Sans SC', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+  font: 16px/1.7 'IBM Plex Mono', Consolas, 'Noto Sans SC', 'Source Han Sans SC', sans-serif;
 }
 .site-head {
   padding: 3rem 1.5rem 2rem;
@@ -30,11 +30,11 @@ body {
 .nav-link:hover { color: var(--accent); }
 .nav-link.is-active { color: var(--accent); border-bottom-color: var(--accent); }
 .site-main { padding: 0 1.5rem; }
-.page { max-width: var(--measure); margin: 0 auto; }
+.page { margin: 0 auto; }
 .page-heading { margin: 2.5rem 0 .5rem; font-size: 1.5rem; }
 .page-intro { margin: 0 0 1.5rem; color: var(--ink-soft); }
-.block { padding: 1.75rem 0; border-top: 1px solid var(--rule); scroll-margin-top: 4rem; }
-.block:first-of-type { border-top: 0; }
+.block { padding: 1.25rem 1.25rem 1.5rem; border: 1px solid var(--rule); border-radius: .5rem; background: var(--paper); scroll-margin-top: 4rem; }
+.block-figure { display: block; width: 100%; height: auto; margin: .75rem 0 0; border-radius: .25rem; }
 .block-heading { margin: 0 0 .75rem; font-size: 1.2rem; }
 .block-copy { margin: 0 0 1rem; }
 .block-copy:last-child { margin-bottom: 0; }
@@ -42,6 +42,8 @@ body {
 .site-foot { margin-top: 3rem; padding: 1.5rem; border-top: 1px solid var(--rule); color: var(--ink-soft); font-size: .875rem; }
 .site-toc { margin: 0 0 1rem; padding: .75rem 1rem; background: var(--paper-alt); border-left: 3px solid var(--accent); }
 .site-toc ol { margin: .25rem 0 0; padding-left: 1.25rem; }
+.page-blocks { display: grid; gap: var(--gap); grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; }
+.site-title, .page-heading, .block-heading { font-family: 'Noto Sans SC', 'Source Han Sans SC', Helvetica, Arial, sans-serif; }
 
 /* 每种区块一条基调,种类由内容定义决定 */
 .block-batch .block-heading::before { content: ""; display: inline-block; width: .5rem; height: .5rem; margin-right: .5rem; vertical-align: middle; border-radius: 50%; background: hsl(0 62% 52%); }
@@ -50,9 +52,6 @@ body {
 .block-usage .block-heading::before { content: ""; display: inline-block; width: .5rem; height: .5rem; margin-right: .5rem; vertical-align: middle; border-radius: 50%; background: hsl(141 62% 52%); }
 .block-contribute .block-heading::before { content: ""; display: inline-block; width: .5rem; height: .5rem; margin-right: .5rem; vertical-align: middle; border-radius: 50%; background: hsl(188 62% 52%); }
 
-@media (prefers-color-scheme: dark) {
-  :root { --ink: #e7edf3; --ink-soft: #a5b3c0; --paper: #10161c; --paper-alt: #18212a; --rule: #27333d; }
-}
 @media (max-width: 640px) {
   .site-head { padding: 2rem 1rem 1.5rem; }
   .site-main { padding: 0 1rem; }
@@ -60,4 +59,7 @@ body {
 @media print {
   .site-nav, .site-toc { display: none; }
   .block { break-inside: avoid; }
+}
+@media (max-width: 720px) {
+  .page-blocks { grid-template-columns: minmax(0, 1fr); }
 }
