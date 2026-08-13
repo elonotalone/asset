@@ -246,7 +246,155 @@ function DesignDocumentViewer({ work, payload }: { work: WorkEntry; payload: Wor
 
 /* ---------------- chart / workflow：站内渲染结构化 JSON ---------------- */
 
+const PALETTE = ["#1F6FEB", "#C47323", "#2E8B6F", "#8E5BA6", "#CF222E", "#57606A", "#0A7EA4", "#B45309"];
+
+interface ChartSeries {
+  name: string;
+  type: "line" | "bar" | "scatter";
+  color: string;
+  points: { x: number; y: number }[];
+}
+
+interface ChartSpec {
+  title: string;
+  subtitle: string;
+  xName: string;
+  yName: string;
+  xType: "category" | "value";
+  categories: string[];
+  series: ChartSeries[];
+  yMin?: number;
+  yMax?: number;
+  yInterval?: number;
+}
+
+function num(v: unknown): number | null {
+  if (typeof v === "number") return Number.isFinite(v) ? v : null;
+  if (typeof v === "string" && v.trim() !== "") {
+    const n = Number(v.replace(/,/g, ""));
+    return Number.isFinite(n) ? n : null;
+  }
+  return null;
+}
+
+/**
+ * `oceanleo.chart.v1` 的正文是 `dataset`（维度 + 行矩阵）+ `option`（谁画成什么）。
+ * 这里把它摊平成「几条数列、每条几组点」，站内自己用 SVG 画出来。
+ * 老形状 `{categories, series:[{values}]}` 也照收。
+ */
+export function chartSpecOf(payload: WorkPayload): ChartSpec | null {
+  if (!payload || typeof payload !== "object") return null;
+  const body = payload as Record<string, unknown>;
+  const root = (body.chart && typeof body.chart === "object" ? body.chart : body) as Record<string, unknown>;
+  const option = (root.option && typeof root.option === "object" ? root.option : {}) as Record<string, unknown>;
+  const title = (option.title ?? {}) as Record<string, unknown>;
+  const xAxis = (option.xAxis ?? {}) as Record<string, unknown>;
+  const yAxis = (option.yAxis ?? {}) as Record<string, unknown>;
+  const palette = Array.isArray(option.color) ? option.color.map((c) => String(c)) : PALETTE;
+
+  const base: ChartSpec = {
+    title: String(title.text ?? root.title ?? ""),
+    subtitle: String(title.subtext ?? ""),
+    xName: String(xAxis.name ?? ""),
+    yName: String(yAxis.name ?? ""),
+    xType: xAxis.type === "value" ? "value" : "category",
+    categories: [],
+    series: [],
+    yMin: num(yAxis.min) ?? undefined,
+    yMax: num(yAxis.max) ?? undefined,
+    yInterval: num(yAxis.interval) ?? undefined,
+  };
+
+  const dataset = (root.dataset ?? {}) as Record<string, unknown>;
+  const rows = Array.isArray(dataset.source) ? dataset.source : null;
+
+  if (rows && rows.length > 0) {
+    const dims = Array.isArray(dataset.dimensions)
+      ? dataset.dimensions.map((d) =>
+          d && typeof d === "object" ? String((d as Record<string, unknown>).name ?? "") : String(d),
+        )
+      : [];
+    const cell = (row: unknown, key: string | number): unknown => {
+      if (Array.isArray(row)) return row[typeof key === "number" ? key : dims.indexOf(key)];
+      if (row && typeof row === "object") return (row as Record<string, unknown>)[String(key)];
+      return undefined;
+    };
+
+    const declared = Array.isArray(option.series) ? option.series : [];
+    const specs: Record<string, unknown>[] =
+      declared.length > 0
+        ? declared.map((s) => (s && typeof s === "object" ? (s as Record<string, unknown>) : {}))
+        : dims.slice(1).map((name) => ({ name, encode: { x: dims[0], y: name } }));
+
+    base.categories =
+      base.xType === "category"
+        ? rows.map((r) => {
+            const encode = (specs[0]?.encode ?? {}) as Record<string, unknown>;
+            const xKey = encode.x !== undefined ? String(encode.x) : dims[0] ?? 0;
+            return String(cell(r, xKey) ?? "");
+          })
+        : [];
+
+    base.series = specs.map((s, si) => {
+      const encode = (s.encode && typeof s.encode === "object" ? s.encode : {}) as Record<string, unknown>;
+      const xKey = encode.x !== undefined ? String(encode.x) : dims[0] ?? 0;
+      const yKey = encode.y !== undefined ? String(encode.y) : dims[si + 1] ?? 1;
+      const itemStyle = (s.itemStyle ?? {}) as Record<string, unknown>;
+      const type = s.type === "line" || s.type === "scatter" ? s.type : "bar";
+      const points: { x: number; y: number }[] = [];
+      rows.forEach((r, ri) => {
+        const y = num(cell(r, yKey));
+        if (y === null) return;
+        const x = base.xType === "value" ? num(cell(r, xKey)) : ri;
+        if (x === null) return;
+        points.push({ x, y });
+      });
+      return {
+        name: String(s.name ?? yKey),
+        type,
+        color: String(itemStyle.color ?? palette[si % palette.length]),
+        points,
+      };
+    });
+  } else {
+    // 老形状：categories[] + series[].values[]
+    base.categories = Array.isArray(root.categories) ? root.categories.map((c) => String(c)) : [];
+    const legacy = Array.isArray(root.series) ? root.series : [];
+    base.series = legacy.map((s, si) => {
+      const o = (s && typeof s === "object" ? s : {}) as Record<string, unknown>;
+      const values = Array.isArray(o.values ?? o.data) ? ((o.values ?? o.data) as unknown[]) : [];
+      const points: { x: number; y: number }[] = [];
+      values.forEach((v, i) => {
+        const y = num(v);
+        if (y !== null) points.push({ x: i, y });
+      });
+      return {
+        name: String(o.name ?? `数列 ${si + 1}`),
+        type: (o.type === "line" || o.type === "scatter" ? o.type : "bar") as ChartSeries["type"],
+        color: palette[si % palette.length],
+        points,
+      };
+    });
+  }
+
+  base.series = base.series.filter((s) => s.points.length > 0);
+  return base.series.length > 0 ? base : null;
+}
+
+function niceTicks(min: number, max: number, want = 5): number[] {
+  if (!(max > min)) return [min];
+  const raw = (max - min) / want;
+  const mag = 10 ** Math.floor(Math.log10(raw));
+  const step = [1, 2, 2.5, 5, 10].map((m) => m * mag).find((s) => s >= raw) ?? mag * 10;
+  const out: number[] = [];
+  for (let v = Math.ceil(min / step) * step; v <= max + step / 1000; v += step) out.push(Number(v.toFixed(6)));
+  return out;
+}
+
+// 站内自己画图，不引图表库：条形 / 折线 / 散点三种够覆盖 oceanleo.chart.v1 今天的产物，
+// 而多一个运行时依赖就多一份要跟着升级的东西。
 function ChartViewer({ work, payload }: { work: WorkEntry; payload: WorkPayload }) {
+  const tt = useUI();
   if (work.view.src.endsWith(".svg")) {
     return (
       <div className="flex justify-center rounded-xl border border-zinc-200 bg-white p-4">
@@ -256,53 +404,120 @@ function ChartViewer({ work, payload }: { work: WorkEntry; payload: WorkPayload 
     );
   }
 
-  const body = (payload && typeof payload === "object" ? payload : {}) as Record<string, unknown>;
-  const chart = (body.chart && typeof body.chart === "object" ? body.chart : body) as Record<string, unknown>;
-  const categories = Array.isArray(chart.categories) ? chart.categories.map((c) => String(c)) : [];
-  const rawSeries = Array.isArray(chart.series) ? chart.series : [];
-  const series = rawSeries
-    .map((s) => {
-      const o = (s && typeof s === "object" ? s : {}) as Record<string, unknown>;
-      const values = Array.isArray(o.values ?? o.data)
-        ? ((o.values ?? o.data) as unknown[]).map((v) => (typeof v === "number" ? v : Number(v)))
-        : [];
-      return { name: String(o.name ?? ""), values: values.filter((v) => Number.isFinite(v)) };
-    })
-    .filter((s) => s.values.length > 0);
+  const spec = chartSpecOf(payload);
+  if (!spec) return <Fallback work={work} reason="这份图表没有可画的数列，先看封面。" />;
 
-  if (series.length === 0) return <Fallback work={work} reason="这份图表没有可画的数列，先看封面。" />;
+  const W = 920;
+  const H = 460;
+  const pad = { top: 16, right: 24, bottom: 56, left: 72 };
+  const plotW = W - pad.left - pad.right;
+  const plotH = H - pad.top - pad.bottom;
 
-  const max = Math.max(...series.flatMap((s) => s.values), 1);
-  const palette = ["#1F6FEB", "#E5484D", "#12A594", "#F76808", "#8E4EC6"];
-  const groups = Math.max(...series.map((s) => s.values.length));
+  const ys = spec.series.flatMap((s) => s.points.map((p) => p.y));
+  const yMin = spec.yMin ?? Math.min(0, ...ys);
+  const yMax = spec.yMax ?? Math.max(...ys) * 1.05;
+  const yTicks = spec.yInterval
+    ? Array.from({ length: Math.floor((yMax - yMin) / spec.yInterval) + 1 }, (_, i) => yMin + i * spec.yInterval!)
+    : niceTicks(yMin, yMax);
+  const yAt = (v: number) => pad.top + plotH - ((v - yMin) / (yMax - yMin || 1)) * plotH;
+
+  const isCategory = spec.xType === "category";
+  const xs = spec.series.flatMap((s) => s.points.map((p) => p.x));
+  const xMin = isCategory ? 0 : Math.min(...xs);
+  const xMax = isCategory ? Math.max(spec.categories.length - 1, 1) : Math.max(...xs);
+  const band = isCategory ? plotW / Math.max(spec.categories.length, 1) : 0;
+  const xAt = (v: number) =>
+    isCategory ? pad.left + band * (v + 0.5) : pad.left + ((v - xMin) / (xMax - xMin || 1)) * plotW;
+
+  const bars = spec.series.filter((s) => s.type === "bar");
+  const barW = bars.length > 0 ? Math.min((band * 0.72) / bars.length, 42) : 0;
+  const labelEvery = Math.ceil(spec.categories.length / 14) || 1;
 
   return (
-    <div className="rounded-xl border border-zinc-200 bg-white p-5">
-      <div className="flex h-72 items-end gap-3">
-        {Array.from({ length: groups }, (_, gi) => (
-          <div key={gi} className="flex h-full min-w-0 flex-1 flex-col justify-end gap-1">
-            <div className="flex h-full items-end justify-center gap-0.5">
-              {series.map((s, si) => (
-                <div
-                  key={si}
-                  title={`${s.name} ${s.values[gi] ?? 0}`}
-                  style={{
-                    height: `${((s.values[gi] ?? 0) / max) * 100}%`,
-                    background: palette[si % palette.length],
-                  }}
-                  className="w-full max-w-8 rounded-t"
-                />
-              ))}
-            </div>
-            <div className="truncate text-center text-[10px] text-zinc-500">{categories[gi] ?? gi + 1}</div>
-          </div>
+    <div className="flex flex-col gap-2 rounded-xl border border-zinc-200 bg-white p-5">
+      {spec.title && <h3 className="text-base font-semibold text-zinc-900">{spec.title}</h3>}
+      {spec.subtitle && <p className="text-xs leading-relaxed text-zinc-500">{spec.subtitle}</p>}
+
+      <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="img" aria-label={spec.title || work.title}>
+        {yTicks.map((t) => (
+          <g key={t}>
+            <line x1={pad.left} x2={W - pad.right} y1={yAt(t)} y2={yAt(t)} stroke="#E6EAF0" strokeWidth="1" />
+            <text x={pad.left - 10} y={yAt(t) + 4} textAnchor="end" fontSize="12" fill="#57606A">
+              {t}
+            </text>
+          </g>
         ))}
-      </div>
-      <div className="mt-3 flex flex-wrap gap-3 border-t border-zinc-100 pt-3">
-        {series.map((s, si) => (
+        <line x1={pad.left} x2={W - pad.right} y1={yAt(yMin)} y2={yAt(yMin)} stroke="#B8C2CC" />
+        <line x1={pad.left} x2={pad.left} y1={pad.top} y2={pad.top + plotH} stroke="#B8C2CC" />
+        {spec.yName && (
+          <text x={pad.left - 58} y={pad.top + plotH / 2} fontSize="12" fill="#57606A" transform={`rotate(-90 ${pad.left - 58} ${pad.top + plotH / 2})`} textAnchor="middle">
+            {spec.yName}
+          </text>
+        )}
+
+        {isCategory
+          ? spec.categories.map((c, i) =>
+              i % labelEvery === 0 ? (
+                <text key={i} x={xAt(i)} y={pad.top + plotH + 20} textAnchor="middle" fontSize="11" fill="#57606A">
+                  {c.length > 10 ? `${c.slice(0, 9)}…` : c}
+                </text>
+              ) : null,
+            )
+          : niceTicks(xMin, xMax).map((t) => (
+              <text key={t} x={xAt(t)} y={pad.top + plotH + 20} textAnchor="middle" fontSize="11" fill="#57606A">
+                {t}
+              </text>
+            ))}
+        {spec.xName && (
+          <text x={pad.left + plotW / 2} y={H - 22} textAnchor="middle" fontSize="12" fill="#57606A">
+            {spec.xName}
+          </text>
+        )}
+
+        {spec.series.map((s, si) => {
+          if (s.type === "bar") {
+            const slot = bars.indexOf(s);
+            return (
+              <g key={si}>
+                {s.points.map((p, pi) => {
+                  const x = xAt(p.x) - (barW * bars.length) / 2 + slot * barW;
+                  const y = yAt(Math.max(p.y, yMin));
+                  return (
+                    <rect key={pi} x={x} y={y} width={Math.max(barW - 2, 1)} height={Math.max(yAt(yMin) - y, 0)} fill={s.color}>
+                      <title>{`${s.name} ${spec.categories[p.x] ?? p.x}：${p.y}`}</title>
+                    </rect>
+                  );
+                })}
+              </g>
+            );
+          }
+          if (s.type === "line") {
+            const d = s.points.map((p, i) => `${i === 0 ? "M" : "L"} ${xAt(p.x)} ${yAt(p.y)}`).join(" ");
+            return (
+              <g key={si}>
+                <path d={d} fill="none" stroke={s.color} strokeWidth="2" strokeLinejoin="round" />
+                {s.points.length <= 40 &&
+                  s.points.map((p, pi) => <circle key={pi} cx={xAt(p.x)} cy={yAt(p.y)} r="2.6" fill={s.color} />)}
+              </g>
+            );
+          }
+          return (
+            <g key={si}>
+              {s.points.map((p, pi) => (
+                <circle key={pi} cx={xAt(p.x)} cy={yAt(p.y)} r="4" fill={s.color} fillOpacity="0.75">
+                  <title>{`${s.name} (${p.x}, ${p.y})`}</title>
+                </circle>
+              ))}
+            </g>
+          );
+        })}
+      </svg>
+
+      <div className="flex flex-wrap gap-3 border-t border-zinc-100 pt-3">
+        {spec.series.map((s, si) => (
           <span key={si} className="flex items-center gap-1.5 text-xs text-zinc-600">
-            <i className="h-2.5 w-2.5 rounded-sm" style={{ background: palette[si % palette.length] }} />
-            {s.name || `series ${si + 1}`}
+            <i className="h-2.5 w-2.5 rounded-sm" style={{ background: s.color }} />
+            {s.name || tt("数列 {n}", { n: si + 1 })}
           </span>
         ))}
       </div>
