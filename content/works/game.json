@@ -72,5 +72,42 @@
       "playtestPass": 8,
       "playtestFail": 0
     }
+  },
+  {
+    "id": "echo-recall-01",
+    "artifactType": "game",
+    "title": "灯语",
+    "styleId": "echo-recall",
+    "summary": "九盏灯按顺序亮一遍，然后全灭、屏上不留一点痕迹，你把顺序照按回去。对一次就加一盏，错一次就到此为止，错的时候正确答案完整重放一遍。复现不限时。",
+    "cover": "/works/game/echo-recall-01.cover.png",
+    "view": {
+      "kind": "game",
+      "src": "/works/game/echo-recall-01.html",
+      "download": "/works/game/echo-recall-01.game.json",
+      "aspect": 1.45
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo (OCEANLEO-AIGEN)",
+        "licenseCode": "OCEANLEO-AIGEN",
+        "licenseUrl": "https://oceanleo.com/licenses/oceanleo-aigen"
+      }
+    ],
+    "readings": {
+      "entryCount": 1,
+      "hasEntrypoint": true,
+      "entrypoint": "echo-recall-01.game.json",
+      "assetCount": 0,
+      "totalUncompressedBytes": 15183,
+      "entrypointByteSize": 15183,
+      "closureShape": "single-file",
+      "playSourceByteSize": 14099,
+      "coverNonBlankRatio": 0.3844482421875,
+      "coverColorCount": 725,
+      "coverFrameIndex": 88,
+      "playtestPass": 9,
+      "playtestFail": 0
+    }
   }
 ]

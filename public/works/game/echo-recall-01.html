@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<meta name="description" content="一款只考记性的小游戏：九宫格的灯按顺序亮起，全灭之后照原样按回去，每对一次序列加长一盏。">
+<title>灯语</title>
+<style>
+html, body { margin: 0; padding: 0; height: 100%; background: #0C0E14; overflow: hidden; }
+body { touch-action: none; -webkit-user-select: none; user-select: none; }
+#stage { display: block; width: 100%; height: 100%; }
+#fallback { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font: 16px/1.7 system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  color: #fff; opacity: .75; text-align: center; padding: 2rem; }
+</style>
+</head>
+<body>
+<canvas id="stage" role="img" aria-label="一款只考记性的小游戏：九宫格的灯按顺序亮起，全灭之后照原样按回去，每对一次序列加长一盏。"></canvas>
+<noscript><div id="fallback">这是一款需要 JavaScript 才能运行的小游戏：一款只考记性的小游戏：九宫格的灯按顺序亮起，全灭之后照原样按回去，每对一次序列加长一盏。</div></noscript>
+<script>
+// 灯语 —— 玩法风格「回声」（echo-recall）
+// 循环：场上按顺序点亮一串灯 → 全灭、屏上不留任何痕迹 → 你把顺序复现出来 →
+//      对错当场揭晓 → 序列加长一格，回到看灯。
+// 难度只来自记忆，旋钮只有一个：要记的量。复现阶段没有时限。
+var bundle = (function () {
+  "use strict";
+
+  var K = {
+    cols: 3, rows: 3,
+    start: 4,             // 第一层要记几个
+    goal: 10,             // 记到这么长就是满灯（过关）
+    lead: 700,            // 开场「看好」的静默
+    onMs: 480,            // 展示：一盏灯亮多久
+    gapMs: 200,           // 展示：两盏之间的暗场
+    tapMs: 140,           // 复现：按下之后的一闪，闪完立刻收走（不留痕迹）
+    wrongMs: 620,         // 判错时错误色停留多久
+    replayOn: 360,        // 复盘：正确答案重放，一盏亮多久
+    replayGap: 150,
+    endPause: 520         // 复盘结束到结算之间的停顿
+  };
+
+  // 夜色打底 + 一冷一暖两个信号色 + 一个只在判错时出现的错误色。
+  var NIGHT = [12, 14, 20], COLD = [90, 169, 255], WARM = [255, 194, 75], WRONG = [215, 38, 61];
+  function rgba(c, a) { return "rgba(" + c[0] + "," + c[1] + "," + c[2] + "," + a + ")"; }
+
+  var W = 0, H = 0, S = null;
+
+  function finite(v, f) { return (typeof v === "number" && isFinite(v)) ? v : f; }
+  function clamp(v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); }
+
+  // 定种子随机：不许用 Math.random（封面要求同输入同字节）。
+  // 玩家第一次落手时把手速的零头掺进种子——同一台机器上重开一局，序列就不一样了，
+  // 上一局背下来的东西帮不上忙。没有人碰过的时候（比如抓封面）走的是固定种子。
+  function rnd() {
+    S.seed = (S.seed * 1664525 + 1013904223) % 4294967296;
+    return S.seed / 4294967296;
+  }
+
+  function grow() {
+    var n = K.cols * K.rows;
+    var next = Math.floor(rnd() * n) % n;
+    if (S.seq.length && next === S.seq[S.seq.length - 1]) next = (next + 1 + Math.floor(rnd() * (n - 1))) % n;
+    S.seq.push(next);
+  }
+
+  function fresh(seed, best) {
+    S = {
+      seed: seed, best: best || 0,
+      seq: [], phase: "show", at: -1, timer: -K.lead,
+      typed: 0, lit: -1, flash: 0, flashKind: "ok", flashCell: -1,
+      over: null, overAge: 0, touched: false, frames: 0
+    };
+    for (var i = 0; i < K.start; i++) grow();
+    return S;
+  }
+
+  function beginShow() {
+    S.phase = "show";
+    S.at = -1;
+    S.timer = -K.lead * 0.5;
+    S.lit = -1;
+    S.typed = 0;
+  }
+
+  function beginReplay() {
+    S.phase = "replay";
+    S.at = -1;
+    S.timer = 0;
+    S.lit = -1;
+  }
+
+  function tap(i) {
+    if (S.phase !== "input" || S.over) return;
+    S.flash = K.tapMs;
+    S.flashCell = i;
+    if (i === S.seq[S.typed]) {
+      S.flashKind = "ok";
+      S.typed += 1;
+      if (S.typed >= S.seq.length) {
+        S.best = Math.max(S.best, S.seq.length);
+        if (S.seq.length >= K.goal) { S.over = "win"; S.phase = "over"; S.overAge = 0; return; }
+        grow();
+        beginShow();
+      }
+      return;
+    }
+    // 错了：先把错的那一下明确地打出来，再把正确答案完整重放一遍——
+    // 这个风格一半的乐趣在「原来是那个」。
+    S.flashKind = "bad";
+    S.best = Math.max(S.best, S.typed);
+    S.phase = "wrong";
+    S.timer = 0;
+  }
+
+  function layout() {
+    var bar = clamp(H * 0.11, 44, 92);
+    var foot = clamp(H * 0.10, 40, 84);
+    var free = { top: bar, h: H - bar - foot };
+    var edge = Math.min(W * 0.82, free.h * 0.94);
+    var cell = edge / K.cols;
+    return {
+      bar: bar, foot: foot, edge: edge, cell: cell,
+      gx: (W - edge) / 2, gy: bar + (free.h - edge) / 2, footTop: H - foot
+    };
+  }
+
+  function cellAt(x, y) {
+    var L = layout();
+    var c = Math.floor((x - L.gx) / L.cell), r = Math.floor((y - L.gy) / L.cell);
+    if (r < 0 || r >= K.rows || c < 0 || c >= K.cols) return -1;
+    return r * K.cols + c;
+  }
+
+  function hueOf(i) {
+    // 冷暖只用来分辨灯的种类，不表示好坏。同一盏灯永远是同一个颜色。
+    var r = Math.floor(i / K.cols), c = i % K.cols;
+    return ((r + c) % 2 === 0) ? COLD : WARM;
+  }
+
+  function sans(g, px, weight) {
+    g.font = (weight ? weight + " " : "") + Math.round(px) +
+      "px system-ui, -apple-system, 'PingFang SC', sans-serif";
+  }
+
+  return {
+    title: "灯语",
+
+    setup: function (env) {
+      W = finite(env && env.width, 640);
+      H = finite(env && env.height, 640);
+      fresh(20260813, 0);
+    },
+
+    resize: function (w, h) { W = finite(w, W); H = finite(h, H); },
+
+    pointer: function (x, y, phase) {
+      if (phase !== "down") return;
+      if (!S.touched) {
+        S.touched = true;
+        S.seed = (S.seed ^ (S.frames * 2654435761 + Math.round(x) * 13 + Math.round(y) * 7)) >>> 0;
+      }
+      if (S.over) { fresh(S.seed, S.best); return; }
+      var i = cellAt(x, y);
+      if (i >= 0) tap(i);
+    },
+
+    key: function (code, phase) {
+      if (phase !== "down") return;
+      if (!S.touched) {
+        S.touched = true;
+        S.seed = (S.seed ^ (S.frames * 2654435761 + 91)) >>> 0;
+      }
+      if (S.over) { fresh(S.seed, S.best); return; }
+      // 键盘：小键盘/数字键 1–9 与九宫格一一对应，顺序与看到的一致。
+      var m = /^(?:Digit|Numpad)([1-9])$/.exec(code) || /^([1-9])$/.exec(code);
+      if (!m) return;
+      var d = Number(m[1]) - 1;
+      var r = 2 - Math.floor(d / 3), c = d % 3;   // 小键盘 7/8/9 在上排
+      tap(r * K.cols + c);
+    },
+
+    update: function (dt) {
+      dt = clamp(finite(dt, 16.67), 0, 50);
+      S.frames += 1;
+      S.flash = Math.max(0, S.flash - dt);
+
+      if (S.phase === "input") return;   // 复现阶段没有时限：玩家想坐多久都行
+
+      S.timer += dt;
+
+      if (S.phase === "show") {
+        var span = S.at < 0 ? 0 : (S.lit >= 0 ? K.onMs : K.gapMs);
+        if (S.timer < span) return;
+        S.timer = 0;
+        if (S.lit >= 0) { S.lit = -1; return; }      // 灯灭，进暗场
+        S.at += 1;
+        if (S.at >= S.seq.length) { S.phase = "input"; S.lit = -1; return; }
+        S.lit = S.seq[S.at];
+        return;
+      }
+
+      if (S.phase === "wrong") {
+        if (S.timer < K.wrongMs) return;
+        beginReplay();
+        return;
+      }
+
+      if (S.phase === "replay") {
+        var span2 = S.at < 0 ? 0 : (S.lit >= 0 ? K.replayOn : K.replayGap);
+        if (S.timer < span2) return;
+        S.timer = 0;
+        if (S.lit >= 0) { S.lit = -1; return; }
+        S.at += 1;
+        if (S.at >= S.seq.length) {
+          S.lit = -1;
+          S.over = "lose";
+          S.phase = "over";
+          S.overAge = 0;
+          return;
+        }
+        S.lit = S.seq[S.at];
+        return;
+      }
+
+      if (S.phase === "over") { S.overAge += dt; }
+    },
+
+    draw: function (g) {
+      var L = layout();
+      g.fillStyle = rgba(NIGHT, 1);
+      g.fillRect(0, 0, W, H);
+
+      var showing = S.phase === "show" || S.phase === "replay";
+      for (var i = 0; i < K.cols * K.rows; i++) {
+        var r = Math.floor(i / K.cols), c = i % K.cols;
+        var x = L.gx + c * L.cell, y = L.gy + r * L.cell;
+        var pad = L.cell * 0.09;
+        var s = L.cell - pad * 2;
+        var hue = hueOf(i);
+
+        var on = showing && S.lit === i;
+        var hit = S.flash > 0 && S.flashCell === i;
+        var bad = hit && S.flashKind === "bad";
+        // 亮度就是信息：暗＝没轮到它，亮＝现在是它。除此之外亮度不表示别的意思。
+        var a = on ? 0.95 : 0.10;
+        if (hit) a = Math.max(a, 0.30 + 0.6 * (S.flash / K.tapMs));
+
+        g.fillStyle = rgba(bad ? WRONG : hue, a);
+        g.beginPath();
+        g.roundRect(x + pad, y + pad, s, s, s * 0.16);
+        g.fill();
+
+        g.strokeStyle = rgba(bad ? WRONG : hue, on ? 0.9 : 0.22);
+        g.lineWidth = on ? 3 : 1.5;
+        g.beginPath();
+        g.roundRect(x + pad, y + pad, s, s, s * 0.16);
+        g.stroke();
+      }
+
+      // 判错的那一下：错误色只在这一瞬间出现，重放开始就收走。
+      if (S.phase === "wrong") {
+        g.strokeStyle = rgba(WRONG, 0.55);
+        g.lineWidth = 3;
+        g.strokeRect(L.gx - 8, L.gy - 8, L.edge + 16, L.edge + 16);
+      }
+    },
+
+    hud: function (g) {
+      var L = layout();
+      var pad = W * 0.06;
+
+      // 顶部状态条：这一层要记几个、历史最好。序列本身一个字都不写在这里。
+      g.textBaseline = "middle";
+      g.textAlign = "left";
+      sans(g, L.bar * 0.30, "600");
+      g.fillStyle = rgba(COLD, 0.85);
+      g.fillText("第 " + S.seq.length + " 盏 / " + K.goal, pad, L.bar * 0.55);
+
+      g.textAlign = "right";
+      sans(g, L.bar * 0.26);
+      g.fillStyle = rgba(COLD, 0.45);
+      g.fillText("最好 " + S.best, W - pad, L.bar * 0.55);
+
+      g.beginPath();
+      g.moveTo(pad, L.bar - 1);
+      g.lineTo(W - pad, L.bar - 1);
+      g.strokeStyle = rgba(COLD, 0.16);
+      g.lineWidth = 1;
+      g.stroke();
+
+      // 底部：一句话说清现在轮到谁，外加一道层数阶梯。
+      var cy = L.footTop + L.foot * 0.42;
+      g.textAlign = "center";
+      sans(g, L.foot * 0.30);
+      var say = S.phase === "show" ? "看好" :
+        (S.phase === "input" ? "照着按　不限时" :
+          (S.phase === "wrong" ? "错了" :
+            (S.phase === "replay" ? "正确答案" :
+              (S.over === "win" ? "满灯　按一下再来" : "到此为止　按一下再来"))));
+      g.fillStyle = rgba(S.phase === "wrong" ? WRONG : COLD, S.phase === "input" ? 0.5 : 0.8);
+      g.fillText(say, W / 2, cy);
+
+      var steps = K.goal - K.start + 1;
+      var sw = Math.min(W * 0.5, steps * L.foot * 0.16);
+      var gap = sw / steps;
+      var bx = (W - sw) / 2;
+      var by = L.footTop + L.foot * 0.78;
+      for (var i = 0; i < steps; i++) {
+        var done = i <= S.seq.length - K.start;
+        g.beginPath();
+        g.moveTo(bx + i * gap + gap * 0.15, by);
+        g.lineTo(bx + i * gap + gap * 0.85, by);
+        g.strokeStyle = rgba(WARM, done ? 0.75 : 0.18);
+        g.lineWidth = done ? 3 : 2;
+        g.stroke();
+      }
+
+      if (S.phase === "over") {
+        g.textAlign = "center";
+        sans(g, Math.min(W, H) * 0.11, "600");
+        g.fillStyle = rgba(S.over === "win" ? WARM : COLD, 0.92);
+        g.fillText(String(S.best), W / 2, L.gy + L.edge * 0.5);
+        sans(g, Math.min(W, H) * 0.035);
+        g.fillStyle = rgba(COLD, 0.6);
+        g.fillText(S.over === "win" ? "十盏全记住了" : "记住了这么多盏", W / 2, L.gy + L.edge * 0.5 + Math.min(W, H) * 0.09);
+      }
+    },
+
+    __probe: function () {
+      return {
+        phase: S.phase, over: S.over, lit: S.lit,
+        seqLen: S.seq.length, typed: S.typed, best: S.best,
+        goal: K.goal, touched: S.touched
+      };
+    }
+  };
+})();
+
+
+(function () {
+  "use strict";
+  var cv = document.getElementById("stage");
+  var g = cv.getContext("2d", { alpha: false });
+  var W = 0, H = 0, started = false;
+
+  function fit() {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = cv.clientWidth || window.innerWidth;
+    H = cv.clientHeight || window.innerHeight;
+    cv.width = Math.round(W * dpr);
+    cv.height = Math.round(H * dpr);
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    if (started && bundle.resize) bundle.resize(W, H);
+  }
+
+  fit();
+  bundle.setup({ ctx: g, canvas: cv, width: W, height: H });
+  started = true;
+  window.addEventListener("resize", fit);
+  window.addEventListener("orientationchange", fit);
+
+  function at(e) {
+    var r = cv.getBoundingClientRect();
+    return [e.clientX - r.left, e.clientY - r.top];
+  }
+  function on(name, phase) {
+    cv.addEventListener(name, function (e) {
+      var p = at(e);
+      bundle.pointer(p[0], p[1], phase);
+      if (e.cancelable) e.preventDefault();
+    }, { passive: false });
+  }
+  on("pointerdown", "down");
+  on("pointermove", "move");
+  on("pointerup", "up");
+  cv.addEventListener("pointercancel", function () { bundle.pointer(-1, -1, "up"); });
+  cv.addEventListener("contextmenu", function (e) { e.preventDefault(); });
+
+  window.addEventListener("keydown", function (e) {
+    if (e.repeat) return;
+    bundle.key(e.code || e.key, "down");
+    if (e.code === "Space" || e.code === "ArrowUp" || e.code === "ArrowDown") e.preventDefault();
+  });
+  window.addEventListener("keyup", function (e) { bundle.key(e.code || e.key, "up"); });
+
+  var last = 0;
+  function loop(ts) {
+    var dt = last ? Math.min(ts - last, 50) : 16.67;
+    last = ts;
+    bundle.update(dt, ts);
+    bundle.draw(g, ts);
+    bundle.hud(g, ts);
+    window.requestAnimationFrame(loop);
+  }
+  window.requestAnimationFrame(loop);
+})();
+
+</script>
+</body>
+</html>
