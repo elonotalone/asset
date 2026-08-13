@@ -1,678 +1,20 @@
 [
   {
-    "id": "duty-register-01",
+    "id": "pack-capacity-model-01",
     "artifactType": "grid",
-    "title": "冷链仓温控值班登记表（2026 年 7 月 1–10 日）",
-    "styleId": "duty-register",
-    "summary": "一线值班员边巡检边填的台账：一天三班、三个库区，设定温度与实测温度并排，超差的那几次写在处置列里。首行冻结、开筛选、末尾不放合计——台账的最后一行永远是最新一条记录。",
-    "cover": "/works/grid/duty-register-01.cover.webp",
-    "view": {
-      "kind": "grid",
-      "src": "/works/grid/duty-register-01.xlsx",
-      "download": "/works/grid/duty-register-01.xlsx",
-      "sheets": [
-        {
-          "name": "温控巡检登记",
-          "header": [
-            "日期",
-            "班次",
-            "巡检时刻",
-            "库区",
-            "设定温度 ℃",
-            "实测温度 ℃",
-            "相对湿度 %",
-            "除霜状态",
-            "值班人",
-            "异常与处置"
-          ],
-          "rows": [
-            [
-              "2026-07-01",
-              "早班",
-              "07:20",
-              "冷藏 A 区",
-              4,
-              4.1,
-              78,
-              "正常",
-              "陈汝立",
-              null
-            ],
-            [
-              "2026-07-01",
-              "中班",
-              "15:10",
-              "冷冻 B 区",
-              -18,
-              -18.2,
-              65,
-              "正常",
-              "周敏",
-              null
-            ],
-            [
-              "2026-07-01",
-              "夜班",
-              "23:05",
-              "速冻 C 区",
-              -25,
-              -25.1,
-              61,
-              "正常",
-              "李国栋",
-              null
-            ],
-            [
-              "2026-07-02",
-              "早班",
-              "07:15",
-              "冷冻 B 区",
-              -18,
-              -17.9,
-              66,
-              "除霜中",
-              "陈汝立",
-              "除霜周期内回温 0.1℃，在容差内"
-            ],
-            [
-              "2026-07-02",
-              "中班",
-              "15:25",
-              "速冻 C 区",
-              -25,
-              -24.9,
-              62,
-              "正常",
-              "周敏",
-              null
-            ],
-            [
-              "2026-07-02",
-              "夜班",
-              "23:10",
-              "冷藏 A 区",
-              4,
-              3.8,
-              80,
-              "正常",
-              "李国栋",
-              null
-            ],
-            [
-              "2026-07-03",
-              "早班",
-              "07:05",
-              "速冻 C 区",
-              -25,
-              -25.4,
-              60,
-              "正常",
-              "何雪",
-              null
-            ],
-            [
-              "2026-07-03",
-              "中班",
-              "15:00",
-              "冷藏 A 区",
-              4,
-              4.4,
-              82,
-              "正常",
-              "陈汝立",
-              "外门开启频繁，湿度偏高"
-            ],
-            [
-              "2026-07-03",
-              "夜班",
-              "23:20",
-              "冷冻 B 区",
-              -18,
-              -18.4,
-              64,
-              "正常",
-              "周敏",
-              null
-            ],
-            [
-              "2026-07-04",
-              "早班",
-              "07:30",
-              "冷藏 A 区",
-              4,
-              4.6,
-              79,
-              "正常",
-              "何雪",
-              "接近上限 4.7℃，已通知制冷组巡查冷凝器"
-            ],
-            [
-              "2026-07-04",
-              "中班",
-              "15:15",
-              "冷冻 B 区",
-              -18,
-              -17.4,
-              67,
-              "除霜中",
-              "李国栋",
-              null
-            ],
-            [
-              "2026-07-04",
-              "夜班",
-              "23:00",
-              "冷冻 B 区",
-              -18,
-              -16.8,
-              69,
-              "除霜结束",
-              "陈汝立",
-              "超上限 0.3℃；判为除霜后回温，30 分钟复测 -18.1℃，未做处置"
-            ],
-            [
-              "2026-07-05",
-              "早班",
-              "07:10",
-              "速冻 C 区",
-              -25,
-              -25.2,
-              59,
-              "正常",
-              "周敏",
-              null
-            ],
-            [
-              "2026-07-05",
-              "中班",
-              "15:35",
-              "冷藏 A 区",
-              4,
-              4,
-              77,
-              "正常",
-              "何雪",
-              null
-            ],
-            [
-              "2026-07-05",
-              "夜班",
-              "23:25",
-              "冷冻 B 区",
-              -18,
-              -18.6,
-              63,
-              "正常",
-              "李国栋",
-              null
-            ],
-            [
-              "2026-07-06",
-              "早班",
-              "07:25",
-              "冷冻 B 区",
-              -18,
-              -18.1,
-              65,
-              "正常",
-              "陈汝立",
-              null
-            ],
-            [
-              "2026-07-06",
-              "中班",
-              "15:05",
-              "速冻 C 区",
-              -25,
-              -24.6,
-              63,
-              "正常",
-              "周敏",
-              "C 区西侧探头示数较东侧高 0.5℃，已报校准"
-            ],
-            [
-              "2026-07-06",
-              "夜班",
-              "23:15",
-              "冷藏 A 区",
-              4,
-              3.6,
-              81,
-              "正常",
-              "何雪",
-              null
-            ],
-            [
-              "2026-07-07",
-              "早班",
-              "07:00",
-              "冷藏 A 区",
-              4,
-              3.9,
-              78,
-              "正常",
-              "李国栋",
-              null
-            ],
-            [
-              "2026-07-07",
-              "中班",
-              "15:20",
-              "冷冻 B 区",
-              -18,
-              -18.3,
-              64,
-              "正常",
-              "陈汝立",
-              null
-            ],
-            [
-              "2026-07-07",
-              "夜班",
-              "23:30",
-              "速冻 C 区",
-              -25,
-              -25.5,
-              58,
-              "正常",
-              "周敏",
-              null
-            ],
-            [
-              "2026-07-08",
-              "早班",
-              "07:35",
-              "速冻 C 区",
-              -25,
-              -24.2,
-              64,
-              "除霜中",
-              "何雪",
-              "除霜中，容差上限 -24.2℃，恰在临界"
-            ],
-            [
-              "2026-07-08",
-              "中班",
-              "15:40",
-              "冷藏 A 区",
-              4,
-              4.3,
-              83,
-              "正常",
-              "李国栋",
-              "上午收货 12 车次，外门累计开启 41 分钟"
-            ],
-            [
-              "2026-07-08",
-              "夜班",
-              "23:35",
-              "冷冻 B 区",
-              -18,
-              -18,
-              66,
-              "正常",
-              "陈汝立",
-              null
-            ],
-            [
-              "2026-07-09",
-              "早班",
-              "07:40",
-              "冷冻 B 区",
-              -18,
-              -18.5,
-              63,
-              "正常",
-              "周敏",
-              null
-            ],
-            [
-              "2026-07-09",
-              "中班",
-              "15:30",
-              "速冻 C 区",
-              -25,
-              -25,
-              61,
-              "正常",
-              "何雪",
-              null
-            ],
-            [
-              "2026-07-09",
-              "夜班",
-              "23:40",
-              "冷藏 A 区",
-              4,
-              4.2,
-              79,
-              "正常",
-              "李国栋",
-              null
-            ],
-            [
-              "2026-07-10",
-              "早班",
-              "07:45",
-              "冷藏 A 区",
-              4,
-              4.5,
-              84,
-              "正常",
-              "陈汝立",
-              "梅雨，除湿机连续运行 6 小时"
-            ],
-            [
-              "2026-07-10",
-              "中班",
-              "15:45",
-              "冷冻 B 区",
-              -18,
-              -18.2,
-              65,
-              "正常",
-              "周敏",
-              null
-            ],
-            [
-              "2026-07-10",
-              "夜班",
-              "23:50",
-              "速冻 C 区",
-              -25,
-              -25.3,
-              60,
-              "正常",
-              "何雪",
-              null
-            ]
-          ]
-        }
-      ]
-    },
-    "downloadable": true,
-    "attribution": [
-      {
-        "text": "OceanLeo 第一方原创；表内数值为合成的示例数据，量纲与勾稽关系按行业常识设定",
-        "licenseCode": "CC0-1.0",
-        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
-      }
-    ],
-    "readings": {
-      "partCount": 11,
-      "sheetCount": 1,
-      "pictureCount": 0,
-      "chartPartCount": 0,
-      "byteSize": 9504,
-      "sha256": "6ec17c6989b11a078100166365f5c290bb8da946c7027aefe09911af4ea3ec28",
-      "cover_route": "artifact",
-      "cover_sourceFormat": "xlsx",
-      "cover_sourceByteSize": 9504,
-      "cover_sourceSha256": "6ec17c6989b11a078100166365f5c290bb8da946c7027aefe09911af4ea3ec28",
-      "cover_formatEvidence": "包内有 xl/workbook.xml",
-      "cover_coverOrigin": "rendered",
-      "cover_renderPath": "soffice --headless --convert-to pdf → pdftoppm -f 1 -l 1 -r 150",
-      "cover_renderDetail": "soffice --headless --convert-to pdf → pdftoppm -f 1 -l 1 -r 150，原始 1275x1650",
-      "cover_width": 1155,
-      "cover_height": 1156,
-      "cover_mediaType": "image/webp",
-      "cover_byteSize": 158168,
-      "cover_encodeQuality": 92,
-      "cover_encodeAttempts": 1,
-      "cover_downscales": 0,
-      "cover_withinByteBudget": true,
-      "cover_withinEdgeBudget": true,
-      "cover_maxEdge": 1280,
-      "cover_maxBytes": 204800,
-      "cover_cropped": true,
-      "cover_nonBlankRatio": 0.4553760541649815,
-      "cover_colorCount": 741,
-      "cover_entropyBits": 2.2770441614786727,
-      "cover_sha256": "063b03e46f543501ad82f1c91ea48ba42c623f4708f5f89d53ea60578581db7f",
-      "mainBlockCount": 5,
-      "mainBlockLayout": "dense@12+57 color@00+102 sparse@02+68 sparse@72+18 sparse@92+18"
-    }
-  },
-  {
-    "id": "scenario-model-01",
-    "artifactType": "grid",
-    "title": "500 kWp 屋顶分布式光伏投资回收测算（保守 / 基准 / 乐观）",
+    "title": "离线素材包容量测算（三情景）",
     "styleId": "scenario-model",
-    "summary": "从上往下读一遍就是算了一遍：最上面是十个可改的假设，中间一行一步把公式摊开，最下面三个情景横向对照回收期、NPV 与度电成本。每一格都是活公式，改假设全表重算。",
-    "cover": "/works/grid/scenario-model-01.cover.webp",
+    "summary": "口径：只把缩略图随包，原件按需下载；全库 119,838 件 / 238 个类目为实测值。推导段与情景段每一格都是公式，改假设段即可重算。",
+    "cover": "/works/grid/pack-capacity-model-01.cover.webp",
     "view": {
       "kind": "grid",
-      "src": "/works/grid/scenario-model-01.xlsx",
-      "download": "/works/grid/scenario-model-01.xlsx",
-      "sheets": [
-        {
-          "name": "投资回收测算",
-          "header": [
-            "项目",
-            "保守",
-            "基准",
-            "乐观",
-            "单位｜说明"
-          ],
-          "rows": [
-            [
-              "一、假设（只有这一段可以改）",
-              null,
-              null,
-              null,
-              "改动上面这一段，下面两段全部重算"
-            ],
-            [
-              "装机容量",
-              500,
-              500,
-              500,
-              "kWp｜屋顶可用面积约 4,200 ㎡，按 8.4 ㎡/kWp 折算，三情景相同"
-            ],
-            [
-              "单位造价（含并网）",
-              3.85,
-              3.62,
-              3.45,
-              "元/Wp｜组件 + 支架 + 逆变器 + 施工 + 并网；乐观情景假设集采落地"
-            ],
-            [
-              "首年等效利用小时",
-              980,
-              1080,
-              1150,
-              "h｜当地多年平均 1,080 h；保守取 P90，乐观取 P50 并考虑清洗到位"
-            ],
-            [
-              "年发电衰减率",
-              0.007,
-              0.0055,
-              0.0045,
-              "首年衰减已计入等效小时，此处为第 2 年起的线性年衰减"
-            ],
-            [
-              "自发自用比例",
-              0.55,
-              0.7,
-              0.85,
-              "取决于厂区白班负荷；两班制可到 0.85"
-            ],
-            [
-              "上网电价",
-              0.391,
-              0.391,
-              0.391,
-              "元/kWh｜燃煤发电基准价，三情景相同（政策价，不做假设）"
-            ],
-            [
-              "自用替代电价",
-              0.612,
-              0.648,
-              0.702,
-              "元/kWh｜大工业目录电价的加权均值；乐观情景假设尖峰时段占比提高"
-            ],
-            [
-              "年运维费率",
-              0.014,
-              0.011,
-              0.009,
-              "占初始投资｜含清洗、保险、逆变器更换摊销"
-            ],
-            [
-              "折现率",
-              0.065,
-              0.055,
-              0.048,
-              "企业加权平均资金成本"
-            ],
-            [
-              "计算年限",
-              25,
-              25,
-              25,
-              "年｜组件质保 25 年，三情景相同"
-            ],
-            [
-              null,
-              null,
-              null,
-              null,
-              null
-            ],
-            [
-              "二、推导（一格一步，公式写在格子里）",
-              null,
-              null,
-              null,
-              "每一格都能点开看见它是怎么算出来的"
-            ],
-            [
-              "初始投资",
-              1925000,
-              1810000,
-              1725000,
-              "元｜含并网与验收费用，不含屋面加固"
-            ],
-            [
-              "首年发电量",
-              490000,
-              540000,
-              575000,
-              "kWh｜等效利用小时 × 装机容量"
-            ],
-            [
-              "首年自用电量",
-              269500,
-              378000,
-              488750,
-              "kWh｜自发自用比例由厂区白班负荷决定"
-            ],
-            [
-              "首年上网电量",
-              220500,
-              162000,
-              86250,
-              "kWh｜余电全额上网"
-            ],
-            [
-              "首年自用节省",
-              164934,
-              244944,
-              343102.5,
-              "元｜替代的是目录电价，不是上网电价"
-            ],
-            [
-              "首年上网收入",
-              86215.5,
-              63342,
-              33723.75,
-              "元｜燃煤基准价，无补贴"
-            ],
-            [
-              "首年运维支出",
-              26950,
-              19910,
-              15525,
-              "元｜费率按初始投资计，不随发电量变"
-            ],
-            [
-              "首年净现金流",
-              224199.5,
-              288376,
-              361301.25,
-              "元｜未计所得税与折旧抵税"
-            ],
-            [
-              "25 年累计发电量",
-              11274158,
-              12645460,
-              13624880,
-              "kWh｜按几何衰减求和的闭式解"
-            ],
-            [
-              "25 年累计净现金流",
-              5158490.99,
-              6753050.2,
-              8561193.44,
-              "元｜未折现；电价按不变价，未计上调"
-            ],
-            [
-              "25 年净现金流现值",
-              2572762.47,
-              3677585.44,
-              4977741.1,
-              "元｜等比现金流现值闭式解；与逐年现金流表的差异 < 0.3%"
-            ],
-            [
-              null,
-              null,
-              null,
-              null,
-              null
-            ],
-            [
-              "三、情景对照（只读这一段也够）",
-              null,
-              null,
-              null,
-              "同一行上三个情景直接可比"
-            ],
-            [
-              "静态回收期",
-              8.59,
-              6.28,
-              4.77,
-              "年｜初始投资 ÷ 首年净现金流，不考虑衰减与折现"
-            ],
-            [
-              "25 年 NPV",
-              64.8,
-              186.8,
-              325.3,
-              "万元｜净现金流现值 − 初始投资"
-            ],
-            [
-              "度电成本 LCOE",
-              0.231,
-              0.182,
-              0.155,
-              "元/kWh｜未折现；全生命周期支出 ÷ 全生命周期发电量"
-            ],
-            [
-              null,
-              null,
-              null,
-              null,
-              "基准情景静态回收期 6.28 年、NPV 186.8 万元、LCOE 0.182 元/kWh；保守情景 LCOE 0.231 元/kWh 仍低于自用替代电价 0.612 元/kWh，即最差情景下自用部分依然划算。"
-            ]
-          ]
-        }
-      ]
+      "src": "/works/grid/pack-capacity-model-01.xlsx",
+      "download": "/works/grid/pack-capacity-model-01.xlsx"
     },
     "downloadable": true,
     "attribution": [
       {
-        "text": "OceanLeo 第一方原创；表内数值为合成的示例数据，量纲与勾稽关系按行业常识设定",
+        "text": "OceanLeo 第一方原创。表内每一个数都来自本机 oceanleo 库的只读查询，SQL 原文与查询快照随件存放在 signals/E2-workshop/data/，可原样重跑对账。",
         "licenseCode": "CC0-1.0",
         "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
       }
@@ -682,20 +24,36 @@
       "sheetCount": 1,
       "pictureCount": 0,
       "chartPartCount": 0,
-      "byteSize": 9893,
-      "sha256": "d874d7383c495c0c0b86e2a78f55825cf10f32a381cf85de838616689698db8f",
+      "parts": "[Content_Types].xml _rels/.rels docProps/app.xml docProps/core.xml docProps/custom.xml xl/_rels/workbook.xml.rels xl/sharedStrings.xml xl/styles.xml xl/theme/theme1.xml xl/workbook.xml xl/worksheets/sheet1.xml",
+      "license": null,
+      "axis_gridPurpose": "scenario-model",
+      "axis_emphasis": "formula-exposed",
+      "axis_density": "sparse",
+      "axis_sheetPlan": "sectioned-single",
+      "byteSize": 9603,
+      "dimension": "A1:E26",
+      "colWidths": "26,12,62",
+      "rowCount": 26,
+      "mergeCount": 1,
+      "freeze": "none",
+      "autoFilter": "none",
+      "formulaCells": 39,
+      "cachedValues": 39,
+      "numFmts": "#,##0.####",
+      "stylePalette": "#1B4332 #B8C2CC #D8DEE4 #F2F5F9 #FFFFFF",
       "cover_route": "artifact",
       "cover_sourceFormat": "xlsx",
-      "cover_sourceByteSize": 9893,
-      "cover_sourceSha256": "d874d7383c495c0c0b86e2a78f55825cf10f32a381cf85de838616689698db8f",
+      "cover_sourceByteSize": 9603,
+      "cover_sourceSha256": "3c187db0eca5ebcdf38c0ca3b993ab0b579bf1d47a0b91b28ede45421bab96a1",
       "cover_formatEvidence": "包内有 xl/workbook.xml",
       "cover_coverOrigin": "rendered",
       "cover_renderPath": "soffice --headless --convert-to pdf → pdftoppm -f 1 -l 1 -r 150",
       "cover_renderDetail": "soffice --headless --convert-to pdf → pdftoppm -f 1 -l 1 -r 150，原始 1275x1650",
-      "cover_width": 1009,
-      "cover_height": 1156,
+      "cover_placeholderReason": null,
+      "cover_width": 1038,
+      "cover_height": 969,
       "cover_mediaType": "image/webp",
-      "cover_byteSize": 125898,
+      "cover_byteSize": 95894,
       "cover_encodeQuality": 92,
       "cover_encodeAttempts": 1,
       "cover_downscales": 0,
@@ -704,440 +62,80 @@
       "cover_maxEdge": 1280,
       "cover_maxBytes": 204800,
       "cover_cropped": true,
-      "cover_nonBlankRatio": 0.4478799798354601,
-      "cover_colorCount": 737,
-      "cover_entropyBits": 2.2245275459956355,
-      "cover_sha256": "59fe02303353a5ae7954493272cfcce688d34890fb82753db1bc50fcb29b8bce",
-      "mainBlockCount": 4,
-      "mainBlockLayout": "sparse@22+87 color@00+102 dense@55+43 dense@12+27"
+      "cover_cropBox_x": 38,
+      "cover_cropBox_y": 68,
+      "cover_cropBox_width": 1038,
+      "cover_cropBox_height": 969,
+      "cover_cropSkipReason": null,
+      "cover_nonBlankRatio": 0.4346176560067288,
+      "cover_colorCount": 732,
+      "cover_entropyBits": 2.16401669635904,
+      "cover_dominantColor": "255 255 255 255",
+      "cover_outline_title": "离线包容量测算",
+      "cover_outline_subtitle": null,
+      "cover_outline_accent": "#4f81bd",
+      "cover_outline_lineCount": 6,
+      "cover_outline_sheetCount": 1,
+      "cover_outline_rowCount": 12,
+      "cover_outline_columnCount": 5,
+      "cover_outline_sourceByteSize": 9603
     }
   },
   {
-    "id": "two-source-recon-01",
+    "id": "supply-license-matrix-01",
     "artifactType": "grid",
-    "title": "平台流水与银行入账逐笔对账（2026 年第 27 周）",
-    "styleId": "two-source-recon",
-    "summary": "先给结论再给证据：结论页只列对不平的 4 笔并逐笔写清原因，24 笔全量放在明细页（两个来源左右并置、差额列夹在正中），口径单独一张表。差额一律是公式，不是手填的数。",
-    "cover": "/works/grid/two-source-recon-01.cover.webp",
+    "title": "授权族 × 素材族 件数矩阵",
+    "styleId": "spec-matrix",
+    "summary": "口径：7 种授权族 × 7 个素材族 = 49 格，其中 29 格为空（按数字格式显示为「—」，不是删掉）。行合计与列合计在右下角交汇于 119,838，那一格是本表唯一的自校验点。列头的素材族名缩成两字，是为了让那个自校验格留在一屏之内。",
+    "cover": "/works/grid/supply-license-matrix-01.cover.webp",
     "view": {
       "kind": "grid",
-      "src": "/works/grid/two-source-recon-01.xlsx",
-      "download": "/works/grid/two-source-recon-01.xlsx",
-      "sheets": [
-        {
-          "name": "结论",
-          "header": [
-            "项目 / 单号",
-            "平台流水（元）",
-            "银行入账（元）",
-            "差额（元）",
-            "说明"
-          ],
-          "rows": [
-            [
-              "笔数",
-              24,
-              23,
-              1,
-              "银行侧少 1 笔，即下方跨账期未达的那一笔"
-            ],
-            [
-              "金额合计（元）",
-              569350.5,
-              540807.9,
-              28542.6,
-              "取自明细页，不手工汇总"
-            ],
-            [
-              "对不平的笔数",
-              4,
-              null,
-              null,
-              "已平的 20 笔不在本页，去明细页看"
-            ],
-            [
-              null,
-              null,
-              null,
-              null,
-              null
-            ],
-            [
-              "对不平的 4 笔逐笔如下",
-              "平台流水",
-              "银行入账",
-              "差额",
-              "原因（每一笔都要有）"
-            ],
-            [
-              "PF20260702-0318",
-              7640,
-              7627.4,
-              12.6,
-              "第三方支付通道手续费 12.60 元由银行侧净额入账，平台侧记全额"
-            ],
-            [
-              "PF20260703-0329",
-              28470,
-              0,
-              28470,
-              "平台 17:42 结算，超过银行当日截止时点，07-04 到账，跨账期未入本期"
-            ],
-            [
-              "PF20260704-0337",
-              5720,
-              5420,
-              300,
-              "客户部分退款 300.00 元，银行侧已扣减，平台侧退款单次日才生成"
-            ],
-            [
-              "PF20260706-0353",
-              3140,
-              3380,
-              -240,
-              "银行侧重复入账 240.00 元（BK7060120 与 BK7060126 同额），待银行冲正"
-            ],
-            [
-              null,
-              null,
-              null,
-              null,
-              null
-            ],
-            [
-              "差异归因合计（元）",
-              null,
-              null,
-              28542.6,
-              "与上方「金额合计」的差额相等，即差异已全部归因，无兜底项"
-            ]
-          ]
-        },
-        {
-          "name": "逐笔明细",
-          "header": [
-            "平台单号",
-            "平台结算日",
-            "平台金额（元）",
-            "差额（元）",
-            "银行金额（元）",
-            "银行到账日",
-            "银行流水号",
-            "说明"
-          ],
-          "rows": [
-            [
-              "PF20260701-0311",
-              "2026-07-01",
-              18620,
-              0,
-              18620,
-              "2026-07-01",
-              "BK7010049",
-              null
-            ],
-            [
-              "PF20260701-0312",
-              "2026-07-01",
-              4380.5,
-              0,
-              4380.5,
-              "2026-07-01",
-              "BK7010050",
-              null
-            ],
-            [
-              "PF20260701-0313",
-              "2026-07-01",
-              92150,
-              0,
-              92150,
-              "2026-07-01",
-              "BK7010051",
-              null
-            ],
-            [
-              "PF20260702-0318",
-              "2026-07-02",
-              7640,
-              12.6,
-              7627.4,
-              "2026-07-02",
-              "BK7020063",
-              "第三方支付通道手续费 12.60 元由银行侧净额入账，平台侧记全额"
-            ],
-            [
-              "PF20260702-0319",
-              "2026-07-02",
-              15300,
-              0,
-              15300,
-              "2026-07-02",
-              "BK7020064",
-              null
-            ],
-            [
-              "PF20260702-0320",
-              "2026-07-02",
-              2280,
-              0,
-              2280,
-              "2026-07-02",
-              "BK7020065",
-              null
-            ],
-            [
-              "PF20260703-0327",
-              "2026-07-03",
-              43900,
-              0,
-              43900,
-              "2026-07-03",
-              "BK7030071",
-              null
-            ],
-            [
-              "PF20260703-0328",
-              "2026-07-03",
-              6150,
-              0,
-              6150,
-              "2026-07-03",
-              "BK7030072",
-              null
-            ],
-            [
-              "PF20260703-0329",
-              "2026-07-03",
-              28470,
-              28470,
-              0,
-              null,
-              "—",
-              "平台 17:42 结算，超过银行当日截止时点，07-04 到账，跨账期未入本期"
-            ],
-            [
-              "PF20260704-0335",
-              "2026-07-04",
-              11080,
-              0,
-              11080,
-              "2026-07-04",
-              "BK7040088",
-              null
-            ],
-            [
-              "PF20260704-0336",
-              "2026-07-04",
-              39250,
-              0,
-              39250,
-              "2026-07-04",
-              "BK7040089",
-              null
-            ],
-            [
-              "PF20260704-0337",
-              "2026-07-04",
-              5720,
-              300,
-              5420,
-              "2026-07-04",
-              "BK7040090",
-              "客户部分退款 300.00 元，银行侧已扣减，平台侧退款单次日才生成"
-            ],
-            [
-              "PF20260705-0341",
-              "2026-07-05",
-              76400,
-              0,
-              76400,
-              "2026-07-05",
-              "BK7050102",
-              null
-            ],
-            [
-              "PF20260705-0342",
-              "2026-07-05",
-              1890,
-              0,
-              1890,
-              "2026-07-05",
-              "BK7050103",
-              null
-            ],
-            [
-              "PF20260705-0343",
-              "2026-07-05",
-              24060,
-              0,
-              24060,
-              "2026-07-05",
-              "BK7050104",
-              null
-            ],
-            [
-              "PF20260706-0350",
-              "2026-07-06",
-              13750,
-              0,
-              13750,
-              "2026-07-06",
-              "BK7060117",
-              null
-            ],
-            [
-              "PF20260706-0351",
-              "2026-07-06",
-              8420,
-              0,
-              8420,
-              "2026-07-06",
-              "BK7060118",
-              null
-            ],
-            [
-              "PF20260706-0352",
-              "2026-07-06",
-              55300,
-              0,
-              55300,
-              "2026-07-06",
-              "BK7060119",
-              null
-            ],
-            [
-              "PF20260706-0353",
-              "2026-07-06",
-              3140,
-              -240,
-              3380,
-              "2026-07-06",
-              "BK7060120",
-              "银行侧重复入账 240.00 元（BK7060120 与 BK7060126 同额），待银行冲正"
-            ],
-            [
-              "PF20260707-0361",
-              "2026-07-07",
-              20950,
-              0,
-              20950,
-              "2026-07-07",
-              "BK7070131",
-              null
-            ],
-            [
-              "PF20260707-0362",
-              "2026-07-07",
-              46700,
-              0,
-              46700,
-              "2026-07-07",
-              "BK7070132",
-              null
-            ],
-            [
-              "PF20260707-0363",
-              "2026-07-07",
-              9830,
-              0,
-              9830,
-              "2026-07-07",
-              "BK7070133",
-              null
-            ],
-            [
-              "PF20260707-0364",
-              "2026-07-07",
-              31500,
-              0,
-              31500,
-              "2026-07-07",
-              "BK7070134",
-              null
-            ],
-            [
-              "PF20260707-0365",
-              "2026-07-07",
-              2470,
-              0,
-              2470,
-              "2026-07-07",
-              "BK7070135",
-              null
-            ]
-          ]
-        },
-        {
-          "name": "口径说明",
-          "header": [
-            "口径项",
-            "约定"
-          ],
-          "rows": [
-            [
-              "账期",
-              "2026-07-01 00:00 至 2026-07-07 23:59，按平台结算时点划分"
-            ],
-            [
-              "平台侧取数",
-              "订单状态 = 已结算 的资金流水，含手续费前全额，不含未结算与已冻结"
-            ],
-            [
-              "银行侧取数",
-              "对公结算户当期贷记发生额，剔除利息、退汇与行内调账"
-            ],
-            [
-              "净额与全额",
-              "第三方通道按净额入账，平台按全额记账，差额即通道手续费，不作为差异处理"
-            ],
-            [
-              "跨账期",
-              "平台结算晚于银行当日截止时点（17:00）的笔次，次日到账，本期列为未达账项"
-            ],
-            [
-              "退款",
-              "以银行侧扣减时点为准；平台侧退款单晚于银行的，本期列差异，下期自动平"
-            ],
-            [
-              "重复入账",
-              "银行侧同额重复的，本期全额列差异并挂账，冲正后下期核销"
-            ],
-            [
-              "容差",
-              "无容差。任何非零差额都必须逐笔给出原因，不接受「四舍五入后一致」"
-            ]
-          ]
-        }
-      ]
+      "src": "/works/grid/supply-license-matrix-01.xlsx",
+      "download": "/works/grid/supply-license-matrix-01.xlsx"
     },
     "downloadable": true,
     "attribution": [
       {
-        "text": "OceanLeo 第一方原创；表内数值为合成的示例数据，量纲与勾稽关系按行业常识设定",
+        "text": "OceanLeo 第一方原创。表内每一个数都来自本机 oceanleo 库的只读查询，SQL 原文与查询快照随件存放在 signals/E2-workshop/data/，可原样重跑对账。",
         "licenseCode": "CC0-1.0",
         "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
       }
     ],
     "readings": {
-      "partCount": 13,
-      "sheetCount": 3,
+      "partCount": 11,
+      "sheetCount": 1,
       "pictureCount": 0,
       "chartPartCount": 0,
-      "byteSize": 11680,
-      "sha256": "b721043428d1f2188770315cefe9d6490c865c10d43546184665bb68cac9b53b",
+      "parts": "[Content_Types].xml _rels/.rels docProps/app.xml docProps/core.xml docProps/custom.xml xl/_rels/workbook.xml.rels xl/sharedStrings.xml xl/styles.xml xl/theme/theme1.xml xl/workbook.xml xl/worksheets/sheet1.xml",
+      "license": null,
+      "axis_gridPurpose": "spec-matrix",
+      "axis_emphasis": "numfmt-coded",
+      "axis_density": "dense",
+      "axis_sheetPlan": "single-sheet",
+      "byteSize": 8010,
+      "dimension": "A1:I10",
+      "colWidths": "15,7,9",
+      "rowCount": 10,
+      "mergeCount": 1,
+      "freeze": "none",
+      "autoFilter": "none",
+      "formulaCells": 0,
+      "cachedValues": 0,
+      "numFmts": "#,##0;-#,##0;&quot;—&quot;",
+      "stylePalette": "#6B2737 #B8C2CC #D8DEE4 #F2F5F9 #FFFFFF",
       "cover_route": "artifact",
       "cover_sourceFormat": "xlsx",
-      "cover_sourceByteSize": 11680,
-      "cover_sourceSha256": "b721043428d1f2188770315cefe9d6490c865c10d43546184665bb68cac9b53b",
+      "cover_sourceByteSize": 8010,
+      "cover_sourceSha256": "682552f4447b43b1d38dd62fc1aba437d3466b750061266374bcfbd1e7fe844c",
       "cover_formatEvidence": "包内有 xl/workbook.xml",
       "cover_coverOrigin": "rendered",
       "cover_renderPath": "soffice --headless --convert-to pdf → pdftoppm -f 1 -l 1 -r 150",
       "cover_renderDetail": "soffice --headless --convert-to pdf → pdftoppm -f 1 -l 1 -r 150，原始 1275x1650",
-      "cover_width": 1009,
-      "cover_height": 564,
+      "cover_placeholderReason": null,
+      "cover_width": 1198,
+      "cover_height": 469,
       "cover_mediaType": "image/webp",
-      "cover_byteSize": 55256,
+      "cover_byteSize": 48686,
       "cover_encodeQuality": 92,
       "cover_encodeAttempts": 1,
       "cover_downscales": 0,
@@ -1146,12 +144,105 @@
       "cover_maxEdge": 1280,
       "cover_maxBytes": 204800,
       "cover_cropped": true,
-      "cover_nonBlankRatio": 0.3759322129205941,
-      "cover_colorCount": 495,
-      "cover_entropyBits": 2.110698186623964,
-      "cover_sha256": "c088162fce16b3a7f3936170604bf0e356e8d86fa14705dcc3286edd07b02fcd",
-      "mainBlockCount": 3,
-      "mainBlockLayout": "dense@01+108 sparse@45+64 dense@45+52"
+      "cover_cropBox_x": 38,
+      "cover_cropBox_y": 68,
+      "cover_cropBox_width": 1198,
+      "cover_cropBox_height": 469,
+      "cover_cropSkipReason": null,
+      "cover_nonBlankRatio": 0.37178346284318925,
+      "cover_colorCount": 745,
+      "cover_entropyBits": 2.060718807165978,
+      "cover_dominantColor": "255 255 255 255",
+      "cover_outline_title": "授权族×素材族",
+      "cover_outline_subtitle": null,
+      "cover_outline_accent": "#4f81bd",
+      "cover_outline_lineCount": 6,
+      "cover_outline_sheetCount": 1,
+      "cover_outline_rowCount": 10,
+      "cover_outline_columnCount": 9,
+      "cover_outline_sourceByteSize": 8010
+    }
+  },
+  {
+    "id": "category-intake-checklist-01",
+    "artifactType": "grid",
+    "title": "素材类目入库验收清单（件数 ≥100 的 30 个类目）",
+    "styleId": "intake-checklist",
+    "summary": "判定链三条阈值：主授权族为来源不清 → 退回；有件缺体积或位图/视频缺像素尺寸 → 退回；无条件可商用率 < 50% → 待补；其余通过。本批 通过 28 / 待补 2 / 退回 0。",
+    "cover": "/works/grid/category-intake-checklist-01.cover.webp",
+    "view": {
+      "kind": "grid",
+      "src": "/works/grid/category-intake-checklist-01.xlsx",
+      "download": "/works/grid/category-intake-checklist-01.xlsx"
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创。表内每一个数都来自本机 oceanleo 库的只读查询，SQL 原文与查询快照随件存放在 signals/E2-workshop/data/，可原样重跑对账。",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "partCount": 11,
+      "sheetCount": 1,
+      "pictureCount": 0,
+      "chartPartCount": 0,
+      "parts": "[Content_Types].xml _rels/.rels docProps/app.xml docProps/core.xml docProps/custom.xml xl/_rels/workbook.xml.rels xl/sharedStrings.xml xl/styles.xml xl/theme/theme1.xml xl/workbook.xml xl/worksheets/sheet1.xml",
+      "license": null,
+      "axis_gridPurpose": "intake-checklist",
+      "axis_emphasis": "filter-header",
+      "axis_density": "medium",
+      "axis_sheetPlan": "single-sheet",
+      "byteSize": 9435,
+      "dimension": "A1:I32",
+      "colWidths": "16,7,11,7,7,10,9,6,46",
+      "rowCount": 32,
+      "mergeCount": 1,
+      "freeze": "none",
+      "autoFilter": "A2:I32",
+      "formulaCells": 0,
+      "cachedValues": 0,
+      "numFmts": "#,##0.0 | 0.0&quot;%&quot;",
+      "stylePalette": "#3B3663 #B8C2CC #D8DEE4 #F2F5F9 #FFFFFF",
+      "cover_route": "artifact",
+      "cover_sourceFormat": "xlsx",
+      "cover_sourceByteSize": 9435,
+      "cover_sourceSha256": "4f9a0e121417b34f5160cc4024232d3ed8be1d855a85551d71bb68ad3ceca5f8",
+      "cover_formatEvidence": "包内有 xl/workbook.xml",
+      "cover_coverOrigin": "rendered",
+      "cover_renderPath": "soffice --headless --convert-to pdf → pdftoppm -f 1 -l 1 -r 150",
+      "cover_renderDetail": "soffice --headless --convert-to pdf → pdftoppm -f 1 -l 1 -r 150，原始 1275x1650",
+      "cover_placeholderReason": null,
+      "cover_width": 1198,
+      "cover_height": 1156,
+      "cover_mediaType": "image/webp",
+      "cover_byteSize": 196494,
+      "cover_encodeQuality": 85,
+      "cover_encodeAttempts": 2,
+      "cover_downscales": 0,
+      "cover_withinByteBudget": true,
+      "cover_withinEdgeBudget": true,
+      "cover_maxEdge": 1280,
+      "cover_maxBytes": 204800,
+      "cover_cropped": true,
+      "cover_cropBox_x": 38,
+      "cover_cropBox_y": 68,
+      "cover_cropBox_width": 1198,
+      "cover_cropBox_height": 1156,
+      "cover_cropSkipReason": null,
+      "cover_nonBlankRatio": 0.47800905199554045,
+      "cover_colorCount": 738,
+      "cover_entropyBits": 2.6970925711932816,
+      "cover_dominantColor": "255 255 255 255",
+      "cover_outline_title": "入库验收清单",
+      "cover_outline_subtitle": null,
+      "cover_outline_accent": "#4f81bd",
+      "cover_outline_lineCount": 6,
+      "cover_outline_sheetCount": 1,
+      "cover_outline_rowCount": 12,
+      "cover_outline_columnCount": 9,
+      "cover_outline_sourceByteSize": 9435
     }
   }
 ]
