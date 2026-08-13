@@ -52,5 +52,59 @@
       "adjacentDiffPct": 0.73,
       "staticTailSec": 0
     }
+  },
+  {
+    "id": "hard-cut-caption-14s-01",
+    "artifactType": "video",
+    "title": "硬切字幕 · 九月食堂三件事",
+    "styleId": "hard-cut-caption-14s",
+    "summary": "14 秒把三条食堂变更说完：早餐提前、加素食窗口、餐盘回收改到东门。九段全屏字幕硬切，段越往后越短，最后一段停三秒让人记住日期。没有转场，没有配音，静音看也不漏信息。",
+    "cover": "/works/video/hard-cut-caption-14s-01.cover.webp",
+    "view": {
+      "kind": "video",
+      "src": "/works/video/hard-cut-caption-14s-01.mp4",
+      "poster": "/works/video/hard-cut-caption-14s-01.cover.webp",
+      "frames": [
+        "/works/video/hard-cut-caption-14s-01.f1.webp",
+        "/works/video/hard-cut-caption-14s-01.f2.webp",
+        "/works/video/hard-cut-caption-14s-01.f3.webp"
+      ],
+      "download": "/works/video/hard-cut-caption-14s-01.mp4",
+      "durationSec": 14,
+      "aspect": 1.778
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创，逐帧程序绘制后编码，无第三方素材",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "sourceFormat": "mp4",
+      "mediaType": "video/mp4",
+      "byteSize": 98291,
+      "sha256": "2e76cdb372b890e041f2b7a537d178a52938a46c2a4be03dc7c33c38da10197f",
+      "magicMatched": true,
+      "bytesUnchanged": true,
+      "creditCarriage": "carried-in-band",
+      "creditBlocksShelving": false,
+      "license": {
+        "usage_scope": "standalone",
+        "license_family": "public-domain",
+        "supply_tier": "byte-portable"
+      },
+      "resolution": "1280x720",
+      "durationSec": 14,
+      "fps": 30,
+      "frameCount": 420,
+      "audioStreams": 0,
+      "cuts": 8,
+      "maxSceneScore": 0.0867,
+      "firstLastDiffPct": 4.29,
+      "adjacentDiffPct": 0,
+      "staticTailSec": 2.75
+    }
   }
 ]
