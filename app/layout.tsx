@@ -13,11 +13,12 @@ import { getThemeClass } from "@oceanleo/ui/theme/server";
 // 境内合规页脚：变量未设时渲染 null，.com 产物逐字节不变。
 import { IcpBeianFooter } from "@/app/_components/icp-beian-footer";
 
+import { SITE_HOST } from "@/lib/site-origin";
 export const dynamic = "force-dynamic";
 export async function generateMetadata(): Promise<Metadata> {
   const tt = await ttServer();
   return {
-    title: tt("免费开源素材库 · 图片/视频/音乐/音效/3D | asset.oceanleo.com"),
+    title: tt(`免费开源素材库 · 图片/视频/音乐/音效/3D | ${SITE_HOST}`),
     description: tt(
       "一站浏览来自 Openverse / Pexels / Pixabay / Poly Haven / Freesound / Jamendo 的免费开源授权素材，默认只展示可商用素材，下载后可直接拿去 PPT / 设计 / 视频 / 3D 创作。",
     ),
