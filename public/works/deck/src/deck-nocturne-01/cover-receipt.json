@@ -2,40 +2,64 @@
   "ok": true,
   "tool": "cover-frame",
   "toolVersion": 1,
-  "out": "/root/projects/asset/public/works/deck/deck-nocturne-01.cover.png",
+  "out": "/root/projects/asset/public/works/deck/deck-nocturne-01.cover.webp",
   "outputs": [
     {
-      "path": "/root/projects/asset/public/works/deck/deck-nocturne-01.cover.png",
-      "byteSize": 186820,
-      "sha256": "04ae61617115dd01cb9498939f6b79d9d6c312fe8e0d3d2e9ef1eb4ab8a0b5f1"
+      "path": "/root/projects/asset/public/works/deck/deck-nocturne-01.cover.webp",
+      "byteSize": 50692,
+      "sha256": "90fe5178910349138a7fee36f90a4ac360277acaa01ba658eeed87e56e88ab7b"
     }
   ],
   "readings": {
-    "route": "frame",
-    "width": 1024,
-    "height": 1024,
-    "mediaType": "image/png",
-    "nonBlankRatio": 0.9605522155761719,
-    "frameIndex": 0,
-    "colorCount": 4016,
-    "entropyBits": 8.459481258465454,
+    "route": "artifact",
+    "sourceFormat": "pptx",
+    "sourceByteSize": 1479494,
+    "sourceSha256": "ead6fa578c3dd38e2c98524fb72707e45a6e44d56a59fa5f1857b95ffd0c8108",
+    "formatEvidence": "包内有 ppt/presentation.xml",
+    "coverOrigin": "rendered",
+    "renderPath": "soffice --headless --convert-to pdf → pdftoppm -f 1 -l 1 -r 150",
+    "renderDetail": "soffice --headless --convert-to pdf → pdftoppm -f 1 -l 1 -r 150，原始 2001x1125",
+    "placeholderReason": null,
+    "width": 1280,
+    "height": 720,
+    "mediaType": "image/webp",
+    "byteSize": 50692,
+    "encodeQuality": 92,
+    "encodeAttempts": 1,
+    "downscales": 0,
+    "withinByteBudget": true,
+    "withinEdgeBudget": true,
+    "maxEdge": 1280,
+    "maxBytes": 204800,
+    "cropped": false,
+    "nonBlankRatio": 0.9579014756944444,
+    "colorCount": 15976,
+    "entropyBits": 9.700254952471461,
     "dominantColor": [
-      5,
-      3,
-      11,
+      15,
+      10,
+      30,
       255
     ],
-    "byteSize": 186820,
+    "outline": {
+      "title": "整夜没有关灯的那条海岸",
+      "subtitle": "OceanLeo 夜间海岸观测项目 · 2026 年度",
+      "accent": "#a855f7",
+      "lineCount": 2,
+      "slideCount": 8,
+      "imageCount": 5,
+      "sourceByteSize": 1479494
+    },
     "license": {
       "usage_scope": "commercial-ok",
       "license_family": "CC0-1.0",
       "supply_tier": "first-party"
     }
   },
-  "writer": "@napi-rs/canvas 0.1.100 + node:vm（沙箱抓帧，无浏览器）",
+  "writer": "oceanleo-convert（soffice --headless --convert-to pdf → pdftoppm -f 1 -l 1 -r 150）+ @napi-rs/canvas 重采样与编码",
   "writerVersion": "0.1.100",
-  "source": "/root/projects/asset/public/works/deck/src/deck-nocturne-01/cover.js",
+  "source": "/root/projects/asset/public/works/deck/deck-nocturne-01.pptx",
   "notes": [
-    "封面由 P2 的 render-cover.mjs 外壳调用 cover-frame：本机 canvas 未注册任何字体，外壳先注册 Noto Sans/Serif CJK 再渲染，渲染与编码全在 cover-frame 内完成。"
+    "pptx → PDF：753259 B（soffice --headless --convert-to pdf）"
   ]
 }
