@@ -1,0 +1,100 @@
+{
+  "schema": "oceanleo.attested-artifact/v1",
+  "orderId": "wo-h1-deck-html-nocturne-01-v1",
+  "itemIndex": 0,
+  "artifactType": "deck",
+  "specPath": "docs/design-guides/deck/html/_INDEX.md",
+  "specDigest": "spec-normative/v1:sha256:69f9d1381ff9b93c029002491776d143d8ed837957dcdc72b181b6a210e3961c",
+  "designSpec": {
+    "digest": "spec-normative/v1:sha256:69f9d1381ff9b93c029002491776d143d8ed837957dcdc72b181b6a210e3961c",
+    "sources": [
+      {
+        "path": "docs/design-guides/deck/html/_INDEX.md",
+        "digest": "spec-normative/v1:sha256:45676596091ff8ac65a8021c7acbb77914fc5dfc9ec6b87ba980f2446e552ee0"
+      }
+    ],
+    "capturedAt": "2026-08-13T16:14:48.826Z"
+  },
+  "sourceFormat": "oceanleo.deck.v1",
+  "mediaType": "application/vnd.oceanleo.deck+json",
+  "deliveryFamily": "html",
+  "editability": "native",
+  "editorCapability": "deck-editor",
+  "entrypoint": "public/works/deck/src/deck-html-nocturne-01/deck.json",
+  "closureShape": "single-file",
+  "closureDigest": "e3982dccfee4ef89eae73c904fcf27389b22b794a8f92b58f7a7d350807c89b9",
+  "files": [
+    {
+      "path": "public/works/deck/src/deck-html-nocturne-01/deck.json",
+      "byteSize": 4672,
+      "sha256": "e3982dccfee4ef89eae73c904fcf27389b22b794a8f92b58f7a7d350807c89b9",
+      "mediaType": "application/vnd.oceanleo.deck+json",
+      "role": "primary"
+    }
+  ],
+  "fullRendition": {
+    "path": "content/active-runtime/website/deck-html-nocturne-01/index.html",
+    "format": "html",
+    "byteSize": 1948262,
+    "sha256": "852738ceab5a974d7d504278cc37cd5f28fe44a48c33620126b7c501449ab14b",
+    "mediaType": "text/html"
+  },
+  "references": [],
+  "title": "夜间海岸观测：2026 年度影像汇报",
+  "summary": "一年 17 个观测夜的汇报：整页夜景压字，一页只讲一句话——哪三个浮标失联了、最值钱的六小时出现在什么时候、交班该提前多久。",
+  "tags": [
+    "html-deck",
+    "年度汇报",
+    "图像主导",
+    "neon"
+  ],
+  "materialOrigin": "official-authored",
+  "fictionalSample": true,
+  "userDerived": false,
+  "previewHint": "none",
+  "provenance": {
+    "sourceKind": "owned",
+    "provider": "",
+    "author": "OceanLeo Official",
+    "licenseCode": "OCEANLEO-AIGEN",
+    "licenseUrl": "",
+    "licensePermissions": [
+      "view",
+      "copy",
+      "modify",
+      "export_source"
+    ],
+    "attribution": "",
+    "rightsAsserted": true,
+    "parentRevisionIds": [],
+    "termsSnapshot": {
+      "schema": "oceanleo.artifact-supply-terms/v1",
+      "usageScope": "standalone",
+      "supplyTier": "byte-portable",
+      "licenseFamily": "first-party",
+      "attributionRequired": false,
+      "shareAlike": false,
+      "noticeRequired": false,
+      "orderId": "wo-h1-deck-html-nocturne-01-v1",
+      "specPath": "docs/design-guides/deck/html/_INDEX.md",
+      "specDigest": "spec-normative/v1:sha256:69f9d1381ff9b93c029002491776d143d8ed837957dcdc72b181b6a210e3961c",
+      "materials": []
+    },
+    "revisionId": "f8b9de73-1bc3-47b5-9e33-6fee6f83439a"
+  },
+  "grants": [
+    "export",
+    "source"
+  ],
+  "registry": {
+    "write": false,
+    "reason": "入库与上架必须是两步,否则闸② 没有插入点(N-3)"
+  },
+  "downloadKind": "artifact_rendition",
+  "state": "ingested",
+  "artifactId": "7e40ddbf-a4e5-4c51-8072-b8ff275c98b0",
+  "artifactRevisionId": "f8b9de73-1bc3-47b5-9e33-6fee6f83439a",
+  "retiredAt": null,
+  "ingestedAt": "2026-08-13T16:14:57.558Z",
+  "storageKey": null
+}

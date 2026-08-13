@@ -16,6 +16,8 @@ const IDS = [
   "deck-html-monotype-01",
   "deck-html-manual-01",
 ];
+const UUID =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 
 function readJson(relativePath) {
   return JSON.parse(readFileSync(path.join(ROOT, relativePath), "utf8"));
@@ -77,6 +79,8 @@ test("three official HTML decks close source, preview, runtime and receipt bytes
 
   assert.equal(new Set(works.map((item) => item.styleId)).size, 3);
   assert.equal(new Set(summary.items.map((item) => item.purpose)).size, 3);
+  const artifactIds = new Set();
+  const revisionIds = new Set();
 
   for (const work of works) {
     assert.equal(work.artifactType, "deck");
@@ -96,6 +100,12 @@ test("three official HTML decks close source, preview, runtime and receipt bytes
     );
     const ingestReport = readJson(
       `content/receipts/deck-html/${work.id}/ingest/ingest-plan-report.json`,
+    );
+    const executionReport = readJson(
+      `content/receipts/deck-html/${work.id}/ingest/ingest-execution-report.json`,
+    );
+    const ingested = readJson(
+      `content/receipts/deck-html/${work.id}/ingest/ingested-attested.json`,
     );
     const planItem = plan.items.find((item) => item.item.id === work.id);
 
@@ -179,5 +189,21 @@ test("three official HTML decks close source, preview, runtime and receipt bytes
     assert.equal(planned.fullRendition.mediaType, "text/html");
     assert.equal(ingestReport.blocked.length, 0);
     assert.equal(ingestReport.passed.length, 1);
+    assert.equal(executionReport.blocked.length, 0);
+    assert.equal(executionReport.passed.length, 1);
+    assert.equal(ingested.state, "ingested");
+    assert.equal(ingested.deliveryFamily, "html");
+    assert.equal(ingested.fullRendition.format, "html");
+    assert.equal(
+      ingested.fullRendition.sha256,
+      receipt.fullRendition.sha256,
+    );
+    assert.equal(ingested.closureDigest, receipt.structuredSource.sha256);
+    assert.match(ingested.artifactId, UUID);
+    assert.match(ingested.artifactRevisionId, UUID);
+    artifactIds.add(ingested.artifactId);
+    revisionIds.add(ingested.artifactRevisionId);
   }
+  assert.equal(artifactIds.size, 3);
+  assert.equal(revisionIds.size, 3);
 });

@@ -1,0 +1,21 @@
+{
+  "schema": "oceanleo.ingest-report/v1",
+  "kind": "ingest",
+  "gate": "ingest",
+  "at": "2026-08-13T16:14:48.838Z",
+  "orderId": "wo-h1-deck-html-nocturne-01-v1",
+  "input": [
+    {
+      "itemIndex": 0,
+      "artifactType": "deck"
+    }
+  ],
+  "passed": [
+    {
+      "itemIndex": 0,
+      "closureDigest": "e3982dccfee4ef89eae73c904fcf27389b22b794a8f92b58f7a7d350807c89b9"
+    }
+  ],
+  "blocked": [],
+  "skipped": []
+}
