@@ -24,17 +24,30 @@
       "entryCount": 4,
       "htmlCount": 1,
       "assetCount": 0,
-      "totalUncompressedBytes": 16857,
+      "totalUncompressedBytes": 15767,
       "hasIndexHtml": true,
       "innerEntrypoint": "index.html",
       "closureShape": "source-zip",
-      "zipByteSize": 8282,
-      "zipSha256": "826c708661e0c10db29169d59cacd98cc8a2cd1d53303982d0c4ff622c4d463a",
+      "zipByteSize": 8082,
+      "zipSha256": "27390e8d2404277fe7a32339e922ee8a011edf0760ef1149f33feee69cb33375",
       "sectionCount": 7,
       "bodyCharCount": 949,
       "imageCount": 0,
       "paragraphsReadableWithoutJs": 23,
-      "paragraphsMissingWithoutJs": 0
+      "paragraphsMissingWithoutJs": 0,
+      "layout": {
+        "source": "input",
+        "navPosition": "none",
+        "firstScreen": "statement",
+        "bodyFlow": "long-scroll",
+        "gridColumns": null,
+        "measureCh": 50,
+        "mainBlockCount": 3,
+        "fingerprint": "478188622b64347a",
+        "documentHeight": 2573,
+        "derivedFrom": "writer-layout-model",
+        "firstScreenFingerprintSelfMeasured": "cc79ea7469bb5003"
+      }
     }
   },
   {
@@ -42,7 +55,7 @@
     "artifactType": "website",
     "title": "拾光共享厨房 · 商用烤箱与排烟系统现场手册",
     "styleId": "field-guide",
-    "summary": "站在设备旁边查第几步用的手册：开工、烤制、收工、故障四类入口，每一步自带前提、耗时与安全阈值，从中间任何一处切进来都能直接照做。",
+    "summary": "站在设备旁边查第几步用的手册：首屏先选要做哪件事再登记开工，步骤清单常驻左侧栏，正文一步一通栏；深色底、危险色只服务会伤人的那一步，另附一张三号灶位平面图标出燃气总阀与灭火器。",
     "cover": "/works/website/field-guide-01.cover.webp",
     "view": {
       "kind": "website",
@@ -59,20 +72,33 @@
       }
     ],
     "readings": {
-      "entryCount": 4,
+      "entryCount": 6,
       "htmlCount": 1,
-      "assetCount": 0,
-      "totalUncompressedBytes": 24549,
+      "assetCount": 1,
+      "totalUncompressedBytes": 152680,
       "hasIndexHtml": true,
       "innerEntrypoint": "index.html",
       "closureShape": "source-zip",
-      "zipByteSize": 11427,
-      "zipSha256": "69055c48456d0783cabb81369ea45929e50fcd5338d73913a8295296835ef2ea",
+      "zipByteSize": 132106,
+      "zipSha256": "d7e003aadf5893ff3d1af6997f32cec6bd00e78c3976fb54282047d03c349867",
       "sectionCount": 9,
       "bodyCharCount": 2113,
-      "imageCount": 0,
+      "imageCount": 1,
       "paragraphsReadableWithoutJs": 50,
-      "paragraphsMissingWithoutJs": 0
+      "paragraphsMissingWithoutJs": 0,
+      "layout": {
+        "source": "input",
+        "navPosition": "side",
+        "firstScreen": "form",
+        "bodyFlow": "sectioned",
+        "gridColumns": null,
+        "measureCh": 84,
+        "mainBlockCount": 2,
+        "fingerprint": "d97c6df6bcf83ec1",
+        "documentHeight": 5075,
+        "derivedFrom": "writer-layout-model",
+        "firstScreenFingerprintSelfMeasured": "ceb82f94398d3849"
+      }
     }
   },
   {
@@ -80,7 +106,7 @@
     "artifactType": "website",
     "title": "云溪镇老照片开放档案 · 1958–1999 全目",
     "styleId": "open-index",
-    "summary": "412 张老照片的全目索引：按年代、地点、门类三个轴各铺一遍，逐条给编号、年份、来源与使用条件，暂缓公开的 23 张也列在目内。",
+    "summary": "412 张老照片的全目索引：顶栏切维度，正文三列网格一屏铺满条目，按年代、地点、门类三个轴各铺一遍，逐条给编号、年份、来源与使用条件，暂缓公开的 23 张也列在目内。",
     "cover": "/works/website/open-index-01.cover.webp",
     "view": {
       "kind": "website",
@@ -100,17 +126,30 @@
       "entryCount": 4,
       "htmlCount": 1,
       "assetCount": 0,
-      "totalUncompressedBytes": 21304,
+      "totalUncompressedBytes": 21935,
       "hasIndexHtml": true,
       "innerEntrypoint": "index.html",
       "closureShape": "source-zip",
-      "zipByteSize": 10108,
-      "zipSha256": "5b0878da748409f413623830dd6b601fbec59091b07cbd6aedea7eb09951082a",
+      "zipByteSize": 10358,
+      "zipSha256": "82ff6eae2d04bae434ca25bb6fa1b1bc80e2996dfc9b22e0c79d424197f642f8",
       "sectionCount": 7,
       "bodyCharCount": 2202,
       "imageCount": 0,
       "paragraphsReadableWithoutJs": 53,
-      "paragraphsMissingWithoutJs": 0
+      "paragraphsMissingWithoutJs": 0,
+      "layout": {
+        "source": "input",
+        "navPosition": "top",
+        "firstScreen": "statement",
+        "bodyFlow": "grid",
+        "gridColumns": 3,
+        "measureCh": 96,
+        "mainBlockCount": 4,
+        "fingerprint": "1b7aa23e0adad591",
+        "documentHeight": 3054,
+        "derivedFrom": "writer-layout-model",
+        "firstScreenFingerprintSelfMeasured": "a71f38c4b15a03b6"
+      }
     }
   }
 ]
