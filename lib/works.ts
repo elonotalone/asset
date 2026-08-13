@@ -18,6 +18,7 @@ import {
   type ArtifactType,
   type WorkAttribution,
   type WorkEntry,
+  type WorkProduction,
   type WorkSheet,
   type WorkView,
 } from "@/components/WorksKinds";
@@ -32,10 +33,18 @@ export interface WorkProblem {
   reason: string;
 }
 
+export interface WorksTypeGroup {
+  type: ArtifactType;
+  label: string;
+  works: WorkEntry[];
+  /** 这一类已转外接时的口径；仍在自产的类型没有这一格。 */
+  production?: WorkProduction;
+}
+
 export interface WorksCatalog {
   works: WorkEntry[];
   problems: WorkProblem[];
-  byType: { type: ArtifactType; label: string; works: WorkEntry[] }[];
+  byType: WorksTypeGroup[];
 }
 
 /* ------------------------------------------------------------------ *
@@ -163,6 +172,26 @@ function parseView(v: unknown, problems: string[]): WorkView | null {
   return view;
 }
 
+/**
+ * 「本类已转外接」的状态格（`signals/X1-signals.md` S1 定的字段名）。
+ *
+ * fail-closed：只有 `status === "external-api"` 且 `notice` 有内容才算数，
+ * 其余取值当作没有这一格 —— 站上宁可少说一句，也不许把没核实的口径摆给用户。
+ * 这一格**只影响文案**，不影响 `downloadable`：成品还在，还能下载。
+ */
+function parseProduction(v: unknown): WorkProduction | undefined {
+  if (!v || typeof v !== "object" || Array.isArray(v)) return undefined;
+  const p = v as Record<string, unknown>;
+  if (p.status !== "external-api") return undefined;
+  if (!nonEmptyString(p.notice)) return undefined;
+  return {
+    status: "external-api",
+    retiredOn: nonEmptyString(p.retiredOn) ? p.retiredOn : "",
+    agentScope: p.agentScope === "design-doc" ? "design-doc" : "none",
+    notice: p.notice,
+  };
+}
+
 function parseEntry(raw: unknown, file: string, problems: string[]): WorkEntry | null {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
     problems.push("不是对象");
@@ -208,6 +237,7 @@ function parseEntry(raw: unknown, file: string, problems: string[]): WorkEntry |
       e.readings && typeof e.readings === "object" && !Array.isArray(e.readings)
         ? (e.readings as Record<string, unknown>)
         : undefined,
+    production: parseProduction(e.production),
     sourceFile: file,
   };
 }
@@ -262,11 +292,17 @@ function readCatalog(): WorksCatalog {
     });
   }
 
-  const byType = ARTIFACT_TYPE_ORDER.map((type) => ({
-    type,
-    label: ARTIFACT_TYPE_LABELS[type],
-    works: works.filter((w) => w.artifactType === type),
-  })).filter((g) => g.works.length > 0);
+  const byType: WorksTypeGroup[] = ARTIFACT_TYPE_ORDER.map((type) => {
+    const inType = works.filter((w) => w.artifactType === type);
+    return {
+      type,
+      label: ARTIFACT_TYPE_LABELS[type],
+      works: inType,
+      // 「本类已转外接」是**类型级**的事实，写在每条上只是因为片段文件里没有类型级的头。
+      // 同一类型里每条的口径逐字相同（X1 的交接契约），所以取第一条给得出这一格的。
+      production: inType.find((w) => w.production)?.production,
+    };
+  }).filter((g) => g.works.length > 0);
 
   return { works, problems, byType };
 }

@@ -387,6 +387,24 @@ export interface WorkView {
   durationSec?: number;
 }
 
+/**
+ * 「这一类还由不由我们自己产」。交接契约见 `signals/X1-signals.md` S1，字段名已定死。
+ *
+ * 它说的**不是下架**：成品还在、还有效、还能下载。说的是这一类不再由 agent 自产，
+ * 改由外接 API 生成。两句话都必须出现在界面上——只说前者会让用户以为东西没了，
+ * 什么都不说会让用户以为这一类还在更新。
+ */
+export interface WorkProduction {
+  /** 今天只认这一个取值；其余一律当没有（fail-closed）。 */
+  status: "external-api";
+  /** 操作员裁定日，`YYYY-MM-DD`。 */
+  retiredOn: string;
+  /** agent 还剩多少活：`none` 全停；`design-doc` 只出设计文档。 */
+  agentScope: "none" | "design-doc";
+  /** 给用户看的原话，**逐字上屏**，站上不改写。 */
+  notice: string;
+}
+
 export interface WorkEntry {
   id: string;
   artifactType: ArtifactType;
@@ -401,6 +419,8 @@ export interface WorkEntry {
   attribution: WorkAttribution[];
   /** 收据读数，原样抄进来，详情页原样列出。 */
   readings?: Record<string, unknown>;
+  /** 这一类的自产状态；仍在自产的类型没有这一格。 */
+  production?: WorkProduction;
   /** 装载时补上：这一条来自哪个片段文件。构建期报错定位用。 */
   sourceFile: string;
 }

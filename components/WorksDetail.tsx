@@ -72,6 +72,18 @@ export function WorksDetail({
           <h1 className="text-xl font-semibold text-zinc-900">{work.title}</h1>
           {work.summary && <p className="mt-2 text-sm leading-relaxed text-zinc-600">{work.summary}</p>}
 
+          {/* 直接落到详情页的用户看不到类型页那条横幅，同一件事在这里再说一次。
+              说的是「这一类不再自产」，不是「这一件下架了」——它照常可看可下。 */}
+          {work.production ? (
+            <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50/70 px-3 py-2 text-xs leading-6 text-amber-900">
+              <span className="mr-1.5 rounded bg-amber-200/70 px-1.5 py-0.5 text-[10px] font-medium">
+                {tt("存量")}
+              </span>
+              {tt(work.production.notice)}
+              {tt("这一件本身没有变化，照常查看与下载。")}
+            </p>
+          ) : null}
+
           <dl className="mt-4 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-xs">
             <dt className="text-zinc-400">{tt("类型")}</dt>
             <dd className="text-zinc-700">{tt(ARTIFACT_TYPE_LABELS[work.artifactType])}</dd>

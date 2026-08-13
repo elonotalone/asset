@@ -10,6 +10,7 @@ import {
   groupByFamily,
   type ArtifactType,
   type WorkEntry,
+  type WorkProduction,
 } from "@/components/WorksKinds";
 
 // 成品展厅列表页。按 artifact type 分格，卡片走**真封面**。
@@ -23,6 +24,36 @@ export interface WorksGroup {
   type: ArtifactType;
   label: string;
   works: WorkEntry[];
+  production?: WorkProduction;
+}
+
+/**
+ * 「本类已转外接」的横幅。**照实说，两句都要说**：
+ * 这一类不再由我们自产（否则用户以为还在更新），成品还在还有效（否则用户以为下架了）。
+ * 文案逐字用产线交下来的 `notice`，站上不改写。
+ */
+function ProductionNotice({ production }: { production: WorkProduction }) {
+  const tt = useUI();
+  return (
+    <div className="mb-3 rounded-lg border border-amber-200 bg-amber-50/70 px-3.5 py-2.5">
+      <p className="text-xs leading-6 text-amber-900">
+        <span className="mr-1.5 rounded bg-amber-200/70 px-1.5 py-0.5 text-[10px] font-medium">
+          {tt("存量")}
+        </span>
+        {tt(production.notice)}
+        {production.agentScope === "design-doc"
+          ? tt("平台这边继续出设计文档，模型本身走外接。")
+          : ""}
+      </p>
+      <p className="mt-1 text-[11px] text-amber-700/80">
+        {production.retiredOn
+          ? tt("{date} 起不再新产；下面这些一件没少，照常查看与下载。", {
+              date: production.retiredOn,
+            })
+          : tt("下面这些一件没少，照常查看与下载。")}
+      </p>
+    </div>
+  );
 }
 
 function WorkCard({ work }: { work: WorkEntry }) {
@@ -170,6 +201,9 @@ export function WorksGallery({ groups, total }: { groups: WorksGroup[]; total: n
               >
                 {tt(g.label)}
                 <span className="ml-1 text-zinc-400">{g.works.length}</span>
+                {g.production ? (
+                  <span className="ml-1 text-amber-600">{tt("存量")}</span>
+                ) : null}
               </a>
             ))}
           </nav>
@@ -183,6 +217,7 @@ export function WorksGallery({ groups, total }: { groups: WorksGroup[]; total: n
                     {tt("{n} 件", { n: g.works.length })}
                   </span>
                 </h2>
+                {g.production ? <ProductionNotice production={g.production} /> : null}
                 {familiesFor(g.type) ? <FamilySections group={g} /> : <CardGrid works={g.works} />}
               </section>
             ))}
