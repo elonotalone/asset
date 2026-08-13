@@ -736,7 +736,7 @@
       "where": "所有带素材库的 OceanLeo 站点：从库里打开 3D 模型即进入。",
       "status": "shipped",
       "statusNote": "注册表里有 `threed` 适配器（工程格式 oceanleo.model-view@1，load/mutate/save/reopen 全套），实现见 `oceanleo-ui/src/shell/media-editors/Model3DStage.tsx`。",
-      "caution": "HDRI 与纹理是环境光照和贴图素材，不是模型，可预览下载但不进这个工作台。",
+      "caution": "HDRI 与纹理是环境光照和贴图素材，不是模型，可以预览但不进这个工作台。",
       "specPath": "docs/specs/oceanleo-plugins-v1/editors/model-3d-editor.md"
     },
     {
