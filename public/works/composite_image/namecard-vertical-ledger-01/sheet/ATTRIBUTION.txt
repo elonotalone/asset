@@ -1,0 +1,8 @@
+# 署名与许可 —— 承和堂中医门诊名片拼版 · 竖版台账正反两面
+
+- OceanLeo 第一方原创名片版面
+  许可:CC0(https://creativecommons.org/publicdomain/zero/1.0/)
+- 行标记图标 5 枚:SVGRepo 公共领域图标库(platform_assets · category=icon · CC0)
+  许可:CC0(https://creativecommons.org/publicdomain/zero/1.0/)
+- OceanLeo 程序化生成
+  许可:OCEANLEO-AIGEN(https://oceanleo.com/licenses/aigen)
