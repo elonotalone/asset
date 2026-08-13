@@ -19,7 +19,7 @@ function durableItem(): LibraryItem {
     artifactId: "asset-root",
     revisionId: "asset-rev-2",
     artifactType: "single_file_image",
-    roles: ["approved_inventory_example"],
+    roles: ["primary"],
     owner: {
       principalId: "workspace:asset",
       visibility: "workspace",
@@ -82,7 +82,7 @@ function durableItem(): LibraryItem {
     bindings: [
       {
         contextId: CONTEXT_ID,
-        role: "approved_inventory_example",
+        role: "primary",
         rank: 1,
         pinnedRevisionId: "asset-rev-2",
       },
@@ -129,19 +129,30 @@ const targetEvidence = {
   reason: "",
 };
 
-test("asset consumer delegates More and My Library to the shared remote surfaces", () => {
+function renderShelf(
+  materials: React.ComponentProps<typeof MaterialLibrary>["materials"],
+  extra: Partial<React.ComponentProps<typeof MaterialLibrary>> = {},
+) {
+  return renderToStaticMarkup(
+    <I18nProvider locale="zh" messages={{}}>
+      <MaterialLibrary
+        materials={materials}
+        siteId="asset"
+        appId="asset"
+        contextId={CONTEXT_ID}
+        fetchPrimary={false}
+        onOpenItem={() => {}}
+        {...extra}
+      />
+    </I18nProvider>,
+  );
+}
+
+test("asset consumer delegates cards to the shared preview-detail surface", () => {
   const caller = readFileSync("components/AssetLibrary.tsx", "utf8");
   const detail = readFileSync("components/AssetDetail.tsx", "utf8");
   const resultCanvas = readFileSync(
     "node_modules/@oceanleo/ui/src/shell/ResultCanvas.tsx",
-    "utf8",
-  );
-  const materialLibrary = readFileSync(
-    "node_modules/@oceanleo/ui/src/shell/material-library-view.tsx",
-    "utf8",
-  );
-  const workspaceLibrary = readFileSync(
-    "node_modules/@oceanleo/ui/src/shell/WorkspaceLibrary.tsx",
     "utf8",
   );
   assert.match(caller, /<ResultCanvas/);
@@ -167,14 +178,19 @@ test("asset consumer delegates More and My Library to the shared remote surfaces
     resultCanvas,
     /materialContext\?\.contextId\s*\|\|\s*canonicalArtifactContextId\(materialSiteId, materialAppId\)/,
   );
-  assert.match(
-    materialLibrary,
-    /onOpenEntry=\{\s*level === "primary"[\s\S]*?: undefined\s*\}/,
-  );
-  assert.match(
-    workspaceLibrary,
-    /if \(onOpenEntry\) \{[\s\S]*?return;\s*\}\s*setSelectedId\(entry.id\)/,
-  );
+
+  const durable = durableItem();
+  const html = renderShelf([
+    {
+      id: "durable-asset",
+      title: durable.title,
+      thumb: durable.thumbUrl || "",
+      libraryItem: durable,
+    },
+  ]);
+  assert.match(html, /Durable migrated asset/);
+  assert.match(html, /aria-label="预览「Durable migrated asset」"/);
+  assert.doesNotMatch(html, /data-material-shelf-skeleton="true"/);
 });
 
 test("shared shell filters legacy rows and exposes canonical actions for durable rows", () => {
@@ -191,29 +207,30 @@ test("shared shell filters legacy rows and exposes canonical actions for durable
     ),
   );
 
-  const html = renderToStaticMarkup(
-    <I18nProvider locale="zh" messages={{}}>
-      <MaterialLibrary
-        materials={[
-          {
-            id: "durable-asset",
-            title: durable.title,
-            thumb: durable.thumbUrl || "",
-            libraryItem: durable,
-          },
-        ]}
-        siteId="asset"
-        appId="asset"
-        contextId={CONTEXT_ID}
-        fetchPrimary={false}
-        materialActions={["insert", "replace"]}
-        materialActionAvailable={() => true}
-        onMaterialAction={() => ({ ok: true })}
-        onOpenItem={() => {}}
-      />
-    </I18nProvider>,
+  const html = renderShelf(
+    [
+      {
+        id: "durable-asset",
+        title: durable.title,
+        thumb: durable.thumbUrl || "",
+        libraryItem: durable,
+      },
+      {
+        id: "legacy-row",
+        title: "Legacy row must stay filtered",
+        thumb: "https://signed.example/legacy-preview",
+        kind: "image",
+      },
+    ],
+    {
+      materialActions: ["insert", "replace"],
+      materialActionAvailable: () => true,
+      onMaterialAction: () => ({ ok: true }),
+      onSeeAll: () => {},
+    },
   );
   assert.match(html, /Durable migrated asset/);
+  assert.doesNotMatch(html, /Legacy row must stay filtered/);
   assert.match(html, /aria-label="打开完整素材库"/);
   for (const label of [
     "单文件图片",
@@ -232,4 +249,9 @@ test("shared shell filters legacy rows and exposes canonical actions for durable
   ]) {
     assert.match(html, new RegExp(`>${label}<`));
   }
+
+  const emptyHtml = renderShelf([], { fetchPrimary: true });
+  assert.match(emptyHtml, /data-material-shelf-state="loading"/);
+  assert.match(emptyHtml, /data-material-shelf-skeleton="true"/);
+  assert.doesNotMatch(emptyHtml, /这里还没有内容|暂无|没有匹配/);
 });
