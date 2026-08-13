@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<meta name="description" content="一款只有一个动作的反应小游戏：指针进门时按下，门越来越窄。">
+<title>潮汐门</title>
+<style>
+html, body { margin: 0; padding: 0; height: 100%; background: #04121f; overflow: hidden; }
+body { touch-action: none; -webkit-user-select: none; user-select: none; }
+#stage { display: block; width: 100%; height: 100%; }
+#fallback { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font: 16px/1.7 system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  color: #fff; opacity: .75; text-align: center; padding: 2rem; }
+</style>
+</head>
+<body>
+<canvas id="stage" role="img" aria-label="一款只有一个动作的反应小游戏：指针进门时按下，门越来越窄。"></canvas>
+<noscript><div id="fallback">这是一款需要 JavaScript 才能运行的小游戏：一款只有一个动作的反应小游戏：指针进门时按下，门越来越窄。</div></noscript>
+<script>
+// 潮汐门 —— 玩法风格「一息」（one-breath-reflex）
+// 循环：看到时机收窄 → 按下唯一那个动作 → 当场知道准还是偏 → 更快，回到看时机。
+// 难度只来自反应。三色：深底 / 行动青 / 警告红。
+var bundle = (function () {
+  "use strict";
+
+  // ── 手感常量表（全部集中在这里，逻辑里不许再出现字面量）────────────────
+  var K = {
+    lives: 3,             // 命数
+    target: 28,           // 过关所需命中数
+    speed0: 0.0016,       // 初始角速度（弧度/毫秒）
+    speedUp: 1.045,       // 每命中一次的提速倍率
+    speedMax: 0.0052,     // 角速度上限
+    span0: 0.74,          // 初始门宽（弧度）
+    spanShrink: 0.955,    // 每命中一次的门宽收窄倍率
+    spanMin: 0.20,        // 门宽下限（留给玩家的容错底线）
+    // 新门离当前指针多远。**leadMin + leadVar 必须小于一整圈减去门宽**：
+    // 超过一圈会绕回来，新门就贴在指针脸上，玩家还没看清就已经错过。
+    leadMin: 3.0,
+    leadVar: 3.0,
+    flipEvery: 3,         // 每几次命中翻一次转向
+    lockMs: 150,          // 按下判定的锁定时间，防手指连点
+    overQuietMs: 250,     // 结算画面的静默期，之后按一下即重开
+    titleMs: 1500,        // 标题字退场时间
+    flashMs: 260,         // 判定闪光时长
+    shakeMs: 200,         // 失手轻震时长
+    shakeMax: 7,          // 轻震最大位移（像素）
+    dots: 44,             // 表盘刻点数
+    demoRestartMs: 1100   // 演示模式下终局后自动重开的间隔
+  };
+
+  var BASE = [4, 18, 31], ACT = [49, 230, 196], WARN = [255, 85, 102];
+  function rgba(c, a) { return "rgba(" + c[0] + "," + c[1] + "," + c[2] + "," + a + ")"; }
+
+  var TAU = Math.PI * 2;
+  function norm(a) { a = a % TAU; return a < 0 ? a + TAU : a; }
+  function clamp(v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); }
+  function finite(v, fallback) { return (typeof v === "number" && isFinite(v)) ? v : fallback; }
+
+  var S = null, W = 0, H = 0;
+
+  // 定种子随机：封面要求同一份输入产出逐字节相同的 PNG，所以不许用 Math.random。
+  function rnd() {
+    S.seed = (S.seed * 1664525 + 1013904223) % 4294967296;
+    return S.seed / 4294967296;
+  }
+
+  function fresh(demo) {
+    return {
+      seed: 20260813,
+      ang: 0, dir: 1,
+      speed: K.speed0, span: K.span0, gate: Math.PI * 0.75,
+      hits: 0, lives: K.lives, over: null,
+      inGate: false, used: false,
+      lock: 0, flash: 0, flashKind: "hit", shake: 0,
+      age: 0, ripples: [], demo: demo, overAge: 0
+    };
+  }
+
+  function layout() {
+    var band = clamp(H * 0.13, 52, 96);
+    var cx = W / 2;
+    var cy = (H - band) / 2;
+    var r = Math.min(W, H - band) * 0.36;
+    return { band: band, cx: cx, cy: cy, r: r, bandTop: H - band };
+  }
+
+  function placeGate() {
+    S.gate = norm(S.ang + S.dir * (K.leadMin + rnd() * K.leadVar) - (S.dir < 0 ? S.span : 0));
+    S.inGate = false;
+    S.used = false;
+  }
+
+  function ripple(kind) {
+    var L = layout();
+    S.ripples.push({
+      x: L.cx + Math.cos(S.ang) * L.r,
+      y: L.cy + Math.sin(S.ang) * L.r,
+      age: 0, kind: kind
+    });
+    if (S.ripples.length > 8) S.ripples.shift();
+  }
+
+  function hurt() {
+    S.lives -= 1;
+    S.flash = K.flashMs;
+    S.flashKind = "miss";
+    S.shake = K.shakeMs;
+    if (S.lives <= 0) { S.lives = 0; S.over = "lose"; S.overAge = 0; }
+  }
+
+  function press() {
+    // 重开不受连点锁约束：结算画面上按下去必须立刻回到新的一局。
+    // 只留一个极短的静默期，免得终结那一下的余劲把结果直接翻页。
+    if (S.over) {
+      if (S.overAge < K.overQuietMs) return;
+      S = fresh(S.demo);
+      placeGate();
+      return;
+    }
+    // 连点锁只挡无效的按。挡住一次真命中，玩家会觉得「我明明按中了」——
+    // 那是判定在骗人，比连点严重得多。
+    var into = norm(S.ang - S.gate);
+    var valid = into < S.span && !S.used;
+    if (!valid && S.lock > 0) return;
+    S.lock = K.lockMs;
+    if (valid) {
+      S.used = true;
+      S.hits += 1;
+      S.flash = K.flashMs;
+      S.flashKind = "hit";
+      ripple("hit");
+      if (S.hits >= K.target) { S.over = "win"; S.overAge = 0; return; }
+      S.speed = Math.min(S.speed * K.speedUp, K.speedMax);
+      S.span = Math.max(S.span * K.spanShrink, K.spanMin);
+      if (S.hits % K.flipEvery === 0) S.dir = -S.dir;
+      placeGate();
+    } else {
+      ripple("miss");
+      hurt();
+    }
+  }
+
+  return {
+    title: "潮汐门",
+
+    setup: function (env) {
+      W = finite(env && env.width, 640);
+      H = finite(env && env.height, 640);
+      S = fresh(true);
+      placeGate();
+    },
+
+    resize: function (w, h) {
+      W = finite(w, W);
+      H = finite(h, H);
+    },
+
+    pointer: function (x, y, phase) {
+      if (phase !== "down") return;
+      S.demo = false;
+      press();
+    },
+
+    key: function (code, phase) {
+      if (phase !== "down") return;
+      if (code === "Space" || code === "Enter" || code === " " || code === "KeyJ") {
+        S.demo = false;
+        press();
+      }
+    },
+
+    update: function (dt, t) {
+      dt = clamp(finite(dt, 16.67), 0, 50);
+      S.age += dt;
+      S.lock = Math.max(0, S.lock - dt);
+      S.flash = Math.max(0, S.flash - dt);
+      S.shake = Math.max(0, S.shake - dt);
+      for (var i = 0; i < S.ripples.length; i++) S.ripples[i].age += dt;
+      while (S.ripples.length && S.ripples[0].age > 620) S.ripples.shift();
+
+      if (S.over) {
+        S.overAge += dt;
+        if (S.demo && S.overAge > K.demoRestartMs) { S = fresh(true); placeGate(); }
+        return;
+      }
+
+      S.ang = norm(S.ang + S.dir * S.speed * dt);
+
+      // 演示：没有人碰过它的时候自己玩给人看，第一次真输入就交还给玩家。
+      // 必须在算 now 之前按 —— 按中会把门挪走，拿旧门算出来的 now 会让下一帧
+      // 误判成「门从眼前过去了没按」，等于每命中一次就白扣一条命。
+      var into = norm(S.ang - S.gate);
+      if (S.demo && into < S.span && !S.used && into > S.span * 0.45) press();
+
+      var now = norm(S.ang - S.gate) < S.span;
+      if (S.inGate && !now && !S.used) {
+        // 门从眼前过去了却没按 —— 放着不管必须死。
+        hurt();
+        if (!S.over) placeGate();
+      }
+      S.inGate = now;
+    },
+
+    draw: function (g, t) {
+      var L = layout();
+      var sh = 0;
+      if (S.shake > 0) {
+        sh = (S.shake / K.shakeMs) * K.shakeMax;
+        sh = Math.sin(S.age * 0.09) * sh;
+      }
+
+      g.fillStyle = rgba(BASE, 1);
+      g.fillRect(0, 0, W, H);
+
+      g.save();
+      g.translate(sh, 0);
+
+      var dim = S.over ? 0.25 : 1;
+
+      // 表盘：一圈刻点。离门越近越亮，玩家因此能看出「还差多少」。
+      for (var i = 0; i < K.dots; i++) {
+        var a = (i / K.dots) * TAU;
+        var into = norm(a - S.gate);
+        var lit = into < S.span;
+        var d = Math.abs(norm(a - S.ang + Math.PI) - Math.PI);
+        var near = clamp(1 - d / 0.9, 0, 1);
+        var rr = L.r + (lit ? 0 : 0);
+        var size = Math.max(1.6, L.r * (lit ? 0.032 : 0.017) * (1 + near * 0.7));
+        g.beginPath();
+        g.arc(L.cx + Math.cos(a) * rr, L.cy + Math.sin(a) * rr, size, 0, TAU);
+        g.fillStyle = rgba(lit ? ACT : ACT, (lit ? 0.95 : 0.16 + near * 0.3) * dim);
+        g.fill();
+      }
+
+      // 门：那道弧就是「现在可以按」，行动色只出现在这里。
+      g.beginPath();
+      g.arc(L.cx, L.cy, L.r, S.gate, S.gate + S.span);
+      g.strokeStyle = rgba(ACT, 0.9 * dim);
+      g.lineWidth = Math.max(3, L.r * 0.055);
+      g.lineCap = "round";
+      g.stroke();
+
+      // 指针
+      var hx = L.cx + Math.cos(S.ang) * L.r;
+      var hy = L.cy + Math.sin(S.ang) * L.r;
+      g.beginPath();
+      g.moveTo(L.cx + Math.cos(S.ang) * L.r * 0.22, L.cy + Math.sin(S.ang) * L.r * 0.22);
+      g.lineTo(hx, hy);
+      g.strokeStyle = rgba(ACT, 0.55 * dim);
+      g.lineWidth = Math.max(1.5, L.r * 0.018);
+      g.stroke();
+
+      g.beginPath();
+      g.arc(hx, hy, Math.max(4, L.r * 0.075), 0, TAU);
+      g.fillStyle = S.flash > 0 && S.flashKind === "miss" ? rgba(WARN, dim) : rgba(ACT, dim);
+      g.fill();
+
+      // 判定回响：短、猛、退得干净，绝不盖住下一个时机。
+      for (var j = 0; j < S.ripples.length; j++) {
+        var p = S.ripples[j];
+        var k = clamp(p.age / 620, 0, 1);
+        g.beginPath();
+        g.arc(p.x, p.y, L.r * (0.09 + k * 0.42), 0, TAU);
+        g.strokeStyle = rgba(p.kind === "hit" ? ACT : WARN, (1 - k) * 0.75);
+        g.lineWidth = Math.max(1.5, L.r * 0.022 * (1 - k));
+        g.stroke();
+      }
+
+      // 盘心：开局一秒半是作品名，之后一直是命中数。不做开场页，加载完就在玩。
+      var tf = clamp(1 - (S.age - K.titleMs) / 500, 0, 1);
+      g.textAlign = "center";
+      g.textBaseline = "middle";
+      if (S.over) {
+        g.font = "600 " + Math.round(L.r * 0.34) + "px system-ui, -apple-system, 'PingFang SC', sans-serif";
+        g.fillStyle = rgba(S.over === "win" ? ACT : WARN, 1);
+        g.fillText(S.over === "win" ? "过关" : "结束", L.cx, L.cy - L.r * 0.1);
+        g.font = Math.round(L.r * 0.13) + "px system-ui, -apple-system, 'PingFang SC', sans-serif";
+        g.fillStyle = rgba(ACT, 0.8);
+        g.fillText("命中 " + S.hits + " / " + K.target + "　按一下再来一局", L.cx, L.cy + L.r * 0.28);
+      } else if (S.age < K.titleMs + 500) {
+        g.font = "600 " + Math.round(L.r * 0.3) + "px system-ui, -apple-system, 'PingFang SC', sans-serif";
+        g.fillStyle = rgba(ACT, tf);
+        g.fillText("潮汐门", L.cx, L.cy - L.r * 0.06);
+        g.font = Math.round(L.r * 0.12) + "px system-ui, -apple-system, 'PingFang SC', sans-serif";
+        g.fillStyle = rgba(ACT, tf * 0.65);
+        g.fillText("指针进门时按下", L.cx, L.cy + L.r * 0.24);
+      } else {
+        g.font = "600 " + Math.round(L.r * 0.52) + "px system-ui, -apple-system, 'PingFang SC', sans-serif";
+        g.fillStyle = rgba(S.flash > 0 && S.flashKind === "hit" ? ACT : ACT, S.flash > 0 ? 1 : 0.82);
+        g.fillText(String(S.hits), L.cx, L.cy);
+      }
+
+      g.restore();
+    },
+
+    hud: function (g, t) {
+      var L = layout();
+
+      g.beginPath();
+      g.moveTo(W * 0.08, L.bandTop);
+      g.lineTo(W * 0.92, L.bandTop);
+      g.strokeStyle = rgba(ACT, 0.18);
+      g.lineWidth = 1;
+      g.stroke();
+
+      var cy = L.bandTop + L.band * 0.52;
+      var r = Math.max(4, L.band * 0.11);
+      for (var i = 0; i < K.lives; i++) {
+        g.beginPath();
+        g.arc(W * 0.08 + r + i * r * 3.2, cy, r, 0, Math.PI * 2);
+        if (i < S.lives) { g.fillStyle = rgba(WARN, 0.9); g.fill(); }
+        else { g.strokeStyle = rgba(WARN, 0.35); g.lineWidth = 1.5; g.stroke(); }
+      }
+
+      g.font = Math.round(L.band * 0.26) + "px system-ui, -apple-system, 'PingFang SC', sans-serif";
+      g.textBaseline = "middle";
+      g.textAlign = "center";
+      g.fillStyle = rgba(ACT, 0.5);
+      g.fillText(S.over ? "按一下 · 重开" : "按下 / 空格", W * 0.5, cy);
+
+      g.textAlign = "right";
+      g.fillStyle = rgba(ACT, 0.75);
+      g.fillText(S.hits + " / " + K.target, W * 0.92, cy);
+    },
+
+    // 自证接口：无浏览器条件下的逻辑单测靠它读状态，不参与画面。
+    __probe: function () {
+      return {
+        hits: S.hits, lives: S.lives, over: S.over, span: S.span,
+        speed: S.speed, demo: S.demo, ang: S.ang, gate: S.gate, dir: S.dir
+      };
+    }
+  };
+})();
+
+
+(function () {
+  "use strict";
+  var cv = document.getElementById("stage");
+  var g = cv.getContext("2d", { alpha: false });
+  var W = 0, H = 0, started = false;
+
+  function fit() {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = cv.clientWidth || window.innerWidth;
+    H = cv.clientHeight || window.innerHeight;
+    cv.width = Math.round(W * dpr);
+    cv.height = Math.round(H * dpr);
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    if (started && bundle.resize) bundle.resize(W, H);
+  }
+
+  fit();
+  bundle.setup({ ctx: g, canvas: cv, width: W, height: H });
+  started = true;
+  window.addEventListener("resize", fit);
+  window.addEventListener("orientationchange", fit);
+
+  function at(e) {
+    var r = cv.getBoundingClientRect();
+    return [e.clientX - r.left, e.clientY - r.top];
+  }
+  function on(name, phase) {
+    cv.addEventListener(name, function (e) {
+      var p = at(e);
+      bundle.pointer(p[0], p[1], phase);
+      if (e.cancelable) e.preventDefault();
+    }, { passive: false });
+  }
+  on("pointerdown", "down");
+  on("pointermove", "move");
+  on("pointerup", "up");
+  cv.addEventListener("pointercancel", function () { bundle.pointer(-1, -1, "up"); });
+  cv.addEventListener("contextmenu", function (e) { e.preventDefault(); });
+
+  window.addEventListener("keydown", function (e) {
+    if (e.repeat) return;
+    bundle.key(e.code || e.key, "down");
+    if (e.code === "Space" || e.code === "ArrowUp" || e.code === "ArrowDown") e.preventDefault();
+  });
+  window.addEventListener("keyup", function (e) { bundle.key(e.code || e.key, "up"); });
+
+  var last = 0;
+  function loop(ts) {
+    var dt = last ? Math.min(ts - last, 50) : 16.67;
+    last = ts;
+    bundle.update(dt, ts);
+    bundle.draw(g, ts);
+    bundle.hud(g, ts);
+    window.requestAnimationFrame(loop);
+  }
+  window.requestAnimationFrame(loop);
+})();
+
+</script>
+</body>
+</html>

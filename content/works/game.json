@@ -1,0 +1,39 @@
+[
+  {
+    "id": "one-breath-reflex-01",
+    "artifactType": "game",
+    "title": "潮汐门",
+    "styleId": "one-breath-reflex",
+    "summary": "指针绕盘一圈，进门那一瞬按下。门每中一次就更窄更快，三条命，中满二十八次过关。一局不到一分钟，只有一个动作。",
+    "cover": "/works/game/one-breath-reflex-01.cover.png",
+    "view": {
+      "kind": "game",
+      "src": "/works/game/one-breath-reflex-01.html",
+      "download": "/works/game/one-breath-reflex-01.game.json",
+      "aspect": 1.45
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo (OCEANLEO-AIGEN)",
+        "licenseCode": "OCEANLEO-AIGEN",
+        "licenseUrl": "https://oceanleo.com/licenses/oceanleo-aigen"
+      }
+    ],
+    "readings": {
+      "entryCount": 1,
+      "hasEntrypoint": true,
+      "entrypoint": "one-breath-reflex-01.game.json",
+      "assetCount": 0,
+      "totalUncompressedBytes": 15724,
+      "entrypointByteSize": 15724,
+      "closureShape": "single-file",
+      "playSourceByteSize": 14738,
+      "coverNonBlankRatio": 0.0294091796875,
+      "coverColorCount": 671,
+      "coverFrameIndex": 330,
+      "playtestPass": 9,
+      "playtestFail": 0
+    }
+  }
+]
