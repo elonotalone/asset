@@ -35,7 +35,8 @@ export type ViewKind =
   | "audio"
   | "workflow"
   | "image"
-  | "video";
+  | "video"
+  | "plugin";
 
 export interface ViewKindSpec {
   /** 查看器档位。 */
@@ -172,6 +173,17 @@ export const VIEW_KINDS: Readonly<Record<ViewKind, ViewKindSpec>> = {
     extras: ["poster", "frames", "download", "durationSec"],
     note: "原生 <video> + poster；有 frames[] 抽帧就在下面排一行帧。",
   },
+  plugin: {
+    mode: "frame",
+    label: "工具",
+    src: "实例入口 .html（`/works/plugin/<实例>/index.html`）",
+    extras: ["aspect"],
+    note:
+      "受限 iframe，sandbox=\"allow-scripts\"（工具要跑脚本；**不给 allow-same-origin**）。" +
+      "**不直接嵌 view.src**：站内改嵌 /plugin-gallery/runtime/<实例>/…，那条路由给文档配了" +
+      "`Content-Security-Policy: sandbox`，顶层直接打开也拿不到本站 origin。" +
+      "src 不在 /works/plugin/ 下时不运行，只出封面与说明（fail-closed）。",
+  },
 };
 
 export const VIEW_KIND_IDS = Object.keys(VIEW_KINDS) as ViewKind[];
@@ -198,7 +210,8 @@ export type ArtifactType =
   | "audio"
   | "workflow"
   | "single_file_image"
-  | "video";
+  | "video"
+  | "plugin";
 
 /** 列表页的分格顺序。清单片段文件名 = artifact type（`content/works/<type>.json`）。 */
 export const ARTIFACT_TYPE_ORDER: readonly ArtifactType[] = [
@@ -206,6 +219,7 @@ export const ARTIFACT_TYPE_ORDER: readonly ArtifactType[] = [
   "deck",
   "website",
   "game",
+  "plugin",
   "document",
   "pdf",
   "grid",
@@ -233,7 +247,28 @@ export const ARTIFACT_TYPE_LABELS: Readonly<Record<ArtifactType, string>> = {
   workflow: "工作流",
   single_file_image: "图片",
   video: "视频",
+  plugin: "工具",
 };
+
+/**
+ * 工具实例在站内的**运行地址**：把货源路径换成加固路由。
+ *
+ * `/works/plugin/<实例>/index.html` → `/plugin-gallery/runtime/<实例>/index.html`
+ *
+ * 为什么不直接嵌 `view.src`：那条裸路径顶层打开时脚本跑在 asset.oceanleo.com 自己的
+ * origin 上（带着 `Domain=.oceanleo.com` 的 SSO cookie）。加固路由给文档配了
+ * `Content-Security-Policy: sandbox allow-scripts`，两种打开方式都落在不透明 origin。
+ * 见 `app/plugin-gallery/runtime/[...path]/route.ts`。
+ *
+ * 前缀对不上就返回 null，**不猜也不降级到裸路径**（fail-closed）。
+ */
+export function pluginRuntimePathFor(src: string): string | null {
+  const prefix = "/works/plugin/";
+  if (!src.startsWith(prefix) || src.includes("..")) return null;
+  const rest = src.slice(prefix.length);
+  if (!/^[A-Za-z0-9][A-Za-z0-9._/-]*\.html?$/.test(rest)) return null;
+  return `/plugin-gallery/runtime/${rest}`;
+}
 
 export function isArtifactType(v: unknown): v is ArtifactType {
   return typeof v === "string" && Object.prototype.hasOwnProperty.call(ARTIFACT_TYPE_LABELS, v);

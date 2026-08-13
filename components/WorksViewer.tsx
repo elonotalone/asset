@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useUI } from "@oceanleo/ui/i18n";
 import {
   EXTRACT_SOURCE_LABELS,
+  pluginRuntimePathFor,
   type DeckSlide,
   type DocBlock,
   type ExtractedContent,
@@ -1101,6 +1102,33 @@ export function WorksViewer({
           />
         </Frame>
       );
+
+    case "plugin": {
+      // 工具与游戏同样要跑脚本，但**不嵌 view.src**：改嵌加固路由，那条路由给文档
+      // 配了 `Content-Security-Policy: sandbox`，顶层直接打开也拿不到本站 origin。
+      // 前缀对不上就不运行（fail-closed），不退回裸路径。
+      const runtimePath = pluginRuntimePathFor(v.src);
+      if (!runtimePath) {
+        return (
+          <Fallback
+            work={work}
+            reason="这件工具的入口不在 /works/plugin/ 下，站内不运行；请从「工具能力」那一格打开。"
+          />
+        );
+      }
+      return (
+        <Frame aspect={v.aspect}>
+          <iframe
+            src={runtimePath}
+            title={work.title}
+            sandbox="allow-scripts"
+            loading="lazy"
+            referrerPolicy="no-referrer"
+            className="absolute inset-0 h-full w-full border-0 bg-white"
+          />
+        </Frame>
+      );
+    }
 
     case "grid":
       // 片段自带 sheets[] 最准（产线位知道哪几张表要给人看）；
