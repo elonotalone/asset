@@ -1,0 +1,15 @@
+{
+  "tool": "cover-frame",
+  "version": 1,
+  "meta": {
+    "title": "县域分布式光伏并网消纳白皮书（2026）",
+    "usage_scope": "first-party",
+    "license_family": "CC0",
+    "supply_tier": "original"
+  },
+  "media": [
+    { "id": "artifact", "path": "../document-whitepaper-column-01.docx" }
+  ],
+  "body": { "sourceFormat": "docx" },
+  "options": { "dpi": 130, "maxEdge": 1000 }
+}
