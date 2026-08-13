@@ -1,0 +1,113 @@
+[
+  {
+    "id": "linear-conveyor-01",
+    "artifactType": "workflow",
+    "title": "一条道传送带 · 整批图片过同一道工序",
+    "styleId": "linear-conveyor",
+    "summary": "一整批同构图片走同一条直线：入列、尺寸归一、水印叠加、编目出片。没有分叉也没有回头，跑起来不需要人守着，代价是每一件的处理完全相同。",
+    "cover": "/works/workflow/linear-conveyor-01.cover.png",
+    "view": {
+      "kind": "workflow",
+      "src": "/works/workflow/linear-conveyor-01.flow.json",
+      "download": "/works/workflow/linear-conveyor-01.project.json"
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创流程",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "envelope": "oceanleo.video-canvas.v1",
+      "nodeCount": 5,
+      "edgeCount": 4,
+      "longestPath": 5,
+      "branchCount": 0,
+      "backEdgeCount": 0,
+      "fingerprint": "5/4/5/0",
+      "nodeKindCount": 4,
+      "outputNodeCount": 1,
+      "clipCount": 4,
+      "layerCount": 1,
+      "durationMs": 12000,
+      "sourceBytes": 4643,
+      "canonicalByteSize": 2078
+    }
+  },
+  {
+    "id": "fan-out-review-merge-01",
+    "artifactType": "workflow",
+    "title": "分头做·人来判·再合流 · 成片与文案两版一起交",
+    "styleId": "fan-out-review-merge",
+    "summary": "一份案例原料同时做出成片和配套文案两版，两版做完先停下来等人过目，签了字才合成一份交付包。中间那道人工闸不是缺陷，是这条流程存在的理由。",
+    "cover": "/works/workflow/fan-out-review-merge-01.cover.png",
+    "view": {
+      "kind": "workflow",
+      "src": "/works/workflow/fan-out-review-merge-01.flow.json",
+      "download": "/works/workflow/fan-out-review-merge-01.project.json"
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创流程",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "envelope": "oceanleo.video-canvas.v1",
+      "nodeCount": 8,
+      "edgeCount": 9,
+      "longestPath": 7,
+      "branchCount": 2,
+      "backEdgeCount": 0,
+      "fingerprint": "8/9/7/2",
+      "nodeKindCount": 7,
+      "outputNodeCount": 1,
+      "clipCount": 8,
+      "layerCount": 4,
+      "durationMs": 18000,
+      "sourceBytes": 7999,
+      "canonicalByteSize": 3471
+    }
+  },
+  {
+    "id": "retry-loop-gate-01",
+    "artifactType": "workflow",
+    "title": "打回重来 · 抠图不过就换条件重抠",
+    "styleId": "retry-loop-gate",
+    "summary": "自动抠图一次做不对时的走法：判定不过就换一套条件只重抠这一步，不从头再来；次数用完了带着现状从兜底那条路出去，不在原地空转。",
+    "cover": "/works/workflow/retry-loop-gate-01.cover.png",
+    "view": {
+      "kind": "workflow",
+      "src": "/works/workflow/retry-loop-gate-01.flow.json",
+      "download": "/works/workflow/retry-loop-gate-01.project.json"
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创流程",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "envelope": "oceanleo.video-canvas.v1",
+      "nodeCount": 9,
+      "edgeCount": 10,
+      "longestPath": 9,
+      "branchCount": 2,
+      "backEdgeCount": 1,
+      "fingerprint": "9/10/9/2",
+      "nodeKindCount": 5,
+      "outputNodeCount": 1,
+      "clipCount": 10,
+      "layerCount": 2,
+      "durationMs": 24000,
+      "sourceBytes": 9103,
+      "canonicalByteSize": 3896
+    }
+  }
+]
