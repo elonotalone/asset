@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>金融计算器</title>
+<!--
+  金融计算器 · 可运行插件实例
+  规格：docs/specs/oceanleo-plugins-v1/plugins/financial-calculator.md（oceandino 仓）
+  版面：docs/design-guides/plugin/workbench-ledgerbook.md
+
+  承载要求（给嵌入方）：
+    - 必须放进 sandbox="allow-scripts" 的 iframe，绝不与 allow-same-origin 同给。
+    - 可执行内容应由 oceanleo.app 隔离域提供，不在 oceanleo.com 同源执行。
+    - 零外部资源、零存储、零网络请求、不访问 parent/top。
+  详见 signals/G1-hosting.md。
+
+  经典 <script src> 而非 type="module"：不透明源下模块脚本按 CORS 取回会失败。
+
+  它提供计算与教学，不提供投资建议（规格原话）。
+-->
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+
+  <div class="head">
+    <h1>金融计算器</h1>
+    <span class="sub">改一个假设，月供、总利息与逐期明细一起变；口径与结论同屏，不给投资建议</span>
+  </div>
+
+  <div class="body">
+
+    <div class="assume">
+      <div class="block-title">假设</div>
+
+      <div class="field">
+        <label for="principal">本金 / 元</label>
+        <input id="principal" type="text" inputmode="decimal" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="field">
+        <label for="rate">年利率 / %</label>
+        <input id="rate" type="text" inputmode="decimal" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="field">
+        <label for="periods">期数 / 月</label>
+        <input id="periods" type="text" inputmode="numeric" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="field">
+        <label for="method">还款方式</label>
+        <select id="method">
+          <option value="annuity">等额本息</option>
+          <option value="equal-principal">等额本金</option>
+        </select>
+      </div>
+
+      <p class="note">改任意一个，右边整屏同一帧换完。把 360 改成 240 就是 20 年与 30 年的对比。</p>
+
+      <div class="cash">
+        <div class="block-title">现金流（另一组计算，不与上面共用输入）</div>
+        <div class="field">
+          <label for="discount">折现率 / %</label>
+          <input id="discount" type="text" inputmode="decimal" autocomplete="off" spellcheck="false">
+        </div>
+        <textarea id="flows" spellcheck="false" aria-label="现金流，逗号或换行分隔"></textarea>
+        <div class="cash-out" id="cash-out"></div>
+      </div>
+    </div>
+
+    <div class="result">
+      <div class="headline" id="headline"></div>
+      <div class="basis">
+        <p id="basis-line"></p>
+        <p>结果旁边永远写着它是怎么算的：这一条就是口径，不藏进折叠块，也不藏进悬浮提示。</p>
+      </div>
+      <div class="detail">
+        <table>
+          <thead>
+            <tr><th>期</th><th>还款</th><th>利息</th><th>本金</th><th>余额</th></tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+        <div class="tail" id="tail"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="foot">
+    <button id="run-test" type="button">运行自测</button>
+    <span id="test-out">未运行</span>
+    <ul id="test-detail"></ul>
+  </div>
+
+</div>
+<script src="engine.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

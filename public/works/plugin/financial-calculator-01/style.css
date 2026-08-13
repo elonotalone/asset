@@ -1,0 +1,252 @@
+/*
+ * 金融计算器 · 版面
+ * 指导：docs/design-guides/plugin/workbench-ledgerbook.md（oceandino 仓）
+ *
+ * 守着指导里的硬话：
+ *   - 三块分工：左假设区，右结论区 + 明细区。明细自己滚，假设区永远留在视野里。
+ *   - 强调手段只有「分隔线与隔行底纹」：没有卡片投影、没有彩色边框、没有区块标题色带。
+ *   - 全部数字等宽右对齐 —— 数位对不齐就没有账册。
+ *   - 四级字号，结论大数 34 / 区块标题 16 = 2.125，不超过 2.2。
+ *   - 口径与结论同屏常驻，不进折叠块、不进悬浮提示。
+ *   - 不许动画、不许骨架屏。
+ */
+
+:root {
+  --ink: #16181d;
+  --muted: #6b7280;
+  --faint: #9aa1ab;
+  --divider: #dfe2e6;
+  --rule: #b6bcc4;
+  --shade: #f6f7f8;
+  --accent: #0f766e;
+  --pos: #166534;
+  --neg: #9f1239;
+  --bg: #ffffff;
+
+  /* 四级字号，到此为止。 */
+  --fs-big: 34px;
+  --fs-head: 16px;
+  --fs-body: 14px;
+  --fs-fine: 11px;
+
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --sans: system-ui, -apple-system, "Segoe UI", "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei", sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: var(--fs-body);
+  line-height: 1.5;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100vh;
+}
+
+/* ---------- 抬头 ---------- */
+
+.head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 16px 22px 12px;
+  border-bottom: 1px solid var(--divider);
+  flex: 0 0 auto;
+}
+.head h1 { margin: 0; font-size: var(--fs-head); font-weight: 600; }
+.head .sub { font-size: var(--fs-fine); color: var(--muted); }
+
+/* ---------- 两栏：左假设，右结论 + 明细 ---------- */
+
+.body {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.assume {
+  border-right: 1px solid var(--divider);
+  padding: 16px 20px 20px;
+  overflow-y: auto;
+  flex: 0 0 auto;
+}
+.block-title {
+  font-size: var(--fs-fine);
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  padding-bottom: 8px;
+}
+
+.field {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 0 7px;
+  border-bottom: 1px solid var(--divider);
+}
+.field label { font-size: var(--fs-fine); color: var(--muted); white-space: nowrap; }
+.field input, .field select {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 1px 0;
+  font-family: var(--mono);
+  font-size: var(--fs-body);
+  color: var(--ink);
+  text-align: right;
+  width: 60%;
+  min-width: 0;
+}
+.field select { font-family: var(--sans); cursor: pointer; }
+.field input:focus, .field select:focus {
+  outline: none;
+  box-shadow: inset 0 -1px 0 0 var(--accent);
+}
+
+.note { font-size: var(--fs-fine); color: var(--faint); padding-top: 10px; }
+
+.cash { padding-top: 22px; }
+.cash textarea {
+  width: 100%;
+  height: 62px;
+  resize: vertical;
+  border: 1px solid var(--divider);
+  background: transparent;
+  padding: 6px 8px;
+  font-family: var(--mono);
+  font-size: var(--fs-fine);
+  color: var(--ink);
+}
+.cash textarea:focus { outline: none; border-color: var(--accent); }
+.cash-out { padding-top: 8px; }
+.cash-out div {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--divider);
+}
+.cash-out .k { font-size: var(--fs-fine); color: var(--muted); }
+.cash-out .v { font-family: var(--mono); font-size: var(--fs-body); }
+
+/* ---------- 右：结论区常驻，明细区自滚 ---------- */
+
+.result {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.headline {
+  display: flex;
+  gap: 40px;
+  padding: 16px 22px 12px;
+  flex: 0 0 auto;
+}
+.headline .cell .k {
+  font-size: var(--fs-fine);
+  color: var(--accent);
+  letter-spacing: 0.04em;
+}
+.headline .cell .v {
+  font-family: var(--mono);
+  font-size: var(--fs-big);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.basis {
+  padding: 0 22px 12px;
+  font-size: var(--fs-fine);
+  color: var(--muted);
+  border-bottom: 1px solid var(--divider);
+  flex: 0 0 auto;
+}
+.basis p { margin: 0 0 3px; }
+
+/* 明细：摊开可滚。指导第 1 条明令禁止折叠或分页藏起来。 */
+.detail {
+  flex: 1 1 auto;
+  min-height: 160px;
+  overflow-y: auto;
+  padding: 0 22px 16px;
+}
+table { width: 100%; border-collapse: collapse; }
+thead th {
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  font-size: var(--fs-fine);
+  font-weight: 400;
+  color: var(--muted);
+  text-align: right;
+  padding: 8px 0 5px;
+  border-bottom: 1px solid var(--rule);
+}
+thead th:first-child { text-align: left; }
+tbody td {
+  font-family: var(--mono);
+  font-size: var(--fs-body);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  padding: 3px 0;
+  white-space: nowrap;
+}
+tbody td:first-child { text-align: left; color: var(--muted); }
+tbody tr:nth-child(even) td { background: var(--shade); }
+tbody td + td { padding-left: 14px; }
+
+.tail {
+  padding: 10px 0 0;
+  font-size: var(--fs-fine);
+  color: var(--muted);
+}
+
+.pos { color: var(--pos); }
+.neg { color: var(--neg); }
+
+/* ---------- 页脚：自测 ---------- */
+
+.foot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 22px 10px;
+  border-top: 1px solid var(--divider);
+  font-size: var(--fs-fine);
+  color: var(--muted);
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+}
+#run-test {
+  appearance: none;
+  border: 1px solid var(--divider);
+  background: transparent;
+  padding: 4px 11px;
+  font: inherit;
+  color: var(--ink);
+  cursor: pointer;
+}
+#run-test:hover { border-color: var(--ink); }
+#run-test:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+#test-detail { margin: 0; padding-left: 1.1em; }
+
+@media (max-width: 760px) {
+  .body { grid-template-columns: 1fr; }
+  .assume { border-right: 0; border-bottom: 1px solid var(--divider); }
+  :root { --fs-big: 26px; }
+  .headline { gap: 22px; flex-wrap: wrap; }
+}
