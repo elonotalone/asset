@@ -23,7 +23,7 @@
                 }
               ]
             },
-            "assetId": "input-sample-bug"
+            "assetId": "assets/audio/sfx/freesound-514833.mp3"
           },
           {
             "id": "n-enrich",
@@ -120,7 +120,7 @@
               "policy": "fail-closed",
               "templateRef": "workflow/exclusive-triage-v1"
             },
-            "assetId": "rule-basis-checklist"
+            "assetId": "assets/audio/sfx/freesound-855481.mp3"
           },
           {
             "id": "n-auto-reply",
@@ -328,7 +328,7 @@
               "timeoutMs": 5000,
               "policy": "record-only"
             },
-            "assetId": "output-example-hard-cut"
+            "assetId": "assets/audio/sfx/freesound-442583.mp3"
           }
         ],
         "edges": [
@@ -525,46 +525,46 @@
   ],
   "assets": [
     {
-      "id": "input-sample-bug",
-      "sha256": "2c437577b5f604653b52eb30581eb65215d035a35673ff51378cea3b51c57fa9",
-      "mediaType": "image/png",
-      "byteSize": 3728,
+      "id": "assets/audio/sfx/freesound-514833.mp3",
+      "sha256": "2753c4b4126b89fa2eb39f3bb8f70e1dbe9c11b625297227a79063adadea51d4",
+      "mediaType": "audio/mpeg",
+      "byteSize": 55560,
       "licenseCode": "CC0-1.0"
     },
     {
-      "id": "rule-basis-checklist",
-      "sha256": "77afb59034760c1a054fd2b7f572ff159cf75853f328297120ed67b10b715764",
-      "mediaType": "image/png",
-      "byteSize": 4079,
+      "id": "assets/audio/sfx/freesound-855481.mp3",
+      "sha256": "839d3a81eb227979742fc52d03d9937e7d1ce76ff0129a3686c3c4c001214fb7",
+      "mediaType": "audio/mpeg",
+      "byteSize": 39436,
       "licenseCode": "CC0-1.0"
     },
     {
-      "id": "output-example-hard-cut",
-      "sha256": "2e76cdb372b890e041f2b7a537d178a52938a46c2a4be03dc7c33c38da10197f",
-      "mediaType": "video/mp4",
-      "byteSize": 98291,
+      "id": "assets/audio/sfx/freesound-442583.mp3",
+      "sha256": "e9ff9c9f1bb18d67a3f6ab5be3960897d49f7d715881d505bc8190f3863bc493",
+      "mediaType": "audio/mpeg",
+      "byteSize": 66624,
       "licenseCode": "CC0-1.0"
     }
   ],
   "attribution": {
     "entries": [
       {
-        "text": "输入样例 bug.png — OceanLeo 第一方生成并像素化，复用自 deck-pixel-01",
+        "text": "User interface menu sounds.wav — oussamaben / Freesound，CC0",
         "licenseCode": "CC0-1.0",
         "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
-        "assetId": "input-sample-bug"
+        "assetId": "assets/audio/sfx/freesound-514833.mp3"
       },
       {
-        "text": "规则依据 checklist.png — OceanLeo 第一方生成并像素化，复用自 deck-pixel-01",
+        "text": "UI Pack — Generative Sound by Glorb — bassimat / Freesound，CC0",
         "licenseCode": "CC0-1.0",
         "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
-        "assetId": "rule-basis-checklist"
+        "assetId": "assets/audio/sfx/freesound-855481.mp3"
       },
       {
-        "text": "输出示例 hard-cut-caption-14s-01.mp4 — OceanLeo 第一方逐帧程序绘制并编码",
+        "text": "181001_010_crowd_cheer.wav — wangzhuokun / Freesound，CC0",
         "licenseCode": "CC0-1.0",
         "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
-        "assetId": "output-example-hard-cut"
+        "assetId": "assets/audio/sfx/freesound-442583.mp3"
       },
       {
         "text": "OceanLeo 第一方原创流程",

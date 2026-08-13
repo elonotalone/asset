@@ -19,8 +19,8 @@
       "kind": "source",
       "x": 56,
       "y": 172,
-      "assetId": "input-sample-bug",
-      "assetRole": "输入样例：带缺陷的来件，用来演示流程接收的原始对象"
+      "assetId": "assets/audio/sfx/freesound-514833.mp3",
+      "assetRole": "输入样例：用户界面菜单声，用来演示流程接收的真实音频来件"
     },
     {
       "id": "n-enrich",
@@ -63,8 +63,8 @@
         "policy": "fail-closed",
         "templateRef": "workflow/exclusive-triage-v1"
       },
-      "assetId": "rule-basis-checklist",
-      "assetRole": "规则依据：检查清单，用来说明分支或合并节点按什么判定"
+      "assetId": "assets/audio/sfx/freesound-855481.mp3",
+      "assetRole": "规则依据：UI 提示音组，用来给分支、复核和合并节点定义可试听的判定基准"
     },
     {
       "id": "n-auto-reply",
@@ -153,8 +153,8 @@
         "timeoutMs": 5000,
         "policy": "record-only"
       },
-      "assetId": "output-example-hard-cut",
-      "assetRole": "输出示例：14 秒硬切字幕成片，用来说明输出节点交付的可播放结果"
+      "assetId": "assets/audio/sfx/freesound-442583.mp3",
+      "assetRole": "输出示例：短促欢呼声，用来说明结束或归档节点交付的可播放确认结果"
     }
   ],
   "edges": [

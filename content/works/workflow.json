@@ -125,22 +125,22 @@
     "downloadable": true,
     "attribution": [
       {
-        "text": "输入样例 bug.png — OceanLeo 第一方生成并像素化，复用自 deck-pixel-01",
+        "text": "User interface menu sounds.wav — oussamaben / Freesound，CC0",
         "licenseCode": "CC0-1.0",
         "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
-        "assetId": "input-sample-bug"
+        "assetId": "assets/audio/sfx/freesound-514833.mp3"
       },
       {
-        "text": "规则依据 checklist.png — OceanLeo 第一方生成并像素化，复用自 deck-pixel-01",
+        "text": "UI Pack — Generative Sound by Glorb — bassimat / Freesound，CC0",
         "licenseCode": "CC0-1.0",
         "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
-        "assetId": "rule-basis-checklist"
+        "assetId": "assets/audio/sfx/freesound-855481.mp3"
       },
       {
-        "text": "输出示例 hard-cut-caption-14s-01.mp4 — OceanLeo 第一方逐帧程序绘制并编码",
+        "text": "181001_010_crowd_cheer.wav — wangzhuokun / Freesound，CC0",
         "licenseCode": "CC0-1.0",
         "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
-        "assetId": "output-example-hard-cut"
+        "assetId": "assets/audio/sfx/freesound-442583.mp3"
       },
       {
         "text": "OceanLeo 第一方原创流程",
@@ -165,8 +165,8 @@
       "clipCount": 12,
       "layerCount": 5,
       "durationMs": 30000,
-      "sourceBytes": 15919,
-      "canonicalByteSize": 7879,
+      "sourceBytes": 16001,
+      "canonicalByteSize": 7961,
       "paramsNodeCount": 8,
       "paramKeys": [
         "approvalRequired",
@@ -209,33 +209,33 @@
       "missingAssetReferenceCount": 0,
       "unreferencedAssetCount": 0,
       "duplicateAssetIdCount": 0,
-      "dependencyClosureBytes": 106098,
+      "dependencyClosureBytes": 161620,
       "closureHasVideoOrAudio": true,
       "assets": [
         {
-          "id": "input-sample-bug",
+          "id": "assets/audio/sfx/freesound-514833.mp3",
           "role": "输入样例",
-          "mediaType": "image/png",
-          "byteSize": 3728,
-          "sha256": "2c437577b5f604653b52eb30581eb65215d035a35673ff51378cea3b51c57fa9",
+          "mediaType": "audio/mpeg",
+          "byteSize": 55560,
+          "sha256": "2753c4b4126b89fa2eb39f3bb8f70e1dbe9c11b625297227a79063adadea51d4",
           "licenseCode": "CC0-1.0",
           "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
         },
         {
-          "id": "rule-basis-checklist",
+          "id": "assets/audio/sfx/freesound-855481.mp3",
           "role": "规则依据",
-          "mediaType": "image/png",
-          "byteSize": 4079,
-          "sha256": "77afb59034760c1a054fd2b7f572ff159cf75853f328297120ed67b10b715764",
+          "mediaType": "audio/mpeg",
+          "byteSize": 39436,
+          "sha256": "839d3a81eb227979742fc52d03d9937e7d1ce76ff0129a3686c3c4c001214fb7",
           "licenseCode": "CC0-1.0",
           "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
         },
         {
-          "id": "output-example-hard-cut",
+          "id": "assets/audio/sfx/freesound-442583.mp3",
           "role": "输出示例",
-          "mediaType": "video/mp4",
-          "byteSize": 98291,
-          "sha256": "2e76cdb372b890e041f2b7a537d178a52938a46c2a4be03dc7c33c38da10197f",
+          "mediaType": "audio/mpeg",
+          "byteSize": 66624,
+          "sha256": "e9ff9c9f1bb18d67a3f6ab5be3960897d49f7d715881d505bc8190f3863bc493",
           "licenseCode": "CC0-1.0",
           "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
         }
@@ -243,15 +243,15 @@
       "assetBindings": [
         {
           "nodeId": "n-intake",
-          "assetId": "input-sample-bug"
+          "assetId": "assets/audio/sfx/freesound-514833.mp3"
         },
         {
           "nodeId": "n-triage",
-          "assetId": "rule-basis-checklist"
+          "assetId": "assets/audio/sfx/freesound-855481.mp3"
         },
         {
           "nodeId": "n-close",
-          "assetId": "output-example-hard-cut"
+          "assetId": "assets/audio/sfx/freesound-442583.mp3"
         }
       ]
     }
@@ -271,22 +271,22 @@
     "downloadable": true,
     "attribution": [
       {
-        "text": "输入样例 bug.png — OceanLeo 第一方生成并像素化，复用自 deck-pixel-01",
+        "text": "User interface menu sounds.wav — oussamaben / Freesound，CC0",
         "licenseCode": "CC0-1.0",
         "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
-        "assetId": "input-sample-bug"
+        "assetId": "assets/audio/sfx/freesound-514833.mp3"
       },
       {
-        "text": "规则依据 checklist.png — OceanLeo 第一方生成并像素化，复用自 deck-pixel-01",
+        "text": "UI Pack — Generative Sound by Glorb — bassimat / Freesound，CC0",
         "licenseCode": "CC0-1.0",
         "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
-        "assetId": "rule-basis-checklist"
+        "assetId": "assets/audio/sfx/freesound-855481.mp3"
       },
       {
-        "text": "输出示例 hard-cut-caption-14s-01.mp4 — OceanLeo 第一方逐帧程序绘制并编码",
+        "text": "181001_010_crowd_cheer.wav — wangzhuokun / Freesound，CC0",
         "licenseCode": "CC0-1.0",
         "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
-        "assetId": "output-example-hard-cut"
+        "assetId": "assets/audio/sfx/freesound-442583.mp3"
       },
       {
         "text": "OceanLeo 第一方原创流程",
@@ -311,8 +311,8 @@
       "clipCount": 12,
       "layerCount": 2,
       "durationMs": 36000,
-      "sourceBytes": 15190,
-      "canonicalByteSize": 7615,
+      "sourceBytes": 15272,
+      "canonicalByteSize": 7697,
       "paramsNodeCount": 6,
       "paramKeys": [
         "approvalRequired",
@@ -355,33 +355,33 @@
       "missingAssetReferenceCount": 0,
       "unreferencedAssetCount": 0,
       "duplicateAssetIdCount": 0,
-      "dependencyClosureBytes": 106098,
+      "dependencyClosureBytes": 161620,
       "closureHasVideoOrAudio": true,
       "assets": [
         {
-          "id": "input-sample-bug",
+          "id": "assets/audio/sfx/freesound-514833.mp3",
           "role": "输入样例",
-          "mediaType": "image/png",
-          "byteSize": 3728,
-          "sha256": "2c437577b5f604653b52eb30581eb65215d035a35673ff51378cea3b51c57fa9",
+          "mediaType": "audio/mpeg",
+          "byteSize": 55560,
+          "sha256": "2753c4b4126b89fa2eb39f3bb8f70e1dbe9c11b625297227a79063adadea51d4",
           "licenseCode": "CC0-1.0",
           "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
         },
         {
-          "id": "rule-basis-checklist",
+          "id": "assets/audio/sfx/freesound-855481.mp3",
           "role": "规则依据",
-          "mediaType": "image/png",
-          "byteSize": 4079,
-          "sha256": "77afb59034760c1a054fd2b7f572ff159cf75853f328297120ed67b10b715764",
+          "mediaType": "audio/mpeg",
+          "byteSize": 39436,
+          "sha256": "839d3a81eb227979742fc52d03d9937e7d1ce76ff0129a3686c3c4c001214fb7",
           "licenseCode": "CC0-1.0",
           "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
         },
         {
-          "id": "output-example-hard-cut",
+          "id": "assets/audio/sfx/freesound-442583.mp3",
           "role": "输出示例",
-          "mediaType": "video/mp4",
-          "byteSize": 98291,
-          "sha256": "2e76cdb372b890e041f2b7a537d178a52938a46c2a4be03dc7c33c38da10197f",
+          "mediaType": "audio/mpeg",
+          "byteSize": 66624,
+          "sha256": "e9ff9c9f1bb18d67a3f6ab5be3960897d49f7d715881d505bc8190f3863bc493",
           "licenseCode": "CC0-1.0",
           "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
         }
@@ -389,15 +389,15 @@
       "assetBindings": [
         {
           "nodeId": "n-draft",
-          "assetId": "input-sample-bug"
+          "assetId": "assets/audio/sfx/freesound-514833.mp3"
         },
         {
           "nodeId": "n-review",
-          "assetId": "rule-basis-checklist"
+          "assetId": "assets/audio/sfx/freesound-855481.mp3"
         },
         {
           "nodeId": "n-archive",
-          "assetId": "output-example-hard-cut"
+          "assetId": "assets/audio/sfx/freesound-442583.mp3"
         }
       ]
     }
@@ -417,22 +417,22 @@
     "downloadable": true,
     "attribution": [
       {
-        "text": "输入样例 bug.png — OceanLeo 第一方生成并像素化，复用自 deck-pixel-01",
+        "text": "User interface menu sounds.wav — oussamaben / Freesound，CC0",
         "licenseCode": "CC0-1.0",
         "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
-        "assetId": "input-sample-bug"
+        "assetId": "assets/audio/sfx/freesound-514833.mp3"
       },
       {
-        "text": "规则依据 checklist.png — OceanLeo 第一方生成并像素化，复用自 deck-pixel-01",
+        "text": "UI Pack — Generative Sound by Glorb — bassimat / Freesound，CC0",
         "licenseCode": "CC0-1.0",
         "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
-        "assetId": "rule-basis-checklist"
+        "assetId": "assets/audio/sfx/freesound-855481.mp3"
       },
       {
-        "text": "输出示例 hard-cut-caption-14s-01.mp4 — OceanLeo 第一方逐帧程序绘制并编码",
+        "text": "181001_010_crowd_cheer.wav — wangzhuokun / Freesound，CC0",
         "licenseCode": "CC0-1.0",
         "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
-        "assetId": "output-example-hard-cut"
+        "assetId": "assets/audio/sfx/freesound-442583.mp3"
       },
       {
         "text": "OceanLeo 第一方原创流程",
@@ -457,8 +457,8 @@
       "clipCount": 12,
       "layerCount": 4,
       "durationMs": 27000,
-      "sourceBytes": 15268,
-      "canonicalByteSize": 7758,
+      "sourceBytes": 15350,
+      "canonicalByteSize": 7840,
       "paramsNodeCount": 12,
       "paramKeys": [
         "field",
@@ -497,33 +497,33 @@
       "missingAssetReferenceCount": 0,
       "unreferencedAssetCount": 0,
       "duplicateAssetIdCount": 0,
-      "dependencyClosureBytes": 106098,
+      "dependencyClosureBytes": 161620,
       "closureHasVideoOrAudio": true,
       "assets": [
         {
-          "id": "input-sample-bug",
+          "id": "assets/audio/sfx/freesound-514833.mp3",
           "role": "输入样例",
-          "mediaType": "image/png",
-          "byteSize": 3728,
-          "sha256": "2c437577b5f604653b52eb30581eb65215d035a35673ff51378cea3b51c57fa9",
+          "mediaType": "audio/mpeg",
+          "byteSize": 55560,
+          "sha256": "2753c4b4126b89fa2eb39f3bb8f70e1dbe9c11b625297227a79063adadea51d4",
           "licenseCode": "CC0-1.0",
           "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
         },
         {
-          "id": "rule-basis-checklist",
+          "id": "assets/audio/sfx/freesound-855481.mp3",
           "role": "规则依据",
-          "mediaType": "image/png",
-          "byteSize": 4079,
-          "sha256": "77afb59034760c1a054fd2b7f572ff159cf75853f328297120ed67b10b715764",
+          "mediaType": "audio/mpeg",
+          "byteSize": 39436,
+          "sha256": "839d3a81eb227979742fc52d03d9937e7d1ce76ff0129a3686c3c4c001214fb7",
           "licenseCode": "CC0-1.0",
           "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
         },
         {
-          "id": "output-example-hard-cut",
+          "id": "assets/audio/sfx/freesound-442583.mp3",
           "role": "输出示例",
-          "mediaType": "video/mp4",
-          "byteSize": 98291,
-          "sha256": "2e76cdb372b890e041f2b7a537d178a52938a46c2a4be03dc7c33c38da10197f",
+          "mediaType": "audio/mpeg",
+          "byteSize": 66624,
+          "sha256": "e9ff9c9f1bb18d67a3f6ab5be3960897d49f7d715881d505bc8190f3863bc493",
           "licenseCode": "CC0-1.0",
           "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
         }
@@ -531,15 +531,15 @@
       "assetBindings": [
         {
           "nodeId": "n-src-ticket",
-          "assetId": "input-sample-bug"
+          "assetId": "assets/audio/sfx/freesound-514833.mp3"
         },
         {
           "nodeId": "n-align",
-          "assetId": "rule-basis-checklist"
+          "assetId": "assets/audio/sfx/freesound-855481.mp3"
         },
         {
           "nodeId": "n-out",
-          "assetId": "output-example-hard-cut"
+          "assetId": "assets/audio/sfx/freesound-442583.mp3"
         }
       ]
     }
