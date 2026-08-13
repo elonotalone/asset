@@ -1,6 +1,6 @@
 {
   "source": "/root/projects/asset/public/works/deck/deck-memphis-01.pptx",
-  "sourceSha256": "2cec06b93c656909e5b6c1a283adda9b1dec05eda95b9515d737e93f845693e3",
+  "sourceSha256": "a32e6e25f7961c4ccb54aff7abf53d59d65b292c4436fc47faa313da9d9e60a5",
   "via": "soffice --headless --convert-to pdf → pdftoppm -r 150 → @napi-rs/canvas 重采样 + webp",
   "container": "oceanleo-convert",
   "pageCount": 9,
@@ -10,10 +10,10 @@
       "file": "01.webp",
       "width": 1280,
       "height": 720,
-      "byteSize": 13466,
-      "sha256": "1056fb5f7db702e786e0ebec82a1f29d8ad1810f380e7e072ef10f3ee1d595b3",
-      "nonBlankRatio": 0.030647,
-      "colorCount": 1037
+      "byteSize": 59822,
+      "sha256": "42b0b699f9f2740d024a7c976b07583a5fec3064630fe3309f6cc06e76a6a730",
+      "nonBlankRatio": 0.900718,
+      "colorCount": 119534
     },
     {
       "page": 2,
@@ -100,10 +100,10 @@
     "file": "deck-memphis-01.cover.webp",
     "width": 1280,
     "height": 720,
-    "byteSize": 13466,
-    "sha256": "1056fb5f7db702e786e0ebec82a1f29d8ad1810f380e7e072ef10f3ee1d595b3",
-    "nonBlankRatio": 0.030647,
-    "colorCount": 1037,
+    "byteSize": 59822,
+    "sha256": "42b0b699f9f2740d024a7c976b07583a5fec3064630fe3309f6cc06e76a6a730",
+    "nonBlankRatio": 0.900718,
+    "colorCount": 119534,
     "origin": "rendered-page-1"
   }
 }

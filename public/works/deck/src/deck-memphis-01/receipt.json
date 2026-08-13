@@ -6,8 +6,8 @@
   "outputs": [
     {
       "path": "/root/projects/asset/public/works/deck/deck-memphis-01.pptx",
-      "byteSize": 1015147,
-      "sha256": "2cec06b93c656909e5b6c1a283adda9b1dec05eda95b9515d737e93f845693e3"
+      "byteSize": 1323808,
+      "sha256": "a32e6e25f7961c4ccb54aff7abf53d59d65b292c4436fc47faa313da9d9e60a5"
     }
   ],
   "readings": {
@@ -15,23 +15,23 @@
     "packResolved": "riso-crimson",
     "sequenceId": "compact-pitch",
     "slideCount": 9,
-    "distinctLayouts": 7,
+    "distinctLayouts": 6,
     "denseSlides": 0,
-    "zeroImageSlides": 4,
-    "pictureCount": 5,
+    "zeroImageSlides": 3,
+    "pictureCount": 6,
     "chartPartCount": 0,
     "graphicFrameCount": 0,
     "slideMasterCount": 1,
     "slideLayoutCount": 16,
     "themeCount": 1,
-    "partCount": 84,
-    "averageShapesPerSlide": 8.333333333333334,
+    "partCount": 85,
+    "averageShapesPerSlide": 8.555555555555555,
     "maxShapesPerSlide": 20,
     "hasCustomPropertiesOverride": true,
     "hasVisibleCreditsBar": true,
     "creditsLength": 144,
     "textCharacters": 828,
-    "irBytes": 7420,
+    "irBytes": 7872,
     "byteFloor": 49152,
     "byteCeiling": 52428800,
     "license": {
@@ -53,6 +53,7 @@
     "ppt/media/image3.png",
     "ppt/media/image4.png",
     "ppt/media/image5.png",
+    "ppt/media/image6.png",
     "ppt/notesMasters/_rels/notesMaster1.xml.rels",
     "ppt/notesMasters/notesMaster1.xml",
     "ppt/notesSlides/_rels/notesSlide1.xml.rels",
@@ -129,6 +130,6 @@
     "ppt/theme/theme1.xml"
   ],
   "notes": [
-    "有 4/9 页没有配图。这不阻断产出，但它正是当年三份 PPT 被判致命缺陷的那个读数。"
+    "有 3/9 页没有配图。这不阻断产出，但它正是当年三份 PPT 被判致命缺陷的那个读数。"
   ]
 }

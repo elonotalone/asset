@@ -58,14 +58,30 @@
       "byteSize": 340662,
       "sha256": "6f144e538db4c33f29afd5e67bf115aebd47ac7a098afc389ef99d707ce4780f",
       "licenseCode": "OceanLeo-Free-1.0"
+    },
+    {
+      "id": "storefront",
+      "mediaType": "image/png",
+      "width": 690,
+      "height": 491,
+      "byteSize": 308466,
+      "sha256": "2156e87ff7901e9252598e15cd958c2e49de4eef7ed418c49d5659c03418890e",
+      "licenseCode": "OceanLeo-Free-1.0"
     }
   ],
   "slides": [
     {
-      "layout": "title",
+      "layout": "image-full",
       "title": "不做盲盒",
-      "subtitle": "校园文创「壳与芯」2026 秋季首发 · 9 月 12 日 · 三件东西，一个定价承诺",
-      "note": "开场只讲一句：今年我们不发盲盒，发三件能用完的东西。"
+      "body": "校园文创「壳与芯」2026 秋季首发 · 9 月 12 日 · 三件东西，一个定价承诺",
+      "note": "开场只讲一句：今年我们不发盲盒，发三件能用完的东西。",
+      "images": [
+        {
+          "assetId": "storefront",
+          "alt": "撞色几何风格的门店与发布现场，人群与展台",
+          "fit": "cover"
+        }
+      ]
     },
     {
       "layout": "image-full",

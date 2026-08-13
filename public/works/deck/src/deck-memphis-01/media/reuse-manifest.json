@@ -118,5 +118,29 @@
     "supplyTier": "byte-portable",
     "attributionRequired": false,
     "author": "OceanLeo Design"
+  },
+  {
+    "file": "memphis-p04-1.png",
+    "sourceRef": "memphis/p04",
+    "sourceUrl": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/ppt/decks/memphis/p04.webp",
+    "sourcePageSha256": "8d1c596c54c247333d33831aba5637b758a6ba37795df39f624103845779b04e",
+    "cropRect": {
+      "x": 1048,
+      "y": 225,
+      "w": 690,
+      "h": 491
+    },
+    "pageBackground": "#f9f4ec",
+    "width": 690,
+    "height": 491,
+    "byteSize": 308466,
+    "sha256": "2156e87ff7901e9252598e15cd958c2e49de4eef7ed418c49d5659c03418890e",
+    "origin": "reused-platform-asset",
+    "licenseCode": "OceanLeo-Free-1.0",
+    "licenseFamily": "first-party",
+    "usageScope": "standalone",
+    "supplyTier": "byte-portable",
+    "attributionRequired": false,
+    "author": "OceanLeo Design"
   }
 ]

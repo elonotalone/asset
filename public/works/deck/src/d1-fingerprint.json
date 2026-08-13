@@ -1,0 +1,553 @@
+{
+  "definition": "占画布 ≥8% 的块：类型 + 归一化位置 + 归一化尺寸，量化到 1/10",
+  "pieces": {
+    "deck-memphis-01": {
+      "dir": "/root/projects/asset/public/works/deck/pages/deck-memphis-01",
+      "pageCount": 9,
+      "pages": [
+        {
+          "file": "01.webp",
+          "blockCount": 1,
+          "blocks": [
+            {
+              "kind": "img",
+              "x": 0,
+              "y": 0,
+              "w": 10,
+              "h": 10,
+              "colors": 4237
+            }
+          ],
+          "signature": "img@0,0,10,10"
+        },
+        {
+          "file": "02.webp",
+          "blockCount": 1,
+          "blocks": [
+            {
+              "kind": "img",
+              "x": 0,
+              "y": 0,
+              "w": 10,
+              "h": 10,
+              "colors": 6270
+            }
+          ],
+          "signature": "img@0,0,10,10"
+        },
+        {
+          "file": "03.webp",
+          "blockCount": 1,
+          "blocks": [
+            {
+              "kind": "txt",
+              "x": 1,
+              "y": 3,
+              "w": 6,
+              "h": 3,
+              "colors": 206
+            }
+          ],
+          "signature": "txt@1,3,6,3"
+        },
+        {
+          "file": "04.webp",
+          "blockCount": 0,
+          "blocks": [],
+          "signature": "(空页)"
+        },
+        {
+          "file": "05.webp",
+          "blockCount": 2,
+          "blocks": [
+            {
+              "kind": "img",
+              "x": 6,
+              "y": 2,
+              "w": 4,
+              "h": 6,
+              "colors": 1156
+            },
+            {
+              "kind": "txt",
+              "x": 0,
+              "y": 3,
+              "w": 5,
+              "h": 3,
+              "colors": 162
+            }
+          ],
+          "signature": "img@6,2,4,6 | txt@0,3,5,3"
+        },
+        {
+          "file": "06.webp",
+          "blockCount": 2,
+          "blocks": [
+            {
+              "kind": "img",
+              "x": 0,
+              "y": 2,
+              "w": 4,
+              "h": 6,
+              "colors": 1416
+            },
+            {
+              "kind": "txt",
+              "x": 4,
+              "y": 3,
+              "w": 5,
+              "h": 3,
+              "colors": 172
+            }
+          ],
+          "signature": "img@0,2,4,6 | txt@4,3,5,3"
+        },
+        {
+          "file": "07.webp",
+          "blockCount": 1,
+          "blocks": [
+            {
+              "kind": "img",
+              "x": 0,
+              "y": 0,
+              "w": 10,
+              "h": 10,
+              "colors": 3545
+            }
+          ],
+          "signature": "img@0,0,10,10"
+        },
+        {
+          "file": "08.webp",
+          "blockCount": 1,
+          "blocks": [
+            {
+              "kind": "txt",
+              "x": 0,
+              "y": 4,
+              "w": 10,
+              "h": 6,
+              "colors": 267
+            }
+          ],
+          "signature": "txt@0,4,10,6"
+        },
+        {
+          "file": "09.webp",
+          "blockCount": 3,
+          "blocks": [
+            {
+              "kind": "img",
+              "x": 6,
+              "y": 2,
+              "w": 4,
+              "h": 6,
+              "colors": 2432
+            },
+            {
+              "kind": "txt",
+              "x": 0,
+              "y": 3,
+              "w": 4,
+              "h": 3,
+              "colors": 166
+            },
+            {
+              "kind": "bar",
+              "x": 0,
+              "y": 9,
+              "w": 9,
+              "h": 1,
+              "colors": 115
+            }
+          ],
+          "signature": "img@6,2,4,6 | txt@0,3,4,3 | bar@0,9,9,1"
+        }
+      ],
+      "distinctPageSignatures": 7
+    },
+    "deck-ukiyo-01": {
+      "dir": "/root/projects/asset/public/works/deck/pages/deck-ukiyo-01",
+      "pageCount": 9,
+      "pages": [
+        {
+          "file": "01.webp",
+          "blockCount": 1,
+          "blocks": [
+            {
+              "kind": "txt",
+              "x": 0,
+              "y": 0,
+              "w": 10,
+              "h": 10,
+              "colors": 181
+            }
+          ],
+          "signature": "txt@0,0,10,10"
+        },
+        {
+          "file": "02.webp",
+          "blockCount": 1,
+          "blocks": [
+            {
+              "kind": "img",
+              "x": 0,
+              "y": 0,
+              "w": 10,
+              "h": 10,
+              "colors": 1730
+            }
+          ],
+          "signature": "img@0,0,10,10"
+        },
+        {
+          "file": "03.webp",
+          "blockCount": 1,
+          "blocks": [
+            {
+              "kind": "img",
+              "x": 0,
+              "y": 0,
+              "w": 10,
+              "h": 10,
+              "colors": 2165
+            }
+          ],
+          "signature": "img@0,0,10,10"
+        },
+        {
+          "file": "04.webp",
+          "blockCount": 2,
+          "blocks": [
+            {
+              "kind": "img",
+              "x": 0,
+              "y": 2,
+              "w": 4,
+              "h": 6,
+              "colors": 771
+            },
+            {
+              "kind": "txt",
+              "x": 4,
+              "y": 3,
+              "w": 5,
+              "h": 5,
+              "colors": 131
+            }
+          ],
+          "signature": "img@0,2,4,6 | txt@4,3,5,5"
+        },
+        {
+          "file": "05.webp",
+          "blockCount": 2,
+          "blocks": [
+            {
+              "kind": "img",
+              "x": 6,
+              "y": 0,
+              "w": 4,
+              "h": 10,
+              "colors": 1966
+            },
+            {
+              "kind": "txt",
+              "x": 0,
+              "y": 3,
+              "w": 5,
+              "h": 5,
+              "colors": 133
+            }
+          ],
+          "signature": "img@6,0,4,10 | txt@0,3,5,5"
+        },
+        {
+          "file": "06.webp",
+          "blockCount": 2,
+          "blocks": [
+            {
+              "kind": "txt",
+              "x": 0,
+              "y": 3,
+              "w": 4,
+              "h": 6,
+              "colors": 129
+            },
+            {
+              "kind": "txt",
+              "x": 5,
+              "y": 3,
+              "w": 4,
+              "h": 6,
+              "colors": 122
+            }
+          ],
+          "signature": "txt@0,3,4,6 | txt@5,3,4,6"
+        },
+        {
+          "file": "07.webp",
+          "blockCount": 1,
+          "blocks": [
+            {
+              "kind": "img",
+              "x": 0,
+              "y": 0,
+              "w": 10,
+              "h": 10,
+              "colors": 1584
+            }
+          ],
+          "signature": "img@0,0,10,10"
+        },
+        {
+          "file": "08.webp",
+          "blockCount": 1,
+          "blocks": [
+            {
+              "kind": "img",
+              "x": 0,
+              "y": 1,
+              "w": 9,
+              "h": 6,
+              "colors": 427
+            }
+          ],
+          "signature": "img@0,1,9,6"
+        },
+        {
+          "file": "09.webp",
+          "blockCount": 2,
+          "blocks": [
+            {
+              "kind": "txt",
+              "x": 0,
+              "y": 3,
+              "w": 6,
+              "h": 3,
+              "colors": 130
+            },
+            {
+              "kind": "bar",
+              "x": 0,
+              "y": 9,
+              "w": 9,
+              "h": 1,
+              "colors": 114
+            }
+          ],
+          "signature": "txt@0,3,6,3 | bar@0,9,9,1"
+        }
+      ],
+      "distinctPageSignatures": 7
+    },
+    "deck-pixel-01": {
+      "dir": "/root/projects/asset/public/works/deck/pages/deck-pixel-01",
+      "pageCount": 9,
+      "pages": [
+        {
+          "file": "01.webp",
+          "blockCount": 1,
+          "blocks": [
+            {
+              "kind": "bar",
+              "x": 0,
+              "y": 2,
+              "w": 9,
+              "h": 3,
+              "colors": 144
+            }
+          ],
+          "signature": "bar@0,2,9,3"
+        },
+        {
+          "file": "02.webp",
+          "blockCount": 1,
+          "blocks": [
+            {
+              "kind": "txt",
+              "x": 0,
+              "y": 3,
+              "w": 9,
+              "h": 4,
+              "colors": 394
+            }
+          ],
+          "signature": "txt@0,3,9,4"
+        },
+        {
+          "file": "03.webp",
+          "blockCount": 2,
+          "blocks": [
+            {
+              "kind": "txt",
+              "x": 6,
+              "y": 2,
+              "w": 4,
+              "h": 6,
+              "colors": 273
+            },
+            {
+              "kind": "txt",
+              "x": 0,
+              "y": 3,
+              "w": 5,
+              "h": 6,
+              "colors": 117
+            }
+          ],
+          "signature": "txt@6,2,4,6 | txt@0,3,5,6"
+        },
+        {
+          "file": "04.webp",
+          "blockCount": 1,
+          "blocks": [
+            {
+              "kind": "img",
+              "x": 0,
+              "y": 1,
+              "w": 9,
+              "h": 6,
+              "colors": 420
+            }
+          ],
+          "signature": "img@0,1,9,6"
+        },
+        {
+          "file": "05.webp",
+          "blockCount": 1,
+          "blocks": [
+            {
+              "kind": "img",
+              "x": 0,
+              "y": 1,
+              "w": 9,
+              "h": 7,
+              "colors": 539
+            }
+          ],
+          "signature": "img@0,1,9,7"
+        },
+        {
+          "file": "06.webp",
+          "blockCount": 2,
+          "blocks": [
+            {
+              "kind": "txt",
+              "x": 0,
+              "y": 2,
+              "w": 4,
+              "h": 6,
+              "colors": 181
+            },
+            {
+              "kind": "txt",
+              "x": 4,
+              "y": 3,
+              "w": 5,
+              "h": 5,
+              "colors": 119
+            }
+          ],
+          "signature": "txt@0,2,4,6 | txt@4,3,5,5"
+        },
+        {
+          "file": "07.webp",
+          "blockCount": 2,
+          "blocks": [
+            {
+              "kind": "txt",
+              "x": 6,
+              "y": 2,
+              "w": 4,
+              "h": 6,
+              "colors": 218
+            },
+            {
+              "kind": "txt",
+              "x": 0,
+              "y": 3,
+              "w": 5,
+              "h": 6,
+              "colors": 127
+            }
+          ],
+          "signature": "txt@6,2,4,6 | txt@0,3,5,6"
+        },
+        {
+          "file": "08.webp",
+          "blockCount": 1,
+          "blocks": [
+            {
+              "kind": "txt",
+              "x": 0,
+              "y": 1,
+              "w": 9,
+              "h": 6,
+              "colors": 242
+            }
+          ],
+          "signature": "txt@0,1,9,6"
+        },
+        {
+          "file": "09.webp",
+          "blockCount": 3,
+          "blocks": [
+            {
+              "kind": "txt",
+              "x": 6,
+              "y": 2,
+              "w": 4,
+              "h": 6,
+              "colors": 252
+            },
+            {
+              "kind": "txt",
+              "x": 0,
+              "y": 3,
+              "w": 5,
+              "h": 5,
+              "colors": 120
+            },
+            {
+              "kind": "bar",
+              "x": 0,
+              "y": 9,
+              "w": 9,
+              "h": 1,
+              "colors": 96
+            }
+          ],
+          "signature": "txt@6,2,4,6 | txt@0,3,5,5 | bar@0,9,9,1"
+        }
+      ],
+      "distinctPageSignatures": 8
+    }
+  },
+  "pairwise": [
+    {
+      "a": "deck-memphis-01",
+      "b": "deck-ukiyo-01",
+      "sharedPageSignatures": [
+        "img@0,0,10,10"
+      ],
+      "jaccardDistancePct": 92.3,
+      "coverSignatureSame": false
+    },
+    {
+      "a": "deck-memphis-01",
+      "b": "deck-pixel-01",
+      "sharedPageSignatures": [],
+      "jaccardDistancePct": 100,
+      "coverSignatureSame": false
+    },
+    {
+      "a": "deck-ukiyo-01",
+      "b": "deck-pixel-01",
+      "sharedPageSignatures": [
+        "img@0,1,9,6"
+      ],
+      "jaccardDistancePct": 92.9,
+      "coverSignatureSame": false
+    }
+  ]
+}
