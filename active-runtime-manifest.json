@@ -1,0 +1,77 @@
+{
+  "schema": "oceanleo.active-runtime-manifest.v1",
+  "items": [
+    {
+      "id": "financial-calculator-01",
+      "kind": "plugin",
+      "source": "content/active-runtime/plugin/financial-calculator-01",
+      "entry": "index.html"
+    },
+    {
+      "id": "search-query-builder-01",
+      "kind": "plugin",
+      "source": "content/active-runtime/plugin/search-query-builder-01",
+      "entry": "index.html"
+    },
+    {
+      "id": "unit-converter-01",
+      "kind": "plugin",
+      "source": "content/active-runtime/plugin/unit-converter-01",
+      "entry": "index.html"
+    },
+    {
+      "id": "echo-recall-01",
+      "kind": "game",
+      "source": "content/active-runtime/game/echo-recall-01",
+      "entry": "index.html"
+    },
+    {
+      "id": "one-breath-reflex-01",
+      "kind": "game",
+      "source": "content/active-runtime/game/one-breath-reflex-01",
+      "entry": "index.html"
+    },
+    {
+      "id": "one-shot-route-01",
+      "kind": "game",
+      "source": "content/active-runtime/game/one-shot-route-01",
+      "entry": "index.html"
+    },
+    {
+      "id": "paper-deduction-01",
+      "kind": "game",
+      "source": "content/active-runtime/game/paper-deduction-01",
+      "entry": "index.html"
+    },
+    {
+      "id": "quiet-consequence-01",
+      "kind": "game",
+      "source": "content/active-runtime/game/quiet-consequence-01",
+      "entry": "index.html"
+    },
+    {
+      "id": "slow-ledger-tactics-01",
+      "kind": "game",
+      "source": "content/active-runtime/game/slow-ledger-tactics-01",
+      "entry": "index.html"
+    },
+    {
+      "id": "docfilm-portfolio-01",
+      "kind": "website",
+      "source": "content/active-runtime/website/docfilm-portfolio-01",
+      "entry": "index.html"
+    },
+    {
+      "id": "law-intake-01",
+      "kind": "website",
+      "source": "content/active-runtime/website/law-intake-01",
+      "entry": "index.html"
+    },
+    {
+      "id": "salon-booking-01",
+      "kind": "website",
+      "source": "content/active-runtime/website/salon-booking-01",
+      "entry": "index.html"
+    }
+  ]
+}
