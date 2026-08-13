@@ -288,6 +288,58 @@ export interface WorkEntry {
   sourceFile: string;
 }
 
+/* ------------------------------------------------------------------ *
+ * ④ 构建期从真字节抽出来的正文（.pptx / .docx / .xlsx / .pdf）
+ * ------------------------------------------------------------------ */
+
+// 形状定义放这里而不是 lib/works-extract.ts：抽取器要 node:fs / node:zlib，
+// 查看器是客户端组件，两边只能共享**纯类型**。抽取器从这里 re-export。
+
+export interface DocParagraph {
+  kind: "heading" | "para" | "list";
+  /** heading 的层级，1 最大。para / list 恒为 0。 */
+  level: number;
+  text: string;
+}
+
+export interface DocTable {
+  kind: "table";
+  rows: string[][];
+}
+
+export type DocBlock = DocParagraph | DocTable;
+
+export interface DeckSlide {
+  index: number;
+  title: string;
+  lines: string[];
+  notes: string[];
+}
+
+export interface PdfPage {
+  index: number;
+  lines: string[];
+}
+
+/** 抽出来的表比片段里的 `sheets[]` 多一样东西：跨列标题行（不是表头）。 */
+export interface ExtractedSheet extends WorkSheet {
+  caption?: string[];
+}
+
+export type ExtractedContent =
+  | { form: "doc"; from: string; blocks: DocBlock[] }
+  | { form: "slides"; from: string; slides: DeckSlide[] }
+  | { form: "sheets"; from: string; sheets: ExtractedSheet[] }
+  | { form: "pages"; from: string; pages: PdfPage[] };
+
+/** 「这份正文是从什么格式里打开的」，详情页照实说。 */
+export const EXTRACT_SOURCE_LABELS: Record<string, string> = {
+  pptx: "PowerPoint 演示文稿",
+  docx: "Word 文档",
+  xlsx: "Excel 工作簿",
+  pdf: "PDF",
+};
+
 /** 下载入口只对 `downloadable: true` 开；关着的时候一律返回 null。 */
 export function downloadHref(work: WorkEntry): string | null {
   if (!work.downloadable) return null;
