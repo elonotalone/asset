@@ -45,5 +45,47 @@
       "inkRatio": 0.065,
       "largestBlockShare": 0.647
     }
+  },
+  {
+    "id": "block-shout-poster-01",
+    "artifactType": "single_file_image",
+    "title": "换书大会 活动海报",
+    "styleId": "block-shout-poster",
+    "summary": "四块实心色硬切满幅，「换书」两个大字压在红蓝交界上、左右各借当地的反色读。规则写在色块里：带一本来，换一本走，不收钱、不登记、不问你读没读完。",
+    "cover": "/works/single_file_image/block-shout-poster-01.cover.webp",
+    "view": {
+      "kind": "image",
+      "src": "/works/single_file_image/block-shout-poster-01.png",
+      "download": "/works/single_file_image/block-shout-poster-01.png",
+      "aspect": 0.75
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创，画面全部为程序绘制，无第三方素材",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "sourceFormat": "png",
+      "mediaType": "image/png",
+      "byteSize": 121728,
+      "sha256": "aba1089d91861fb984f677ceedc3012c5c33f2a2beeb9f979ac5ef67fc8daadc",
+      "magicMatched": true,
+      "bytesUnchanged": true,
+      "creditCarriage": "carried-in-band",
+      "creditSlot": "png-text",
+      "creditBlocksShelving": false,
+      "license": {
+        "usage_scope": "standalone",
+        "license_family": "public-domain",
+        "supply_tier": "byte-portable"
+      },
+      "canvas": "1200x1600",
+      "paletteColorCount": 5,
+      "inkRatio": 0.664,
+      "largestBlockShare": 0.336
+    }
   }
 ]
