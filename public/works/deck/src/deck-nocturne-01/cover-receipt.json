@@ -1,0 +1,41 @@
+{
+  "ok": true,
+  "tool": "cover-frame",
+  "toolVersion": 1,
+  "out": "/root/projects/asset/public/works/deck/deck-nocturne-01.cover.png",
+  "outputs": [
+    {
+      "path": "/root/projects/asset/public/works/deck/deck-nocturne-01.cover.png",
+      "byteSize": 186820,
+      "sha256": "04ae61617115dd01cb9498939f6b79d9d6c312fe8e0d3d2e9ef1eb4ab8a0b5f1"
+    }
+  ],
+  "readings": {
+    "route": "frame",
+    "width": 1024,
+    "height": 1024,
+    "mediaType": "image/png",
+    "nonBlankRatio": 0.9605522155761719,
+    "frameIndex": 0,
+    "colorCount": 4016,
+    "entropyBits": 8.459481258465454,
+    "dominantColor": [
+      5,
+      3,
+      11,
+      255
+    ],
+    "byteSize": 186820,
+    "license": {
+      "usage_scope": "commercial-ok",
+      "license_family": "CC0-1.0",
+      "supply_tier": "first-party"
+    }
+  },
+  "writer": "@napi-rs/canvas 0.1.100 + node:vm（沙箱抓帧，无浏览器）",
+  "writerVersion": "0.1.100",
+  "source": "/root/projects/asset/public/works/deck/src/deck-nocturne-01/cover.js",
+  "notes": [
+    "封面由 P2 的 render-cover.mjs 外壳调用 cover-frame：本机 canvas 未注册任何字体，外壳先注册 Noto Sans/Serif CJK 再渲染，渲染与编码全在 cover-frame 内完成。"
+  ]
+}
