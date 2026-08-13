@@ -1,0 +1,23 @@
+{
+  "tool": "cover-frame",
+  "version": 1,
+  "meta": {
+    "title": "职业院校产教融合季度观察（2026 年第二季 · 第 14 期）",
+    "usage_scope": "first-party",
+    "license_family": "CC0",
+    "supply_tier": "original"
+  },
+  "media": [
+    {
+      "id": "artifact",
+      "path": "../pdf-column-digest-01.pdf"
+    }
+  ],
+  "body": {
+    "sourceFormat": "pdf"
+  },
+  "options": {
+    "dpi": 130,
+    "maxEdge": 1000
+  }
+}

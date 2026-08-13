@@ -1,0 +1,288 @@
+{
+  "ok": true,
+  "tool": "doc-pdf",
+  "toolVersion": 1,
+  "out": "/tmp/e1-digest",
+  "outputs": [
+    {
+      "path": "/tmp/e1-digest/ATTRIBUTION.txt",
+      "byteSize": 392,
+      "sha256": "c2805917d51385d48154c56951e574a03ac29af4810a9bd57220e7f1399526ab"
+    },
+    {
+      "path": "/tmp/e1-digest/pdf-column-digest-01.pdf",
+      "byteSize": 186498,
+      "sha256": "729afe00e25965ae30c052f7e6184f681facdb9354f1083e81ef620996a4c22e"
+    },
+    {
+      "path": "/tmp/e1-digest/preview.png",
+      "byteSize": 644718,
+      "sha256": "7b3aa567fc4e2561bce680abbbd086d85d8e140266f3f242e8d44ad66dc17a60"
+    }
+  ],
+  "readings": {
+    "entrypoint": "pdf-column-digest-01.pdf",
+    "route": "cjk-embed",
+    "fileCount": 3,
+    "sourceBytes": 186498,
+    "closureBytes": 831608,
+    "pageCount": 2,
+    "imageCount": 0,
+    "embeddedFonts": [
+      "BAAAAA+NotoSerifCJKjp-Bold-VKana",
+      "CAAAAA+DejaVuSerif-Bold",
+      "DAAAAA+NotoSerifCJKjp-Regular-VKana",
+      "EAAAAA+DejaVuSerif",
+      "FAAAAA+NotoSerifCJKjp-Regular-VKana"
+    ],
+    "embeddedFontDetails": [
+      {
+        "name": "BAAAAA+NotoSerifCJKjp-Bold-VKana",
+        "type": "Type 1",
+        "encoding": "Builtin",
+        "embedded": true,
+        "subset": true,
+        "unicode": true
+      },
+      {
+        "name": "CAAAAA+DejaVuSerif-Bold",
+        "type": "TrueType",
+        "encoding": "WinAnsi",
+        "embedded": true,
+        "subset": true,
+        "unicode": true
+      },
+      {
+        "name": "DAAAAA+NotoSerifCJKjp-Regular-VKana",
+        "type": "Type 1",
+        "encoding": "Builtin",
+        "embedded": true,
+        "subset": true,
+        "unicode": true
+      },
+      {
+        "name": "EAAAAA+DejaVuSerif",
+        "type": "TrueType",
+        "encoding": "WinAnsi",
+        "embedded": true,
+        "subset": true,
+        "unicode": true
+      },
+      {
+        "name": "FAAAAA+NotoSerifCJKjp-Regular-VKana",
+        "type": "Type 1",
+        "encoding": "Builtin",
+        "embedded": true,
+        "subset": true,
+        "unicode": true
+      }
+    ],
+    "embeddedFontCount": 5,
+    "extractedChars": 1666,
+    "declaredChars": 1378,
+    "textFidelity": {
+      "verdict": "green",
+      "reasons": [],
+      "metrics": {
+        "extractedChars": 1501,
+        "residueChars": 5,
+        "residueRatio": 0.003331,
+        "extractedCjk": 1420,
+        "declaredCjk": 1250,
+        "declaredCoverage": 1,
+        "recoveredEncoding": null,
+        "recoveredCjk": 0,
+        "embeddedFonts": 5,
+        "cidFonts": 0
+      }
+    },
+    "readbackAvailable": true,
+    "blockCount": 16,
+    "figureCount": 0,
+    "layout": {
+      "source": "input",
+      "axesFromInput": [
+        "body.palette",
+        "layout.columnSpacing",
+        "layout.columns",
+        "layout.lineSpacing",
+        "layout.margins",
+        "layout.page",
+        "theme.bodySize",
+        "theme.fonts",
+        "theme.headingScale"
+      ],
+      "derivedFrom": "writer-layout-model",
+      "derivedNote": "几何是写出器版面模型按字号/字宽常量算出来的声明值,不是渲染实测(工具不许起浏览器)。独立复核以 V2 的量法为准。",
+      "page": {
+        "id": "a4",
+        "orientation": "portrait",
+        "widthTwip": 11906,
+        "heightTwip": 16838
+      },
+      "marginsTwip": {
+        "top": 1247,
+        "bottom": 1247,
+        "right": 1134,
+        "left": 1134,
+        "header": 624,
+        "footer": 624
+      },
+      "contentWidthTwip": 9638,
+      "contentHeightTwip": 14344,
+      "columns": 2,
+      "columnSpacingTwip": 340,
+      "columnWidthTwip": 4649,
+      "lineSpacing": "normal",
+      "lineTwip": 288,
+      "paragraphAfterTwip": 120,
+      "headingScale": "normal",
+      "bodySize": "compact",
+      "fontSizesHalfPoint": {
+        "h1": 36,
+        "h2": 28,
+        "h3": 24,
+        "body": 19
+      },
+      "fonts": {
+        "latin": "DejaVu Serif",
+        "eastAsia": "Noto Serif CJK SC",
+        "heading": "DejaVu Serif",
+        "headingEastAsia": "Noto Serif CJK SC"
+      },
+      "figure": {
+        "widthRatio": null,
+        "align": "center"
+      },
+      "palette": [
+        "1F1E17",
+        "5B6428",
+        "6E7440",
+        "CFD2B8"
+      ],
+      "paletteBySlot": {
+        "accent": "5B6428",
+        "heading2": "5B6428",
+        "heading3": "6E7440",
+        "body": "1F1E17",
+        "tableHeaderFill": "CFD2B8",
+        "rule": "CFD2B8"
+      },
+      "pageCount": 1,
+      "mainBlockCount": 3,
+      "mainBlocks": [
+        {
+          "kind": "section",
+          "pageIndex": 0,
+          "column": 0,
+          "x": 0.0952,
+          "y": 0.2237,
+          "w": 0.3905,
+          "h": 0.4354,
+          "areaRatio": 0.17
+        },
+        {
+          "kind": "section",
+          "pageIndex": 0,
+          "column": 0,
+          "x": 0.0952,
+          "y": 0.6592,
+          "w": 0.3905,
+          "h": 0.2668,
+          "areaRatio": 0.1042
+        },
+        {
+          "kind": "section",
+          "pageIndex": 0,
+          "column": 1,
+          "x": 0.5143,
+          "y": 0.0938,
+          "w": 0.3905,
+          "h": 0.2252,
+          "areaRatio": 0.0879
+        }
+      ],
+      "fingerprint": "3d9e894c4fed97b3",
+      "fingerprintByThreshold": {
+        "6": "310fd19dce5b1b63",
+        "7": "310fd19dce5b1b63",
+        "8": "3d9e894c4fed97b3",
+        "9": "618c390e8e51b0b2",
+        "10": "618c390e8e51b0b2"
+      }
+    },
+    "measured": {
+      "mediaBoxPt": {
+        "width": 595.303937007874,
+        "height": 841.889763779528
+      },
+      "colors": [
+        "#1F1E17",
+        "#5B6428"
+      ],
+      "colorCount": 2,
+      "derivedFrom": "produced-pdf-bytes",
+      "page": {
+        "swatches": [
+          {
+            "hex": "#FFFFFF",
+            "share": 0.7072
+          },
+          {
+            "hex": "#B6B7B0",
+            "share": 0.0405
+          },
+          {
+            "hex": "#E9E9E8",
+            "share": 0.0394
+          },
+          {
+            "hex": "#C3C4BF",
+            "share": 0.038
+          },
+          {
+            "hex": "#D0D1CD",
+            "share": 0.0362
+          },
+          {
+            "hex": "#DDDEDB",
+            "share": 0.0348
+          },
+          {
+            "hex": "#F3F3F2",
+            "share": 0.0333
+          },
+          {
+            "hex": "#9C9E91",
+            "share": 0.0274
+          },
+          {
+            "hex": "#FAFAF9",
+            "share": 0.0232
+          },
+          {
+            "hex": "#FDFDFD",
+            "share": 0.0119
+          },
+          {
+            "hex": "#FFFFFE",
+            "share": 0.0079
+          }
+        ],
+        "derivedFrom": "rendered-first-page"
+      }
+    },
+    "previewBytes": 644718,
+    "attributionEntryCount": 1,
+    "license": {
+      "usage_scope": "first-party",
+      "license_family": "CC0",
+      "supply_tier": "original"
+    }
+  },
+  "writer": "assemblers/pdf/emit.mjs（三条渲染路：cjk-embed / ascii-skeleton / inline-figures）",
+  "writerVersion": null,
+  "notes": [
+    "成品里嵌着 5 枚字体:BAAAAA+NotoSerifCJKjp-Bold-VKana、CAAAAA+DejaVuSerif-Bold、DAAAAA+NotoSerifCJKjp-Regular-VKana、EAAAAA+DejaVuSerif、FAAAAA+NotoSerifCJKjp-Regular-VKana。每一枚都是随字节发给用户的字体程序 —— 账上要有对应的料,否则就是把别人的东西当自己的发出去。"
+  ]
+}
