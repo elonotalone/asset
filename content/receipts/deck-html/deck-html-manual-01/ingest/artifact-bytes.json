@@ -1,0 +1,33 @@
+{
+  "$object": "artifact-bytes",
+  "orderId": "wo-h1-deck-html-manual-01-v1",
+  "itemIndex": 0,
+  "artifactType": "deck",
+  "deliveryFamily": "html",
+  "entrypoint": "public/works/deck/src/deck-html-manual-01/deck.json",
+  "files": [
+    {
+      "path": "public/works/deck/src/deck-html-manual-01/deck.json",
+      "byteSize": 10473,
+      "sha256": "ee5c188ad13b9ec4d311c7d6ebc0a32c6d6b8f34b1e3d67bcdb123bb3a3fe00a",
+      "mediaType": "application/vnd.oceanleo.deck+json",
+      "role": "primary"
+    }
+  ],
+  "fullRendition": {
+    "path": "content/active-runtime/website/deck-html-manual-01/index.html",
+    "format": "html",
+    "byteSize": 177501,
+    "sha256": "82ec18836cd3f787d2c5d59a54742c96557e2325f9312e1986dc28de166c1047",
+    "mediaType": "text/html"
+  },
+  "closureShape": "single-file",
+  "closureDigest": "ee5c188ad13b9ec4d311c7d6ebc0a32c6d6b8f34b1e3d67bcdb123bb3a3fe00a",
+  "assemblerId": "asm-web",
+  "formingAssemblerId": "asm-web",
+  "references": [],
+  "previewHint": "none",
+  "preview": null,
+  "bytesDir": "/root/projects/asset",
+  "materialSha256": {}
+}

@@ -1,0 +1,21 @@
+{
+  "schema": "oceanleo.ingest-report/v1",
+  "kind": "ingest",
+  "gate": "ingest",
+  "at": "2026-08-13T16:11:35.445Z",
+  "orderId": "wo-h1-deck-html-monotype-01-v1",
+  "input": [
+    {
+      "itemIndex": 0,
+      "artifactType": "deck"
+    }
+  ],
+  "passed": [
+    {
+      "itemIndex": 0,
+      "closureDigest": "c6b668985b731ce5af644f8744d98fafe58332ad2f633a8c83b097291d8173ee"
+    }
+  ],
+  "blocked": [],
+  "skipped": []
+}

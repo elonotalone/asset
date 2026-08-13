@@ -1,0 +1,80 @@
+{
+  "schema": "oceanleo.deck-html-production-summary.v1",
+  "artifactType": "deck",
+  "deliveryFamily": "html",
+  "count": 3,
+  "items": [
+    {
+      "id": "deck-html-nocturne-01",
+      "twinId": "deck-nocturne-01",
+      "purpose": "图像主导的年度夜间观测汇报",
+      "axes": {
+        "style": "neon",
+        "scene": "sc-review",
+        "domain": "dm-public"
+      },
+      "structuredSource": {
+        "path": "public/works/deck/src/deck-html-nocturne-01/deck.json",
+        "byteSize": 4672,
+        "sha256": "e3982dccfee4ef89eae73c904fcf27389b22b794a8f92b58f7a7d350807c89b9",
+        "mediaType": "application/vnd.oceanleo.deck+json"
+      },
+      "fullRendition": {
+        "path": "content/active-runtime/website/deck-html-nocturne-01/index.html",
+        "byteSize": 1948262,
+        "sha256": "852738ceab5a974d7d504278cc37cd5f28fe44a48c33620126b7c501449ab14b",
+        "format": "html",
+        "mediaType": "text/html"
+      },
+      "productionReceipt": "content/receipts/deck-html/deck-html-nocturne-01/production.json"
+    },
+    {
+      "id": "deck-html-monotype-01",
+      "twinId": "deck-monotype-01",
+      "purpose": "文字与数据主导的内部成本备忘",
+      "axes": {
+        "style": "editorial",
+        "scene": "sc-review",
+        "domain": "dm-finance"
+      },
+      "structuredSource": {
+        "path": "public/works/deck/src/deck-html-monotype-01/deck.json",
+        "byteSize": 8081,
+        "sha256": "c6b668985b731ce5af644f8744d98fafe58332ad2f633a8c83b097291d8173ee",
+        "mediaType": "application/vnd.oceanleo.deck+json"
+      },
+      "fullRendition": {
+        "path": "content/active-runtime/website/deck-html-monotype-01/index.html",
+        "byteSize": 47170,
+        "sha256": "66abbd67e34bbc85049f671f9fd45309603f05ddd47e1c514f280b87d54d2d0c",
+        "format": "html",
+        "mediaType": "text/html"
+      },
+      "productionReceipt": "content/receipts/deck-html/deck-html-monotype-01/production.json"
+    },
+    {
+      "id": "deck-html-manual-01",
+      "twinId": "deck-manual-01",
+      "purpose": "步骤主导的社区共享书屋落地手册",
+      "axes": {
+        "style": "blueprint",
+        "scene": "sc-teaching",
+        "domain": "dm-public"
+      },
+      "structuredSource": {
+        "path": "public/works/deck/src/deck-html-manual-01/deck.json",
+        "byteSize": 10473,
+        "sha256": "ee5c188ad13b9ec4d311c7d6ebc0a32c6d6b8f34b1e3d67bcdb123bb3a3fe00a",
+        "mediaType": "application/vnd.oceanleo.deck+json"
+      },
+      "fullRendition": {
+        "path": "content/active-runtime/website/deck-html-manual-01/index.html",
+        "byteSize": 177501,
+        "sha256": "82ec18836cd3f787d2c5d59a54742c96557e2325f9312e1986dc28de166c1047",
+        "format": "html",
+        "mediaType": "text/html"
+      },
+      "productionReceipt": "content/receipts/deck-html/deck-html-manual-01/production.json"
+    }
+  ]
+}

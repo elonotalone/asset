@@ -153,3 +153,28 @@ test("HTML deck viewer uses static pages and a new-window runtime link", () => {
   assert.match(html, /查看结构稿/);
   assert.doesNotMatch(html, /<iframe|srcdoc=/i);
 });
+
+test("official HTML deck entries receive only their F9-planned runtime URLs", () => {
+  const ids = [
+    "deck-html-nocturne-01",
+    "deck-html-monotype-01",
+    "deck-html-manual-01",
+  ];
+  const catalog = worksModule.loadWorks();
+  for (const id of ids) {
+    const entry = catalog.works.find((workEntry) => workEntry.id === id);
+    assert.ok(entry, id);
+    assert.equal(entry.artifactType, "deck");
+    assert.equal(entry.deliveryFamily, "html");
+    assert.equal(entry.view.kind, "deck");
+    assert.ok(kinds.isActiveRuntimeUrl(entry.view.runtime), id);
+    assert.equal(entry.view.src, entry.view.source);
+    assert.ok((entry.view.pages?.length ?? 0) >= 8);
+  }
+  assert.equal(
+    catalog.problems.some(
+      (problem) => problem.file === "deck.html.json",
+    ),
+    false,
+  );
+});

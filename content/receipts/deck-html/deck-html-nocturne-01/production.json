@@ -1,0 +1,199 @@
+{
+  "schema": "oceanleo.deck-html-production-receipt.v1",
+  "id": "deck-html-nocturne-01",
+  "artifactType": "deck",
+  "deliveryFamily": "html",
+  "twinId": "deck-nocturne-01",
+  "purpose": "图像主导的年度夜间观测汇报",
+  "axes": {
+    "style": "neon",
+    "scene": "sc-review",
+    "domain": "dm-public"
+  },
+  "writerReceipt": "content/receipts/deck-html/deck-html-nocturne-01/writer.json",
+  "structuredSource": {
+    "path": "public/works/deck/src/deck-html-nocturne-01/deck.json",
+    "byteSize": 4672,
+    "sha256": "e3982dccfee4ef89eae73c904fcf27389b22b794a8f92b58f7a7d350807c89b9",
+    "mediaType": "application/vnd.oceanleo.deck+json"
+  },
+  "sourceMedia": [
+    {
+      "id": "night-cover",
+      "mediaType": "image/png",
+      "licenseCode": "CC0-1.0",
+      "path": "public/works/deck/src/deck-nocturne-01/media/night-cover.png",
+      "byteSize": 193431,
+      "sha256": "2345c0a2a6e95e295ccc604f18df4ec3a5ffa68495e0b7686ebc4d63bc008615",
+      "origin": "reused licensed source byte from deck-nocturne-01"
+    },
+    {
+      "id": "tide-lines",
+      "mediaType": "image/png",
+      "licenseCode": "CC0-1.0",
+      "path": "public/works/deck/src/deck-nocturne-01/media/tide-lines.png",
+      "byteSize": 233521,
+      "sha256": "23341a82b0b1266d20c2330b5671443156e2f3f3ba71d55007a165122d8481c8",
+      "origin": "reused licensed source byte from deck-nocturne-01"
+    },
+    {
+      "id": "buoy-field",
+      "mediaType": "image/png",
+      "licenseCode": "CC0-1.0",
+      "path": "public/works/deck/src/deck-nocturne-01/media/buoy-field.png",
+      "byteSize": 290455,
+      "sha256": "16b081dba9b9bad309789333fcaff1d7bd2472f72dc706d316f7e5235a885144",
+      "origin": "reused licensed source byte from deck-nocturne-01"
+    },
+    {
+      "id": "storm-front",
+      "mediaType": "image/png",
+      "licenseCode": "CC0-1.0",
+      "path": "public/works/deck/src/deck-nocturne-01/media/storm-front.png",
+      "byteSize": 549673,
+      "sha256": "781668e9bcf7087130a88b92449808c01263fdcbedb7427e49cd809c2e41d939",
+      "origin": "reused licensed source byte from deck-nocturne-01"
+    },
+    {
+      "id": "dawn-handover",
+      "mediaType": "image/png",
+      "licenseCode": "CC0-1.0",
+      "path": "public/works/deck/src/deck-nocturne-01/media/dawn-handover.png",
+      "byteSize": 179361,
+      "sha256": "8a6d3c174d6aa6b53ed609a6965ed86b799ff95cfbb8736668e42669843b42fc",
+      "origin": "reused licensed source byte from deck-nocturne-01"
+    }
+  ],
+  "fullRendition": {
+    "path": "content/active-runtime/website/deck-html-nocturne-01/index.html",
+    "byteSize": 1948262,
+    "sha256": "852738ceab5a974d7d504278cc37cd5f28fe44a48c33620126b7c501449ab14b",
+    "format": "html",
+    "mediaType": "text/html"
+  },
+  "cover": {
+    "path": "public/works/deck/deck-html-nocturne-01.cover.webp",
+    "byteSize": 50692,
+    "sha256": "90fe5178910349138a7fee36f90a4ac360277acaa01ba658eeed87e56e88ab7b",
+    "mediaType": "image/webp",
+    "origin": "byte-identical static cover from deck-nocturne-01"
+  },
+  "pages": [
+    {
+      "path": "public/works/deck/pages/deck-html-nocturne-01/01.webp",
+      "byteSize": 39180,
+      "sha256": "2588625608aa65225e3940e846423b604be1aec3042e3532f69dd13edeabdf7a",
+      "mediaType": "image/webp",
+      "index": 1,
+      "origin": "byte-identical vetted static page from deck-nocturne-01"
+    },
+    {
+      "path": "public/works/deck/pages/deck-html-nocturne-01/02.webp",
+      "byteSize": 65474,
+      "sha256": "8f6194e79b1e04c36653e859d5062a6d8e18cda669afa1ad09a15ad0962d41de",
+      "mediaType": "image/webp",
+      "index": 2,
+      "origin": "byte-identical vetted static page from deck-nocturne-01"
+    },
+    {
+      "path": "public/works/deck/pages/deck-html-nocturne-01/03.webp",
+      "byteSize": 9970,
+      "sha256": "3923d9c553cf44f1bd2983a8bdd9758ca21f99c2778452231e445754b4141b87",
+      "mediaType": "image/webp",
+      "index": 3,
+      "origin": "byte-identical vetted static page from deck-nocturne-01"
+    },
+    {
+      "path": "public/works/deck/pages/deck-html-nocturne-01/04.webp",
+      "byteSize": 48042,
+      "sha256": "76b8f57cd609cac8fc93bdb621c739e87d0520362a99f2101b27f4f2a69972ca",
+      "mediaType": "image/webp",
+      "index": 4,
+      "origin": "byte-identical vetted static page from deck-nocturne-01"
+    },
+    {
+      "path": "public/works/deck/pages/deck-html-nocturne-01/05.webp",
+      "byteSize": 46722,
+      "sha256": "bf7ce3f6e54544aa0761ded5e7e9a8647b77ff6f68bef6440b98b4b007e92745",
+      "mediaType": "image/webp",
+      "index": 5,
+      "origin": "byte-identical vetted static page from deck-nocturne-01"
+    },
+    {
+      "path": "public/works/deck/pages/deck-html-nocturne-01/06.webp",
+      "byteSize": 10610,
+      "sha256": "c3bb368a3e27fed22a63cdf7ff452f15850cc8644f687af307a1c519afd3a25f",
+      "mediaType": "image/webp",
+      "index": 6,
+      "origin": "byte-identical vetted static page from deck-nocturne-01"
+    },
+    {
+      "path": "public/works/deck/pages/deck-html-nocturne-01/07.webp",
+      "byteSize": 35132,
+      "sha256": "b9c63fb11fe88f3027cdbeef1b25b57b2a1abbc062fb0cf5071a82f9be7ff773",
+      "mediaType": "image/webp",
+      "index": 7,
+      "origin": "byte-identical vetted static page from deck-nocturne-01"
+    },
+    {
+      "path": "public/works/deck/pages/deck-html-nocturne-01/08.webp",
+      "byteSize": 25436,
+      "sha256": "29741990d6a579ba0809a4943d79b76939aa11184761d7adcf8221d22576e311",
+      "mediaType": "image/webp",
+      "index": 8,
+      "origin": "byte-identical vetted static page from deck-nocturne-01"
+    }
+  ],
+  "closure": {
+    "utf8": true,
+    "remoteDependencyCount": 0,
+    "externalScriptCount": 0,
+    "forbiddenRuntimeApiCount": 0,
+    "navigationPaths": {
+      "keyboard": {
+        "previous": true,
+        "next": true
+      },
+      "click": {
+        "previous": true,
+        "next": true,
+        "stageHalves": true
+      },
+      "touch": {
+        "previous": true,
+        "next": true,
+        "pointerEvents": true
+      }
+    },
+    "pageSemantics": {
+      "pageIndices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "sequential": true,
+      "labelsMatch": true,
+      "hiddenMatch": true,
+      "counterInitial": "1 / 8",
+      "progressMax": 8,
+      "progressValue": 1,
+      "consistent": true
+    }
+  },
+  "license": {
+    "usage_scope": "commercial-ok",
+    "license_family": "CC0-1.0",
+    "supply_tier": "first-party"
+  },
+  "ingestFixtures": {
+    "artifactBytes": "content/receipts/deck-html/deck-html-nocturne-01/ingest/artifact-bytes.json",
+    "billOfMaterials": "content/receipts/deck-html/deck-html-nocturne-01/ingest/bom.json",
+    "workOrder": "content/receipts/deck-html/deck-html-nocturne-01/ingest/work-order.json",
+    "contentSpec": "content/receipts/deck-html/deck-html-nocturne-01/ingest/content-spec.json"
+  }
+}

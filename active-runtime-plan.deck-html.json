@@ -1,0 +1,69 @@
+{
+  "schema": "oceanleo.active-runtime-plan.v1",
+  "manifest": "active-runtime-manifest.deck-html.json",
+  "manifestSha256": "551d1bdc9ddec564f4c0b5ecc51967f482d2fb24fe150464b17b9ef7fe50baae",
+  "itemCount": 3,
+  "totalBytes": 2172933,
+  "items": [
+    {
+      "item": {
+        "id": "deck-html-nocturne-01",
+        "kind": "website",
+        "source": "content/active-runtime/website/deck-html-nocturne-01",
+        "entry": "index.html"
+      },
+      "host": "s-b15b61eb08dfb478236383d2408a7507.oceanleo.app",
+      "entryUrl": "https://s-b15b61eb08dfb478236383d2408a7507.oceanleo.app/embed",
+      "closureSha256": "a2ccdb9922870505856ea0343e5e483ed4f757dc0fa68a7590e2e8cf063e1b6f",
+      "fileCount": 1,
+      "totalBytes": 1948262,
+      "files": [
+        {
+          "path": "index.html",
+          "sha256": "852738ceab5a974d7d504278cc37cd5f28fe44a48c33620126b7c501449ab14b",
+          "bytes": 1948262
+        }
+      ]
+    },
+    {
+      "item": {
+        "id": "deck-html-monotype-01",
+        "kind": "website",
+        "source": "content/active-runtime/website/deck-html-monotype-01",
+        "entry": "index.html"
+      },
+      "host": "s-7e967a18f4e078e87d374566c8cb34de.oceanleo.app",
+      "entryUrl": "https://s-7e967a18f4e078e87d374566c8cb34de.oceanleo.app/embed",
+      "closureSha256": "6b18f9ba88f9ad0af24377ef26fafa737ba9f18c04515d7ebd7445ac2f31e0bf",
+      "fileCount": 1,
+      "totalBytes": 47170,
+      "files": [
+        {
+          "path": "index.html",
+          "sha256": "66abbd67e34bbc85049f671f9fd45309603f05ddd47e1c514f280b87d54d2d0c",
+          "bytes": 47170
+        }
+      ]
+    },
+    {
+      "item": {
+        "id": "deck-html-manual-01",
+        "kind": "website",
+        "source": "content/active-runtime/website/deck-html-manual-01",
+        "entry": "index.html"
+      },
+      "host": "s-8fe57ddda07cf9c733583721b30d7579.oceanleo.app",
+      "entryUrl": "https://s-8fe57ddda07cf9c733583721b30d7579.oceanleo.app/embed",
+      "closureSha256": "20bf60ca5cb2c6e85156b7c9751c666eb275f91daa8244aa96b07d7e3c55f387",
+      "fileCount": 1,
+      "totalBytes": 177501,
+      "files": [
+        {
+          "path": "index.html",
+          "sha256": "82ec18836cd3f787d2c5d59a54742c96557e2325f9312e1986dc28de166c1047",
+          "bytes": 177501
+        }
+      ]
+    }
+  ]
+}

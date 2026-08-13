@@ -1,0 +1,93 @@
+{
+  "schema": "oceanleo.attested-artifact/v1",
+  "orderId": "wo-h1-deck-html-manual-01-v1",
+  "itemIndex": 0,
+  "artifactType": "deck",
+  "specPath": "docs/design-guides/deck/html/_INDEX.md",
+  "specDigest": "spec-normative/v1:sha256:69f9d1381ff9b93c029002491776d143d8ed837957dcdc72b181b6a210e3961c",
+  "designSpec": {
+    "digest": "spec-normative/v1:sha256:69f9d1381ff9b93c029002491776d143d8ed837957dcdc72b181b6a210e3961c",
+    "sources": [
+      {
+        "path": "docs/design-guides/deck/html/_INDEX.md",
+        "digest": "spec-normative/v1:sha256:45676596091ff8ac65a8021c7acbb77914fc5dfc9ec6b87ba980f2446e552ee0"
+      }
+    ],
+    "capturedAt": "2026-08-13T16:11:36.154Z"
+  },
+  "sourceFormat": "oceanleo.deck.v1",
+  "mediaType": "application/vnd.oceanleo.deck+json",
+  "deliveryFamily": "html",
+  "editability": "native",
+  "editorCapability": "deck-editor",
+  "entrypoint": "public/works/deck/src/deck-html-manual-01/deck.json",
+  "closureShape": "single-file",
+  "closureDigest": "ee5c188ad13b9ec4d311c7d6ebc0a32c6d6b8f34b1e3d67bcdb123bb3a3fe00a",
+  "files": [
+    {
+      "path": "public/works/deck/src/deck-html-manual-01/deck.json",
+      "byteSize": 10473,
+      "sha256": "ee5c188ad13b9ec4d311c7d6ebc0a32c6d6b8f34b1e3d67bcdb123bb3a3fe00a",
+      "mediaType": "application/vnd.oceanleo.deck+json",
+      "role": "primary"
+    }
+  ],
+  "fullRendition": {
+    "path": "content/active-runtime/website/deck-html-manual-01/index.html",
+    "format": "html",
+    "byteSize": 177501,
+    "sha256": "82ec18836cd3f787d2c5d59a54742c96557e2325f9312e1986dc28de166c1047",
+    "mediaType": "text/html"
+  },
+  "references": [],
+  "title": "社区共享书屋落地手册：从选点到开放日",
+  "summary": "六周把一间 20 平方米的闲置房开成书屋：选点、分拣、上架、物料、值守、开放日，一页一步，每一步都是能照着做的动作，末页是打勾才算交付的检查清单。",
+  "tags": [
+    "html-deck",
+    "操作手册",
+    "步骤教程",
+    "blueprint"
+  ],
+  "materialOrigin": "official-authored",
+  "fictionalSample": true,
+  "userDerived": false,
+  "previewHint": "none",
+  "provenance": {
+    "sourceKind": "owned",
+    "provider": "",
+    "author": "OceanLeo Official",
+    "licenseCode": "OCEANLEO-AIGEN",
+    "licenseUrl": "",
+    "licensePermissions": [
+      "view",
+      "copy",
+      "modify",
+      "export_source"
+    ],
+    "attribution": "",
+    "rightsAsserted": true,
+    "parentRevisionIds": [],
+    "termsSnapshot": {
+      "schema": "oceanleo.artifact-supply-terms/v1",
+      "usageScope": "standalone",
+      "supplyTier": "byte-portable",
+      "licenseFamily": "first-party",
+      "attributionRequired": false,
+      "shareAlike": false,
+      "noticeRequired": false,
+      "orderId": "wo-h1-deck-html-manual-01-v1",
+      "specPath": "docs/design-guides/deck/html/_INDEX.md",
+      "specDigest": "spec-normative/v1:sha256:69f9d1381ff9b93c029002491776d143d8ed837957dcdc72b181b6a210e3961c",
+      "materials": []
+    }
+  },
+  "grants": [
+    "export",
+    "source"
+  ],
+  "registry": {
+    "write": false,
+    "reason": "入库与上架必须是两步,否则闸② 没有插入点(N-3)"
+  },
+  "downloadKind": "artifact_rendition"
+}

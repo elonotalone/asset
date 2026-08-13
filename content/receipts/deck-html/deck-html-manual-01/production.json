@@ -1,0 +1,226 @@
+{
+  "schema": "oceanleo.deck-html-production-receipt.v1",
+  "id": "deck-html-manual-01",
+  "artifactType": "deck",
+  "deliveryFamily": "html",
+  "twinId": "deck-manual-01",
+  "purpose": "步骤主导的社区共享书屋落地手册",
+  "axes": {
+    "style": "blueprint",
+    "scene": "sc-teaching",
+    "domain": "dm-public"
+  },
+  "writerReceipt": "content/receipts/deck-html/deck-html-manual-01/writer.json",
+  "structuredSource": {
+    "path": "public/works/deck/src/deck-html-manual-01/deck.json",
+    "byteSize": 10473,
+    "sha256": "ee5c188ad13b9ec4d311c7d6ebc0a32c6d6b8f34b1e3d67bcdb123bb3a3fe00a",
+    "mediaType": "application/vnd.oceanleo.deck+json"
+  },
+  "sourceMedia": [
+    {
+      "id": "site-plan",
+      "mediaType": "image/png",
+      "licenseCode": "CC0-1.0",
+      "path": "public/works/deck/src/deck-manual-01/media/site-plan.png",
+      "byteSize": 13468,
+      "sha256": "0558c8df9ccc78a3efc577697597ced80c55ce24660c64bb5e9db50f2c8e5d4f",
+      "origin": "reused licensed source byte from deck-manual-01"
+    },
+    {
+      "id": "book-sort",
+      "mediaType": "image/png",
+      "licenseCode": "CC0-1.0",
+      "path": "public/works/deck/src/deck-manual-01/media/book-sort.png",
+      "byteSize": 12916,
+      "sha256": "a6c90e322b5c4b10e06500744e11b7ee871a663e476937751d15511557c4644c",
+      "origin": "reused licensed source byte from deck-manual-01"
+    },
+    {
+      "id": "shelf-flow",
+      "mediaType": "image/png",
+      "licenseCode": "CC0-1.0",
+      "path": "public/works/deck/src/deck-manual-01/media/shelf-flow.png",
+      "byteSize": 23094,
+      "sha256": "ab8b55b217b85358487fe694cf63f1d4299622cbd6858949882bc838dced8807",
+      "origin": "reused licensed source byte from deck-manual-01"
+    },
+    {
+      "id": "open-day",
+      "mediaType": "image/png",
+      "licenseCode": "CC0-1.0",
+      "path": "public/works/deck/src/deck-manual-01/media/open-day.png",
+      "byteSize": 18785,
+      "sha256": "aa779a5ceab850bc022c833bd90923fb2a39b9da4f46fdea289507902b287ad1",
+      "origin": "reused licensed source byte from deck-manual-01"
+    },
+    {
+      "id": "kit-shelf",
+      "mediaType": "image/png",
+      "licenseCode": "CC0-1.0",
+      "path": "public/works/deck/src/deck-manual-01/media/kit-shelf.png",
+      "byteSize": 11205,
+      "sha256": "8e2592774564e06130d19440d91ae1a72b09b7f8589339f6ff402da9b5e316ac",
+      "origin": "reused licensed source byte from deck-manual-01"
+    },
+    {
+      "id": "kit-signage",
+      "mediaType": "image/png",
+      "licenseCode": "CC0-1.0",
+      "path": "public/works/deck/src/deck-manual-01/media/kit-signage.png",
+      "byteSize": 9196,
+      "sha256": "22033122e3cca7865c5ca2a40d240b8371ddc9856b15b89e7dd423c133430fc9",
+      "origin": "reused licensed source byte from deck-manual-01"
+    },
+    {
+      "id": "kit-loanbox",
+      "mediaType": "image/png",
+      "licenseCode": "CC0-1.0",
+      "path": "public/works/deck/src/deck-manual-01/media/kit-loanbox.png",
+      "byteSize": 19541,
+      "sha256": "ab8fb1edb57dd25256bcc3f84cf7af68cf86d29339f03c1d8cca0c7c000ae487",
+      "origin": "reused licensed source byte from deck-manual-01"
+    }
+  ],
+  "fullRendition": {
+    "path": "content/active-runtime/website/deck-html-manual-01/index.html",
+    "byteSize": 177501,
+    "sha256": "82ec18836cd3f787d2c5d59a54742c96557e2325f9312e1986dc28de166c1047",
+    "format": "html",
+    "mediaType": "text/html"
+  },
+  "cover": {
+    "path": "public/works/deck/deck-html-manual-01.cover.webp",
+    "byteSize": 20960,
+    "sha256": "bb73b074e6816182c76e98682bbc13663943e066480cadbdb66826f6a4422fba",
+    "mediaType": "image/webp",
+    "origin": "byte-identical static cover from deck-manual-01"
+  },
+  "pages": [
+    {
+      "path": "public/works/deck/pages/deck-html-manual-01/01.webp",
+      "byteSize": 18162,
+      "sha256": "b36141a59929a720eb90a8a0cb59db90b3a1e156374cd6971c338455ab47783d",
+      "mediaType": "image/webp",
+      "index": 1,
+      "origin": "byte-identical vetted static page from deck-manual-01"
+    },
+    {
+      "path": "public/works/deck/pages/deck-html-manual-01/02.webp",
+      "byteSize": 36806,
+      "sha256": "bd9727e254788c9305d5948128af55afd972202e246ca02743ba03c03671a727",
+      "mediaType": "image/webp",
+      "index": 2,
+      "origin": "byte-identical vetted static page from deck-manual-01"
+    },
+    {
+      "path": "public/works/deck/pages/deck-html-manual-01/03.webp",
+      "byteSize": 36706,
+      "sha256": "d40f13e0ba23f1e657db0c73d78981bf2d579a6a6927da3ae4988b9fac76ca05",
+      "mediaType": "image/webp",
+      "index": 3,
+      "origin": "byte-identical vetted static page from deck-manual-01"
+    },
+    {
+      "path": "public/works/deck/pages/deck-html-manual-01/04.webp",
+      "byteSize": 30414,
+      "sha256": "c62a402a552022ae7e20b24c31f6b5b72a38879934544d55f28db43deea06c3a",
+      "mediaType": "image/webp",
+      "index": 4,
+      "origin": "byte-identical vetted static page from deck-manual-01"
+    },
+    {
+      "path": "public/works/deck/pages/deck-html-manual-01/05.webp",
+      "byteSize": 39926,
+      "sha256": "b0e4947f09447bd20b0eca6dc06d69a462f288b9ada5c4a3f686045053679444",
+      "mediaType": "image/webp",
+      "index": 5,
+      "origin": "byte-identical vetted static page from deck-manual-01"
+    },
+    {
+      "path": "public/works/deck/pages/deck-html-manual-01/06.webp",
+      "byteSize": 24712,
+      "sha256": "bf496f2c2eda18a126e6ab1c814bf0851d47075e10a3292ed4de0c9178ba64b5",
+      "mediaType": "image/webp",
+      "index": 6,
+      "origin": "byte-identical vetted static page from deck-manual-01"
+    },
+    {
+      "path": "public/works/deck/pages/deck-html-manual-01/07.webp",
+      "byteSize": 48124,
+      "sha256": "97415c70a6d218388566c8ab1ade28572d8f1f20cc87df0b59afa4c1f30b98b1",
+      "mediaType": "image/webp",
+      "index": 7,
+      "origin": "byte-identical vetted static page from deck-manual-01"
+    },
+    {
+      "path": "public/works/deck/pages/deck-html-manual-01/08.webp",
+      "byteSize": 36416,
+      "sha256": "0ebfe7d8646f45c69851ca8b6c19fa4823f2b01170a7cc324bb4acc968c45b03",
+      "mediaType": "image/webp",
+      "index": 8,
+      "origin": "byte-identical vetted static page from deck-manual-01"
+    },
+    {
+      "path": "public/works/deck/pages/deck-html-manual-01/09.webp",
+      "byteSize": 57682,
+      "sha256": "89229aa7b5b286d22e84d6f484dd30572e0e318e480203ba6245dfa251d1e22c",
+      "mediaType": "image/webp",
+      "index": 9,
+      "origin": "byte-identical vetted static page from deck-manual-01"
+    }
+  ],
+  "closure": {
+    "utf8": true,
+    "remoteDependencyCount": 0,
+    "externalScriptCount": 0,
+    "forbiddenRuntimeApiCount": 0,
+    "navigationPaths": {
+      "keyboard": {
+        "previous": true,
+        "next": true
+      },
+      "click": {
+        "previous": true,
+        "next": true,
+        "stageHalves": true
+      },
+      "touch": {
+        "previous": true,
+        "next": true,
+        "pointerEvents": true
+      }
+    },
+    "pageSemantics": {
+      "pageIndices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "sequential": true,
+      "labelsMatch": true,
+      "hiddenMatch": true,
+      "counterInitial": "1 / 9",
+      "progressMax": 9,
+      "progressValue": 1,
+      "consistent": true
+    }
+  },
+  "license": {
+    "usage_scope": "commercial-ok",
+    "license_family": "CC0-1.0",
+    "supply_tier": "first-party"
+  },
+  "ingestFixtures": {
+    "artifactBytes": "content/receipts/deck-html/deck-html-manual-01/ingest/artifact-bytes.json",
+    "billOfMaterials": "content/receipts/deck-html/deck-html-manual-01/ingest/bom.json",
+    "workOrder": "content/receipts/deck-html/deck-html-manual-01/ingest/work-order.json",
+    "contentSpec": "content/receipts/deck-html/deck-html-manual-01/ingest/content-spec.json"
+  }
+}
