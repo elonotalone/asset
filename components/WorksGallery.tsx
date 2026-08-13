@@ -1,11 +1,23 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useUI } from "@oceanleo/ui/i18n";
-import { VIEW_KINDS, type ArtifactType, type WorkEntry } from "@/components/WorksKinds";
+import {
+  VIEW_KINDS,
+  familiesFor,
+  familyAnchor,
+  groupByFamily,
+  type ArtifactType,
+  type WorkEntry,
+} from "@/components/WorksKinds";
 
 // 成品展厅列表页。按 artifact type 分格，卡片走**真封面**。
 // 卡片点进去是详情页（真的能打开看），不是放大封面。
+//
+// 设计稿那一格里装着四种彼此无关的物料（简历 / LOGO / 小红书封面 / 名片），
+// 所以有物料族的类型再分一层小节，并给一排筛选钮 —— 四族糊成一个瀑布流时
+// 用户要找名片得先滚过所有简历。
 
 export interface WorksGroup {
   type: ArtifactType;
@@ -43,6 +55,89 @@ function WorkCard({ work }: { work: WorkEntry }) {
         {work.styleId && <span className="truncate text-[11px] text-zinc-400">{work.styleId}</span>}
       </div>
     </Link>
+  );
+}
+
+function CardGrid({ works }: { works: WorkEntry[] }) {
+  return (
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+      {works.map((w) => (
+        <WorkCard key={w.id} work={w} />
+      ))}
+    </div>
+  );
+}
+
+/** 有物料族的类型（今天只有设计稿）：一排筛选钮 + 逐族小节。 */
+function FamilySections({ group }: { group: WorksGroup }) {
+  const tt = useUI();
+  const [picked, setPicked] = useState<string>("all");
+  const families = useMemo(() => groupByFamily(group.type, group.works), [group]);
+
+  // 只剩一族时筛选钮是噪音（点了也是同一批东西），直接出网格。
+  if (families.length < 2) return <CardGrid works={group.works} />;
+
+  const shown = picked === "all" ? families : families.filter((f) => f.family.id === picked);
+
+  return (
+    <>
+      <div className="mb-4 flex flex-wrap items-center gap-1.5">
+        <span className="mr-1 text-xs text-zinc-400">{tt("物料")}</span>
+        <button
+          type="button"
+          onClick={() => setPicked("all")}
+          aria-pressed={picked === "all"}
+          className={`rounded-full px-3 py-1 text-xs transition ${
+            picked === "all" ? "bg-zinc-900 text-white" : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
+          }`}
+        >
+          {tt("全部")}
+          <span className={`ml-1 ${picked === "all" ? "text-white/70" : "text-zinc-400"}`}>
+            {group.works.length}
+          </span>
+        </button>
+        {families.map(({ family, works }) => (
+          <button
+            key={family.id}
+            type="button"
+            title={tt(family.hint)}
+            onClick={() => setPicked(family.id)}
+            aria-pressed={picked === family.id}
+            className={`rounded-full px-3 py-1 text-xs transition ${
+              picked === family.id
+                ? "bg-zinc-900 text-white"
+                : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
+            }`}
+          >
+            {tt(family.label)}
+            <span className={`ml-1 ${picked === family.id ? "text-white/70" : "text-zinc-400"}`}>
+              {works.length}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      <div className="flex flex-col gap-8">
+        {shown.map(({ family, works }) => (
+          <section
+            key={family.id}
+            id={familyAnchor(group.type, family.id)}
+            className="scroll-mt-20"
+          >
+            <div className="mb-2.5">
+              <h3 className="flex items-baseline gap-2 text-sm font-semibold text-zinc-700">
+                {tt(family.label)}
+                <span className="text-xs font-normal text-zinc-400">
+                  {tt("{n} 件", { n: works.length })}
+                </span>
+              </h3>
+              <p className="mt-0.5 text-xs text-zinc-400">{tt(family.hint)}</p>
+            </div>
+            <CardGrid works={works} />
+          </section>
+        ))}
+      </div>
+    </>
   );
 }
 
@@ -88,11 +183,7 @@ export function WorksGallery({ groups, total }: { groups: WorksGroup[]; total: n
                     {tt("{n} 件", { n: g.works.length })}
                   </span>
                 </h2>
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-                  {g.works.map((w) => (
-                    <WorkCard key={w.id} work={w} />
-                  ))}
-                </div>
+                {familiesFor(g.type) ? <FamilySections group={g} /> : <CardGrid works={g.works} />}
               </section>
             ))}
           </div>

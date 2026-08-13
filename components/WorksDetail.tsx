@@ -6,6 +6,9 @@ import {
   ARTIFACT_TYPE_LABELS,
   VIEW_KINDS,
   downloadHref,
+  familiesFor,
+  familyAnchor,
+  familyOf,
   type ExtractedContent,
   type WorkEntry,
 } from "@/components/WorksKinds";
@@ -34,6 +37,8 @@ export function WorksDetail({
   const href = downloadHref(work);
   const rows = readingRows(work.readings);
   const kind = VIEW_KINDS[work.view.kind];
+  // 设计稿这一格里有四种物料，面包屑要能跳回它自己那一族，不是跳回混装的大格。
+  const family = familiesFor(work.artifactType) ? familyOf(work) : null;
 
   return (
     <div className="mx-auto w-full max-w-6xl px-5 py-6">
@@ -45,6 +50,17 @@ export function WorksDetail({
         <Link href={`/works#${work.artifactType}`} className="hover:text-zinc-800">
           {tt(ARTIFACT_TYPE_LABELS[work.artifactType])}
         </Link>
+        {family ? (
+          <>
+            <span>/</span>
+            <Link
+              href={`/works#${familyAnchor(work.artifactType, family.id)}`}
+              className="hover:text-zinc-800"
+            >
+              {tt(family.label)}
+            </Link>
+          </>
+        ) : null}
       </nav>
 
       <div className="flex flex-col gap-6 lg:flex-row">

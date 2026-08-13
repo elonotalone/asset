@@ -240,6 +240,113 @@ export function isArtifactType(v: unknown): v is ArtifactType {
 }
 
 /* ------------------------------------------------------------------ *
+ * ②b 物料族：一个 artifact type 内部还要再分的那一层
+ * ------------------------------------------------------------------ */
+
+// `composite_image` 一格里装着四种彼此无关的东西：简历、LOGO、小红书封面、名片。
+// 用户来找名片，不该先滚过二十件简历 —— 所以这一类在列表页再分一层「物料」。
+// 其余 13 类没有这一层，`familiesFor()` 对它们返回 null，列表页照旧一格到底。
+
+export interface MaterialFamily {
+  id: string;
+  label: string;
+  /** 一句话说清这一族是什么，列表页写在小标题下面。 */
+  hint: string;
+  /** `styleId` / `id` 的前缀。判族的第一与第二凭据。 */
+  prefixes: readonly string[];
+  /**
+   * 只写这一族的清单片段文件名。判族的第三凭据。
+   *
+   * 兜底靠文件而不是靠「猜」：片段文件按合同一位 owner 一份、一份一族
+   * （`tasks2/_COMMON2.md` §5），所以文件名是可信的归属证据。产线位改了
+   * `styleId` 的命名习惯时，这一层能接住，不至于让整族掉进「其他」。
+   */
+  files: readonly string[];
+}
+
+export const MATERIAL_FAMILIES: Readonly<Partial<Record<ArtifactType, readonly MaterialFamily[]>>> = {
+  composite_image: [
+    {
+      id: "resume",
+      label: "简历",
+      hint: "求职用的一页纸：证件照、基本信息栏、经历与技能。",
+      prefixes: ["resume-"],
+      files: ["composite_image.json"],
+    },
+    {
+      id: "logo",
+      label: "LOGO",
+      hint: "品牌标识本身，不是带标识的海报。",
+      prefixes: ["logo-"],
+      files: ["composite_image.logo.json"],
+    },
+    {
+      id: "xhs",
+      label: "小红书封面",
+      hint: "竖版信息流封面，第一眼要能读懂在讲什么。",
+      prefixes: ["xhs-"],
+      files: ["composite_image.xhs.json"],
+    },
+    {
+      id: "namecard",
+      label: "名片",
+      hint: "标准名片开本，正反面的版面各算一件。",
+      prefixes: ["namecard-"],
+      files: ["composite_image.namecard.json"],
+    },
+  ],
+};
+
+/** 三条凭据都没命中时的去处。**不猜**，如实归到「其他」。 */
+export const OTHER_FAMILY: MaterialFamily = {
+  id: "other",
+  label: "其他设计稿",
+  hint: "还没归进上面几族的设计稿。",
+  prefixes: [],
+  files: [],
+};
+
+export function familiesFor(type: ArtifactType): readonly MaterialFamily[] | null {
+  return MATERIAL_FAMILIES[type] ?? null;
+}
+
+/** 一件成品属于哪一族：先看 `styleId` 前缀，再看 `id` 前缀，最后看它来自哪份片段。 */
+export function familyOf(work: WorkEntry): MaterialFamily {
+  const families = familiesFor(work.artifactType);
+  if (!families) return OTHER_FAMILY;
+  for (const key of [work.styleId, work.id]) {
+    if (!key) continue;
+    const hit = families.find((f) => f.prefixes.some((p) => key.startsWith(p)));
+    if (hit) return hit;
+  }
+  return families.find((f) => f.files.includes(work.sourceFile)) ?? OTHER_FAMILY;
+}
+
+export interface FamilyGroup {
+  family: MaterialFamily;
+  works: WorkEntry[];
+}
+
+/** 按物料族分堆，空族不出现。族的顺序照 `MATERIAL_FAMILIES` 写的顺序，「其他」永远垫底。 */
+export function groupByFamily(type: ArtifactType, works: WorkEntry[]): FamilyGroup[] {
+  const families = familiesFor(type);
+  if (!families) return [];
+  const buckets = new Map<string, FamilyGroup>();
+  for (const family of [...families, OTHER_FAMILY]) {
+    buckets.set(family.id, { family, works: [] });
+  }
+  for (const work of works) {
+    buckets.get(familyOf(work).id)?.works.push(work);
+  }
+  return [...buckets.values()].filter((g) => g.works.length > 0);
+}
+
+/** 列表页小节的锚点 id，详情页面包屑要跳回同一个位置。 */
+export function familyAnchor(type: ArtifactType, familyId: string): string {
+  return `${type}--${familyId}`;
+}
+
+/* ------------------------------------------------------------------ *
  * ③ 清单片段 schema
  * ------------------------------------------------------------------ */
 
