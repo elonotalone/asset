@@ -1,0 +1,44 @@
+[
+  {
+    "id": "resume-academic-01",
+    "artifactType": "composite_image",
+    "title": "学术克制风格简历 · 计算材料学研究岗",
+    "styleId": "resume-academic",
+    "summary": "单栏无侧栏、只用线条做强调的学术简历。教育与研究经历在前，六条代表论著与三项主持课题完整列出，不为压进一页而删减。",
+    "cover": "/works/composite_image/resume-academic-01.cover.webp",
+    "view": {
+      "kind": "design-document",
+      "src": "/works/composite_image/resume-academic-01.json"
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "envelope": "oceanleo.design-document.v1",
+      "bodyShape": "scene",
+      "entrypoint": "design-document.json",
+      "sourceBytes": 20594,
+      "canonicalByteSize": 13344,
+      "indentOverheadBytes": 7250,
+      "declaredAssetCount": 0,
+      "attributionCount": 1,
+      "metrics": {
+        "elementCount": 58,
+        "elementTypeCount": 2,
+        "textElementCount": 49,
+        "paletteColorCount": 5,
+        "distinctZCount": 58,
+        "assetCount": 0,
+        "titleLength": 19,
+        "attributionCount": 1
+      },
+      "canvas": "1240x3148",
+      "license": null
+    }
+  }
+]
