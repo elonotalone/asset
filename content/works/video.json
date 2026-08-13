@@ -20,6 +20,12 @@
       "aspect": 0.5625
     },
     "downloadable": true,
+    "production": {
+      "status": "external-api",
+      "retiredOn": "2026-08-13",
+      "agentScope": "none",
+      "notice": "本类已转外接 API 生成，以下为存量成品。"
+    },
     "attribution": [
       {
         "text": "OceanLeo 第一方原创，逐帧程序绘制后编码，无第三方素材",
@@ -74,6 +80,12 @@
       "aspect": 1.778
     },
     "downloadable": true,
+    "production": {
+      "status": "external-api",
+      "retiredOn": "2026-08-13",
+      "agentScope": "none",
+      "notice": "本类已转外接 API 生成，以下为存量成品。"
+    },
     "attribution": [
       {
         "text": "OceanLeo 第一方原创，逐帧程序绘制后编码，无第三方素材",
@@ -128,6 +140,12 @@
       "aspect": 1
     },
     "downloadable": true,
+    "production": {
+      "status": "external-api",
+      "retiredOn": "2026-08-13",
+      "agentScope": "none",
+      "notice": "本类已转外接 API 生成，以下为存量成品。"
+    },
     "attribution": [
       {
         "text": "OceanLeo 第一方原创，逐帧程序绘制后编码，无第三方素材",

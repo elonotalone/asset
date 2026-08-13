@@ -12,6 +12,12 @@
       "download": "/works/vector_image/vector-orthographic-linework-01/vector-orthographic-linework-01.svg"
     },
     "downloadable": true,
+    "production": {
+      "status": "external-api",
+      "retiredOn": "2026-08-13",
+      "agentScope": "none",
+      "notice": "本类已转外接 API 生成，以下为存量成品。"
+    },
     "attribution": [
       {
         "text": "OceanLeo 第一方原创线稿",
@@ -52,6 +58,12 @@
       "download": "/works/vector_image/vector-flat-silhouette-02/vector-flat-silhouette-02.svg"
     },
     "downloadable": true,
+    "production": {
+      "status": "external-api",
+      "retiredOn": "2026-08-13",
+      "agentScope": "none",
+      "notice": "本类已转外接 API 生成，以下为存量成品。"
+    },
     "attribution": [
       {
         "text": "OceanLeo 第一方原创剪影",
@@ -92,6 +104,12 @@
       "download": "/works/vector_image/vector-concentric-emblem-03/vector-concentric-emblem-03.svg"
     },
     "downloadable": true,
+    "production": {
+      "status": "external-api",
+      "retiredOn": "2026-08-13",
+      "agentScope": "none",
+      "notice": "本类已转外接 API 生成，以下为存量成品。"
+    },
     "attribution": [
       {
         "text": "OceanLeo 第一方原创徽记",

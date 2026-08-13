@@ -13,6 +13,12 @@
       "durationSec": 4.2
     },
     "downloadable": true,
+    "production": {
+      "status": "external-api",
+      "retiredOn": "2026-08-13",
+      "agentScope": "none",
+      "notice": "本类已转外接 API 生成，以下为存量成品。"
+    },
     "attribution": [
       {
         "text": "OceanLeo 第一方原创，本机程序合成分轨并混音",
@@ -57,6 +63,12 @@
       "durationSec": 32
     },
     "downloadable": true,
+    "production": {
+      "status": "external-api",
+      "retiredOn": "2026-08-13",
+      "agentScope": "none",
+      "notice": "本类已转外接 API 生成，以下为存量成品。"
+    },
     "attribution": [
       {
         "text": "OceanLeo 第一方原创，本机程序合成分轨并混音",
@@ -101,6 +113,12 @@
       "durationSec": 26
     },
     "downloadable": true,
+    "production": {
+      "status": "external-api",
+      "retiredOn": "2026-08-13",
+      "agentScope": "none",
+      "notice": "本类已转外接 API 生成，以下为存量成品。"
+    },
     "attribution": [
       {
         "text": "OceanLeo 第一方原创，本机程序合成分轨并混音",

@@ -19,6 +19,12 @@
       "download": "/works/model_3d/model-prismatic-massing-01-gltf.zip"
     },
     "downloadable": true,
+    "production": {
+      "status": "external-api",
+      "retiredOn": "2026-08-13",
+      "agentScope": "design-doc",
+      "notice": "本类模型改由外接 API 生成，平台只出设计文档；以下为存量成品。"
+    },
     "attribution": [
       {
         "text": "OceanLeo 第一方原创体量研究",
@@ -132,6 +138,12 @@
       "download": "/works/model_3d/model-organic-cluster-02-gltf.zip"
     },
     "downloadable": true,
+    "production": {
+      "status": "external-api",
+      "retiredOn": "2026-08-13",
+      "agentScope": "design-doc",
+      "notice": "本类模型改由外接 API 生成，平台只出设计文档；以下为存量成品。"
+    },
     "attribution": [
       {
         "text": "OceanLeo 第一方原创形体研究",
@@ -244,6 +256,12 @@
       "download": "/works/model_3d/model-axial-revolve-03-gltf.zip"
     },
     "downloadable": true,
+    "production": {
+      "status": "external-api",
+      "retiredOn": "2026-08-13",
+      "agentScope": "design-doc",
+      "notice": "本类模型改由外接 API 生成，平台只出设计文档；以下为存量成品。"
+    },
     "attribution": [
       {
         "text": "OceanLeo 第一方原创零件研究",
