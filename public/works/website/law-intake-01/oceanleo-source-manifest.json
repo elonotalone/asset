@@ -4,8 +4,8 @@
   "files": [
     {
       "path": "index.html",
-      "blob_sha256": "3b328a3cc384b648847d9701d93ae5f0a0e9c37ba5de961b16f87e705b793673",
-      "byteSize": 13615,
+      "blob_sha256": "4ea16901825c6d47a7c2937523c45964235150bfe032b51497fc474f781e0f67",
+      "byteSize": 13711,
       "mediaType": "text/html"
     },
     {
@@ -22,14 +22,14 @@
     },
     {
       "path": "content.json",
-      "blob_sha256": "b3bc3ff564fa80aba017090c529fca170f539795aba170e14633f5bb1cdffe68",
-      "byteSize": 11034,
+      "blob_sha256": "b68e031a8dfaef619ab49ad7a7fb28f7138c99dd6a70297cdaad9ff19c06a0ca",
+      "byteSize": 11130,
       "mediaType": "application/json"
     },
     {
       "path": "site.json",
-      "blob_sha256": "58d32bb5b03f09ce6cd3188c5120ac0cf61d382143bc5c98080d1530f5a26868",
-      "byteSize": 37018,
+      "blob_sha256": "2c53b302d87a7e5357d35a61ed55ad6fce548fb4221e38f5a48e207eeeb94f33",
+      "byteSize": 37484,
       "mediaType": "application/json"
     },
     {

@@ -176,44 +176,44 @@
             "tag": "违法解除 · 制造业 · 1 人",
             "title": "以「不能胜任工作」解除，未经调岗或培训",
             "description": "公司在绩效考核末位后直接解除。我们评估后建议不要硬抗：单位没有履行调岗或培训的前置程序，仲裁阶段几乎必败。转为调解，以经济补偿的一点五倍达成，用时二十六天，避免了二倍赔偿金加上四个月的诉讼周期。",
-            "linkLabel": "View details",
-            "href": "#",
+            "linkLabel": "提交案情，约评估电话",
+            "href": "#intake",
             "image": {
-              "keyword": "business case study 1",
-              "alt": "以「不能胜任工作」解除，未经调岗或培训"
+              "keyword": "labor arbitration dismissal documents",
+              "alt": "以「不能胜任工作」解除，未经调岗或培训的脱敏案卷记录"
             }
           },
           {
             "tag": "未签书面合同 · 连锁餐饮 · 9 人",
             "title": "群体性二倍工资请求，跨度十一个月",
             "description": "门店换了三任店长，入职登记表在，合同没签。我们没有争「有没有签」，而是逐人核算实际用工起止与二倍工资的十一个月上限，并主张其中四人已过仲裁时效。最终裁决支持金额约为对方请求的四成，用时三个月零九天。",
-            "linkLabel": "View details",
-            "href": "#",
+            "linkLabel": "提交案情，约评估电话",
+            "href": "#intake",
             "image": {
-              "keyword": "business case study 2",
-              "alt": "群体性二倍工资请求，跨度十一个月"
+              "keyword": "restaurant payroll employment contracts",
+              "alt": "群体性二倍工资请求，跨度十一个月的脱敏案卷记录"
             }
           },
           {
             "tag": "竞业限制 · 科技公司 · 1 人",
             "title": "离职后违反竞业限制，主张返还补偿并支付违约金",
             "description": "公司胜诉但只拿回违约金的三成。失误在我们身上：没有在诉前固定对方新入职单位的社保缴纳证据，仅凭工商关联推定，仲裁庭不予采信关联部分。用时四个月。这件事之后我们把竞业案的证据固定挪到了立案之前。",
-            "linkLabel": "View details",
-            "href": "#",
+            "linkLabel": "提交案情，约评估电话",
+            "href": "#intake",
             "image": {
-              "keyword": "business case study 3",
-              "alt": "离职后违反竞业限制，主张返还补偿并支付违约金"
+              "keyword": "noncompete evidence case file",
+              "alt": "离职后违反竞业限制，主张返还补偿并支付违约金的脱敏案卷记录"
             }
           },
           {
             "tag": "工伤 · 物流 · 1 人",
             "title": "认定为工伤后的停工留薪期争议",
             "description": "争议不在认定，在停工留薪期的长短与原工资福利待遇的口径。我们提交了医疗机构的诊断建议与同岗位工资构成明细，把停工留薪期从对方主张的十二个月压到六个月。用时两个月零十一天。",
-            "linkLabel": "View details",
-            "href": "#",
+            "linkLabel": "提交案情，约评估电话",
+            "href": "#intake",
             "image": {
-              "keyword": "business case study 4",
-              "alt": "认定为工伤后的停工留薪期争议"
+              "keyword": "work injury wage dispute records",
+              "alt": "认定为工伤后的停工留薪期争议的脱敏案卷记录"
             }
           }
         ]
@@ -549,44 +549,44 @@
                 "tag": "违法解除 · 制造业 · 1 人",
                 "title": "以「不能胜任工作」解除，未经调岗或培训",
                 "description": "公司在绩效考核末位后直接解除。我们评估后建议不要硬抗：单位没有履行调岗或培训的前置程序，仲裁阶段几乎必败。转为调解，以经济补偿的一点五倍达成，用时二十六天，避免了二倍赔偿金加上四个月的诉讼周期。",
-                "linkLabel": "View details",
-                "href": "#",
+                "linkLabel": "提交案情，约评估电话",
+                "href": "#intake",
                 "image": {
-                  "keyword": "business case study 1",
-                  "alt": "以「不能胜任工作」解除，未经调岗或培训"
+                  "keyword": "labor arbitration dismissal documents",
+                  "alt": "以「不能胜任工作」解除，未经调岗或培训的脱敏案卷记录"
                 }
               },
               {
                 "tag": "未签书面合同 · 连锁餐饮 · 9 人",
                 "title": "群体性二倍工资请求，跨度十一个月",
                 "description": "门店换了三任店长，入职登记表在，合同没签。我们没有争「有没有签」，而是逐人核算实际用工起止与二倍工资的十一个月上限，并主张其中四人已过仲裁时效。最终裁决支持金额约为对方请求的四成，用时三个月零九天。",
-                "linkLabel": "View details",
-                "href": "#",
+                "linkLabel": "提交案情，约评估电话",
+                "href": "#intake",
                 "image": {
-                  "keyword": "business case study 2",
-                  "alt": "群体性二倍工资请求，跨度十一个月"
+                  "keyword": "restaurant payroll employment contracts",
+                  "alt": "群体性二倍工资请求，跨度十一个月的脱敏案卷记录"
                 }
               },
               {
                 "tag": "竞业限制 · 科技公司 · 1 人",
                 "title": "离职后违反竞业限制，主张返还补偿并支付违约金",
                 "description": "公司胜诉但只拿回违约金的三成。失误在我们身上：没有在诉前固定对方新入职单位的社保缴纳证据，仅凭工商关联推定，仲裁庭不予采信关联部分。用时四个月。这件事之后我们把竞业案的证据固定挪到了立案之前。",
-                "linkLabel": "View details",
-                "href": "#",
+                "linkLabel": "提交案情，约评估电话",
+                "href": "#intake",
                 "image": {
-                  "keyword": "business case study 3",
-                  "alt": "离职后违反竞业限制，主张返还补偿并支付违约金"
+                  "keyword": "noncompete evidence case file",
+                  "alt": "离职后违反竞业限制，主张返还补偿并支付违约金的脱敏案卷记录"
                 }
               },
               {
                 "tag": "工伤 · 物流 · 1 人",
                 "title": "认定为工伤后的停工留薪期争议",
                 "description": "争议不在认定，在停工留薪期的长短与原工资福利待遇的口径。我们提交了医疗机构的诊断建议与同岗位工资构成明细，把停工留薪期从对方主张的十二个月压到六个月。用时两个月零十一天。",
-                "linkLabel": "View details",
-                "href": "#",
+                "linkLabel": "提交案情，约评估电话",
+                "href": "#intake",
                 "image": {
-                  "keyword": "business case study 4",
-                  "alt": "认定为工伤后的停工留薪期争议"
+                  "keyword": "work injury wage dispute records",
+                  "alt": "认定为工伤后的停工留薪期争议的脱敏案卷记录"
                 }
               }
             ]
