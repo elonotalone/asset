@@ -1,0 +1,26 @@
+{
+  "source": "/root/projects/asset/public/works/deck/src/deck-pixel-01/gen-raw/hourglass.raw.png",
+  "sourceSha256": "ead676cd383a602faefa3b93dc2c3c026426094c6332f809996e3173248eab49",
+  "sourceSize": [
+    1536,
+    1024
+  ],
+  "grid": [
+    112,
+    75
+  ],
+  "zoom": 7,
+  "width": 784,
+  "height": 525,
+  "byteSize": 4482,
+  "sha256": "ba830ab048d5889bdfab95a9435dec846d5f6827abfe4d7ab40d89afd37694d6",
+  "distinctColors": 4,
+  "paletteHit": true,
+  "cellHistogram": {
+    "237,234,246": 6176,
+    "180,184,197": 513,
+    "42,75,215": 1200,
+    "255,255,255": 511
+  },
+  "origin": "self-generated-then-pixelized"
+}
