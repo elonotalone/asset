@@ -2,13 +2,16 @@ import type { Metadata } from "next";
 import "./globals.css";
 // 全家桶统一样式预编译产物（JS 方式 import，避开 pnpm git 依赖路径含 # 的问题）。
 import "@oceanleo/ui/theme/ui.css";
-import { LeoAssistant, IcpBeianFooter } from "@oceanleo/ui/shell";
+import { LeoAssistant } from "@oceanleo/ui/shell";
 import { FreshBundleGuard } from "@/components/FreshBundleGuard";
 import { I18nProvider } from "@oceanleo/ui/i18n";
 import { getLocale, getMessages, normalizeLocale, htmlLang, localeDir, ttServer } from "@oceanleo/ui/i18n/server";
 import { ThemeScript, ThemeProvider } from "@oceanleo/ui/theme";
 import { getThemeClass } from "@oceanleo/ui/theme/server";
 
+
+// 境内合规页脚：变量未设时渲染 null，.com 产物逐字节不变。
+import { IcpBeianFooter } from "@/app/_components/icp-beian-footer";
 
 export const dynamic = "force-dynamic";
 export async function generateMetadata(): Promise<Metadata> {
