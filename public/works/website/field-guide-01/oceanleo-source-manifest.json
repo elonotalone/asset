@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "entrypoint": "index.html",
+  "files": [
+    {
+      "path": "index.html",
+      "blob_sha256": "e7f7da4c7b4b6ad90fcfad43568785ab3dbe5f92dd1ae0a3da577b555445b6c8",
+      "byteSize": 10132,
+      "mediaType": "text/html"
+    },
+    {
+      "path": "styles.css",
+      "blob_sha256": "932c033007d98ab64e0a7255a54fa600e8ea3ade7bec755cf275adcd6cbc455d",
+      "byteSize": 4027,
+      "mediaType": "text/css"
+    },
+    {
+      "path": "app.js",
+      "blob_sha256": "2de000f16e068d8d5f740e623154cda98d8bfe5e90d7c1f2444589020465855b",
+      "byteSize": 2290,
+      "mediaType": "text/javascript"
+    },
+    {
+      "path": "content.json",
+      "blob_sha256": "adf0ae8533d78ddba46f308de2216e52d7dec73f85108a97554541f08052d83a",
+      "byteSize": 8100,
+      "mediaType": "application/json"
+    }
+  ]
+}
