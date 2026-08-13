@@ -31,23 +31,194 @@
     ],
     "readings": {
       "route": "cjk-embed",
-      "sourceBytes": 155202,
-      "closureBytes": 656419,
-      "pageCount": 2,
+      "sourceBytes": 143167,
+      "closureBytes": 472754,
+      "pageCount": 3,
       "imageCount": 0,
       "blockCount": 52,
       "figureCount": 0,
-      "extractedChars": 2295,
+      "extractedChars": 2297,
       "declaredChars": 2275,
-      "textFidelity": "green",
-      "embeddedFontCount": 4,
+      "textFidelity": {
+        "verdict": "green",
+        "reasons": [],
+        "metrics": {
+          "extractedChars": 2206,
+          "residueChars": 1,
+          "residueRatio": 0.000453,
+          "extractedCjk": 1794,
+          "declaredCjk": 1794,
+          "declaredCoverage": 1,
+          "recoveredEncoding": null,
+          "recoveredCjk": 0,
+          "embeddedFonts": 3,
+          "cidFonts": 0
+        }
+      },
+      "embeddedFontCount": 3,
       "embeddedFonts": [
-        "BAAAAA+NotoSansCJKjp-Regular-VKana",
-        "CAAAAA+DejaVuSans",
-        "DAAAAA+NotoSerifCJKjp-Regular-VKana",
-        "EAAAAA+NotoSerifCJKjp-Regular-VKana"
+        "BAAAAA+NotoSansCJKjp-Bold-VKana",
+        "CAAAAA+NotoSansCJKjp-Regular-VKana",
+        "DAAAAA+NotoSansCJKjp-Regular-VKana"
       ],
-      "license": { "usage_scope": "first-party", "license_family": "CC0", "supply_tier": "original" }
+      "layout": {
+        "source": "input",
+        "axesFromInput": [
+          "body.palette",
+          "layout.columns",
+          "layout.lineSpacing",
+          "layout.margins",
+          "layout.page",
+          "theme.bodySize",
+          "theme.fonts",
+          "theme.headingScale"
+        ],
+        "page": {
+          "id": "letter",
+          "orientation": "portrait",
+          "widthTwip": 12240,
+          "heightTwip": 15840
+        },
+        "marginsTwip": {
+          "top": 1418,
+          "bottom": 1418,
+          "right": 1588,
+          "left": 1588,
+          "header": 709,
+          "footer": 709
+        },
+        "contentWidthTwip": 9064,
+        "columns": 1,
+        "columnWidthTwip": 9064,
+        "lineSpacing": "normal",
+        "lineTwip": 288,
+        "headingScale": "flat",
+        "bodySize": "normal",
+        "fontSizesHalfPoint": {
+          "h1": 26,
+          "h2": 24,
+          "h3": 22,
+          "body": 21
+        },
+        "fonts": {
+          "latin": "Noto Sans",
+          "eastAsia": "Noto Sans CJK SC",
+          "heading": "Noto Sans",
+          "headingEastAsia": "Noto Sans CJK SC"
+        },
+        "figure": {
+          "widthRatio": null,
+          "align": "center"
+        },
+        "palette": [
+          "000000",
+          "6B6B6B",
+          "FFFFFF"
+        ],
+        "pageCount": 2,
+        "mainBlockCount": 2,
+        "mainBlocks": [
+          {
+            "kind": "section",
+            "pageIndex": 0,
+            "column": 0,
+            "x": 0.1297,
+            "y": 0.0895,
+            "w": 0.7405,
+            "h": 0.821,
+            "areaRatio": 0.6079
+          },
+          {
+            "kind": "section",
+            "pageIndex": 1,
+            "column": 0,
+            "x": 0.1297,
+            "y": 0.0895,
+            "w": 0.7405,
+            "h": 0.7328,
+            "areaRatio": 0.5427
+          }
+        ],
+        "fingerprint": "06a81f0d62ab24ce",
+        "fingerprintByThreshold": {
+          "6": "06a81f0d62ab24ce",
+          "7": "06a81f0d62ab24ce",
+          "8": "06a81f0d62ab24ce",
+          "9": "06a81f0d62ab24ce",
+          "10": "06a81f0d62ab24ce"
+        },
+        "derivedFrom": "writer-layout-model"
+      },
+      "measured": {
+        "mediaBoxPt": {
+          "width": 612,
+          "height": 792
+        },
+        "colors": [
+          "#000000",
+          "#6B6B6B"
+        ],
+        "colorCount": 2,
+        "derivedFrom": "produced-pdf-bytes",
+        "page": {
+          "swatches": [
+            {
+              "hex": "#FFFFFF",
+              "share": 0.818
+            },
+            {
+              "hex": "#999999",
+              "share": 0.0261
+            },
+            {
+              "hex": "#CFCFCF",
+              "share": 0.02
+            },
+            {
+              "hex": "#DFDFDF",
+              "share": 0.0198
+            },
+            {
+              "hex": "#ADADAD",
+              "share": 0.019
+            },
+            {
+              "hex": "#777777",
+              "share": 0.0185
+            },
+            {
+              "hex": "#C3C3C3",
+              "share": 0.0143
+            },
+            {
+              "hex": "#BABABA",
+              "share": 0.014
+            },
+            {
+              "hex": "#EAEAEA",
+              "share": 0.0139
+            },
+            {
+              "hex": "#FDFDFD",
+              "share": 0.0125
+            },
+            {
+              "hex": "#F1F1F1",
+              "share": 0.0122
+            },
+            {
+              "hex": "#F8F8F8",
+              "share": 0.0116
+            }
+          ],
+          "derivedFrom": "rendered-first-page"
+        }
+      },
+      "license": {
+        "usage_scope": "first-party",
+        "license_family": "CC0",
+        "supply_tier": "original"
+      }
     }
   },
   {
@@ -82,23 +253,243 @@
     ],
     "readings": {
       "route": "cjk-embed",
-      "sourceBytes": 337063,
-      "closureBytes": 590278,
-      "pageCount": 3,
+      "sourceBytes": 307973,
+      "closureBytes": 439436,
+      "pageCount": 4,
       "imageCount": 3,
       "blockCount": 19,
       "figureCount": 3,
-      "extractedChars": 1160,
+      "extractedChars": 1162,
       "declaredChars": 1137,
-      "textFidelity": "green",
-      "embeddedFontCount": 4,
+      "textFidelity": {
+        "verdict": "green",
+        "reasons": [],
+        "metrics": {
+          "extractedChars": 1068,
+          "residueChars": 0,
+          "residueRatio": 0,
+          "extractedCjk": 1009,
+          "declaredCjk": 1009,
+          "declaredCoverage": 1,
+          "recoveredEncoding": null,
+          "recoveredCjk": 0,
+          "embeddedFonts": 5,
+          "cidFonts": 0
+        }
+      },
+      "embeddedFontCount": 5,
       "embeddedFonts": [
-        "BAAAAA+NotoSansCJKjp-Regular-VKana",
-        "CAAAAA+DejaVuSans",
-        "DAAAAA+NotoSerifCJKjp-Regular-VKana",
-        "EAAAAA+NotoSerifCJKjp-Regular-VKana"
+        "BAAAAA+NotoSansCJKjp-Bold-VKana",
+        "CAAAAA+DejaVuSans-Bold",
+        "DAAAAA+NotoSansCJKjp-Regular-VKana",
+        "EAAAAA+DejaVuSans",
+        "FAAAAA+NotoSansCJKjp-Regular-VKana"
       ],
-      "license": { "usage_scope": "first-party", "license_family": "CC0", "supply_tier": "original" }
+      "layout": {
+        "source": "input",
+        "axesFromInput": [
+          "body.palette",
+          "layout.columns",
+          "layout.figure",
+          "layout.lineSpacing",
+          "layout.margins",
+          "layout.page",
+          "theme.bodySize",
+          "theme.fonts",
+          "theme.headingScale"
+        ],
+        "page": {
+          "id": "a4",
+          "orientation": "portrait",
+          "widthTwip": 11906,
+          "heightTwip": 16838
+        },
+        "marginsTwip": {
+          "top": 1247,
+          "bottom": 1247,
+          "right": 1021,
+          "left": 1021,
+          "header": 624,
+          "footer": 624
+        },
+        "contentWidthTwip": 9864,
+        "columns": 1,
+        "columnWidthTwip": 9864,
+        "lineSpacing": "loose",
+        "lineTwip": 360,
+        "headingScale": "normal",
+        "bodySize": "normal",
+        "fontSizesHalfPoint": {
+          "h1": 36,
+          "h2": 28,
+          "h3": 24,
+          "body": 21
+        },
+        "fonts": {
+          "latin": "DejaVu Sans",
+          "eastAsia": "Noto Sans CJK SC",
+          "heading": "DejaVu Sans",
+          "headingEastAsia": "Noto Sans CJK SC"
+        },
+        "figure": {
+          "widthRatio": 1,
+          "align": "center"
+        },
+        "palette": [
+          "000000",
+          "FFFFFF"
+        ],
+        "pageCount": 4,
+        "mainBlockCount": 8,
+        "mainBlocks": [
+          {
+            "kind": "section",
+            "pageIndex": 0,
+            "column": 0,
+            "x": 0.0858,
+            "y": 0.0741,
+            "w": 0.8285,
+            "h": 0.1063,
+            "areaRatio": 0.0881
+          },
+          {
+            "kind": "image",
+            "pageIndex": 0,
+            "column": 0,
+            "x": 0.0858,
+            "y": 0.1804,
+            "w": 0.8285,
+            "h": 0.5981,
+            "areaRatio": 0.4955
+          },
+          {
+            "kind": "section",
+            "pageIndex": 0,
+            "column": 0,
+            "x": 0.0858,
+            "y": 0.7784,
+            "w": 0.8285,
+            "h": 0.1475,
+            "areaRatio": 0.1222
+          },
+          {
+            "kind": "image",
+            "pageIndex": 1,
+            "column": 0,
+            "x": 0.0858,
+            "y": 0.1237,
+            "w": 0.8285,
+            "h": 0.5981,
+            "areaRatio": 0.4955
+          },
+          {
+            "kind": "section",
+            "pageIndex": 1,
+            "column": 0,
+            "x": 0.0858,
+            "y": 0.7218,
+            "w": 0.8285,
+            "h": 0.2042,
+            "areaRatio": 0.1692
+          },
+          {
+            "kind": "image",
+            "pageIndex": 2,
+            "column": 0,
+            "x": 0.0858,
+            "y": 0.0976,
+            "w": 0.8285,
+            "h": 0.5981,
+            "areaRatio": 0.4955
+          },
+          {
+            "kind": "section",
+            "pageIndex": 2,
+            "column": 0,
+            "x": 0.0858,
+            "y": 0.6957,
+            "w": 0.8285,
+            "h": 0.1785,
+            "areaRatio": 0.1479
+          },
+          {
+            "kind": "section",
+            "pageIndex": 3,
+            "column": 0,
+            "x": 0.0858,
+            "y": 0.0741,
+            "w": 0.8285,
+            "h": 0.173,
+            "areaRatio": 0.1433
+          }
+        ],
+        "fingerprint": "b3cd43d0dbc28d7e",
+        "fingerprintByThreshold": {
+          "6": "b3cd43d0dbc28d7e",
+          "7": "b3cd43d0dbc28d7e",
+          "8": "b3cd43d0dbc28d7e",
+          "9": "8487e4fd5ca4cb79",
+          "10": "8487e4fd5ca4cb79"
+        },
+        "derivedFrom": "writer-layout-model"
+      },
+      "measured": {
+        "mediaBoxPt": {
+          "width": 595.303937007874,
+          "height": 841.889763779528
+        },
+        "colors": [
+          "#000000"
+        ],
+        "colorCount": 1,
+        "derivedFrom": "produced-pdf-bytes",
+        "page": {
+          "swatches": [
+            {
+              "hex": "#FFFFFF",
+              "share": 0.4672
+            },
+            {
+              "hex": "#FBFBF9",
+              "share": 0.4228
+            },
+            {
+              "hex": "#CAD4D2",
+              "share": 0.0308
+            },
+            {
+              "hex": "#87938F",
+              "share": 0.0289
+            },
+            {
+              "hex": "#F2F3F2",
+              "share": 0.0165
+            },
+            {
+              "hex": "#FFFFFE",
+              "share": 0.0122
+            },
+            {
+              "hex": "#FAFBF9",
+              "share": 0.0078
+            },
+            {
+              "hex": "#FCFBF9",
+              "share": 0.0069
+            },
+            {
+              "hex": "#FDFDFC",
+              "share": 0.0061
+            }
+          ],
+          "derivedFrom": "rendered-first-page"
+        }
+      },
+      "license": {
+        "usage_scope": "first-party",
+        "license_family": "CC0",
+        "supply_tier": "original"
+      }
     }
   },
   {
@@ -133,22 +524,207 @@
     ],
     "readings": {
       "route": "cjk-embed",
-      "sourceBytes": 136427,
-      "closureBytes": 359487,
+      "sourceBytes": 123706,
+      "closureBytes": 368613,
       "pageCount": 2,
       "imageCount": 1,
       "blockCount": 38,
       "figureCount": 1,
-      "extractedChars": 1242,
+      "extractedChars": 1241,
       "declaredChars": 1318,
-      "textFidelity": "green",
+      "textFidelity": {
+        "verdict": "green",
+        "reasons": [],
+        "metrics": {
+          "extractedChars": 992,
+          "residueChars": 1,
+          "residueRatio": 0.001008,
+          "extractedCjk": 660,
+          "declaredCjk": 660,
+          "declaredCoverage": 1,
+          "recoveredEncoding": null,
+          "recoveredCjk": 0,
+          "embeddedFonts": 3,
+          "cidFonts": 0
+        }
+      },
       "embeddedFontCount": 3,
       "embeddedFonts": [
-        "BAAAAA+NotoSansCJKjp-Regular-VKana",
-        "CAAAAA+DejaVuSans",
-        "DAAAAA+NotoSerifCJKjp-Regular-VKana"
+        "BAAAAA+NotoSansCJKjp-Bold-VKana",
+        "CAAAAA+NotoSansCJKjp-Regular-VKana",
+        "DAAAAA+NotoSansCJKjp-Regular-VKana"
       ],
-      "license": { "usage_scope": "first-party", "license_family": "CC0", "supply_tier": "original" }
+      "layout": {
+        "source": "input",
+        "axesFromInput": [
+          "body.palette",
+          "layout.columns",
+          "layout.figure",
+          "layout.lineSpacing",
+          "layout.margins",
+          "layout.page",
+          "theme.bodySize",
+          "theme.fonts",
+          "theme.headingScale"
+        ],
+        "page": {
+          "id": "a4",
+          "orientation": "portrait",
+          "widthTwip": 11906,
+          "heightTwip": 16838
+        },
+        "marginsTwip": {
+          "top": 851,
+          "bottom": 851,
+          "right": 851,
+          "left": 851,
+          "header": 426,
+          "footer": 426
+        },
+        "contentWidthTwip": 10204,
+        "columns": 1,
+        "columnWidthTwip": 10204,
+        "lineSpacing": "tight",
+        "lineTwip": 252,
+        "headingScale": "flat",
+        "bodySize": "compact",
+        "fontSizesHalfPoint": {
+          "h1": 26,
+          "h2": 24,
+          "h3": 22,
+          "body": 19
+        },
+        "fonts": {
+          "latin": "Noto Sans",
+          "eastAsia": "Noto Sans CJK SC",
+          "heading": "Noto Sans",
+          "headingEastAsia": "Noto Sans CJK SC"
+        },
+        "figure": {
+          "widthRatio": 0.5,
+          "align": "left"
+        },
+        "palette": [
+          "000000",
+          "4A4A4A",
+          "FFFFFF"
+        ],
+        "pageCount": 2,
+        "mainBlockCount": 4,
+        "mainBlocks": [
+          {
+            "kind": "section",
+            "pageIndex": 0,
+            "column": 0,
+            "x": 0.0715,
+            "y": 0.0505,
+            "w": 0.857,
+            "h": 0.1861,
+            "areaRatio": 0.1595
+          },
+          {
+            "kind": "image",
+            "pageIndex": 0,
+            "column": 0,
+            "x": 0.0715,
+            "y": 0.2366,
+            "w": 0.857,
+            "h": 0.3076,
+            "areaRatio": 0.2637
+          },
+          {
+            "kind": "section",
+            "pageIndex": 0,
+            "column": 0,
+            "x": 0.0715,
+            "y": 0.5442,
+            "w": 0.857,
+            "h": 0.4052,
+            "areaRatio": 0.3473
+          },
+          {
+            "kind": "section",
+            "pageIndex": 1,
+            "column": 0,
+            "x": 0.0715,
+            "y": 0.0505,
+            "w": 0.857,
+            "h": 0.0937,
+            "areaRatio": 0.0803
+          }
+        ],
+        "fingerprint": "5a40444465b9d488",
+        "fingerprintByThreshold": {
+          "6": "5a40444465b9d488",
+          "7": "5a40444465b9d488",
+          "8": "5a40444465b9d488",
+          "9": "1d60a319839d7e0f",
+          "10": "1d60a319839d7e0f"
+        },
+        "derivedFrom": "writer-layout-model"
+      },
+      "measured": {
+        "mediaBoxPt": {
+          "width": 595.303937007874,
+          "height": 841.889763779528
+        },
+        "colors": [
+          "#000000",
+          "#4A4A4A"
+        ],
+        "colorCount": 2,
+        "derivedFrom": "produced-pdf-bytes",
+        "page": {
+          "swatches": [
+            {
+              "hex": "#FFFFFF",
+              "share": 0.8835
+            },
+            {
+              "hex": "#9E9E9E",
+              "share": 0.0171
+            },
+            {
+              "hex": "#D6D5D4",
+              "share": 0.0149
+            },
+            {
+              "hex": "#C4C4C3",
+              "share": 0.0145
+            },
+            {
+              "hex": "#B0B0B0",
+              "share": 0.0143
+            },
+            {
+              "hex": "#E5E5E4",
+              "share": 0.014
+            },
+            {
+              "hex": "#F2F2F2",
+              "share": 0.0134
+            },
+            {
+              "hex": "#797979",
+              "share": 0.0109
+            },
+            {
+              "hex": "#FAFAFA",
+              "share": 0.0081
+            },
+            {
+              "hex": "#FDFDFD",
+              "share": 0.0064
+            }
+          ],
+          "derivedFrom": "rendered-first-page"
+        }
+      },
+      "license": {
+        "usage_scope": "first-party",
+        "license_family": "CC0",
+        "supply_tier": "original"
+      }
     }
   }
 ]

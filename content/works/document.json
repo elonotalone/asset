@@ -20,12 +20,146 @@
       }
     ],
     "readings": {
-      "byteSize": 8675,
+      "byteSize": 8677,
       "partCount": 11,
       "sectionCount": 48,
       "pictureCount": 0,
       "chartPartCount": 0,
-      "license": { "usage_scope": "first-party", "license_family": "CC0", "supply_tier": "original" }
+      "layout": {
+        "source": "input",
+        "axesFromInput": [
+          "body.palette",
+          "layout.columns",
+          "layout.lineSpacing",
+          "layout.margins",
+          "layout.page",
+          "theme.bodySize",
+          "theme.fonts",
+          "theme.headingScale"
+        ],
+        "page": {
+          "id": "b5",
+          "orientation": "portrait",
+          "widthTwip": 9979,
+          "heightTwip": 14175
+        },
+        "marginsTwip": {
+          "top": 1021,
+          "bottom": 1021,
+          "right": 851,
+          "left": 851,
+          "header": 511,
+          "footer": 511
+        },
+        "contentWidthTwip": 8277,
+        "columns": 1,
+        "columnWidthTwip": 8277,
+        "lineSpacing": "normal",
+        "lineTwip": 288,
+        "headingScale": "flat",
+        "bodySize": "compact",
+        "fontSizesHalfPoint": {
+          "h1": 26,
+          "h2": 24,
+          "h3": 22,
+          "body": 19
+        },
+        "fonts": {
+          "latin": "Liberation Sans",
+          "eastAsia": "Noto Sans CJK SC",
+          "heading": "Liberation Sans",
+          "headingEastAsia": "Noto Sans CJK SC"
+        },
+        "figure": {
+          "widthRatio": null,
+          "align": "center"
+        },
+        "palette": [
+          "1A1A1A",
+          "1B4332",
+          "2F4F3E",
+          "D8DEE4",
+          "EDF2EE"
+        ],
+        "pageCount": 3,
+        "mainBlockCount": 6,
+        "mainBlocks": [
+          {
+            "kind": "section",
+            "pageIndex": 0,
+            "column": 0,
+            "x": 0.0853,
+            "y": 0.1643,
+            "w": 0.8294,
+            "h": 0.2734,
+            "areaRatio": 0.2268
+          },
+          {
+            "kind": "section",
+            "pageIndex": 0,
+            "column": 0,
+            "x": 0.0853,
+            "y": 0.4377,
+            "w": 0.8294,
+            "h": 0.4207,
+            "areaRatio": 0.349
+          },
+          {
+            "kind": "section",
+            "pageIndex": 1,
+            "column": 0,
+            "x": 0.0853,
+            "y": 0.072,
+            "w": 0.8294,
+            "h": 0.2285,
+            "areaRatio": 0.1895
+          },
+          {
+            "kind": "section",
+            "pageIndex": 1,
+            "column": 0,
+            "x": 0.0853,
+            "y": 0.3005,
+            "w": 0.8294,
+            "h": 0.2083,
+            "areaRatio": 0.1727
+          },
+          {
+            "kind": "section",
+            "pageIndex": 1,
+            "column": 0,
+            "x": 0.0853,
+            "y": 0.5088,
+            "w": 0.8294,
+            "h": 0.298,
+            "areaRatio": 0.2472
+          },
+          {
+            "kind": "section",
+            "pageIndex": 1,
+            "column": 0,
+            "x": 0.0853,
+            "y": 0.8068,
+            "w": 0.8294,
+            "h": 0.1212,
+            "areaRatio": 0.1005
+          }
+        ],
+        "fingerprint": "a964d75b31873bdb",
+        "fingerprintByThreshold": {
+          "6": "d63d87df278af0d5",
+          "7": "d63d87df278af0d5",
+          "8": "a964d75b31873bdb",
+          "9": "a964d75b31873bdb",
+          "10": "a964d75b31873bdb"
+        },
+        "derivedFrom": "writer-layout-model"
+      },
+      "license": {
+        "usage_scope": "first-party",
+        "license_family": "CC0",
+        "supply_tier": "original"
+      }
     }
   },
   {
@@ -49,12 +183,187 @@
       }
     ],
     "readings": {
-      "byteSize": 51766,
+      "byteSize": 52296,
       "partCount": 12,
-      "sectionCount": 58,
+      "sectionCount": 35,
       "pictureCount": 1,
       "chartPartCount": 0,
-      "license": { "usage_scope": "first-party", "license_family": "CC0", "supply_tier": "original" }
+      "layout": {
+        "source": "input",
+        "axesFromInput": [
+          "body.palette",
+          "layout.columns",
+          "layout.figure",
+          "layout.lineSpacing",
+          "layout.margins",
+          "layout.page",
+          "theme.bodySize",
+          "theme.fonts",
+          "theme.headingScale"
+        ],
+        "page": {
+          "id": "letter",
+          "orientation": "portrait",
+          "widthTwip": 12240,
+          "heightTwip": 15840
+        },
+        "marginsTwip": {
+          "top": 1361,
+          "bottom": 1361,
+          "right": 1134,
+          "left": 2438,
+          "header": 681,
+          "footer": 681
+        },
+        "contentWidthTwip": 8668,
+        "columns": 1,
+        "columnWidthTwip": 8668,
+        "lineSpacing": "tight",
+        "lineTwip": 252,
+        "headingScale": "dramatic",
+        "bodySize": "compact",
+        "fontSizesHalfPoint": {
+          "h1": 56,
+          "h2": 34,
+          "h3": 26,
+          "body": 19
+        },
+        "fonts": {
+          "latin": "DejaVu Sans",
+          "eastAsia": "Noto Sans CJK SC",
+          "heading": "DejaVu Sans",
+          "headingEastAsia": "Noto Sans CJK SC"
+        },
+        "figure": {
+          "widthRatio": 0.62,
+          "align": "center"
+        },
+        "palette": [
+          "0F4C81",
+          "1F2328",
+          "3C5A73",
+          "C7D5E3",
+          "EAF0F6"
+        ],
+        "pageCount": 3,
+        "mainBlockCount": 10,
+        "mainBlocks": [
+          {
+            "kind": "section",
+            "pageIndex": 0,
+            "column": 0,
+            "x": 0.1992,
+            "y": 0.0859,
+            "w": 0.7082,
+            "h": 0.1361,
+            "areaRatio": 0.0964
+          },
+          {
+            "kind": "section",
+            "pageIndex": 0,
+            "column": 0,
+            "x": 0.1992,
+            "y": 0.3609,
+            "w": 0.7082,
+            "h": 0.1488,
+            "areaRatio": 0.1054
+          },
+          {
+            "kind": "table",
+            "pageIndex": 0,
+            "column": 0,
+            "x": 0.1992,
+            "y": 0.5097,
+            "w": 0.7082,
+            "h": 0.1646,
+            "areaRatio": 0.1166
+          },
+          {
+            "kind": "image",
+            "pageIndex": 0,
+            "column": 0,
+            "x": 0.1992,
+            "y": 0.692,
+            "w": 0.7082,
+            "h": 0.1963,
+            "areaRatio": 0.139
+          },
+          {
+            "kind": "section",
+            "pageIndex": 1,
+            "column": 0,
+            "x": 0.1992,
+            "y": 0.0905,
+            "w": 0.7082,
+            "h": 0.1362,
+            "areaRatio": 0.0964
+          },
+          {
+            "kind": "table",
+            "pageIndex": 1,
+            "column": 0,
+            "x": 0.1992,
+            "y": 0.2267,
+            "w": 0.7082,
+            "h": 0.152,
+            "areaRatio": 0.1077
+          },
+          {
+            "kind": "section",
+            "pageIndex": 1,
+            "column": 0,
+            "x": 0.1992,
+            "y": 0.3964,
+            "w": 0.7082,
+            "h": 0.1362,
+            "areaRatio": 0.0964
+          },
+          {
+            "kind": "section",
+            "pageIndex": 1,
+            "column": 0,
+            "x": 0.1992,
+            "y": 0.6588,
+            "w": 0.7082,
+            "h": 0.1362,
+            "areaRatio": 0.0964
+          },
+          {
+            "kind": "table",
+            "pageIndex": 1,
+            "column": 0,
+            "x": 0.1992,
+            "y": 0.795,
+            "w": 0.7082,
+            "h": 0.1191,
+            "areaRatio": 0.0843
+          },
+          {
+            "kind": "table",
+            "pageIndex": 2,
+            "column": 0,
+            "x": 0.1992,
+            "y": 0.1778,
+            "w": 0.7082,
+            "h": 0.1338,
+            "areaRatio": 0.0948
+          }
+        ],
+        "fingerprint": "9d914456b0cb8d81",
+        "fingerprintByThreshold": {
+          "6": "5d714ce6fc1eab72",
+          "7": "5d714ce6fc1eab72",
+          "8": "9d914456b0cb8d81",
+          "9": "054cf6965e5a94d9",
+          "10": "d8ad302f314c6b9b"
+        },
+        "derivedFrom": "writer-layout-model"
+      },
+      "license": {
+        "usage_scope": "first-party",
+        "license_family": "CC0",
+        "supply_tier": "original"
+      }
     }
   },
   {
@@ -78,12 +387,187 @@
       }
     ],
     "readings": {
-      "byteSize": 213752,
+      "byteSize": 213732,
       "partCount": 15,
       "sectionCount": 38,
       "pictureCount": 4,
       "chartPartCount": 0,
-      "license": { "usage_scope": "first-party", "license_family": "CC0", "supply_tier": "original" }
+      "layout": {
+        "source": "input",
+        "axesFromInput": [
+          "body.palette",
+          "layout.columns",
+          "layout.figure",
+          "layout.lineSpacing",
+          "layout.margins",
+          "layout.page",
+          "theme.bodySize",
+          "theme.fonts",
+          "theme.headingScale"
+        ],
+        "page": {
+          "id": "a4",
+          "orientation": "portrait",
+          "widthTwip": 11906,
+          "heightTwip": 16838
+        },
+        "marginsTwip": {
+          "top": 1814,
+          "bottom": 1814,
+          "right": 1985,
+          "left": 1985,
+          "header": 907,
+          "footer": 907
+        },
+        "contentWidthTwip": 7936,
+        "columns": 1,
+        "columnWidthTwip": 7936,
+        "lineSpacing": "loose",
+        "lineTwip": 360,
+        "headingScale": "flat",
+        "bodySize": "large",
+        "fontSizesHalfPoint": {
+          "h1": 26,
+          "h2": 24,
+          "h3": 22,
+          "body": 24
+        },
+        "fonts": {
+          "latin": "Noto Sans",
+          "eastAsia": "Noto Sans CJK SC",
+          "heading": "Noto Sans",
+          "headingEastAsia": "Noto Sans CJK SC"
+        },
+        "figure": {
+          "widthRatio": 1,
+          "align": "center"
+        },
+        "palette": [
+          "3A3A3A",
+          "8A6A3A",
+          "B45309",
+          "E3D9C8",
+          "FBF3E6"
+        ],
+        "pageCount": 4,
+        "mainBlockCount": 10,
+        "mainBlocks": [
+          {
+            "kind": "section",
+            "pageIndex": 0,
+            "column": 0,
+            "x": 0.1667,
+            "y": 0.1077,
+            "w": 0.6666,
+            "h": 0.1241,
+            "areaRatio": 0.0827
+          },
+          {
+            "kind": "image",
+            "pageIndex": 0,
+            "column": 0,
+            "x": 0.1667,
+            "y": 0.2319,
+            "w": 0.6666,
+            "h": 0.3397,
+            "areaRatio": 0.2264
+          },
+          {
+            "kind": "section",
+            "pageIndex": 0,
+            "column": 0,
+            "x": 0.1667,
+            "y": 0.6476,
+            "w": 0.6666,
+            "h": 0.2447,
+            "areaRatio": 0.1631
+          },
+          {
+            "kind": "image",
+            "pageIndex": 1,
+            "column": 0,
+            "x": 0.1667,
+            "y": 0.2218,
+            "w": 0.6666,
+            "h": 0.2916,
+            "areaRatio": 0.1944
+          },
+          {
+            "kind": "section",
+            "pageIndex": 1,
+            "column": 0,
+            "x": 0.1667,
+            "y": 0.5134,
+            "w": 0.6666,
+            "h": 0.2518,
+            "areaRatio": 0.1678
+          },
+          {
+            "kind": "image",
+            "pageIndex": 2,
+            "column": 0,
+            "x": 0.1667,
+            "y": 0.1077,
+            "w": 0.6666,
+            "h": 0.1752,
+            "areaRatio": 0.1168
+          },
+          {
+            "kind": "section",
+            "pageIndex": 2,
+            "column": 0,
+            "x": 0.1667,
+            "y": 0.2829,
+            "w": 0.6666,
+            "h": 0.2851,
+            "areaRatio": 0.19
+          },
+          {
+            "kind": "image",
+            "pageIndex": 2,
+            "column": 0,
+            "x": 0.1667,
+            "y": 0.6108,
+            "w": 0.6666,
+            "h": 0.2756,
+            "areaRatio": 0.1837
+          },
+          {
+            "kind": "section",
+            "pageIndex": 3,
+            "column": 0,
+            "x": 0.1667,
+            "y": 0.1077,
+            "w": 0.6666,
+            "h": 0.2459,
+            "areaRatio": 0.1639
+          },
+          {
+            "kind": "section",
+            "pageIndex": 3,
+            "column": 0,
+            "x": 0.1667,
+            "y": 0.3536,
+            "w": 0.6666,
+            "h": 0.316,
+            "areaRatio": 0.2106
+          }
+        ],
+        "fingerprint": "37fd32b59280ce4f",
+        "fingerprintByThreshold": {
+          "6": "37fd32b59280ce4f",
+          "7": "37fd32b59280ce4f",
+          "8": "37fd32b59280ce4f",
+          "9": "70d2e1086a62bb92",
+          "10": "70d2e1086a62bb92"
+        },
+        "derivedFrom": "writer-layout-model"
+      },
+      "license": {
+        "usage_scope": "first-party",
+        "license_family": "CC0",
+        "supply_tier": "original"
+      }
     }
   }
 ]
