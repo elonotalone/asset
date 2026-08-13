@@ -1,0 +1,13 @@
+{
+  "tool": "cover-frame",
+  "version": 1,
+  "meta": {
+    "title": "会议成本备忘：一场全员周会，一年 1,880 小时",
+    "usage_scope": "commercial-ok",
+    "license_family": "CC0-1.0",
+    "supply_tier": "first-party"
+  },
+  "body": { "sourceFormat": "pptx" },
+  "media": [{ "path": "../../deck-monotype-01.pptx" }],
+  "options": { "maxEdge": 1280, "format": "webp", "dpi": 150 }
+}
