@@ -8,10 +8,17 @@
   "files": [
     {
       "path": "public/works/deck/src/deck-html-nocturne-01/deck.json",
-      "byteSize": 4672,
-      "sha256": "e3982dccfee4ef89eae73c904fcf27389b22b794a8f92b58f7a7d350807c89b9",
+      "byteSize": 9392,
+      "sha256": "dd0b1edcb4e291fdaf074bf850036bf7117c29e565b0898aa9965a0bb8fb971f",
       "mediaType": "application/vnd.oceanleo.deck+json",
       "role": "primary"
+    },
+    {
+      "path": "public/works/deck/deck-html-nocturne-01.cover.webp",
+      "byteSize": 50692,
+      "sha256": "90fe5178910349138a7fee36f90a4ac360277acaa01ba658eeed87e56e88ab7b",
+      "mediaType": "image/webp",
+      "role": "preview"
     }
   ],
   "fullRendition": {
@@ -22,12 +29,17 @@
     "mediaType": "text/html"
   },
   "closureShape": "single-file",
-  "closureDigest": "e3982dccfee4ef89eae73c904fcf27389b22b794a8f92b58f7a7d350807c89b9",
+  "closureDigest": "dd0b1edcb4e291fdaf074bf850036bf7117c29e565b0898aa9965a0bb8fb971f",
   "assemblerId": "asm-web",
   "formingAssemblerId": "asm-web",
   "references": [],
-  "previewHint": "none",
-  "preview": null,
+  "previewHint": "auto-firstpage",
+  "preview": {
+    "path": "public/works/deck/deck-html-nocturne-01.cover.webp",
+    "byteSize": 50692,
+    "sha256": "90fe5178910349138a7fee36f90a4ac360277acaa01ba658eeed87e56e88ab7b",
+    "mediaType": "image/webp"
+  },
   "bytesDir": "/root/projects/asset",
   "materialSha256": {}
 }

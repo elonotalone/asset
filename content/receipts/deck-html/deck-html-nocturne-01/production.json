@@ -13,57 +13,83 @@
   "writerReceipt": "content/receipts/deck-html/deck-html-nocturne-01/writer.json",
   "structuredSource": {
     "path": "public/works/deck/src/deck-html-nocturne-01/deck.json",
-    "byteSize": 4672,
-    "sha256": "e3982dccfee4ef89eae73c904fcf27389b22b794a8f92b58f7a7d350807c89b9",
+    "byteSize": 9392,
+    "sha256": "dd0b1edcb4e291fdaf074bf850036bf7117c29e565b0898aa9965a0bb8fb971f",
     "mediaType": "application/vnd.oceanleo.deck+json"
   },
   "sourceMedia": [
     {
       "id": "night-cover",
+      "reference": "asset://media/night-cover",
       "mediaType": "image/png",
       "licenseCode": "CC0-1.0",
-      "path": "public/works/deck/src/deck-nocturne-01/media/night-cover.png",
+      "path": "public/works/deck/src/deck-html-nocturne-01/media/night-cover.png",
       "byteSize": 193431,
       "sha256": "2345c0a2a6e95e295ccc604f18df4ec3a5ffa68495e0b7686ebc4d63bc008615",
-      "origin": "reused licensed source byte from deck-nocturne-01"
+      "sourcePath": "public/works/deck/src/deck-nocturne-01/media/night-cover.png",
+      "url": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F23%2F2345c0a2a6e95e295ccc604f18df4ec3a5ffa68495e0b7686ebc4d63bc008615",
+      "origin": "byte-identical licensed source media from deck-nocturne-01"
     },
     {
       "id": "tide-lines",
+      "reference": "asset://media/tide-lines",
       "mediaType": "image/png",
       "licenseCode": "CC0-1.0",
-      "path": "public/works/deck/src/deck-nocturne-01/media/tide-lines.png",
+      "path": "public/works/deck/src/deck-html-nocturne-01/media/tide-lines.png",
       "byteSize": 233521,
       "sha256": "23341a82b0b1266d20c2330b5671443156e2f3f3ba71d55007a165122d8481c8",
-      "origin": "reused licensed source byte from deck-nocturne-01"
+      "sourcePath": "public/works/deck/src/deck-nocturne-01/media/tide-lines.png",
+      "url": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F23%2F23341a82b0b1266d20c2330b5671443156e2f3f3ba71d55007a165122d8481c8",
+      "origin": "byte-identical licensed source media from deck-nocturne-01"
     },
     {
       "id": "buoy-field",
+      "reference": "asset://media/buoy-field",
       "mediaType": "image/png",
       "licenseCode": "CC0-1.0",
-      "path": "public/works/deck/src/deck-nocturne-01/media/buoy-field.png",
+      "path": "public/works/deck/src/deck-html-nocturne-01/media/buoy-field.png",
       "byteSize": 290455,
       "sha256": "16b081dba9b9bad309789333fcaff1d7bd2472f72dc706d316f7e5235a885144",
-      "origin": "reused licensed source byte from deck-nocturne-01"
+      "sourcePath": "public/works/deck/src/deck-nocturne-01/media/buoy-field.png",
+      "url": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F16%2F16b081dba9b9bad309789333fcaff1d7bd2472f72dc706d316f7e5235a885144",
+      "origin": "byte-identical licensed source media from deck-nocturne-01"
     },
     {
       "id": "storm-front",
+      "reference": "asset://media/storm-front",
       "mediaType": "image/png",
       "licenseCode": "CC0-1.0",
-      "path": "public/works/deck/src/deck-nocturne-01/media/storm-front.png",
+      "path": "public/works/deck/src/deck-html-nocturne-01/media/storm-front.png",
       "byteSize": 549673,
       "sha256": "781668e9bcf7087130a88b92449808c01263fdcbedb7427e49cd809c2e41d939",
-      "origin": "reused licensed source byte from deck-nocturne-01"
+      "sourcePath": "public/works/deck/src/deck-nocturne-01/media/storm-front.png",
+      "url": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F78%2F781668e9bcf7087130a88b92449808c01263fdcbedb7427e49cd809c2e41d939",
+      "origin": "byte-identical licensed source media from deck-nocturne-01"
     },
     {
       "id": "dawn-handover",
+      "reference": "asset://media/dawn-handover",
       "mediaType": "image/png",
       "licenseCode": "CC0-1.0",
-      "path": "public/works/deck/src/deck-nocturne-01/media/dawn-handover.png",
+      "path": "public/works/deck/src/deck-html-nocturne-01/media/dawn-handover.png",
       "byteSize": 179361,
       "sha256": "8a6d3c174d6aa6b53ed609a6965ed86b799ff95cfbb8736668e42669843b42fc",
-      "origin": "reused licensed source byte from deck-nocturne-01"
+      "sourcePath": "public/works/deck/src/deck-nocturne-01/media/dawn-handover.png",
+      "url": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F8a%2F8a6d3c174d6aa6b53ed609a6965ed86b799ff95cfbb8736668e42669843b42fc",
+      "origin": "byte-identical licensed source media from deck-nocturne-01"
     }
   ],
+  "sourceResolver": {
+    "strategy": "payload.assetUrls",
+    "assetUrls": {
+      "night-cover": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F23%2F2345c0a2a6e95e295ccc604f18df4ec3a5ffa68495e0b7686ebc4d63bc008615",
+      "tide-lines": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F23%2F23341a82b0b1266d20c2330b5671443156e2f3f3ba71d55007a165122d8481c8",
+      "buoy-field": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F16%2F16b081dba9b9bad309789333fcaff1d7bd2472f72dc706d316f7e5235a885144",
+      "storm-front": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F78%2F781668e9bcf7087130a88b92449808c01263fdcbedb7427e49cd809c2e41d939",
+      "dawn-handover": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F8a%2F8a6d3c174d6aa6b53ed609a6965ed86b799ff95cfbb8736668e42669843b42fc"
+    },
+    "resolvedCount": 5
+  },
   "fullRendition": {
     "path": "content/active-runtime/website/deck-html-nocturne-01/index.html",
     "byteSize": 1948262,

@@ -13,11 +13,16 @@
   "writerReceipt": "content/receipts/deck-html/deck-html-monotype-01/writer.json",
   "structuredSource": {
     "path": "public/works/deck/src/deck-html-monotype-01/deck.json",
-    "byteSize": 8081,
-    "sha256": "c6b668985b731ce5af644f8744d98fafe58332ad2f633a8c83b097291d8173ee",
+    "byteSize": 8695,
+    "sha256": "9a62eb63cd76a62dfd53eb94f36baa17b4fda2c208712f23e26f5890c3b8ec9f",
     "mediaType": "application/vnd.oceanleo.deck+json"
   },
   "sourceMedia": [],
+  "sourceResolver": {
+    "strategy": "payload.assetUrls",
+    "assetUrls": {},
+    "resolvedCount": 0
+  },
   "fullRendition": {
     "path": "content/active-runtime/website/deck-html-monotype-01/index.html",
     "byteSize": 47170,

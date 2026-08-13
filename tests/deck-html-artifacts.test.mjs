@@ -37,6 +37,22 @@ function assertReading(reading) {
   assert.equal(sha256(value), reading.sha256, reading.path);
 }
 
+function simulateEditorResolver(source) {
+  const urls = {};
+  for (const [id, candidate] of Object.entries(source.assetUrls || {})) {
+    const url = new URL(candidate);
+    assert.equal(url.protocol, "https:");
+    urls[id] = url.toString();
+  }
+  return urls;
+}
+
+async function simulateEditorFetch(url, sourceMedia) {
+  const media = sourceMedia.find((item) => item.url === url);
+  assert.ok(media, url);
+  return bytes(media.path);
+}
+
 function allFiles(root) {
   const out = [];
   for (const name of readdirSync(root)) {
@@ -49,7 +65,7 @@ function allFiles(root) {
   return out;
 }
 
-test("three official HTML decks close source, preview, runtime and receipt bytes", () => {
+test("three official HTML decks close source, preview, runtime and receipt bytes", async () => {
   const works = readJson("content/works/deck.html.json");
   const manifest = readJson("content/active-runtime/manifest.deck-html.json");
   const rootManifest = readJson("active-runtime-manifest.deck-html.json");
@@ -134,14 +150,31 @@ test("three official HTML decks close source, preview, runtime and receipt bytes
 
     const source = readJson(receipt.structuredSource.path);
     assert.equal(source.schema, "oceanleo.deck.v1");
-    assert.equal(source.slides.length, writer.readings.slideCount);
-    assert.equal(receipt.pages.length, source.slides.length);
-    for (const asset of source.assets || []) {
+    assert.equal(source.data.schema, "oceanleo.deck.v1");
+    assert.equal(source.data.slides.length, writer.readings.slideCount);
+    assert.equal(receipt.pages.length, source.data.slides.length);
+    assert.deepEqual(source.assetUrls, receipt.sourceResolver.assetUrls);
+    assert.equal(
+      receipt.sourceResolver.resolvedCount,
+      (source.data.assets || []).length,
+    );
+    const resolved = simulateEditorResolver(source);
+    for (const asset of source.data.assets || []) {
       const media = receipt.sourceMedia.find((item) => item.id === asset.id);
       assert.ok(media, `${work.id}/${asset.id}`);
       assert.equal(media.sha256, asset.sha256);
       assert.equal(media.byteSize, asset.byteSize);
       assert.equal(media.licenseCode, asset.licenseCode);
+      assert.equal(media.reference, `asset://media/${asset.id}`);
+      assert.equal(resolved[asset.id], media.url);
+      assert.equal(sha256(await simulateEditorFetch(resolved[asset.id], receipt.sourceMedia)), asset.sha256);
+      const gateway = new URL(media.url);
+      assert.equal(gateway.origin, "https://api.oceanleo.com");
+      assert.equal(gateway.pathname, "/v1/media/proxy");
+      assert.match(
+        gateway.searchParams.get("url") || "",
+        new RegExp(`/_typed-artifacts/sha256/${asset.sha256.slice(0, 2)}/${asset.sha256}$`),
+      );
     }
 
     const runtimeDir = path.join(
@@ -198,7 +231,7 @@ test("three official HTML decks close source, preview, runtime and receipt bytes
       ingested.fullRendition.sha256,
       receipt.fullRendition.sha256,
     );
-    assert.equal(ingested.closureDigest, receipt.structuredSource.sha256);
+    assert.equal(ingested.closureDigest, planned.closureDigest);
     assert.match(ingested.artifactId, UUID);
     assert.match(ingested.artifactRevisionId, UUID);
     artifactIds.add(ingested.artifactId);

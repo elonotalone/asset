@@ -174,7 +174,7 @@
   "bodyShape": "deck-slides",
   "materialRefs": [],
   "unusedMaterials": [],
-  "previewHint": "none",
+  "previewHint": "auto-firstpage",
   "provenance": {
     "materialOrigin": "official-authored",
     "fictionalSample": true,

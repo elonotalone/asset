@@ -15,8 +15,8 @@
       },
       "structuredSource": {
         "path": "public/works/deck/src/deck-html-nocturne-01/deck.json",
-        "byteSize": 4672,
-        "sha256": "e3982dccfee4ef89eae73c904fcf27389b22b794a8f92b58f7a7d350807c89b9",
+        "byteSize": 9392,
+        "sha256": "dd0b1edcb4e291fdaf074bf850036bf7117c29e565b0898aa9965a0bb8fb971f",
         "mediaType": "application/vnd.oceanleo.deck+json"
       },
       "fullRendition": {
@@ -39,8 +39,8 @@
       },
       "structuredSource": {
         "path": "public/works/deck/src/deck-html-monotype-01/deck.json",
-        "byteSize": 8081,
-        "sha256": "c6b668985b731ce5af644f8744d98fafe58332ad2f633a8c83b097291d8173ee",
+        "byteSize": 8695,
+        "sha256": "9a62eb63cd76a62dfd53eb94f36baa17b4fda2c208712f23e26f5890c3b8ec9f",
         "mediaType": "application/vnd.oceanleo.deck+json"
       },
       "fullRendition": {
@@ -63,8 +63,8 @@
       },
       "structuredSource": {
         "path": "public/works/deck/src/deck-html-manual-01/deck.json",
-        "byteSize": 10473,
-        "sha256": "ee5c188ad13b9ec4d311c7d6ebc0a32c6d6b8f34b1e3d67bcdb123bb3a3fe00a",
+        "byteSize": 17067,
+        "sha256": "3b25d226f8af2392e4f626a9c4dd1469994d132ab2fb687ea85f0415b4546355",
         "mediaType": "application/vnd.oceanleo.deck+json"
       },
       "fullRendition": {

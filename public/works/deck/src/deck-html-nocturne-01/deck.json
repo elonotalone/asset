@@ -1,160 +1,222 @@
 {
   "schema": "oceanleo.deck.v1",
-  "version": 1,
-  "title": "夜间海岸观测：2026 年度影像汇报",
-  "packId": "cyber-neon",
-  "theme": {
-    "accent": "A855F7"
+  "data": {
+    "schema": "oceanleo.deck.v1",
+    "version": 1,
+    "title": "夜间海岸观测：2026 年度影像汇报",
+    "packId": "cyber-neon",
+    "theme": {
+      "accent": "A855F7"
+    },
+    "master": {
+      "footerText": "OceanLeo 夜间海岸观测项目 · 2026 年度",
+      "showPageNumber": true,
+      "creditsBar": true
+    },
+    "license": {
+      "usage_scope": "commercial-ok",
+      "license_family": "CC0-1.0",
+      "supply_tier": "first-party"
+    },
+    "assets": [
+      {
+        "id": "night-cover",
+        "mediaType": "image/png",
+        "width": 1600,
+        "height": 900,
+        "sha256": "2345c0a2a6e95e295ccc604f18df4ec3a5ffa68495e0b7686ebc4d63bc008615",
+        "byteSize": 193431,
+        "licenseCode": "CC0-1.0"
+      },
+      {
+        "id": "tide-lines",
+        "mediaType": "image/png",
+        "width": 1600,
+        "height": 900,
+        "sha256": "23341a82b0b1266d20c2330b5671443156e2f3f3ba71d55007a165122d8481c8",
+        "byteSize": 233521,
+        "licenseCode": "CC0-1.0"
+      },
+      {
+        "id": "buoy-field",
+        "mediaType": "image/png",
+        "width": 1600,
+        "height": 900,
+        "sha256": "16b081dba9b9bad309789333fcaff1d7bd2472f72dc706d316f7e5235a885144",
+        "byteSize": 290455,
+        "licenseCode": "CC0-1.0"
+      },
+      {
+        "id": "storm-front",
+        "mediaType": "image/png",
+        "width": 1600,
+        "height": 900,
+        "sha256": "781668e9bcf7087130a88b92449808c01263fdcbedb7427e49cd809c2e41d939",
+        "byteSize": 549673,
+        "licenseCode": "CC0-1.0"
+      },
+      {
+        "id": "dawn-handover",
+        "mediaType": "image/png",
+        "width": 1600,
+        "height": 900,
+        "sha256": "8a6d3c174d6aa6b53ed609a6965ed86b799ff95cfbb8736668e42669843b42fc",
+        "byteSize": 179361,
+        "licenseCode": "CC0-1.0"
+      }
+    ],
+    "slides": [
+      {
+        "layout": "image-full",
+        "title": "整夜没有关灯的那条海岸",
+        "note": "夜间海岸观测项目 · 2026 年度影像汇报 · 观测组",
+        "scrimAlpha": 52,
+        "images": [
+          {
+            "assetId": "night-cover",
+            "alt": "深夜的海岬与海面，左侧观测塔射出一束灯光扫过海湾",
+            "fit": "cover"
+          }
+        ]
+      },
+      {
+        "layout": "image-full",
+        "title": "潮位每高 10 厘米，滩涂上能站人的时间就少 40 分钟",
+        "note": "2026 年 3—10 月，17 个观测夜的实测中位数",
+        "scrimAlpha": 60,
+        "images": [
+          {
+            "assetId": "tide-lines",
+            "alt": "俯视视角的夜间海面，层层潮线自远向近推进",
+            "fit": "cover"
+          }
+        ]
+      },
+      {
+        "layout": "section",
+        "title": "在看什么",
+        "subtitle": "九个浮标、一条岸线、每晚六个小时"
+      },
+      {
+        "layout": "image-full",
+        "title": "九个浮标里，有三个整季没有回过一次数据",
+        "note": "失联的三个都在离岸最远的一列，去年冬天换过一次电池",
+        "scrimAlpha": 58,
+        "images": [
+          {
+            "assetId": "buoy-field",
+            "alt": "夜间海面上散布的九处浮标灯光，远近不一",
+            "fit": "cover"
+          }
+        ]
+      },
+      {
+        "layout": "image-full",
+        "title": "最值钱的六个小时，出现在风暴过境后的第一夜",
+        "note": "那一夜记录到的物种数是全年平均的 2.4 倍",
+        "scrimAlpha": 64,
+        "images": [
+          {
+            "assetId": "storm-front",
+            "alt": "低压云层压过海面，一道闪电落在左侧远处",
+            "fit": "cover"
+          }
+        ]
+      },
+      {
+        "layout": "section",
+        "title": "要改的一件事",
+        "subtitle": "不是加人，也不是加设备"
+      },
+      {
+        "layout": "image-full",
+        "title": "把交班从 06:00 提前到 05:15",
+        "note": "天光把最后一段观测吃掉了 45 分钟，这段正是退潮最快的时候",
+        "scrimAlpha": 46,
+        "images": [
+          {
+            "assetId": "dawn-handover",
+            "alt": "黎明前的海岸，天际线开始泛紫，海面尚暗",
+            "fit": "cover"
+          }
+        ]
+      },
+      {
+        "layout": "quote",
+        "quote": {
+          "text": "我们不是在拍海，是在等那一刻——它一年只出现十几次，错过了就要再等一年。",
+          "attribution": "观测组 · 值夜记录本，2026 年 9 月 12 日"
+        },
+        "note": "下一年度的第一夜：2027 年 3 月 6 日"
+      }
+    ],
+    "attribution": {
+      "entries": [
+        {
+          "text": "OceanLeo 第一方原创，全部画面为程序化生成，非实拍照片",
+          "licenseCode": "CC0-1.0",
+          "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+        }
+      ]
+    }
   },
-  "master": {
-    "footerText": "OceanLeo 夜间海岸观测项目 · 2026 年度",
-    "showPageNumber": true,
-    "creditsBar": true
+  "assetUrls": {
+    "night-cover": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F23%2F2345c0a2a6e95e295ccc604f18df4ec3a5ffa68495e0b7686ebc4d63bc008615",
+    "tide-lines": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F23%2F23341a82b0b1266d20c2330b5671443156e2f3f3ba71d55007a165122d8481c8",
+    "buoy-field": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F16%2F16b081dba9b9bad309789333fcaff1d7bd2472f72dc706d316f7e5235a885144",
+    "storm-front": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F78%2F781668e9bcf7087130a88b92449808c01263fdcbedb7427e49cd809c2e41d939",
+    "dawn-handover": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F8a%2F8a6d3c174d6aa6b53ed609a6965ed86b799ff95cfbb8736668e42669843b42fc"
   },
-  "license": {
-    "usage_scope": "commercial-ok",
-    "license_family": "CC0-1.0",
-    "supply_tier": "first-party"
-  },
-  "assets": [
+  "assetMetadata": [
     {
       "id": "night-cover",
-      "mediaType": "image/png",
-      "width": 1600,
-      "height": 900,
+      "reference": "asset://media/night-cover",
+      "url": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F23%2F2345c0a2a6e95e295ccc604f18df4ec3a5ffa68495e0b7686ebc4d63bc008615",
+      "path": "public/works/deck/src/deck-html-nocturne-01/media/night-cover.png",
       "sha256": "2345c0a2a6e95e295ccc604f18df4ec3a5ffa68495e0b7686ebc4d63bc008615",
       "byteSize": 193431,
+      "mediaType": "image/png",
       "licenseCode": "CC0-1.0"
     },
     {
       "id": "tide-lines",
-      "mediaType": "image/png",
-      "width": 1600,
-      "height": 900,
+      "reference": "asset://media/tide-lines",
+      "url": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F23%2F23341a82b0b1266d20c2330b5671443156e2f3f3ba71d55007a165122d8481c8",
+      "path": "public/works/deck/src/deck-html-nocturne-01/media/tide-lines.png",
       "sha256": "23341a82b0b1266d20c2330b5671443156e2f3f3ba71d55007a165122d8481c8",
       "byteSize": 233521,
+      "mediaType": "image/png",
       "licenseCode": "CC0-1.0"
     },
     {
       "id": "buoy-field",
-      "mediaType": "image/png",
-      "width": 1600,
-      "height": 900,
+      "reference": "asset://media/buoy-field",
+      "url": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F16%2F16b081dba9b9bad309789333fcaff1d7bd2472f72dc706d316f7e5235a885144",
+      "path": "public/works/deck/src/deck-html-nocturne-01/media/buoy-field.png",
       "sha256": "16b081dba9b9bad309789333fcaff1d7bd2472f72dc706d316f7e5235a885144",
       "byteSize": 290455,
+      "mediaType": "image/png",
       "licenseCode": "CC0-1.0"
     },
     {
       "id": "storm-front",
-      "mediaType": "image/png",
-      "width": 1600,
-      "height": 900,
+      "reference": "asset://media/storm-front",
+      "url": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F78%2F781668e9bcf7087130a88b92449808c01263fdcbedb7427e49cd809c2e41d939",
+      "path": "public/works/deck/src/deck-html-nocturne-01/media/storm-front.png",
       "sha256": "781668e9bcf7087130a88b92449808c01263fdcbedb7427e49cd809c2e41d939",
       "byteSize": 549673,
+      "mediaType": "image/png",
       "licenseCode": "CC0-1.0"
     },
     {
       "id": "dawn-handover",
-      "mediaType": "image/png",
-      "width": 1600,
-      "height": 900,
+      "reference": "asset://media/dawn-handover",
+      "url": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F8a%2F8a6d3c174d6aa6b53ed609a6965ed86b799ff95cfbb8736668e42669843b42fc",
+      "path": "public/works/deck/src/deck-html-nocturne-01/media/dawn-handover.png",
       "sha256": "8a6d3c174d6aa6b53ed609a6965ed86b799ff95cfbb8736668e42669843b42fc",
       "byteSize": 179361,
+      "mediaType": "image/png",
       "licenseCode": "CC0-1.0"
     }
-  ],
-  "slides": [
-    {
-      "layout": "image-full",
-      "title": "整夜没有关灯的那条海岸",
-      "note": "夜间海岸观测项目 · 2026 年度影像汇报 · 观测组",
-      "scrimAlpha": 52,
-      "images": [
-        {
-          "assetId": "night-cover",
-          "alt": "深夜的海岬与海面，左侧观测塔射出一束灯光扫过海湾",
-          "fit": "cover"
-        }
-      ]
-    },
-    {
-      "layout": "image-full",
-      "title": "潮位每高 10 厘米，滩涂上能站人的时间就少 40 分钟",
-      "note": "2026 年 3—10 月，17 个观测夜的实测中位数",
-      "scrimAlpha": 60,
-      "images": [
-        {
-          "assetId": "tide-lines",
-          "alt": "俯视视角的夜间海面，层层潮线自远向近推进",
-          "fit": "cover"
-        }
-      ]
-    },
-    {
-      "layout": "section",
-      "title": "在看什么",
-      "subtitle": "九个浮标、一条岸线、每晚六个小时"
-    },
-    {
-      "layout": "image-full",
-      "title": "九个浮标里，有三个整季没有回过一次数据",
-      "note": "失联的三个都在离岸最远的一列，去年冬天换过一次电池",
-      "scrimAlpha": 58,
-      "images": [
-        {
-          "assetId": "buoy-field",
-          "alt": "夜间海面上散布的九处浮标灯光，远近不一",
-          "fit": "cover"
-        }
-      ]
-    },
-    {
-      "layout": "image-full",
-      "title": "最值钱的六个小时，出现在风暴过境后的第一夜",
-      "note": "那一夜记录到的物种数是全年平均的 2.4 倍",
-      "scrimAlpha": 64,
-      "images": [
-        {
-          "assetId": "storm-front",
-          "alt": "低压云层压过海面，一道闪电落在左侧远处",
-          "fit": "cover"
-        }
-      ]
-    },
-    {
-      "layout": "section",
-      "title": "要改的一件事",
-      "subtitle": "不是加人，也不是加设备"
-    },
-    {
-      "layout": "image-full",
-      "title": "把交班从 06:00 提前到 05:15",
-      "note": "天光把最后一段观测吃掉了 45 分钟，这段正是退潮最快的时候",
-      "scrimAlpha": 46,
-      "images": [
-        {
-          "assetId": "dawn-handover",
-          "alt": "黎明前的海岸，天际线开始泛紫，海面尚暗",
-          "fit": "cover"
-        }
-      ]
-    },
-    {
-      "layout": "quote",
-      "quote": {
-        "text": "我们不是在拍海，是在等那一刻——它一年只出现十几次，错过了就要再等一年。",
-        "attribution": "观测组 · 值夜记录本，2026 年 9 月 12 日"
-      },
-      "note": "下一年度的第一夜：2027 年 3 月 6 日"
-    }
-  ],
-  "attribution": {
-    "entries": [
-      {
-        "text": "OceanLeo 第一方原创，全部画面为程序化生成，非实拍照片",
-        "licenseCode": "CC0-1.0",
-        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
-      }
-    ]
-  }
+  ]
 }

@@ -33,6 +33,9 @@ const F9_MANIFEST_FILE = path.join(
   ROOT,
   "active-runtime-manifest.deck-html.json",
 );
+const MEDIA_CAS_ROOT =
+  "https://kvrtcumcmhyqhmawpzyc.supabase.co/storage/v1/object/public/media-uploads/_typed-artifacts/sha256";
+const MEDIA_GATEWAY = "https://api.oceanleo.com/v1/media/proxy";
 
 const DEFINITIONS = Object.freeze([
   {
@@ -112,6 +115,11 @@ function extensionFor(mediaType) {
   return extension;
 }
 
+function durableMediaUrl(sha) {
+  const upstream = `${MEDIA_CAS_ROOT}/${sha.slice(0, 2)}/${sha}`;
+  return `${MEDIA_GATEWAY}?url=${encodeURIComponent(upstream)}`;
+}
+
 function runH0Cli({ inputFile, outputFile, receiptFile }) {
   const result = spawnSync(
     process.execPath,
@@ -185,21 +193,46 @@ function productionFor(definition, oldById) {
   const sourceDir = path.join(PUBLIC_DECK_ROOT, "src", definition.id);
   const sourceFile = path.join(sourceDir, "deck.json");
   mkdirSync(sourceDir, { recursive: true });
-  // 新 HTML 条目的 public 源目录只放结构稿。许可图片真字节逐字复用 PPTX twin
-  // 已有的 source media，不再复制一份到新 public 路径。
   rmSync(path.join(sourceDir, "media"), { recursive: true, force: true });
-  writeJson(sourceFile, twinInput.body);
-
   const sourceMedia = assertDeclaredMedia(
     twinSourceDir,
     twinInput.body,
-  ).map(({ asset, source }) => ({
+  ).map(({ asset, source }) => {
+    const destination = path.join(
+      sourceDir,
+      "media",
+      `${asset.id}${extensionFor(asset.mediaType)}`,
+    );
+    const reading = copyMeasured(source, destination);
+    return {
       id: asset.id,
+      reference: `asset://media/${asset.id}`,
       mediaType: asset.mediaType,
       licenseCode: asset.licenseCode ?? null,
-      ...measure(source),
-      origin: `reused licensed source byte from ${definition.twinId}`,
-    }));
+      ...reading,
+      sourcePath: measure(source).path,
+      url: durableMediaUrl(reading.sha256),
+      origin: `byte-identical licensed source media from ${definition.twinId}`,
+    };
+  });
+  const assetUrls = Object.fromEntries(
+    sourceMedia.map((media) => [media.id, media.url]),
+  );
+  writeJson(sourceFile, {
+    schema: "oceanleo.deck.v1",
+    data: twinInput.body,
+    assetUrls,
+    assetMetadata: sourceMedia.map((media) => ({
+      id: media.id,
+      reference: media.reference,
+      url: media.url,
+      path: media.path,
+      sha256: media.sha256,
+      byteSize: media.byteSize,
+      mediaType: media.mediaType,
+      licenseCode: media.licenseCode,
+    })),
+  });
 
   const coverFile = path.join(PUBLIC_DECK_ROOT, `${definition.id}.cover.webp`);
   const cover = copyMeasured(
@@ -281,6 +314,13 @@ function productionFor(definition, oldById) {
         mediaType: structuredSource.mediaType,
         role: "primary",
       },
+      {
+        path: cover.path,
+        byteSize: cover.byteSize,
+        sha256: cover.sha256,
+        mediaType: "image/webp",
+        role: "preview",
+      },
     ],
     fullRendition: {
       path: fullRendition.path,
@@ -294,8 +334,13 @@ function productionFor(definition, oldById) {
     assemblerId: "asm-web",
     formingAssemblerId: "asm-web",
     references: [],
-    previewHint: "none",
-    preview: null,
+    previewHint: "auto-firstpage",
+    preview: {
+      path: cover.path,
+      byteSize: cover.byteSize,
+      sha256: cover.sha256,
+      mediaType: "image/webp",
+    },
     bytesDir: ROOT,
     materialSha256: {},
   };
@@ -310,7 +355,7 @@ function productionFor(definition, oldById) {
         siteKey: "ppt",
         appId: definition.appId,
         count: 1,
-        positionRange: { from: 5, to: 5 },
+        positionRange: { from: 6, to: 6 },
       },
     ],
     acceptance: [
@@ -368,7 +413,7 @@ function productionFor(definition, oldById) {
     bodyShape: "deck-slides",
     materialRefs: [],
     unusedMaterials: [],
-    previewHint: "none",
+    previewHint: "auto-firstpage",
     provenance: {
       materialOrigin: "official-authored",
       fictionalSample: true,
@@ -395,6 +440,11 @@ function productionFor(definition, oldById) {
     writerReceipt: relative(writerReceiptFile),
     structuredSource,
     sourceMedia,
+    sourceResolver: {
+      strategy: "payload.assetUrls",
+      assetUrls,
+      resolvedCount: sourceMedia.length,
+    },
     fullRendition,
     cover: {
       ...cover,
