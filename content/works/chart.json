@@ -1,0 +1,167 @@
+[
+  {
+    "id": "trend-line-annotated-01",
+    "artifactType": "chart",
+    "title": "三条地铁线路日均客运量 36 个月走势（2023-07 ~ 2026-06）",
+    "styleId": "trend-line-annotated",
+    "summary": "机场线三年涨了近六成，1 号线几乎原地踏步，2 号线在南延段开通那个月台阶式跳升。暑运与春运是全年两个峰，按年均值排班会在暑运连续缺员。",
+    "cover": "/works/chart/trend-line-annotated-01.cover.png",
+    "view": {
+      "kind": "chart",
+      "src": "/works/chart/trend-line-annotated-01.chart.json",
+      "download": "/works/chart/trend-line-annotated-01.chart.json"
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创；表内数值为合成的示例数据，量纲与勾稽关系按行业常识设定",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "envelope": "oceanleo.chart.v1",
+      "bodyShape": "tabular",
+      "entrypoint": "metro-daily-ridership-three-lines-36m.chart.json",
+      "sourceBytes": 9481,
+      "canonicalByteSize": 4457,
+      "indentOverheadBytes": 5024,
+      "declaredAssetCount": 0,
+      "attributionCount": 1,
+      "seriesCount": 3,
+      "indicatorCount": 3,
+      "dataRowCount": 36,
+      "dimensionCount": 4,
+      "dataPointCount": 108,
+      "seriesColorCount": 3,
+      "symbolKindCount": 3,
+      "titleLength": 38,
+      "chartTitleLength": 38,
+      "takeawayLength": 217,
+      "byteSize": 9481,
+      "sha256": "bb1869a3042d6eb725bbba5e0f2d6a67699adb9e86ecb5b136fa5cddfc141c23",
+      "cover_route": "frame",
+      "cover_width": 768,
+      "cover_height": 768,
+      "cover_mediaType": "image/png",
+      "cover_nonBlankRatio": 0.06505839029947917,
+      "cover_frameIndex": 0,
+      "cover_colorCount": 1526,
+      "cover_entropyBits": 0.8765325320904546,
+      "cover_byteSize": 103609,
+      "cover_sha256": "83f95d85cb44fb76837b3835fd1ad8be3b96e9e8db95ddcaae81d3b532edbafd",
+      "mainBlockCount": 3,
+      "mainBlockLayout": "color@12+94 sparse@18+82 color@17+81"
+    }
+  },
+  {
+    "id": "composition-bar-ranked-01",
+    "artifactType": "chart",
+    "title": "单位产品成本构成两期对照（2025 全年 vs 2026 上半年）",
+    "styleId": "composition-bar-ranked",
+    "summary": "七项成本按大小排开，前三项就占了八成——改善动作放在剩下四项身上不会有结果。能源动力靠余热回收降了两成多，但质量损失反升，吃掉了节能收益的近三成。",
+    "cover": "/works/chart/composition-bar-ranked-01.cover.png",
+    "view": {
+      "kind": "chart",
+      "src": "/works/chart/composition-bar-ranked-01.chart.json",
+      "download": "/works/chart/composition-bar-ranked-01.chart.json"
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创；表内数值为合成的示例数据，量纲与勾稽关系按行业常识设定",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "envelope": "oceanleo.chart.v1",
+      "bodyShape": "tabular",
+      "entrypoint": "unit-cost-composition-2025-2026h1.chart.json",
+      "sourceBytes": 6615,
+      "canonicalByteSize": 3432,
+      "indentOverheadBytes": 3183,
+      "declaredAssetCount": 0,
+      "attributionCount": 1,
+      "seriesCount": 2,
+      "indicatorCount": 2,
+      "dataRowCount": 7,
+      "dimensionCount": 3,
+      "dataPointCount": 14,
+      "seriesColorCount": 2,
+      "symbolKindCount": 2,
+      "titleLength": 33,
+      "chartTitleLength": 33,
+      "takeawayLength": 193,
+      "byteSize": 6615,
+      "sha256": "6915717c62d7026e19521ae6b7adbf802c663c37640375939371d4583d65ad03",
+      "cover_route": "frame",
+      "cover_width": 768,
+      "cover_height": 768,
+      "cover_mediaType": "image/png",
+      "cover_nonBlankRatio": 0.12687513563368055,
+      "cover_frameIndex": 0,
+      "cover_colorCount": 769,
+      "cover_entropyBits": 1.1804680074622225,
+      "cover_byteSize": 69287,
+      "cover_sha256": "c1d2bf26175b356c9629ed2b609510e6b41800d39868e779e8500c684b6ec3d4",
+      "mainBlockCount": 2,
+      "mainBlockLayout": "color@11+98 dense@10+81"
+    }
+  },
+  {
+    "id": "correlation-scatter-01",
+    "artifactType": "chart",
+    "title": "30 家门店的营业面积与坪效相关性（按商圈类型分组）",
+    "styleId": "correlation-scatter",
+    "summary": "三类门店都是面积越大坪效越低，而同等面积下位置带来的差距比面积本身更大。圈出来的 MC-371 是全样本面积最大却回到小店坪效水平的那一家，值得去现场核实业态记错没有。",
+    "cover": "/works/chart/correlation-scatter-01.cover.png",
+    "view": {
+      "kind": "chart",
+      "src": "/works/chart/correlation-scatter-01.chart.json",
+      "download": "/works/chart/correlation-scatter-01.chart.json"
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创；表内数值为合成的示例数据，量纲与勾稽关系按行业常识设定",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "envelope": "oceanleo.chart.v1",
+      "bodyShape": "tabular",
+      "entrypoint": "store-area-vs-sales-density-30.chart.json",
+      "sourceBytes": 9887,
+      "canonicalByteSize": 4833,
+      "indentOverheadBytes": 5054,
+      "declaredAssetCount": 0,
+      "attributionCount": 1,
+      "seriesCount": 3,
+      "indicatorCount": 4,
+      "dataRowCount": 30,
+      "dimensionCount": 5,
+      "dataPointCount": 90,
+      "seriesColorCount": 3,
+      "symbolKindCount": 3,
+      "titleLength": 26,
+      "chartTitleLength": 26,
+      "takeawayLength": 274,
+      "byteSize": 9887,
+      "sha256": "81f00940352a94b5e65caf86960ef29d79f1473522ca5f5bd0f4e3743d5d1441",
+      "cover_route": "frame",
+      "cover_width": 768,
+      "cover_height": 768,
+      "cover_mediaType": "image/png",
+      "cover_nonBlankRatio": 0.04820421006944445,
+      "cover_frameIndex": 0,
+      "cover_colorCount": 1055,
+      "cover_entropyBits": 0.6404698969049802,
+      "cover_byteSize": 69022,
+      "cover_sha256": "f406397cc111acf44aef99113ab34d000ef423924fec58b0d67c22f6d2373a79",
+      "mainBlockCount": 1,
+      "mainBlockLayout": "sparse@38+52"
+    }
+  }
+]
