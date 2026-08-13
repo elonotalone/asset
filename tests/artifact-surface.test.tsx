@@ -55,6 +55,7 @@ function durableItem(): LibraryItem {
         width: 1200,
         height: 800,
         durationMs: null,
+        byteSize: 24_576,
         digest: "sha256:preview",
       },
       source: {
@@ -68,6 +69,7 @@ function durableItem(): LibraryItem {
         width: 1200,
         height: 800,
         durationMs: null,
+        byteSize: 49_152,
         digest: "sha256:source",
       },
     },
