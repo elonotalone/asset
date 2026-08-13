@@ -15,11 +15,11 @@
 /**
  * 查看方式的四档。决定详情页拿 `view` 里的哪些字段。
  * - `canvas`  站内把结构化 JSON 渲染成画面（design-document / chart / workflow / vector）
- * - `frame`   受限 iframe（website / game）。sandbox 见 VIEW_KINDS，一个字符都不放宽
+ * - `summary` 站内显示安全结构化源与 cover；主动内容只给 `.oceanleo.app` 新窗口入口
  * - `paged`   分页预览图翻页；没有预览图就封面 + 下载（deck / document / pdf / grid）
  * - `media`   原生播放器 / 图片（audio / video / image / model-3d 静帧）
  */
-export type ViewerMode = "canvas" | "frame" | "paged" | "media";
+export type ViewerMode = "canvas" | "summary" | "paged" | "media";
 
 export type ViewKind =
   | "design-document"
@@ -35,15 +35,14 @@ export type ViewKind =
   | "audio"
   | "workflow"
   | "image"
-  | "video"
-  | "plugin";
+  | "video";
 
 export interface ViewKindSpec {
   /** 查看器档位。 */
   mode: ViewerMode;
   /** 中文名，详情页与列表页显示用（走 tt() 翻译）。 */
   label: string;
-  /** `view.src` 期望指向什么。路径一律是 `public/` 下的绝对站内路径，`/works/…` 开头。 */
+  /** `view.src` 期望指向什么。路径一律是 `public/` 下的安全站内字节，`/works/…` 开头。 */
   src: string;
   /** 除 `src` 外这一档会用到的字段。产线位按需要给，缺了只降级不报废。 */
   extras: readonly (keyof WorkView)[];
@@ -78,24 +77,22 @@ export const VIEW_KINDS: Readonly<Record<ViewKind, ViewKindSpec>> = {
       "给了 pages[] 就多一个「原版式」开关。两样都没有（解不开的加密件）才退回封面 + 下载。",
   },
   website: {
-    mode: "frame",
+    mode: "summary",
     label: "网站",
-    src: "解包后的入口 .html（zip 走 view.download）",
-    extras: ["download", "aspect"],
+    src: "权威 site.json（zip 走 view.download，运行入口由 F9 plan 注入）",
+    extras: ["download", "source", "runtime", "aspect"],
     note:
-      "受限 iframe，sandbox=\"\"（零权能，脚本不跑、拿不到同源）。" +
-      "src 若是 .zip 则不 iframe，退回封面 + 下载。",
+      "站内显示结构化目的与 cover；只有精确 https://s-<32hex>.oceanleo.app/embed 才显示" +
+      "新窗口“打开网站”，不 iframe，也不回退 asset 同源入口。",
   },
   game: {
-    mode: "frame",
+    mode: "summary",
     label: "游戏",
-    src: "解包后的入口 .html（bundle 走 view.download）",
-    extras: ["download", "aspect"],
+    src: ".game.json 安全信封（运行入口由 F9 plan 注入）",
+    extras: ["download", "runtime", "aspect"],
     note:
-      "受限 iframe，sandbox=\"allow-scripts\"（游戏要跑脚本；**不给 allow-same-origin**，" +
-      "两者同给等于把本站源交出去，见 tests/untrusted-render-surface.test.mjs UC-3）。" +
-      "src 只认解包后的 .html：`.game.json` 信封里的整份 HTML **站内不跑**" +
-      "（塞 srcdoc 会继承本站 origin，域隔离作废），只出玩法说明 + 下载。",
+      "服务端先从 `.game.json` 摘掉 runnable source，再显示玩法与 cover；只有精确" +
+      " namespace-C `/embed` 才显示新窗口“打开试玩”，不 iframe/srcdoc。",
   },
   document: {
     mode: "paged",
@@ -173,17 +170,6 @@ export const VIEW_KINDS: Readonly<Record<ViewKind, ViewKindSpec>> = {
     extras: ["poster", "frames", "download", "durationSec"],
     note: "原生 <video> + poster；有 frames[] 抽帧就在下面排一行帧。",
   },
-  plugin: {
-    mode: "frame",
-    label: "工具",
-    src: "实例入口 .html（`/works/plugin/<实例>/index.html`）",
-    extras: ["aspect"],
-    note:
-      "受限 iframe，sandbox=\"allow-scripts\"（工具要跑脚本；**不给 allow-same-origin**）。" +
-      "**不直接嵌 view.src**：站内改嵌 /plugin-gallery/runtime/<实例>/…，那条路由给文档配了" +
-      "`Content-Security-Policy: sandbox`，顶层直接打开也拿不到本站 origin。" +
-      "src 不在 /works/plugin/ 下时不运行，只出封面与说明（fail-closed）。",
-  },
 };
 
 export const VIEW_KIND_IDS = Object.keys(VIEW_KINDS) as ViewKind[];
@@ -210,8 +196,7 @@ export type ArtifactType =
   | "audio"
   | "workflow"
   | "single_file_image"
-  | "video"
-  | "plugin";
+  | "video";
 
 /** 列表页的分格顺序。清单片段文件名 = artifact type（`content/works/<type>.json`）。 */
 export const ARTIFACT_TYPE_ORDER: readonly ArtifactType[] = [
@@ -219,7 +204,6 @@ export const ARTIFACT_TYPE_ORDER: readonly ArtifactType[] = [
   "deck",
   "website",
   "game",
-  "plugin",
   "document",
   "pdf",
   "grid",
@@ -247,28 +231,7 @@ export const ARTIFACT_TYPE_LABELS: Readonly<Record<ArtifactType, string>> = {
   workflow: "工作流",
   single_file_image: "图片",
   video: "视频",
-  plugin: "工具",
 };
-
-/**
- * 工具实例在站内的**运行地址**：把货源路径换成加固路由。
- *
- * `/works/plugin/<实例>/index.html` → `/plugin-gallery/runtime/<实例>/index.html`
- *
- * 为什么不直接嵌 `view.src`：那条裸路径顶层打开时脚本跑在 asset.oceanleo.com 自己的
- * origin 上（带着 `Domain=.oceanleo.com` 的 SSO cookie）。加固路由给文档配了
- * `Content-Security-Policy: sandbox allow-scripts`，两种打开方式都落在不透明 origin。
- * 见 `app/plugin-gallery/runtime/[...path]/route.ts`。
- *
- * 前缀对不上就返回 null，**不猜也不降级到裸路径**（fail-closed）。
- */
-export function pluginRuntimePathFor(src: string): string | null {
-  const prefix = "/works/plugin/";
-  if (!src.startsWith(prefix) || src.includes("..")) return null;
-  const rest = src.slice(prefix.length);
-  if (!/^[A-Za-z0-9][A-Za-z0-9._/-]*\.html?$/.test(rest)) return null;
-  return `/plugin-gallery/runtime/${rest}`;
-}
 
 export function isArtifactType(v: unknown): v is ArtifactType {
   return typeof v === "string" && Object.prototype.hasOwnProperty.call(ARTIFACT_TYPE_LABELS, v);
@@ -399,8 +362,15 @@ export interface WorkSheet {
 
 export interface WorkView {
   kind: ViewKind;
-  /** 站内绝对路径，`/works/<artifact_type>/…`。必须真实存在于 public 下。 */
+  /** 安全结构化源或静态媒体的站内绝对路径。必须真实存在于 public 下。 */
   src: string;
+  /**
+   * 主动内容的唯一运行入口。content 清单不准手填；loader 只从与 F9 manifest
+   * 精确对账的 plan 侧车注入。值不满足 isActiveRuntimeUrl() 时不进入 WorkView。
+   */
+  runtime?: string;
+  /** 可单独打开的权威结构化源（website 的 site.json）；必须是 public 下现存文件。 */
+  source?: string;
   /** 分页预览图（deck / document / pdf / grid）。 */
   pages?: string[];
   /** design-document 的 image 元素：assetId → 站内图片路径。 */
@@ -420,6 +390,14 @@ export interface WorkView {
   /** 画面宽高比，`16/9` 这样的数值，iframe / 图片留位用。 */
   aspect?: number;
   durationSec?: number;
+}
+
+/** UC-1：只接受 namespace-C 的精确 HTTPS `/embed`，不解析、不补全、不回退。 */
+const ACTIVE_RUNTIME_URL_RE =
+  /^https:\/\/s-[0-9a-f]{32}\.oceanleo\.app\/embed$/;
+
+export function isActiveRuntimeUrl(value: unknown): value is string {
+  return typeof value === "string" && ACTIVE_RUNTIME_URL_RE.test(value);
 }
 
 /**

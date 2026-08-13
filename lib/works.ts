@@ -7,12 +7,13 @@
 // 表与 schema 在 components/WorksKinds.tsx（纯数据，客户端也能 import）。
 // 这里一并再导出，产线位与页面从哪一侧引入都一样。
 
-import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, lstatSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 
 import {
   ARTIFACT_TYPE_LABELS,
   ARTIFACT_TYPE_ORDER,
+  isActiveRuntimeUrl,
   isArtifactType,
   isViewKind,
   type ArtifactType,
@@ -53,6 +54,233 @@ export interface WorksCatalog {
 
 const WORKS_DIR = path.join(process.cwd(), "content", "works");
 const PUBLIC_DIR = path.join(process.cwd(), "public");
+const ACTIVE_RUNTIME_MANIFEST_PATH = path.join(
+  process.cwd(),
+  "content",
+  "active-runtime",
+  "manifest.game-website.json",
+);
+const ACTIVE_RUNTIME_PLAN_PATH = path.join(process.cwd(), "active-runtime-plan.json");
+const MAX_RUNTIME_JSON_BYTES = 1024 * 1024;
+const ACTIVE_RUNTIME_SCHEMA = "oceanleo.active-runtime-manifest.v1";
+const ACTIVE_RUNTIME_PLAN_SCHEMA = "oceanleo.active-runtime-plan.v1";
+const ACTIVE_RUNTIME_ID = /^[a-z0-9](?:[a-z0-9._-]{0,126}[a-z0-9])?$/;
+const ACTIVE_RUNTIME_HOST = /^s-[0-9a-f]{32}\.oceanleo\.app$/;
+const SHA256 = /^[0-9a-f]{64}$/;
+
+type ActiveRuntimeKind = "plugin" | "game" | "website";
+
+interface ActiveRuntimeManifestItem {
+  id: string;
+  kind: ActiveRuntimeKind;
+  source: string;
+  entry: "index.html";
+}
+
+interface ActiveRuntimePlanItem {
+  item: ActiveRuntimeManifestItem;
+  host: string;
+  entryUrl: string;
+  closureSha256: string;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function hasExactKeys(value: Record<string, unknown>, expected: string[]): boolean {
+  const actual = Object.keys(value).sort();
+  const wanted = [...expected].sort();
+  return actual.length === wanted.length && actual.every((key, index) => key === wanted[index]);
+}
+
+function normalizeRuntimeItem(value: unknown): ActiveRuntimeManifestItem | null {
+  if (!isRecord(value) || !hasExactKeys(value, ["id", "kind", "source", "entry"])) {
+    return null;
+  }
+  if (
+    typeof value.id !== "string" ||
+    !ACTIVE_RUNTIME_ID.test(value.id) ||
+    !["plugin", "game", "website"].includes(String(value.kind)) ||
+    value.source !== `content/active-runtime/${value.kind}/${value.id}` ||
+    value.entry !== "index.html"
+  ) {
+    return null;
+  }
+  return {
+    id: value.id,
+    kind: value.kind as ActiveRuntimeKind,
+    source: value.source,
+    entry: "index.html",
+  };
+}
+
+function normalizeOwnedRuntimeManifest(value: unknown): ActiveRuntimeManifestItem[] {
+  if (
+    !isRecord(value) ||
+    !hasExactKeys(value, ["schema", "items"]) ||
+    value.schema !== ACTIVE_RUNTIME_SCHEMA ||
+    !Array.isArray(value.items)
+  ) {
+    return [];
+  }
+  const items = value.items.map(normalizeRuntimeItem);
+  if (
+    items.some((item) => item === null) ||
+    items.some((item) => item?.kind !== "game" && item?.kind !== "website")
+  ) {
+    return [];
+  }
+  const normalized = items as ActiveRuntimeManifestItem[];
+  if (new Set(normalized.map((item) => item.id)).size !== normalized.length) return [];
+  return normalized;
+}
+
+function normalizePlanFile(value: unknown): boolean {
+  if (
+    !isRecord(value) ||
+    !hasExactKeys(value, ["path", "sha256", "bytes"]) ||
+    typeof value.path !== "string" ||
+    value.path.length === 0 ||
+    value.path.startsWith("/") ||
+    value.path.includes("\\") ||
+    value.path.split("/").includes("..") ||
+    typeof value.sha256 !== "string" ||
+    !SHA256.test(value.sha256) ||
+    !Number.isSafeInteger(value.bytes) ||
+    (value.bytes as number) < 0
+  ) {
+    return false;
+  }
+  return true;
+}
+
+function normalizeRuntimePlanItem(value: unknown): ActiveRuntimePlanItem | null {
+  if (
+    !isRecord(value) ||
+    !hasExactKeys(value, [
+      "item",
+      "host",
+      "entryUrl",
+      "closureSha256",
+      "fileCount",
+      "totalBytes",
+      "files",
+    ])
+  ) {
+    return null;
+  }
+  const item = normalizeRuntimeItem(value.item);
+  if (
+    !item ||
+    typeof value.host !== "string" ||
+    !ACTIVE_RUNTIME_HOST.test(value.host) ||
+    !isActiveRuntimeUrl(value.entryUrl) ||
+    value.entryUrl !== `https://${value.host}/embed` ||
+    typeof value.closureSha256 !== "string" ||
+    !SHA256.test(value.closureSha256) ||
+    !Number.isSafeInteger(value.fileCount) ||
+    (value.fileCount as number) < 1 ||
+    !Number.isSafeInteger(value.totalBytes) ||
+    (value.totalBytes as number) < 1 ||
+    !Array.isArray(value.files) ||
+    value.files.length !== value.fileCount ||
+    !value.files.every(normalizePlanFile) ||
+    value.files.reduce(
+      (sum, file) => sum + ((file as Record<string, number>).bytes ?? 0),
+      0,
+    ) !== value.totalBytes
+  ) {
+    return null;
+  }
+  return {
+    item,
+    host: value.host,
+    entryUrl: value.entryUrl,
+    closureSha256: value.closureSha256,
+  };
+}
+
+function sameRuntimeItem(left: ActiveRuntimeManifestItem, right: ActiveRuntimeManifestItem): boolean {
+  return (
+    left.id === right.id &&
+    left.kind === right.kind &&
+    left.source === right.source &&
+    left.entry === right.entry
+  );
+}
+
+/**
+ * F9 manifest fragment 决定哪些 game/website 有运行闭包，plan 侧车决定能不能打开。
+ * 任一 item 缺失、重复、形状不闭合或 URL 歪掉时只关闭该 item，不猜 host、不回退本站。
+ */
+export function activeRuntimeUrlsFrom(
+  manifestValue: unknown,
+  planValue: unknown,
+): Map<string, string> {
+  const urls = new Map<string, string>();
+  const manifest = normalizeOwnedRuntimeManifest(manifestValue);
+  if (
+    manifest.length === 0 ||
+    !isRecord(planValue) ||
+    !hasExactKeys(planValue, [
+      "schema",
+      "manifest",
+      "manifestSha256",
+      "itemCount",
+      "totalBytes",
+      "items",
+    ]) ||
+    planValue.schema !== ACTIVE_RUNTIME_PLAN_SCHEMA ||
+    typeof planValue.manifest !== "string" ||
+    planValue.manifest.length === 0 ||
+    typeof planValue.manifestSha256 !== "string" ||
+    !SHA256.test(planValue.manifestSha256) ||
+    !Number.isSafeInteger(planValue.itemCount) ||
+    !Number.isSafeInteger(planValue.totalBytes) ||
+    (planValue.totalBytes as number) < 0 ||
+    !Array.isArray(planValue.items) ||
+    planValue.itemCount !== planValue.items.length ||
+    planValue.items.reduce(
+      (sum, item) =>
+        sum +
+        (isRecord(item) && Number.isSafeInteger(item.totalBytes)
+          ? (item.totalBytes as number)
+          : 0),
+      0,
+    ) !== planValue.totalBytes
+  ) {
+    return urls;
+  }
+
+  for (const manifestItem of manifest) {
+    const matches = planValue.items
+      .map(normalizeRuntimePlanItem)
+      .filter(
+        (candidate): candidate is ActiveRuntimePlanItem =>
+          candidate !== null && sameRuntimeItem(candidate.item, manifestItem),
+      );
+    if (matches.length === 1) urls.set(manifestItem.id, matches[0].entryUrl);
+  }
+  return urls;
+}
+
+function readBoundedJson(absolutePath: string): unknown {
+  try {
+    const stat = lstatSync(absolutePath);
+    if (!stat.isFile() || stat.isSymbolicLink() || stat.size > MAX_RUNTIME_JSON_BYTES) return null;
+    return JSON.parse(readFileSync(absolutePath, "utf8"));
+  } catch {
+    return null;
+  }
+}
+
+function loadActiveRuntimeUrls(): Map<string, string> {
+  return activeRuntimeUrlsFrom(
+    readBoundedJson(ACTIVE_RUNTIME_MANIFEST_PATH),
+    readBoundedJson(ACTIVE_RUNTIME_PLAN_PATH),
+  );
+}
 
 /** 站内绝对路径 → public 下的真实文件绝对路径。`..`、越界、查询串一律判失败。 */
 function resolvePublic(p: unknown): string | null {
@@ -123,8 +351,19 @@ function parseView(v: unknown, problems: string[]): WorkView | null {
     problems.push(`view.src 指的文件不存在：${raw.src}`);
     return null;
   }
+  if (Object.prototype.hasOwnProperty.call(raw, "runtime")) {
+    problems.push("view.runtime 不准写进 content 清单，只能由 F9 plan 侧车注入");
+    return null;
+  }
 
   const view: WorkView = { kind: raw.kind, src: raw.src };
+  if (Object.prototype.hasOwnProperty.call(raw, "source")) {
+    if (!publicFileExists(raw.source)) {
+      problems.push(`view.source 指的文件不存在：${String(raw.source)}`);
+      return null;
+    }
+    view.source = raw.source;
+  }
 
   const pages = keepExistingPaths(raw.pages);
   if (pages) view.pages = pages;
@@ -221,6 +460,20 @@ function parseEntry(raw: unknown, file: string, problems: string[]): WorkEntry |
   }
   const view = parseView(e.view, problems);
   if (!view) return null;
+  if (e.artifactType === "game") {
+    const expected = `/works/game/${e.id}.game.json`;
+    if (view.kind !== "game" || view.src !== expected) {
+      problems.push(`game view 必须是 kind=game 且 src=${expected}`);
+      return null;
+    }
+  }
+  if (e.artifactType === "website") {
+    const expected = `/works/website/${e.id}/site.json`;
+    if (view.kind !== "website" || view.src !== expected || view.source !== expected) {
+      problems.push(`website view 必须是 kind=website 且 src/source=${expected}`);
+      return null;
+    }
+  }
 
   return {
     id: e.id,
@@ -246,6 +499,7 @@ function readCatalog(): WorksCatalog {
   const works: WorkEntry[] = [];
   const problems: WorkProblem[] = [];
   const seen = new Map<string, string>();
+  const runtimeUrls = loadActiveRuntimeUrls();
 
   let files: string[] = [];
   try {
@@ -288,6 +542,13 @@ function readCatalog(): WorksCatalog {
         return;
       }
       seen.set(entry.id, file);
+      const runtime = runtimeUrls.get(entry.id);
+      if (
+        runtime &&
+        (entry.artifactType === "game" || entry.artifactType === "website")
+      ) {
+        entry.view.runtime = runtime;
+      }
       works.push(entry);
     });
   }

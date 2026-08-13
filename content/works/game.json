@@ -8,7 +8,7 @@
     "cover": "/works/game/one-breath-reflex-01.cover.png",
     "view": {
       "kind": "game",
-      "src": "/works/game/one-breath-reflex-01.html",
+      "src": "/works/game/one-breath-reflex-01.game.json",
       "download": "/works/game/one-breath-reflex-01.game.json",
       "aspect": 1.45
     },
@@ -45,7 +45,7 @@
     "cover": "/works/game/slow-ledger-tactics-01.cover.png",
     "view": {
       "kind": "game",
-      "src": "/works/game/slow-ledger-tactics-01.html",
+      "src": "/works/game/slow-ledger-tactics-01.game.json",
       "download": "/works/game/slow-ledger-tactics-01.game.json",
       "aspect": 1.45
     },
@@ -82,7 +82,7 @@
     "cover": "/works/game/echo-recall-01.cover.png",
     "view": {
       "kind": "game",
-      "src": "/works/game/echo-recall-01.html",
+      "src": "/works/game/echo-recall-01.game.json",
       "download": "/works/game/echo-recall-01.game.json",
       "aspect": 1.45
     },
@@ -119,7 +119,7 @@
     "cover": "/works/game/paper-deduction-01.cover.png",
     "view": {
       "kind": "game",
-      "src": "/works/game/paper-deduction-01.html",
+      "src": "/works/game/paper-deduction-01.game.json",
       "download": "/works/game/paper-deduction-01.game.json",
       "aspect": 1.45
     },
@@ -169,7 +169,7 @@
     "cover": "/works/game/one-shot-route-01.cover.png",
     "view": {
       "kind": "game",
-      "src": "/works/game/one-shot-route-01.html",
+      "src": "/works/game/one-shot-route-01.game.json",
       "download": "/works/game/one-shot-route-01.game.json",
       "aspect": 1.45
     },
@@ -219,7 +219,7 @@
     "cover": "/works/game/quiet-consequence-01.cover.png",
     "view": {
       "kind": "game",
-      "src": "/works/game/quiet-consequence-01.html",
+      "src": "/works/game/quiet-consequence-01.game.json",
       "download": "/works/game/quiet-consequence-01.game.json",
       "aspect": 1.45
     },

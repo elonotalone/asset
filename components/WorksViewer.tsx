@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useUI } from "@oceanleo/ui/i18n";
 import {
   EXTRACT_SOURCE_LABELS,
-  pluginRuntimePathFor,
+  isActiveRuntimeUrl,
   type DeckSlide,
   type DocBlock,
   type ExtractedContent,
@@ -19,25 +19,11 @@ import {
 //
 // 打不开的时候诚实说打不开 + 给下载，不编造画面。
 //
-// 安全：这里有两个 iframe，sandbox 值都是**写死的字面量**，不是算出来的。
-//   website → sandbox=""              零权能：脚本不跑、拿不到同源
-//   game    → sandbox="allow-scripts" 游戏要跑脚本；**绝不加 allow-same-origin**
-// 两者同给等于把 asset.oceanleo.com 的源交给被嵌内容（SSO cookie 失守），
-// 见 tests/untrusted-render-surface.test.mjs UC-3 与
-// docs/architecture/oceanleo-untrusted-content-isolation.md。
+// 安全：主动内容在这里一律不 iframe、不 srcdoc。game / website 只显示结构化源与
+// cover；运行按钮必须再次通过精确 namespace-C URL 校验，并在新窗口打开。
+// 可执行 HTML/JS/CSS 只由 *.oceanleo.app 提供，见 UC-1。
 
 export type WorkPayload = unknown;
-
-function Frame({ children, aspect }: { children: React.ReactNode; aspect?: number }) {
-  return (
-    <div
-      className="relative w-full overflow-hidden rounded-xl border border-zinc-200 bg-white"
-      style={{ aspectRatio: aspect && aspect > 0 ? String(aspect) : "16 / 10" }}
-    >
-      {children}
-    </div>
-  );
-}
 
 function Fallback({ work, reason }: { work: WorkEntry; reason: string }) {
   const tt = useUI();
@@ -529,16 +515,74 @@ function ChartViewer({ work, payload }: { work: WorkEntry; payload: WorkPayload 
 interface FlowNode {
   id: string;
   label: string;
+  kind: string;
   x?: number;
   y?: number;
 }
 
+interface WorkflowTheme {
+  surface: string;
+  node: string;
+  nodeBorder: string;
+  text: string;
+  muted: string;
+  edge: string;
+  accent: string;
+  warning: string;
+}
+
+const DEFAULT_WORKFLOW_THEME: WorkflowTheme = {
+  surface: "#FFFFFF",
+  node: "#F5F7FA",
+  nodeBorder: "#D0D7DE",
+  text: "#1F2328",
+  muted: "#57606A",
+  edge: "#7D8590",
+  accent: "#0969DA",
+  warning: "#CF222E",
+};
+
+const WORKFLOW_THEME_KEYS = [
+  "surface",
+  "node",
+  "nodeBorder",
+  "text",
+  "muted",
+  "edge",
+  "accent",
+  "warning",
+] as const;
+
+/** I4 carrier 已把 theme 收成闭合八角色；查看器仍在边界再验一次，绝不接任意 CSS。 */
+function workflowThemeOf(value: unknown): WorkflowTheme {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return DEFAULT_WORKFLOW_THEME;
+  }
+  const raw = value as Record<string, unknown>;
+  const actual = Object.keys(raw).sort();
+  const expected = [...WORKFLOW_THEME_KEYS].sort();
+  if (
+    actual.length !== expected.length ||
+    !actual.every((key, index) => key === expected[index]) ||
+    !WORKFLOW_THEME_KEYS.every(
+      (key) => typeof raw[key] === "string" && /^#[0-9a-fA-F]{6}$/.test(raw[key]),
+    )
+  ) {
+    return DEFAULT_WORKFLOW_THEME;
+  }
+  return Object.fromEntries(
+    WORKFLOW_THEME_KEYS.map((key) => [key, raw[key]]),
+  ) as unknown as WorkflowTheme;
+}
+
 function WorkflowViewer({ work, payload }: { work: WorkEntry; payload: WorkPayload }) {
+  const tt = useUI();
   const body = (payload && typeof payload === "object" ? payload : {}) as Record<string, unknown>;
   const graph = (body.workflow && typeof body.workflow === "object" ? body.workflow : body) as Record<
     string,
     unknown
   >;
+  const theme = workflowThemeOf(graph.theme ?? body.theme);
   const rawNodes = Array.isArray(graph.nodes) ? graph.nodes : [];
   const rawEdges = Array.isArray(graph.edges) ? graph.edges : [];
 
@@ -549,6 +593,7 @@ function WorkflowViewer({ work, payload }: { work: WorkEntry; payload: WorkPaylo
       return {
         id,
         label: String(o.label ?? o.title ?? o.name ?? id),
+        kind: String(o.kind ?? o.type ?? ""),
         x: typeof o.x === "number" ? o.x : undefined,
         y: typeof o.y === "number" ? o.y : undefined,
       };
@@ -577,11 +622,14 @@ function WorkflowViewer({ work, payload }: { work: WorkEntry; payload: WorkPaylo
     );
 
   return (
-    <div className="overflow-auto rounded-xl border border-zinc-200 bg-white p-4">
+    <div
+      className="overflow-auto rounded-xl border p-4"
+      style={{ backgroundColor: theme.surface, borderColor: theme.nodeBorder }}
+    >
       <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" style={{ maxHeight: "72vh" }} role="img">
         <defs>
           <marker id="wf-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-            <path d="M0 0 L10 5 L0 10 z" fill="#7D8590" />
+            <path d="M0 0 L10 5 L0 10 z" fill={theme.edge} />
           </marker>
         </defs>
         {edges.map((e, i) => (
@@ -591,32 +639,93 @@ function WorkflowViewer({ work, payload }: { work: WorkEntry; payload: WorkPaylo
               e.to.y - 20
             }, ${e.to.x + 110} ${e.to.y}`}
             fill="none"
-            stroke="#7D8590"
+            stroke={theme.edge}
             strokeWidth="1.6"
             markerEnd="url(#wf-arrow)"
           />
         ))}
         {laid.map((n) => (
           <g key={n.id}>
-            <rect x={n.x} y={n.y} width="220" height="56" rx="10" fill="#F5F7FA" stroke="#D0D7DE" />
-            <text x={n.x + 110} y={n.y + 33} textAnchor="middle" fontSize="14" fill="#1F2328">
+            <rect
+              x={n.x}
+              y={n.y}
+              width="220"
+              height="56"
+              rx="10"
+              fill={theme.node}
+              stroke={theme.nodeBorder}
+            />
+            <rect
+              x={n.x + 9}
+              y={n.y + 12}
+              width="4"
+              height="32"
+              rx="2"
+              fill={/(?:gate|review|approval|decision|condition|warning|error)/i.test(n.kind)
+                ? theme.warning
+                : theme.accent}
+            />
+            <text x={n.x + 116} y={n.y + 28} textAnchor="middle" fontSize="14" fill={theme.text}>
               {n.label.length > 24 ? `${n.label.slice(0, 23)}…` : n.label}
             </text>
+            {n.kind ? (
+              <text x={n.x + 116} y={n.y + 44} textAnchor="middle" fontSize="9" fill={theme.muted}>
+                {n.kind.length > 28 ? `${n.kind.slice(0, 27)}…` : n.kind}
+              </text>
+            ) : null}
           </g>
         ))}
       </svg>
+      <div className="mt-2 flex flex-wrap gap-4 text-[11px]" style={{ color: theme.muted }}>
+        <span className="inline-flex items-center gap-1.5">
+          <i className="h-2 w-2 rounded-full" style={{ backgroundColor: theme.accent }} />
+          {tt("执行节点")}
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <i className="h-2 w-2 rounded-full" style={{ backgroundColor: theme.warning }} />
+          {tt("门槛或提醒")}
+        </span>
+      </div>
     </div>
   );
 }
 
-/* ---------------- game：没有解包入口时的可读说明 ---------------- */
+/* ---------------- game / website：结构化说明 + 隔离域新窗口入口 ---------------- */
 
 // `oceanleo.game-bundle.v1` 信封里那段 `source` 是整份 HTML。它**不进 DOM**：
 // 既不 srcdoc、也不 dangerouslySetInnerHTML —— 见上方安全说明。
 // 装载器已在服务端把 `source` 摘掉，这里拿到的 payload 里根本没有源码。
 
-function GameBriefViewer({ work, payload }: { work: WorkEntry; payload: WorkPayload }) {
+function RuntimeAction({
+  runtime,
+  label,
+  unavailable,
+}: {
+  runtime?: string;
+  label: string;
+  unavailable: string;
+}) {
   const tt = useUI();
+  if (!isActiveRuntimeUrl(runtime)) {
+    return (
+      <span className="inline-flex rounded-lg border border-dashed border-zinc-300 px-3 py-2 text-sm text-zinc-500">
+        {tt(unavailable)}
+      </span>
+    );
+  }
+  return (
+    <a
+      href={runtime}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-700"
+    >
+      {tt(label)}
+    </a>
+  );
+}
+
+function GameBriefViewer({ work, payload }: { work: WorkEntry; payload: WorkPayload }) {
   const body = (payload && typeof payload === "object" ? payload : {}) as Record<string, unknown>;
   const manifest = (body.manifest && typeof body.manifest === "object" ? body.manifest : {}) as Record<
     string,
@@ -644,11 +753,61 @@ function GameBriefViewer({ work, payload }: { work: WorkEntry; payload: WorkPayl
           </div>
         )}
       </div>
-      <p className="rounded-lg border border-dashed border-amber-300 bg-amber-50 px-3 py-2 text-xs leading-relaxed text-amber-800">
-        {tt(
-          "这一件交上来的是游戏信封（整份网页打包成一个 JSON），站内不解包运行：可运行的网页必须由沙箱域取回并在那边合成，塞进本页的 iframe 会让它继承本站身份。要试玩请下载后本地打开，或等这一件补上解包后的入口页。",
-        )}
-      </p>
+      <div>
+        <RuntimeAction runtime={work.view.runtime} label="打开试玩" unavailable="试玩暂不可用" />
+      </div>
+    </div>
+  );
+}
+
+function WebsiteBriefViewer({ work, payload }: { work: WorkEntry; payload: WorkPayload }) {
+  const tt = useUI();
+  const site = (payload && typeof payload === "object" ? payload : {}) as Record<string, unknown>;
+  const purpose =
+    work.readings?.purpose &&
+    typeof work.readings.purpose === "object" &&
+    !Array.isArray(work.readings.purpose)
+      ? (work.readings.purpose as Record<string, unknown>)
+      : {};
+  const purposeRows = [
+    ["给谁使用", purpose.who],
+    ["要解决什么", purpose.problem],
+    ["希望访客做什么", purpose.wantVisitorToDo],
+    ["怎样算有效", purpose.successMetric],
+  ].filter((row): row is [string, string] => typeof row[1] === "string" && row[1].length > 0);
+  const siteName = typeof site.siteName === "string" ? site.siteName : work.title;
+
+  return (
+    <div className="flex flex-col gap-4 rounded-xl border border-zinc-200 bg-white p-5">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={work.cover} alt={work.title} className="w-full rounded-lg border border-zinc-100" />
+      <div className="flex flex-col gap-2">
+        <h3 className="text-base font-semibold text-zinc-900">{siteName}</h3>
+        {work.summary ? <p className="text-sm leading-relaxed text-zinc-600">{work.summary}</p> : null}
+      </div>
+      {purposeRows.length > 0 ? (
+        <dl className="grid gap-3 rounded-lg bg-zinc-50 p-4 text-sm">
+          {purposeRows.map(([label, value]) => (
+            <div key={label}>
+              <dt className="text-xs font-medium text-zinc-500">{tt(label)}</dt>
+              <dd className="mt-0.5 leading-relaxed text-zinc-800">{value}</dd>
+            </div>
+          ))}
+        </dl>
+      ) : null}
+      <div className="flex flex-wrap gap-2">
+        <RuntimeAction runtime={work.view.runtime} label="打开网站" unavailable="网站暂不可用" />
+        {work.view.source ? (
+          <a
+            href={work.view.source}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
+          >
+            {tt("查看 site.json")}
+          </a>
+        ) : null}
+      </div>
     </div>
   );
 }
@@ -1064,71 +1223,10 @@ export function WorksViewer({
       );
 
     case "website":
-      // sandbox="" 是零权能：脚本不跑、拿不到同源。**一个 token 都不许加。**
-      if (!/\.html?$/i.test(v.src)) {
-        return <Fallback work={work} reason="这一件只有打包字节，站内不解包运行；请下载后本地打开。" />;
-      }
-      return (
-        <Frame aspect={v.aspect}>
-          <iframe
-            src={v.src}
-            title={work.title}
-            sandbox=""
-            loading="lazy"
-            referrerPolicy="no-referrer"
-            className="absolute inset-0 h-full w-full border-0 bg-white"
-          />
-        </Frame>
-      );
+      return <WebsiteBriefViewer work={work} payload={payload} />;
 
     case "game":
-      // 游戏要跑脚本，所以给 allow-scripts —— **绝不与 allow-same-origin 同给**。
-      if (!/\.html?$/i.test(v.src)) {
-        // `.game.json` 信封（正文是整份 HTML）不在这里跑：把源码塞进 srcdoc 会让
-        // iframe 继承本站 origin，域隔离当场作废（GameRoute.tsx:101-102 明令禁止，
-        // 也是安全内核 security.untrusted-content-domain 的直接要求）。
-        // 所以站内给的是这一件**看得懂的说明**，跑要到沙箱域或下载后本地打开。
-        return <GameBriefViewer work={work} payload={payload} />;
-      }
-      return (
-        <Frame aspect={v.aspect}>
-          <iframe
-            src={v.src}
-            title={work.title}
-            sandbox="allow-scripts"
-            loading="lazy"
-            referrerPolicy="no-referrer"
-            className="absolute inset-0 h-full w-full border-0 bg-white"
-          />
-        </Frame>
-      );
-
-    case "plugin": {
-      // 工具与游戏同样要跑脚本，但**不嵌 view.src**：改嵌加固路由，那条路由给文档
-      // 配了 `Content-Security-Policy: sandbox`，顶层直接打开也拿不到本站 origin。
-      // 前缀对不上就不运行（fail-closed），不退回裸路径。
-      const runtimePath = pluginRuntimePathFor(v.src);
-      if (!runtimePath) {
-        return (
-          <Fallback
-            work={work}
-            reason="这件工具的入口不在 /works/plugin/ 下，站内不运行；请从「工具能力」那一格打开。"
-          />
-        );
-      }
-      return (
-        <Frame aspect={v.aspect}>
-          <iframe
-            src={runtimePath}
-            title={work.title}
-            sandbox="allow-scripts"
-            loading="lazy"
-            referrerPolicy="no-referrer"
-            className="absolute inset-0 h-full w-full border-0 bg-white"
-          />
-        </Frame>
-      );
-    }
+      return <GameBriefViewer work={work} payload={payload} />;
 
     case "grid":
       // 片段自带 sheets[] 最准（产线位知道哪几张表要给人看）；

@@ -8,7 +8,8 @@
     "cover": "/works/website/law-intake-01.cover.webp",
     "view": {
       "kind": "website",
-      "src": "/works/website/law-intake-01/index.html",
+      "src": "/works/website/law-intake-01/site.json",
+      "source": "/works/website/law-intake-01/site.json",
       "download": "/works/website/law-intake-01-source.zip",
       "aspect": 1.6
     },
@@ -103,7 +104,8 @@
     "cover": "/works/website/salon-booking-01.cover.webp",
     "view": {
       "kind": "website",
-      "src": "/works/website/salon-booking-01/index.html",
+      "src": "/works/website/salon-booking-01/site.json",
+      "source": "/works/website/salon-booking-01/site.json",
       "download": "/works/website/salon-booking-01-source.zip",
       "aspect": 1.6
     },
@@ -203,7 +205,8 @@
     "cover": "/works/website/docfilm-portfolio-01.cover.webp",
     "view": {
       "kind": "website",
-      "src": "/works/website/docfilm-portfolio-01/index.html",
+      "src": "/works/website/docfilm-portfolio-01/site.json",
+      "source": "/works/website/docfilm-portfolio-01/site.json",
       "download": "/works/website/docfilm-portfolio-01-source.zip",
       "aspect": 1.6
     },

@@ -1,0 +1,31 @@
+{
+  "schema": "oceanleo.website-starter.v1",
+  "starterId": "docfilm-portfolio-01",
+  "styleId": "reel-sheet",
+  "axes": {
+    "purpose": "portfolio",
+    "industry": "culture-media",
+    "structure": "doc-sidebar",
+    "layoutFamily": "portfolio"
+  },
+  "purpose": {
+    "audience": "两类专业评审：品牌方的市场负责人（有预算、有交片死线），以及电视台或流媒体的选片编辑（有栏目、有时长格式）。他们同时在看六七个团队，每家给三分钟",
+    "problem": "别家的作品集只有画面和形容词，看完仍然判断不出这个团队拍不拍得了自己这条片子——缺的是时长、周期、团队规模、预算档这四个数",
+    "conversion": "索取片单 PDF，或写信约一次一小时的初剪会",
+    "successMetric": "片单索取数与初剪会预约数；作品播放量不算数",
+    "antiGoal": "不做情怀、不做气质、不做视觉冲击——他们见过的漂亮片头比我们多"
+  },
+  "keywords": ["纪录片制作", "品牌片", "片单", "预算档", "初剪会"],
+  "media": [
+    {
+      "id": "still-tidework",
+      "file": "assets/still-tidework.webp",
+      "fileName": "still-tidework.webp",
+      "bindSection": "film-tidework",
+      "alt": "《潮汐工》剧照：天亮前的滩涂上，两名戴头灯、穿连体防水裤的赶海人推着泥橇往海的方向走，远处有一台风机",
+      "attribution": "OceanLeo 第一方生成（AI 生图），CC0-1.0",
+      "licenseCode": "CC0-1.0"
+    }
+  ],
+  "notes": "剧照绑在第二个板块而不是首屏——`reel-sheet` 的首屏必须是一句主张加四个数，不是一张图（指导第一节）。所以这一件的 firstScreen 推导出来是 statement，而不是 figure。"
+}

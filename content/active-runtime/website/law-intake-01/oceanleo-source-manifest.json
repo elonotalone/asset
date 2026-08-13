@@ -4,8 +4,8 @@
   "files": [
     {
       "path": "index.html",
-      "blob_sha256": "4ea16901825c6d47a7c2937523c45964235150bfe032b51497fc474f781e0f67",
-      "byteSize": 13711,
+      "blob_sha256": "5fc4195291ad891b3815ef5f374902e93433559905fc79374641c9e1a790fcee",
+      "byteSize": 13648,
       "mediaType": "text/html"
     },
     {
@@ -16,8 +16,8 @@
     },
     {
       "path": "app.js",
-      "blob_sha256": "e178694251bc77706610c88f6ed8ea97f1ba072a76621ae24798121d0982ca31",
-      "byteSize": 2591,
+      "blob_sha256": "5faf729bdb664d7cb8ccb112cf344380dc7183a8466d9ca8e7743382fa2f7ee8",
+      "byteSize": 2091,
       "mediaType": "text/javascript"
     },
     {

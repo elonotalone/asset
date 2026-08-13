@@ -1,0 +1,804 @@
+{
+  "siteName": "近点理发 · 望京南湖东园店",
+  "themeColor": "#d2601a",
+  "backgroundColor": "#fbf8f4",
+  "typography": {
+    "bodyFont": "sans",
+    "headingFont": "sans",
+    "baseSize": 16,
+    "lineHeight": 1.6,
+    "headingWeight": 800
+  },
+  "navigation": [
+    {
+      "label": "按项目",
+      "href": "#by-service"
+    },
+    {
+      "label": "按价位",
+      "href": "#by-price"
+    },
+    {
+      "label": "按发型师",
+      "href": "#by-stylist"
+    },
+    {
+      "label": "到店与预约",
+      "href": "#visit"
+    }
+  ],
+  "sections": [
+    {
+      "id": "shopfront",
+      "type": "hero",
+      "style": {
+        "paddingTop": 0,
+        "paddingBottom": 40,
+        "contentWidth": "wide",
+        "alignment": "left",
+        "layout": "default",
+        "cornerRadius": 8,
+        "borderWidth": 0
+      },
+      "layout": {},
+      "content": {
+        "eyebrow": "南湖东园二区 3 号楼底商，地铁 15 号线望京东站 B 口出来走 6 分钟",
+        "title": "剪发 68 元，营业到 21:30，末位接单 20:30",
+        "subtitle": "不办卡、不推销、不加价。全部项目的价格、耗时和能做的人都写在下面，看完直接打电话报时段就行。今晚 19:00 之后通常还有位，周六全天要提前一天约。",
+        "primaryCtaLabel": "打电话约位 010-6473 2210",
+        "primaryCtaHref": "tel:01064732210",
+        "secondaryCtaLabel": "先看全部价目",
+        "secondaryCtaHref": "#by-service",
+        "image": {
+          "keyword": "hair salon storefront evening",
+          "alt": "近点理发望京南湖东园店的门头：暖色灯光的落地窗内有两把理发椅，门口立着一块小黑板价目牌"
+        }
+      }
+    },
+    {
+      "id": "by-service",
+      "type": "menu",
+      "style": {
+        "paddingTop": 40,
+        "paddingBottom": 40,
+        "contentWidth": "wide",
+        "alignment": "left",
+        "layout": "default",
+        "cornerRadius": 8,
+        "borderWidth": 0
+      },
+      "layout": {},
+      "content": {
+        "title": "按项目：全部价目，含耗时",
+        "subtitle": "价格是到手价，洗吹已含在内，不另收。长发（过肩）在标价基础上加 20 元，会在开工前告诉你，不会做完再说。",
+        "groups": [
+          {
+            "name": "剪发",
+            "items": [
+              {
+                "name": "男士剪发",
+                "price": "68 元",
+                "description": "约 40 分钟。含洗、剪、吹。"
+              },
+              {
+                "name": "女士剪发",
+                "price": "98 元",
+                "description": "约 60 分钟。含洗、剪、吹造型。过肩加 20 元。"
+              },
+              {
+                "name": "儿童剪发（12 岁以下）",
+                "price": "48 元",
+                "description": "约 30 分钟。工作日 14:00 前不用等位。"
+              },
+              {
+                "name": "修剪刘海 / 修边",
+                "price": "20 元",
+                "description": "约 10 分钟。本店三个月内剪过的免费。"
+              }
+            ]
+          },
+          {
+            "name": "烫发",
+            "items": [
+              {
+                "name": "基础冷烫",
+                "price": "398 元",
+                "description": "约 2.5 小时。短发或齐肩。"
+              },
+              {
+                "name": "数码烫 / 陶瓷烫",
+                "price": "598 元",
+                "description": "约 3.5 小时。含护理一次。过肩加 100 元。"
+              },
+              {
+                "name": "男士纹理烫",
+                "price": "268 元",
+                "description": "约 1.5 小时。"
+              }
+            ]
+          },
+          {
+            "name": "染发",
+            "items": [
+              {
+                "name": "单色补根（3 厘米以内）",
+                "price": "198 元",
+                "description": "约 1.5 小时。"
+              },
+              {
+                "name": "全头单色",
+                "price": "358 元",
+                "description": "约 2.5 小时。过肩加 100 元。"
+              },
+              {
+                "name": "漂发 + 上色",
+                "price": "698 元起",
+                "description": "约 4 小时以上。发质需先做检测，检测不过我们会劝你别做，检测不收费。"
+              }
+            ]
+          },
+          {
+            "name": "护理与头皮",
+            "items": [
+              {
+                "name": "基础倒膜",
+                "price": "128 元",
+                "description": "约 40 分钟。"
+              },
+              {
+                "name": "结构性修护",
+                "price": "298 元",
+                "description": "约 60 分钟。烫染当天做减 50 元。"
+              },
+              {
+                "name": "头皮清洁",
+                "price": "168 元",
+                "description": "约 45 分钟。有头皮破损或炎症不做，请先去医院。"
+              }
+            ]
+          }
+        ],
+        "image": {
+          "keyword": "price list",
+          "alt": "价目"
+        }
+      }
+    },
+    {
+      "id": "by-price",
+      "type": "pricing",
+      "style": {
+        "paddingTop": 40,
+        "paddingBottom": 40,
+        "contentWidth": "wide",
+        "alignment": "left",
+        "layout": "default",
+        "cornerRadius": 8,
+        "borderWidth": 0
+      },
+      "layout": {},
+      "content": {
+        "title": "按价位：今天准备花多少",
+        "subtitle": "同一批项目按预算再铺一遍。心里有数再进门，比进门再问强。",
+        "plans": [
+          {
+            "name": "100 元以内",
+            "price": "20 – 98 元",
+            "description": "剪发与修边这一档。工作日下午来基本不用等。",
+            "ctaLabel": "打电话报个时段",
+            "highlights": [
+              "男士剪发 68 元",
+              "女士剪发 98 元",
+              "儿童剪发 48 元",
+              "修剪刘海 20 元"
+            ],
+            "featured": false
+          },
+          {
+            "name": "100 – 400 元",
+            "price": "128 – 398 元",
+            "description": "护理、补根、男士烫发这一档。需要一到两个半小时，建议提前一天约。",
+            "ctaLabel": "打电话报个时段",
+            "highlights": [
+              "基础倒膜 128 元",
+              "头皮清洁 168 元",
+              "单色补根 198 元",
+              "男士纹理烫 268 元",
+              "结构性修护 298 元",
+              "全头单色 358 元",
+              "基础冷烫 398 元"
+            ],
+            "featured": true
+          },
+          {
+            "name": "400 元以上",
+            "price": "598 元起",
+            "description": "数码烫与漂染这一档。占用三小时以上，只在工作日与周日接，周六不接。",
+            "ctaLabel": "打电话先聊发质",
+            "highlights": [
+              "数码烫 598 元",
+              "漂发上色 698 元起",
+              "含一次护理",
+              "做之前一定先做发质检测"
+            ],
+            "featured": false
+          }
+        ],
+        "image": {
+          "keyword": "budget",
+          "alt": "价位段"
+        }
+      }
+    },
+    {
+      "id": "by-stylist",
+      "type": "team",
+      "style": {
+        "paddingTop": 40,
+        "paddingBottom": 40,
+        "contentWidth": "wide",
+        "alignment": "left",
+        "layout": "default",
+        "cornerRadius": 8,
+        "borderWidth": 0
+      },
+      "layout": {},
+      "content": {
+        "title": "按发型师：谁在店里，谁能做什么",
+        "subtitle": "本店只有三个人，没有总监店长首席之分，也没有不同职级不同价。指定谁都不加钱。",
+        "members": [
+          {
+            "name": "阿彬",
+            "role": "周二至周日 11:00–21:30",
+            "bio": "做男士剪发和纹理烫最多，短发利落。染发只做补根，全头染他会转给小满。北京本地，话不多。",
+            "image": {
+              "keyword": "barber portrait",
+              "alt": "阿彬"
+            }
+          },
+          {
+            "name": "小满",
+            "role": "周一至周六 11:00–20:00",
+            "bio": "做女士剪发、染发和漂染。发质检测由她做，判断做不了她会直接说不做。周六排得最满，要约她建议提前两天。",
+            "image": {
+              "keyword": "hair stylist portrait",
+              "alt": "小满"
+            }
+          },
+          {
+            "name": "老周",
+            "role": "周一至周五 11:00–19:00",
+            "bio": "烫发和护理。带过十几年老客，儿童剪发也是他做得最稳。周末不在店里。",
+            "image": {
+              "keyword": "senior barber portrait",
+              "alt": "老周"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "before-you-come",
+      "type": "faq",
+      "style": {
+        "paddingTop": 40,
+        "paddingBottom": 40,
+        "contentWidth": "wide",
+        "alignment": "left",
+        "layout": "default",
+        "cornerRadius": 8,
+        "borderWidth": 0
+      },
+      "layout": {},
+      "content": {
+        "title": "来之前你可能会问的",
+        "subtitle": "把电话里被问得最多的几条写在这儿。",
+        "footnote": "价目自 2026 年 3 月 1 日起执行，涨价会提前一个月贴在门口和这一页上。",
+        "contactLabel": "还有别的问题就打",
+        "contactHref": "tel:01064732210",
+        "items": [
+          {
+            "question": "要不要办卡？",
+            "answer": "不办。本店没有储值卡、没有次卡、没有会员价。剪完付剪的钱。"
+          },
+          {
+            "question": "会不会做着做着加钱？",
+            "answer": "不会。过肩加 20（剪）或加 100（烫染）是唯一一种加价，一定在开工前说，说完你可以走。"
+          },
+          {
+            "question": "不预约能直接来吗？",
+            "answer": "可以。工作日通常等 0 到 20 分钟，周六下午可能等一小时以上。打电话报个大概时间我们给你留位，不收定金。"
+          },
+          {
+            "question": "停车怎么办？",
+            "answer": "门口人行道不能停。南湖东园二区地面停车场在楼后，前一小时 5 元。骑车的话门口有停车架。"
+          },
+          {
+            "question": "剪坏了怎么办？",
+            "answer": "七天之内回来免费修，修不回来的退款。这句话在店里的墙上也贴着。"
+          },
+          {
+            "question": "能带小孩来吗？",
+            "answer": "能。工作日 14:00 前小孩最多，那时候来不用等。店里有加高座椅。"
+          }
+        ],
+        "image": {
+          "keyword": "faq",
+          "alt": "常见问题"
+        }
+      }
+    },
+    {
+      "id": "visit",
+      "type": "contact",
+      "style": {
+        "paddingTop": 40,
+        "paddingBottom": 40,
+        "contentWidth": "wide",
+        "alignment": "left",
+        "layout": "default",
+        "cornerRadius": 8,
+        "borderWidth": 0
+      },
+      "layout": {},
+      "content": {
+        "title": "到店与预约",
+        "subtitle": "营业时间 11:00–21:30，末位接单 20:30，全年只在春节初一到初五休息。约位不收定金，来不了打个电话说一声就行。",
+        "phone": "010-6473 2210",
+        "email": "jindian.wangjing@example.cn",
+        "address": "北京市朝阳区望京南湖东园二区 3 号楼底商，地铁 15 号线望京东站 B 口出站步行 6 分钟",
+        "formTitle": "电话占线时，请留下预约信息",
+        "nameLabel": "怎么称呼你",
+        "phoneLabel": "手机号",
+        "emailLabel": "邮箱（可不填）",
+        "messageLabel": "想做的项目与大概到店时间",
+        "submitLabel": "留下预约信息",
+        "image": {
+          "keyword": "map location",
+          "alt": "位置"
+        }
+      }
+    },
+    {
+      "id": "site-foot",
+      "type": "footer",
+      "style": {
+        "paddingTop": 28,
+        "paddingBottom": 28,
+        "contentWidth": "wide",
+        "alignment": "left",
+        "layout": "default",
+        "cornerRadius": 0,
+        "borderWidth": 0
+      },
+      "layout": {},
+      "content": {
+        "title": "近点理发 · 望京南湖东园店",
+        "description": "三个人的小店，开了六年。价目全部写在这一页，改价会提前一个月公示。",
+        "ctaLabel": "约位电话 010-6473 2210",
+        "ctaHref": "tel:01064732210",
+        "links": [
+          {
+            "label": "按项目看价目",
+            "href": "#by-service"
+          },
+          {
+            "label": "按价位看",
+            "href": "#by-price"
+          },
+          {
+            "label": "按发型师看",
+            "href": "#by-stylist"
+          },
+          {
+            "label": "来之前你可能会问的",
+            "href": "#before-you-come"
+          },
+          {
+            "label": "到店与预约",
+            "href": "#visit"
+          }
+        ],
+        "image": {
+          "keyword": "footer",
+          "alt": "页脚"
+        }
+      }
+    }
+  ],
+  "pages": [
+    {
+      "id": "home",
+      "name": "价目与预约",
+      "path": "/",
+      "title": "近点理发 · 望京南湖东园店｜全部价目与今晚余位",
+      "description": "剪发 68 元起，不办卡不推销。全部项目、价格、耗时、谁能做，都写在这一页上。营业到 21:30，末位接单 20:30，电话 010-6473 2210 直接约。",
+      "sections": [
+        {
+          "id": "shopfront",
+          "type": "hero",
+          "style": {
+            "paddingTop": 0,
+            "paddingBottom": 40,
+            "contentWidth": "wide",
+            "alignment": "left",
+            "layout": "default",
+            "cornerRadius": 8,
+            "borderWidth": 0
+          },
+          "layout": {},
+          "content": {
+            "eyebrow": "南湖东园二区 3 号楼底商，地铁 15 号线望京东站 B 口出来走 6 分钟",
+            "title": "剪发 68 元，营业到 21:30，末位接单 20:30",
+            "subtitle": "不办卡、不推销、不加价。全部项目的价格、耗时和能做的人都写在下面，看完直接打电话报时段就行。今晚 19:00 之后通常还有位，周六全天要提前一天约。",
+            "primaryCtaLabel": "打电话约位 010-6473 2210",
+            "primaryCtaHref": "tel:01064732210",
+            "secondaryCtaLabel": "先看全部价目",
+            "secondaryCtaHref": "#by-service",
+            "image": {
+              "keyword": "hair salon storefront evening",
+              "alt": "近点理发望京南湖东园店的门头：暖色灯光的落地窗内有两把理发椅，门口立着一块小黑板价目牌"
+            }
+          }
+        },
+        {
+          "id": "by-service",
+          "type": "menu",
+          "style": {
+            "paddingTop": 40,
+            "paddingBottom": 40,
+            "contentWidth": "wide",
+            "alignment": "left",
+            "layout": "default",
+            "cornerRadius": 8,
+            "borderWidth": 0
+          },
+          "layout": {},
+          "content": {
+            "title": "按项目：全部价目，含耗时",
+            "subtitle": "价格是到手价，洗吹已含在内，不另收。长发（过肩）在标价基础上加 20 元，会在开工前告诉你，不会做完再说。",
+            "groups": [
+              {
+                "name": "剪发",
+                "items": [
+                  {
+                    "name": "男士剪发",
+                    "price": "68 元",
+                    "description": "约 40 分钟。含洗、剪、吹。"
+                  },
+                  {
+                    "name": "女士剪发",
+                    "price": "98 元",
+                    "description": "约 60 分钟。含洗、剪、吹造型。过肩加 20 元。"
+                  },
+                  {
+                    "name": "儿童剪发（12 岁以下）",
+                    "price": "48 元",
+                    "description": "约 30 分钟。工作日 14:00 前不用等位。"
+                  },
+                  {
+                    "name": "修剪刘海 / 修边",
+                    "price": "20 元",
+                    "description": "约 10 分钟。本店三个月内剪过的免费。"
+                  }
+                ]
+              },
+              {
+                "name": "烫发",
+                "items": [
+                  {
+                    "name": "基础冷烫",
+                    "price": "398 元",
+                    "description": "约 2.5 小时。短发或齐肩。"
+                  },
+                  {
+                    "name": "数码烫 / 陶瓷烫",
+                    "price": "598 元",
+                    "description": "约 3.5 小时。含护理一次。过肩加 100 元。"
+                  },
+                  {
+                    "name": "男士纹理烫",
+                    "price": "268 元",
+                    "description": "约 1.5 小时。"
+                  }
+                ]
+              },
+              {
+                "name": "染发",
+                "items": [
+                  {
+                    "name": "单色补根（3 厘米以内）",
+                    "price": "198 元",
+                    "description": "约 1.5 小时。"
+                  },
+                  {
+                    "name": "全头单色",
+                    "price": "358 元",
+                    "description": "约 2.5 小时。过肩加 100 元。"
+                  },
+                  {
+                    "name": "漂发 + 上色",
+                    "price": "698 元起",
+                    "description": "约 4 小时以上。发质需先做检测，检测不过我们会劝你别做，检测不收费。"
+                  }
+                ]
+              },
+              {
+                "name": "护理与头皮",
+                "items": [
+                  {
+                    "name": "基础倒膜",
+                    "price": "128 元",
+                    "description": "约 40 分钟。"
+                  },
+                  {
+                    "name": "结构性修护",
+                    "price": "298 元",
+                    "description": "约 60 分钟。烫染当天做减 50 元。"
+                  },
+                  {
+                    "name": "头皮清洁",
+                    "price": "168 元",
+                    "description": "约 45 分钟。有头皮破损或炎症不做，请先去医院。"
+                  }
+                ]
+              }
+            ],
+            "image": {
+              "keyword": "price list",
+              "alt": "价目"
+            }
+          }
+        },
+        {
+          "id": "by-price",
+          "type": "pricing",
+          "style": {
+            "paddingTop": 40,
+            "paddingBottom": 40,
+            "contentWidth": "wide",
+            "alignment": "left",
+            "layout": "default",
+            "cornerRadius": 8,
+            "borderWidth": 0
+          },
+          "layout": {},
+          "content": {
+            "title": "按价位：今天准备花多少",
+            "subtitle": "同一批项目按预算再铺一遍。心里有数再进门，比进门再问强。",
+            "plans": [
+              {
+                "name": "100 元以内",
+                "price": "20 – 98 元",
+                "description": "剪发与修边这一档。工作日下午来基本不用等。",
+                "ctaLabel": "打电话报个时段",
+                "highlights": [
+                  "男士剪发 68 元",
+                  "女士剪发 98 元",
+                  "儿童剪发 48 元",
+                  "修剪刘海 20 元"
+                ],
+                "featured": false
+              },
+              {
+                "name": "100 – 400 元",
+                "price": "128 – 398 元",
+                "description": "护理、补根、男士烫发这一档。需要一到两个半小时，建议提前一天约。",
+                "ctaLabel": "打电话报个时段",
+                "highlights": [
+                  "基础倒膜 128 元",
+                  "头皮清洁 168 元",
+                  "单色补根 198 元",
+                  "男士纹理烫 268 元",
+                  "结构性修护 298 元",
+                  "全头单色 358 元",
+                  "基础冷烫 398 元"
+                ],
+                "featured": true
+              },
+              {
+                "name": "400 元以上",
+                "price": "598 元起",
+                "description": "数码烫与漂染这一档。占用三小时以上，只在工作日与周日接，周六不接。",
+                "ctaLabel": "打电话先聊发质",
+                "highlights": [
+                  "数码烫 598 元",
+                  "漂发上色 698 元起",
+                  "含一次护理",
+                  "做之前一定先做发质检测"
+                ],
+                "featured": false
+              }
+            ],
+            "image": {
+              "keyword": "budget",
+              "alt": "价位段"
+            }
+          }
+        },
+        {
+          "id": "by-stylist",
+          "type": "team",
+          "style": {
+            "paddingTop": 40,
+            "paddingBottom": 40,
+            "contentWidth": "wide",
+            "alignment": "left",
+            "layout": "default",
+            "cornerRadius": 8,
+            "borderWidth": 0
+          },
+          "layout": {},
+          "content": {
+            "title": "按发型师：谁在店里，谁能做什么",
+            "subtitle": "本店只有三个人，没有总监店长首席之分，也没有不同职级不同价。指定谁都不加钱。",
+            "members": [
+              {
+                "name": "阿彬",
+                "role": "周二至周日 11:00–21:30",
+                "bio": "做男士剪发和纹理烫最多，短发利落。染发只做补根，全头染他会转给小满。北京本地，话不多。",
+                "image": {
+                  "keyword": "barber portrait",
+                  "alt": "阿彬"
+                }
+              },
+              {
+                "name": "小满",
+                "role": "周一至周六 11:00–20:00",
+                "bio": "做女士剪发、染发和漂染。发质检测由她做，判断做不了她会直接说不做。周六排得最满，要约她建议提前两天。",
+                "image": {
+                  "keyword": "hair stylist portrait",
+                  "alt": "小满"
+                }
+              },
+              {
+                "name": "老周",
+                "role": "周一至周五 11:00–19:00",
+                "bio": "烫发和护理。带过十几年老客，儿童剪发也是他做得最稳。周末不在店里。",
+                "image": {
+                  "keyword": "senior barber portrait",
+                  "alt": "老周"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "before-you-come",
+          "type": "faq",
+          "style": {
+            "paddingTop": 40,
+            "paddingBottom": 40,
+            "contentWidth": "wide",
+            "alignment": "left",
+            "layout": "default",
+            "cornerRadius": 8,
+            "borderWidth": 0
+          },
+          "layout": {},
+          "content": {
+            "title": "来之前你可能会问的",
+            "subtitle": "把电话里被问得最多的几条写在这儿。",
+            "footnote": "价目自 2026 年 3 月 1 日起执行，涨价会提前一个月贴在门口和这一页上。",
+            "contactLabel": "还有别的问题就打",
+            "contactHref": "tel:01064732210",
+            "items": [
+              {
+                "question": "要不要办卡？",
+                "answer": "不办。本店没有储值卡、没有次卡、没有会员价。剪完付剪的钱。"
+              },
+              {
+                "question": "会不会做着做着加钱？",
+                "answer": "不会。过肩加 20（剪）或加 100（烫染）是唯一一种加价，一定在开工前说，说完你可以走。"
+              },
+              {
+                "question": "不预约能直接来吗？",
+                "answer": "可以。工作日通常等 0 到 20 分钟，周六下午可能等一小时以上。打电话报个大概时间我们给你留位，不收定金。"
+              },
+              {
+                "question": "停车怎么办？",
+                "answer": "门口人行道不能停。南湖东园二区地面停车场在楼后，前一小时 5 元。骑车的话门口有停车架。"
+              },
+              {
+                "question": "剪坏了怎么办？",
+                "answer": "七天之内回来免费修，修不回来的退款。这句话在店里的墙上也贴着。"
+              },
+              {
+                "question": "能带小孩来吗？",
+                "answer": "能。工作日 14:00 前小孩最多，那时候来不用等。店里有加高座椅。"
+              }
+            ],
+            "image": {
+              "keyword": "faq",
+              "alt": "常见问题"
+            }
+          }
+        },
+        {
+          "id": "visit",
+          "type": "contact",
+          "style": {
+            "paddingTop": 40,
+            "paddingBottom": 40,
+            "contentWidth": "wide",
+            "alignment": "left",
+            "layout": "default",
+            "cornerRadius": 8,
+            "borderWidth": 0
+          },
+          "layout": {},
+          "content": {
+            "title": "到店与预约",
+            "subtitle": "营业时间 11:00–21:30，末位接单 20:30，全年只在春节初一到初五休息。约位不收定金，来不了打个电话说一声就行。",
+            "phone": "010-6473 2210",
+            "email": "jindian.wangjing@example.cn",
+            "address": "北京市朝阳区望京南湖东园二区 3 号楼底商，地铁 15 号线望京东站 B 口出站步行 6 分钟",
+            "formTitle": "电话占线时，请留下预约信息",
+            "nameLabel": "怎么称呼你",
+            "phoneLabel": "手机号",
+            "emailLabel": "邮箱（可不填）",
+            "messageLabel": "想做的项目与大概到店时间",
+            "submitLabel": "留下预约信息",
+            "image": {
+              "keyword": "map location",
+              "alt": "位置"
+            }
+          }
+        },
+        {
+          "id": "site-foot",
+          "type": "footer",
+          "style": {
+            "paddingTop": 28,
+            "paddingBottom": 28,
+            "contentWidth": "wide",
+            "alignment": "left",
+            "layout": "default",
+            "cornerRadius": 0,
+            "borderWidth": 0
+          },
+          "layout": {},
+          "content": {
+            "title": "近点理发 · 望京南湖东园店",
+            "description": "三个人的小店，开了六年。价目全部写在这一页，改价会提前一个月公示。",
+            "ctaLabel": "约位电话 010-6473 2210",
+            "ctaHref": "tel:01064732210",
+            "links": [
+              {
+                "label": "按项目看价目",
+                "href": "#by-service"
+              },
+              {
+                "label": "按价位看",
+                "href": "#by-price"
+              },
+              {
+                "label": "按发型师看",
+                "href": "#by-stylist"
+              },
+              {
+                "label": "来之前你可能会问的",
+                "href": "#before-you-come"
+              },
+              {
+                "label": "到店与预约",
+                "href": "#visit"
+              }
+            ],
+            "image": {
+              "keyword": "footer",
+              "alt": "页脚"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "theme": {
+    "radius": "soft",
+    "density": "regular",
+    "headingFont": "sans",
+    "bodyFont": "sans"
+  },
+  "layoutFamily": "restaurant"
+}

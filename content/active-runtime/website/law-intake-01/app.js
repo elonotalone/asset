@@ -24,7 +24,7 @@
     markActive(blocks[0].id);
   }
 
-  // 目录:从内容清单渲染,清单取不到就退回从 DOM 读,两条路都不改正文。
+  // 目录直接从已经渲染的静态正文读取；主动运行闭包不发任何网络请求。
   function renderToc(sections) {
     var main = document.querySelector(".site-main");
     if (!main || !sections.length) return;
@@ -55,20 +55,5 @@
     });
   }
 
-  try {
-    if (typeof fetch === "function") {
-      fetch("content.json")
-        .then(function (r) { return r.json(); })
-        .then(function (doc) {
-          var pages = (doc && doc.pages) || [];
-          var sections = pages.reduce(function (acc, p) { return acc.concat(p.sections || []); }, []);
-          renderToc(sections.length ? sections : fromDom());
-        })
-        .catch(function () { renderToc(fromDom()); });
-    } else {
-      renderToc(fromDom());
-    }
-  } catch (err) {
-    renderToc(fromDom());
-  }
+  renderToc(fromDom());
 })();
