@@ -60,7 +60,12 @@
       "coverNonBlankRatio": 0.9579014756944444,
       "coverColorCount": 15976,
       "coverEntropyBits": 9.700254952471461,
-      "coverDominantColor": [15, 10, 30, 255],
+      "coverDominantColor": [
+        15,
+        10,
+        30,
+        255
+      ],
       "pagePreviewCount": 8,
       "layoutFingerprintPairMinOccupiedDiffPct": 91.9,
       "sharedPaletteColorsWithSiblings": 0
@@ -128,8 +133,13 @@
       "coverByteSize": 25050,
       "coverNonBlankRatio": 0.02572699652777778,
       "coverColorCount": 1476,
-      "coverEntropyBits": 0.39684294195570455,
-      "coverDominantColor": [255, 255, 255, 255],
+      "coverEntropyBits": 0.3968429419557046,
+      "coverDominantColor": [
+        255,
+        255,
+        255,
+        255
+      ],
       "pagePreviewCount": 10,
       "layoutFingerprintPairMinOccupiedDiffPct": 60.3,
       "sharedPaletteColorsWithSiblings": 2,
@@ -195,13 +205,264 @@
       "coverWidth": 1280,
       "coverHeight": 720,
       "coverByteSize": 20960,
-      "coverNonBlankRatio": 0.043494466145833336,
+      "coverNonBlankRatio": 0.043494466145833334,
       "coverColorCount": 1295,
       "coverEntropyBits": 0.4989731361147013,
-      "coverDominantColor": [242, 246, 252, 255],
+      "coverDominantColor": [
+        242,
+        246,
+        252,
+        255
+      ],
       "pagePreviewCount": 9,
       "layoutFingerprintPairMinOccupiedDiffPct": 60.3,
       "sharedPaletteColorsWithSiblings": 2
+    }
+  },
+  {
+    "id": "deck-memphis-01",
+    "artifactType": "deck",
+    "title": "不做盲盒：校园文创「壳与芯」2026 秋季首发",
+    "styleId": "memphis",
+    "summary": "一场校园文创发布会：撞色几何一页一个主张，三件首发、39 元封顶、六周节奏，最后一页是去哪买。配图全部复用平台既有孟菲斯风演示模板里的插画。",
+    "cover": "/works/deck/deck-memphis-01.cover.webp",
+    "view": {
+      "kind": "deck",
+      "src": "/works/deck/deck-memphis-01.pptx",
+      "download": "/works/deck/deck-memphis-01.pptx",
+      "pages": [
+        "/works/deck/pages/deck-memphis-01/01.webp",
+        "/works/deck/pages/deck-memphis-01/02.webp",
+        "/works/deck/pages/deck-memphis-01/03.webp",
+        "/works/deck/pages/deck-memphis-01/04.webp",
+        "/works/deck/pages/deck-memphis-01/05.webp",
+        "/works/deck/pages/deck-memphis-01/06.webp",
+        "/works/deck/pages/deck-memphis-01/07.webp",
+        "/works/deck/pages/deck-memphis-01/08.webp",
+        "/works/deck/pages/deck-memphis-01/09.webp"
+      ],
+      "aspect": 1.7778
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "配图复用自 OceanLeo 平台既有孟菲斯撞色风演示模板（brand-memphis / memphis 两套整页图裁切），第一方素材，usage_scope=standalone",
+        "licenseCode": "OceanLeo-Free-1.0",
+        "licenseUrl": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/ppt/decks/memphis/deck.html"
+      },
+      {
+        "text": "文字与数据为 OceanLeo 第一方原创示例，「壳与芯」为虚构品牌，不指向任何真实商家",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "packRequested": "riso-crimson",
+      "packResolved": "riso-crimson",
+      "sequenceId": "compact-pitch",
+      "slideCount": 9,
+      "distinctLayouts": 6,
+      "denseSlides": 0,
+      "zeroImageSlides": 3,
+      "pictureCount": 6,
+      "chartPartCount": 0,
+      "graphicFrameCount": 0,
+      "slideMasterCount": 1,
+      "slideLayoutCount": 16,
+      "themeCount": 1,
+      "partCount": 85,
+      "averageShapesPerSlide": 8.555555555555555,
+      "maxShapesPerSlide": 20,
+      "hasCustomPropertiesOverride": true,
+      "hasVisibleCreditsBar": true,
+      "creditsLength": 144,
+      "textCharacters": 828,
+      "irBytes": 7872,
+      "byteFloor": 49152,
+      "byteCeiling": 52428800,
+      "pptxByteSize": 1323808,
+      "styleAxes": {
+        "style": "memphis",
+        "scene": "sc-launch",
+        "domain": "dm-retail"
+      },
+      "imageOrigin": "reused-platform-asset",
+      "coverOrigin": "rendered-page-1",
+      "coverRenderPath": "soffice --headless --convert-to pdf → pdftoppm -r 150 → @napi-rs/canvas 重采样 + webp",
+      "coverWidth": 1280,
+      "coverHeight": 720,
+      "coverByteSize": 59822,
+      "coverNonBlankRatio": 0.900718,
+      "coverColorCount": 119534,
+      "pagePreviewCount": 9,
+      "layoutFingerprintDistinctPageSignatures": 7,
+      "layoutFingerprintPairMinDiffPct": 92.3,
+      "layoutFingerprintMaxSharedPageSignatures": 1,
+      "sharedDominantColorsWithSiblings": 1
+    }
+  },
+  {
+    "id": "deck-ukiyo-01",
+    "artifactType": "deck",
+    "title": "浪与山：六个版画语汇，做一张能用的文旅海报",
+    "styleId": "ukiyo",
+    "summary": "90 分钟文旅海报工作坊的讲稿：先看六幅木版画，再拆出「空处是主体」「前景压边」两条规则，课堂练习与评分标准都在页上，最后一页是作业。",
+    "cover": "/works/deck/deck-ukiyo-01.cover.webp",
+    "view": {
+      "kind": "deck",
+      "src": "/works/deck/deck-ukiyo-01.pptx",
+      "download": "/works/deck/deck-ukiyo-01.pptx",
+      "pages": [
+        "/works/deck/pages/deck-ukiyo-01/01.webp",
+        "/works/deck/pages/deck-ukiyo-01/02.webp",
+        "/works/deck/pages/deck-ukiyo-01/03.webp",
+        "/works/deck/pages/deck-ukiyo-01/04.webp",
+        "/works/deck/pages/deck-ukiyo-01/05.webp",
+        "/works/deck/pages/deck-ukiyo-01/06.webp",
+        "/works/deck/pages/deck-ukiyo-01/07.webp",
+        "/works/deck/pages/deck-ukiyo-01/08.webp",
+        "/works/deck/pages/deck-ukiyo-01/09.webp"
+      ],
+      "aspect": 1.7778
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "配图复用自 OceanLeo 平台既有浮世绘和风演示模板（ukiyo / route-ukiyo / artedu-ukiyo 三套整页图裁切），第一方素材，usage_scope=standalone",
+        "licenseCode": "OceanLeo-Free-1.0",
+        "licenseUrl": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/ppt/decks/ukiyo/deck.html"
+      },
+      {
+        "text": "课程文字为 OceanLeo 第一方原创示例",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "packRequested": "sketchbook-amber",
+      "packResolved": "sketchbook-amber",
+      "sequenceId": "teaching-module",
+      "slideCount": 9,
+      "distinctLayouts": 8,
+      "denseSlides": 0,
+      "zeroImageSlides": 4,
+      "pictureCount": 10,
+      "chartPartCount": 0,
+      "graphicFrameCount": 0,
+      "slideMasterCount": 1,
+      "slideLayoutCount": 16,
+      "themeCount": 1,
+      "partCount": 89,
+      "averageShapesPerSlide": 7.111111111111111,
+      "maxShapesPerSlide": 15,
+      "hasCustomPropertiesOverride": true,
+      "hasVisibleCreditsBar": true,
+      "creditsLength": 132,
+      "textCharacters": 1236,
+      "irBytes": 10139,
+      "byteFloor": 49152,
+      "byteCeiling": 52428800,
+      "pptxByteSize": 6627457,
+      "styleAxes": {
+        "style": "ukiyo",
+        "scene": "sc-teaching",
+        "domain": "dm-culture-travel"
+      },
+      "imageOrigin": "reused-platform-asset",
+      "coverOrigin": "rendered-page-1",
+      "coverRenderPath": "soffice --headless --convert-to pdf → pdftoppm -r 150 → @napi-rs/canvas 重采样 + webp",
+      "coverWidth": 1280,
+      "coverHeight": 720,
+      "coverByteSize": 12638,
+      "coverNonBlankRatio": 0.027844,
+      "coverColorCount": 905,
+      "pagePreviewCount": 9,
+      "layoutFingerprintDistinctPageSignatures": 7,
+      "layoutFingerprintPairMinDiffPct": 92.3,
+      "layoutFingerprintMaxSharedPageSignatures": 1,
+      "sharedDominantColorsWithSiblings": 1
+    }
+  },
+  {
+    "id": "deck-pixel-01",
+    "artifactType": "deck",
+    "title": "像素级复盘：把首屏 4.2 秒砍到 1.1 秒的六周",
+    "styleId": "pixel",
+    "summary": "一份对内的迭代复盘：逐周的账全给，包括第 3 周改错缓存回滚两次；六个数、一张趋势图、三个真正吃时间的坑，最后三件事都有人有日期。配图是自己生成后像素化到四色硬边的像素画。",
+    "cover": "/works/deck/deck-pixel-01.cover.webp",
+    "view": {
+      "kind": "deck",
+      "src": "/works/deck/deck-pixel-01.pptx",
+      "download": "/works/deck/deck-pixel-01.pptx",
+      "pages": [
+        "/works/deck/pages/deck-pixel-01/01.webp",
+        "/works/deck/pages/deck-pixel-01/02.webp",
+        "/works/deck/pages/deck-pixel-01/03.webp",
+        "/works/deck/pages/deck-pixel-01/04.webp",
+        "/works/deck/pages/deck-pixel-01/05.webp",
+        "/works/deck/pages/deck-pixel-01/06.webp",
+        "/works/deck/pages/deck-pixel-01/07.webp",
+        "/works/deck/pages/deck-pixel-01/08.webp",
+        "/works/deck/pages/deck-pixel-01/09.webp"
+      ],
+      "aspect": 1.7778
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "配图为 OceanLeo 第一方自行生成的像素画，生成后按 112 格网格量化到四色硬边（无柔边、无渐变），原始生成物随件出厂于 src/gen-raw/",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      },
+      {
+        "text": "文字与数据为 OceanLeo 第一方原创示例，不指向任何真实团队或系统",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "packRequested": null,
+      "packResolved": null,
+      "sequenceId": "data-review",
+      "slideCount": 9,
+      "distinctLayouts": 7,
+      "denseSlides": 1,
+      "zeroImageSlides": 4,
+      "pictureCount": 5,
+      "chartPartCount": 1,
+      "graphicFrameCount": 1,
+      "slideMasterCount": 1,
+      "slideLayoutCount": 16,
+      "themeCount": 1,
+      "partCount": 87,
+      "averageShapesPerSlide": 12.555555555555555,
+      "maxShapesPerSlide": 55,
+      "hasCustomPropertiesOverride": true,
+      "hasVisibleCreditsBar": true,
+      "creditsLength": 135,
+      "textCharacters": 1446,
+      "irBytes": 10625,
+      "byteFloor": 49152,
+      "byteCeiling": 52428800,
+      "pptxByteSize": 61797,
+      "styleAxes": {
+        "style": "pixel",
+        "scene": "sc-review",
+        "domain": "dm-software"
+      },
+      "imageOrigin": "self-generated",
+      "coverOrigin": "rendered-page-1",
+      "coverRenderPath": "soffice --headless --convert-to pdf → pdftoppm -r 150 → @napi-rs/canvas 重采样 + webp",
+      "coverWidth": 1280,
+      "coverHeight": 720,
+      "coverByteSize": 17398,
+      "coverNonBlankRatio": 0.03495,
+      "coverColorCount": 1303,
+      "pagePreviewCount": 9,
+      "layoutFingerprintDistinctPageSignatures": 8,
+      "layoutFingerprintPairMinDiffPct": 92.9,
+      "layoutFingerprintMaxSharedPageSignatures": 1,
+      "sharedDominantColorsWithSiblings": 1
     }
   }
 ]
