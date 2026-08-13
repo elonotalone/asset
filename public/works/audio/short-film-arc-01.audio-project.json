@@ -1,0 +1,91 @@
+{
+  "schema": "oceanleo.audio-project.v1",
+  "version": 1,
+  "title": "三段弧 · 产品短片配乐",
+  "description": "一条从低到高再落定的配乐。铺垫段一个四音动机走一遍，音符间隔很宽；推进段动机连走三遍、间隔逐次收紧，同时一层律动进入、厚度层爬到最响；收束段动机降八度拉长走最后一遍，厚度层先退出，只剩动机收尾。两处转折是台阶式的，不是渐变。中频始终留出旁白的位置。",
+  "master": {
+    "durationMs": 26044,
+    "sampleRateHz": 44100,
+    "channels": 2,
+    "bitrateKbps": 192
+  },
+  "tracks": [
+    {
+      "id": "motif-0",
+      "name": "motif · 1",
+      "role": "harmony",
+      "gainDb": 0,
+      "startMs": 0,
+      "durationMs": 26044,
+      "licenseCode": "CC0"
+    },
+    {
+      "id": "pulse-0",
+      "name": "pulse · 1",
+      "role": "harmony",
+      "gainDb": 0,
+      "startMs": 7000,
+      "durationMs": 14028,
+      "licenseCode": "CC0"
+    },
+    {
+      "id": "bass-0",
+      "name": "bass · 1",
+      "role": "harmony",
+      "gainDb": 0,
+      "startMs": 0,
+      "durationMs": 23040,
+      "licenseCode": "CC0"
+    }
+  ],
+  "markers": [
+    {
+      "atMs": 7000,
+      "label": "进入推进段",
+      "kind": "cue"
+    },
+    {
+      "atMs": 21000,
+      "label": "进入收束段",
+      "kind": "cue"
+    }
+  ],
+  "loudness": {
+    "integratedLufs": -13.1,
+    "truePeakDbtp": -1.3,
+    "loudnessRangeLu": 4.6
+  },
+  "artwork": {
+    "embeddedInId3": true,
+    "sha256": "e0dd594239e3616d3bdada8201f3ce281a85e3b602a6d8998da8a7d88cbb230e",
+    "widthPx": 1400,
+    "heightPx": 1400
+  },
+  "attribution": {
+    "entries": [
+      {
+        "text": "OceanLeo 第一方原创合成 · 动机层",
+        "licenseCode": "CC0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "trackId": "arc-motif"
+      },
+      {
+        "text": "OceanLeo 第一方原创合成 · 律动层",
+        "licenseCode": "CC0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "trackId": "arc-pulse"
+      },
+      {
+        "text": "OceanLeo 第一方原创合成 · 厚度层",
+        "licenseCode": "CC0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "trackId": "arc-bass"
+      },
+      {
+        "text": "OceanLeo 第一方原创，本机程序合成分轨并混音",
+        "licenseCode": "CC0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ]
+  }
+}

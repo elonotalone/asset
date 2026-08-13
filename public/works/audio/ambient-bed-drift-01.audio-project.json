@@ -1,0 +1,91 @@
+{
+  "schema": "oceanleo.audio-project.v1",
+  "version": 1,
+  "title": "无拍点漂移 · 展厅氛围床",
+  "description": "三层持续声叠成的背景氛围：一层低频底鸣，一层中频微微起伏的持续音，一层很薄的高频空气感。全篇没有鼓点、没有旋律、没有任何等间隔事件，三层的起伏周期互不成整数倍，所以听感一直在缓慢漂移而不复位。首尾在同一能量水平上相接，可以无缝循环播放。",
+  "master": {
+    "durationMs": 32026,
+    "sampleRateHz": 44100,
+    "channels": 2,
+    "bitrateKbps": 192
+  },
+  "tracks": [
+    {
+      "id": "low-0",
+      "name": "low · 1",
+      "role": "ambience",
+      "gainDb": 0,
+      "startMs": 0,
+      "durationMs": 32026,
+      "licenseCode": "CC0"
+    },
+    {
+      "id": "mid-0",
+      "name": "mid · 1",
+      "role": "ambience",
+      "gainDb": 0,
+      "startMs": 0,
+      "durationMs": 32026,
+      "licenseCode": "CC0"
+    },
+    {
+      "id": "air-0",
+      "name": "air · 1",
+      "role": "ambience",
+      "gainDb": 0,
+      "startMs": 0,
+      "durationMs": 32026,
+      "licenseCode": "CC0"
+    }
+  ],
+  "markers": [
+    {
+      "atMs": 0,
+      "label": "loop-in 循环入点",
+      "kind": "cue"
+    },
+    {
+      "atMs": 32000,
+      "label": "loop-out 循环出点",
+      "kind": "cue"
+    }
+  ],
+  "loudness": {
+    "integratedLufs": -20.4,
+    "truePeakDbtp": -10.3,
+    "loudnessRangeLu": 2.9
+  },
+  "artwork": {
+    "embeddedInId3": true,
+    "sha256": "e24ad088d742eff970451efd3a33bff9b0ef60aa609e260271efbf19ff924a11",
+    "widthPx": 1400,
+    "heightPx": 1400
+  },
+  "attribution": {
+    "entries": [
+      {
+        "text": "OceanLeo 第一方原创合成 · 低频底鸣层",
+        "licenseCode": "CC0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "trackId": "bed-low"
+      },
+      {
+        "text": "OceanLeo 第一方原创合成 · 中频持续层",
+        "licenseCode": "CC0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "trackId": "bed-mid"
+      },
+      {
+        "text": "OceanLeo 第一方原创合成 · 高频空气层",
+        "licenseCode": "CC0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "trackId": "bed-air"
+      },
+      {
+        "text": "OceanLeo 第一方原创，本机程序合成分轨并混音",
+        "licenseCode": "CC0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ]
+  }
+}

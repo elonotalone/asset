@@ -1,0 +1,94 @@
+{
+  "schema": "oceanleo.audio-project.v1",
+  "version": 1,
+  "title": "干净瞬态 · 界面反馈音组",
+  "description": "四声互不等距的一次性界面提示音。按下是一记极短的中高频点；确认是同一音色向上滑的短音；出错是同一条滑音掉头向下、亮度更暗；切换是一记更短更脆的点。四声之间是完全静音，全篇没有混响、没有节拍、没有旋律，低频整段留空。",
+  "master": {
+    "durationMs": 4206,
+    "sampleRateHz": 44100,
+    "channels": 2,
+    "bitrateKbps": 128
+  },
+  "tracks": [
+    {
+      "id": "press-0",
+      "name": "press · 1",
+      "role": "fx",
+      "gainDb": 0,
+      "startMs": 0,
+      "durationMs": 209,
+      "licenseCode": "CC0"
+    },
+    {
+      "id": "success-0",
+      "name": "success · 1",
+      "role": "fx",
+      "gainDb": 0,
+      "startMs": 1150,
+      "durationMs": 340,
+      "licenseCode": "CC0"
+    },
+    {
+      "id": "failure-0",
+      "name": "failure · 1",
+      "role": "fx",
+      "gainDb": 0,
+      "startMs": 2470,
+      "durationMs": 340,
+      "licenseCode": "CC0"
+    },
+    {
+      "id": "toggle-0",
+      "name": "toggle · 1",
+      "role": "fx",
+      "gainDb": 0,
+      "startMs": 4030,
+      "durationMs": 157,
+      "licenseCode": "CC0"
+    }
+  ],
+  "loudness": {
+    "integratedLufs": -13.9,
+    "truePeakDbtp": -1.9,
+    "loudnessRangeLu": 0.6
+  },
+  "artwork": {
+    "embeddedInId3": true,
+    "sha256": "1a9c2135b9f0cc63a98531f53c5e262ed82f8470bd169bfca3abc555c476d9f4",
+    "widthPx": 1400,
+    "heightPx": 1400
+  },
+  "attribution": {
+    "entries": [
+      {
+        "text": "OceanLeo 第一方原创合成 · 按下",
+        "licenseCode": "CC0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "trackId": "ui-press"
+      },
+      {
+        "text": "OceanLeo 第一方原创合成 · 确认",
+        "licenseCode": "CC0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "trackId": "ui-success"
+      },
+      {
+        "text": "OceanLeo 第一方原创合成 · 出错",
+        "licenseCode": "CC0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "trackId": "ui-failure"
+      },
+      {
+        "text": "OceanLeo 第一方原创合成 · 切换",
+        "licenseCode": "CC0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "trackId": "ui-toggle"
+      },
+      {
+        "text": "OceanLeo 第一方原创，本机程序合成分轨并混音",
+        "licenseCode": "CC0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ]
+  }
+}
