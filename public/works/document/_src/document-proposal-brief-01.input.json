@@ -1,0 +1,83 @@
+{
+  "tool": "doc-docx",
+  "version": 1,
+  "meta": {
+    "title": "连锁餐饮后厨能耗托管服务提案（示例稿）",
+    "summary": "按提案速览体排的一份对外方案：单栏加宽批注栏，每节固定「一句话主张 + 三到五条并列要点」，配一幅半栏结构示意图。",
+    "creator": "OceanLeo",
+    "usage_scope": "first-party",
+    "license_family": "CC0",
+    "supply_tier": "original"
+  },
+  "media": [
+    { "id": "kitchen-structure", "path": "media/kitchen-energy-structure.png", "mediaType": "image/png" }
+  ],
+  "body": {
+    "blocks": [
+      { "kind": "heading", "level": 1, "text": "连锁餐饮后厨能耗托管服务提案（示例稿）" },
+      { "kind": "paragraph", "text": "提交对象：区域连锁餐饮运营负责人。本提案的每一节都可以单独读，页边留白供批注。全部数据为演示数据。" },
+
+      { "kind": "heading", "level": 2, "text": "为什么后厨的电费降不下来" },
+      { "kind": "paragraph", "text": "后厨的电费之所以年年上涨而无人能说清涨在哪里，是因为整店只有一块总表，没有任何一笔支出可以被归到具体设备上。" },
+      { "kind": "bullet", "text": "一张电费单只有一个数字，无法回答「冷柜和排烟哪个更费」这类最基本的问题。", "marker": "▸" },
+      { "kind": "bullet", "text": "店长的节能动作只能靠经验，做了也看不出效果，两个月后自然放弃。", "marker": "▸" },
+      { "kind": "bullet", "text": "总部想比较门店之间的能耗水平，只能用「每平方米电费」这种被营业时长和菜品结构污染的指标。", "marker": "▸" },
+      { "kind": "bullet", "text": "设备老化是渐进的，没有分项数据时，压缩机效率下降三成也不会触发任何人的注意。", "marker": "▸" },
+
+      { "kind": "heading", "level": 2, "text": "托管服务做的是三件事，不是卖设备" },
+      { "kind": "paragraph", "text": "本方案不以设备采购为前提，它先让能耗可见，再动运行时序，只有在回收期算得过来时才谈更换。" },
+      { "kind": "image", "assetId": "kitchen-structure", "widthPx": 1200, "heightPx": 710, "name": "后厨能耗托管的三段结构" },
+      { "kind": "paragraph", "text": "上图三列自左向右是：用能环节、托管动作、结算方式。三列一一对应，任何一列单独成立都不构成服务。" },
+      { "kind": "bullet", "text": "分项计量：冷藏冷冻、蒸煮炒制、排烟新风、照明与其他，四路独立上表，数据按小时回传。", "marker": "▸" },
+      { "kind": "bullet", "text": "时序调度：非营业时段按预设曲线降载，冷柜在电价低谷时段预冷，排烟随灶头启停联动。", "marker": "▸" },
+      { "kind": "bullet", "text": "设备替换：只更换在演示口径下回收期短于三年的设备，其余维持原状并记录劣化趋势。", "marker": "▸" },
+
+      { "kind": "heading", "level": 2, "text": "钱怎么算" },
+      { "kind": "paragraph", "text": "服务不收固定费用，按实际节省额分成，门店在任何一个考核年度都不承担现金支出增加的风险。" },
+      { "kind": "bullet", "text": "基线取托管前连续 12 个月的同期能耗，按营业时长与气温做两项校正，校正方法在附件中写死，不逐期协商。", "marker": "▸" },
+      { "kind": "bullet", "text": "分成比例在演示口径下取节省额的四成，服务期五年，期满后计量设备产权无偿转移给门店。", "marker": "▸" },
+      { "kind": "bullet", "text": "营业时长发生结构性变动（如全天营业改为分时段）时重算基线；更换菜单或调整客单价不重算。", "marker": "▸" },
+      { "kind": "bullet", "text": "任一考核年度节省额未达到承诺值的七成，门店可单方终止且不承担违约金。", "marker": "▸" },
+
+      { "kind": "heading", "level": 2, "text": "先做一家店，再谈全区" },
+      { "kind": "paragraph", "text": "建议以单店试点起步，用三个月拿到可核对的分项数据，再决定是否推广，而不是先签框架协议。" },
+      { "kind": "bullet", "text": "试点店的选择标准是「营业时长稳定、设备构成典型」，不选能耗最高的那家——那家的节省空间不具代表性。", "marker": "▸" },
+      { "kind": "bullet", "text": "第一个月只装表不做任何调度动作，这一个月的数据就是基线校验，也是双方建立信任的凭据。", "marker": "▸" },
+      { "kind": "bullet", "text": "第二、三个月逐项开启调度，每开一项单独记录效果，避免几项叠加后说不清是哪一项起了作用。", "marker": "▸" },
+      { "kind": "bullet", "text": "三个月结束时给出一份可核对的账：省了多少度、折合多少钱、哪一项贡献最大。", "marker": "▸" },
+
+      { "kind": "heading", "level": 2, "text": "需要门店配合的三件事" },
+      { "kind": "paragraph", "text": "本方案对门店日常经营的干扰被控制在最小，但有三件事必须门店配合，否则服务无法成立。" },
+      { "kind": "bullet", "text": "一次停电两小时的装表窗口，可安排在闭店后进行。", "marker": "▸" },
+      { "kind": "bullet", "text": "指定一名店内联系人，负责确认每月的能耗账单与异常告警，每月约需半小时。", "marker": "▸" },
+      { "kind": "bullet", "text": "允许在非营业时段按调度曲线运行设备，出现影响出品的情况时随时可以人工接管。", "marker": "▸" },
+
+      { "kind": "paragraph", "text": "（本件为 OceanLeo 第一方原创示例文档，示意图为本件自绘，全部数字为演示数据，不构成任何商业报价。）" }
+    ],
+    "layout": {
+      "page": "a4",
+      "margins": { "top": 20, "right": 18, "bottom": 22, "left": 34 },
+      "columns": 1,
+      "lineSpacing": "loose",
+      "figure": { "width": "half", "align": "left" }
+    },
+    "theme": {
+      "fonts": {
+        "latin": "DejaVu Serif",
+        "eastAsia": "Noto Serif CJK SC",
+        "heading": "DejaVu Sans",
+        "headingEastAsia": "Noto Sans CJK SC"
+      },
+      "headingScale": "normal",
+      "bodySize": "normal"
+    },
+    "palette": {
+      "accent": "#0E7490",
+      "heading2": "#0E7490",
+      "heading3": "#3B6E7A",
+      "body": "#1A2426",
+      "rule": "#BFD8DE",
+      "tableHeaderFill": "#E6F1F4"
+    }
+  }
+}

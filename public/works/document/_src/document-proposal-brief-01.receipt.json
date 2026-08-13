@@ -1,0 +1,184 @@
+{
+  "ok": true,
+  "tool": "doc-docx",
+  "toolVersion": 1,
+  "out": "/root/projects/asset/public/works/document/document-proposal-brief-01.docx",
+  "outputs": [
+    {
+      "path": "/root/projects/asset/public/works/document/document-proposal-brief-01.docx",
+      "byteSize": 142282,
+      "sha256": "039bc454917c8586fd6f1d5ab2c9c76eda3989f577e798bb474b5f70e4e4e940"
+    }
+  ],
+  "readings": {
+    "partCount": 12,
+    "sectionCount": 33,
+    "pictureCount": 1,
+    "chartPartCount": 0,
+    "parts": [
+      "[Content_Types].xml",
+      "_rels/.rels",
+      "docProps/app.xml",
+      "docProps/core.xml",
+      "docProps/custom.xml",
+      "word/_rels/document.xml.rels",
+      "word/document.xml",
+      "word/fontTable.xml",
+      "word/media/image1.png",
+      "word/settings.xml",
+      "word/styles.xml",
+      "word/theme/theme1.xml"
+    ],
+    "layout": {
+      "source": "input",
+      "axesFromInput": [
+        "body.palette",
+        "layout.columns",
+        "layout.figure",
+        "layout.lineSpacing",
+        "layout.margins",
+        "layout.page",
+        "theme.bodySize",
+        "theme.fonts",
+        "theme.headingScale"
+      ],
+      "derivedFrom": "writer-layout-model",
+      "derivedNote": "几何是写出器版面模型按字号/字宽常量算出来的声明值,不是渲染实测(工具不许起浏览器)。独立复核以 V2 的量法为准。",
+      "page": {
+        "id": "a4",
+        "orientation": "portrait",
+        "widthTwip": 11906,
+        "heightTwip": 16838
+      },
+      "marginsTwip": {
+        "top": 1134,
+        "bottom": 1247,
+        "right": 1021,
+        "left": 1928,
+        "header": 567,
+        "footer": 624
+      },
+      "contentWidthTwip": 8957,
+      "contentHeightTwip": 14457,
+      "columns": 1,
+      "columnSpacingTwip": 425,
+      "columnWidthTwip": 8957,
+      "lineSpacing": "loose",
+      "lineTwip": 360,
+      "paragraphAfterTwip": 200,
+      "headingScale": "normal",
+      "bodySize": "normal",
+      "fontSizesHalfPoint": {
+        "h1": 36,
+        "h2": 28,
+        "h3": 24,
+        "body": 21
+      },
+      "fonts": {
+        "latin": "DejaVu Serif",
+        "eastAsia": "Noto Serif CJK SC",
+        "heading": "DejaVu Sans",
+        "headingEastAsia": "Noto Sans CJK SC"
+      },
+      "figure": {
+        "widthRatio": 0.5,
+        "align": "left"
+      },
+      "palette": [
+        "0E7490",
+        "1A2426",
+        "3B6E7A",
+        "BFD8DE",
+        "E6F1F4"
+      ],
+      "paletteBySlot": {
+        "accent": "0E7490",
+        "heading2": "0E7490",
+        "heading3": "3B6E7A",
+        "body": "1A2426",
+        "tableHeaderFill": "E6F1F4",
+        "rule": "BFD8DE"
+      },
+      "pageCount": 2,
+      "mainBlockCount": 6,
+      "mainBlocks": [
+        {
+          "kind": "section",
+          "pageIndex": 0,
+          "column": 0,
+          "x": 0.1619,
+          "y": 0.1737,
+          "w": 0.7523,
+          "h": 0.2367,
+          "areaRatio": 0.178
+        },
+        {
+          "kind": "image",
+          "pageIndex": 0,
+          "column": 0,
+          "x": 0.1619,
+          "y": 0.5059,
+          "w": 0.7523,
+          "h": 0.1696,
+          "areaRatio": 0.1276
+        },
+        {
+          "kind": "section",
+          "pageIndex": 0,
+          "column": 0,
+          "x": 0.1619,
+          "y": 0.6755,
+          "w": 0.7523,
+          "h": 0.1598,
+          "areaRatio": 0.1202
+        },
+        {
+          "kind": "section",
+          "pageIndex": 1,
+          "column": 0,
+          "x": 0.1619,
+          "y": 0.0673,
+          "w": 0.7523,
+          "h": 0.1834,
+          "areaRatio": 0.138
+        },
+        {
+          "kind": "section",
+          "pageIndex": 1,
+          "column": 0,
+          "x": 0.1619,
+          "y": 0.2507,
+          "w": 0.7523,
+          "h": 0.2741,
+          "areaRatio": 0.2062
+        },
+        {
+          "kind": "section",
+          "pageIndex": 1,
+          "column": 0,
+          "x": 0.1619,
+          "y": 0.5248,
+          "w": 0.7523,
+          "h": 0.218,
+          "areaRatio": 0.164
+        }
+      ],
+      "fingerprint": "f2343b36ba5f49c1",
+      "fingerprintByThreshold": {
+        "6": "04a77b6b50ecd319",
+        "7": "32457b521b6dacae",
+        "8": "f2343b36ba5f49c1",
+        "9": "f2343b36ba5f49c1",
+        "10": "f2343b36ba5f49c1"
+      }
+    },
+    "license": {
+      "usage_scope": "first-party",
+      "license_family": "CC0",
+      "supply_tier": "original"
+    }
+  },
+  "writer": "assemblers/ooxml/write-docx.mjs",
+  "writerVersion": null,
+  "notes": []
+}
