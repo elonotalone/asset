@@ -22,7 +22,8 @@
                   "dataType": "text"
                 }
               ]
-            }
+            },
+            "assetId": "input-sample-bug"
           },
           {
             "id": "n-enrich",
@@ -118,7 +119,8 @@
               "timeoutMs": 500,
               "policy": "fail-closed",
               "templateRef": "workflow/exclusive-triage-v1"
-            }
+            },
+            "assetId": "rule-basis-checklist"
           },
           {
             "id": "n-auto-reply",
@@ -325,7 +327,8 @@
               "strategy": "archive",
               "timeoutMs": 5000,
               "policy": "record-only"
-            }
+            },
+            "assetId": "output-example-hard-cut"
           }
         ],
         "edges": [
@@ -520,9 +523,49 @@
       }
     }
   ],
-  "assets": [],
+  "assets": [
+    {
+      "id": "input-sample-bug",
+      "sha256": "2c437577b5f604653b52eb30581eb65215d035a35673ff51378cea3b51c57fa9",
+      "mediaType": "image/png",
+      "byteSize": 3728,
+      "licenseCode": "CC0-1.0"
+    },
+    {
+      "id": "rule-basis-checklist",
+      "sha256": "77afb59034760c1a054fd2b7f572ff159cf75853f328297120ed67b10b715764",
+      "mediaType": "image/png",
+      "byteSize": 4079,
+      "licenseCode": "CC0-1.0"
+    },
+    {
+      "id": "output-example-hard-cut",
+      "sha256": "2e76cdb372b890e041f2b7a537d178a52938a46c2a4be03dc7c33c38da10197f",
+      "mediaType": "video/mp4",
+      "byteSize": 98291,
+      "licenseCode": "CC0-1.0"
+    }
+  ],
   "attribution": {
     "entries": [
+      {
+        "text": "输入样例 bug.png — OceanLeo 第一方生成并像素化，复用自 deck-pixel-01",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "assetId": "input-sample-bug"
+      },
+      {
+        "text": "规则依据 checklist.png — OceanLeo 第一方生成并像素化，复用自 deck-pixel-01",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "assetId": "rule-basis-checklist"
+      },
+      {
+        "text": "输出示例 hard-cut-caption-14s-01.mp4 — OceanLeo 第一方逐帧程序绘制并编码",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "assetId": "output-example-hard-cut"
+      },
       {
         "text": "OceanLeo 第一方原创流程",
         "licenseCode": "CC0-1.0",

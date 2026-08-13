@@ -125,6 +125,24 @@
     "downloadable": true,
     "attribution": [
       {
+        "text": "输入样例 bug.png — OceanLeo 第一方生成并像素化，复用自 deck-pixel-01",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "assetId": "input-sample-bug"
+      },
+      {
+        "text": "规则依据 checklist.png — OceanLeo 第一方生成并像素化，复用自 deck-pixel-01",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "assetId": "rule-basis-checklist"
+      },
+      {
+        "text": "输出示例 hard-cut-caption-14s-01.mp4 — OceanLeo 第一方逐帧程序绘制并编码",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "assetId": "output-example-hard-cut"
+      },
+      {
         "text": "OceanLeo 第一方原创流程",
         "licenseCode": "CC0-1.0",
         "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
@@ -147,8 +165,8 @@
       "clipCount": 12,
       "layerCount": 5,
       "durationMs": 30000,
-      "sourceBytes": 14281,
-      "canonicalByteSize": 6598,
+      "sourceBytes": 15919,
+      "canonicalByteSize": 7879,
       "paramsNodeCount": 8,
       "paramKeys": [
         "approvalRequired",
@@ -183,7 +201,59 @@
         "#B3261E"
       ],
       "coverColorCount": 1113,
-      "coverBytes": 88653
+      "coverBytes": 88653,
+      "carrierSchemaPassed": true,
+      "assetCount": 3,
+      "assetReferenceNodeCount": 3,
+      "referencedAssetCount": 3,
+      "missingAssetReferenceCount": 0,
+      "unreferencedAssetCount": 0,
+      "duplicateAssetIdCount": 0,
+      "dependencyClosureBytes": 106098,
+      "closureHasVideoOrAudio": true,
+      "assets": [
+        {
+          "id": "input-sample-bug",
+          "role": "输入样例",
+          "mediaType": "image/png",
+          "byteSize": 3728,
+          "sha256": "2c437577b5f604653b52eb30581eb65215d035a35673ff51378cea3b51c57fa9",
+          "licenseCode": "CC0-1.0",
+          "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+        },
+        {
+          "id": "rule-basis-checklist",
+          "role": "规则依据",
+          "mediaType": "image/png",
+          "byteSize": 4079,
+          "sha256": "77afb59034760c1a054fd2b7f572ff159cf75853f328297120ed67b10b715764",
+          "licenseCode": "CC0-1.0",
+          "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+        },
+        {
+          "id": "output-example-hard-cut",
+          "role": "输出示例",
+          "mediaType": "video/mp4",
+          "byteSize": 98291,
+          "sha256": "2e76cdb372b890e041f2b7a537d178a52938a46c2a4be03dc7c33c38da10197f",
+          "licenseCode": "CC0-1.0",
+          "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+        }
+      ],
+      "assetBindings": [
+        {
+          "nodeId": "n-intake",
+          "assetId": "input-sample-bug"
+        },
+        {
+          "nodeId": "n-triage",
+          "assetId": "rule-basis-checklist"
+        },
+        {
+          "nodeId": "n-close",
+          "assetId": "output-example-hard-cut"
+        }
+      ]
     }
   },
   {
@@ -200,6 +270,24 @@
     },
     "downloadable": true,
     "attribution": [
+      {
+        "text": "输入样例 bug.png — OceanLeo 第一方生成并像素化，复用自 deck-pixel-01",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "assetId": "input-sample-bug"
+      },
+      {
+        "text": "规则依据 checklist.png — OceanLeo 第一方生成并像素化，复用自 deck-pixel-01",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "assetId": "rule-basis-checklist"
+      },
+      {
+        "text": "输出示例 hard-cut-caption-14s-01.mp4 — OceanLeo 第一方逐帧程序绘制并编码",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "assetId": "output-example-hard-cut"
+      },
       {
         "text": "OceanLeo 第一方原创流程",
         "licenseCode": "CC0-1.0",
@@ -223,8 +311,8 @@
       "clipCount": 12,
       "layerCount": 2,
       "durationMs": 36000,
-      "sourceBytes": 13552,
-      "canonicalByteSize": 6334,
+      "sourceBytes": 15190,
+      "canonicalByteSize": 7615,
       "paramsNodeCount": 6,
       "paramKeys": [
         "approvalRequired",
@@ -259,7 +347,59 @@
         "#FF8A65"
       ],
       "coverColorCount": 1005,
-      "coverBytes": 69053
+      "coverBytes": 69053,
+      "carrierSchemaPassed": true,
+      "assetCount": 3,
+      "assetReferenceNodeCount": 3,
+      "referencedAssetCount": 3,
+      "missingAssetReferenceCount": 0,
+      "unreferencedAssetCount": 0,
+      "duplicateAssetIdCount": 0,
+      "dependencyClosureBytes": 106098,
+      "closureHasVideoOrAudio": true,
+      "assets": [
+        {
+          "id": "input-sample-bug",
+          "role": "输入样例",
+          "mediaType": "image/png",
+          "byteSize": 3728,
+          "sha256": "2c437577b5f604653b52eb30581eb65215d035a35673ff51378cea3b51c57fa9",
+          "licenseCode": "CC0-1.0",
+          "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+        },
+        {
+          "id": "rule-basis-checklist",
+          "role": "规则依据",
+          "mediaType": "image/png",
+          "byteSize": 4079,
+          "sha256": "77afb59034760c1a054fd2b7f572ff159cf75853f328297120ed67b10b715764",
+          "licenseCode": "CC0-1.0",
+          "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+        },
+        {
+          "id": "output-example-hard-cut",
+          "role": "输出示例",
+          "mediaType": "video/mp4",
+          "byteSize": 98291,
+          "sha256": "2e76cdb372b890e041f2b7a537d178a52938a46c2a4be03dc7c33c38da10197f",
+          "licenseCode": "CC0-1.0",
+          "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+        }
+      ],
+      "assetBindings": [
+        {
+          "nodeId": "n-draft",
+          "assetId": "input-sample-bug"
+        },
+        {
+          "nodeId": "n-review",
+          "assetId": "rule-basis-checklist"
+        },
+        {
+          "nodeId": "n-archive",
+          "assetId": "output-example-hard-cut"
+        }
+      ]
     }
   },
   {
@@ -276,6 +416,24 @@
     },
     "downloadable": true,
     "attribution": [
+      {
+        "text": "输入样例 bug.png — OceanLeo 第一方生成并像素化，复用自 deck-pixel-01",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "assetId": "input-sample-bug"
+      },
+      {
+        "text": "规则依据 checklist.png — OceanLeo 第一方生成并像素化，复用自 deck-pixel-01",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "assetId": "rule-basis-checklist"
+      },
+      {
+        "text": "输出示例 hard-cut-caption-14s-01.mp4 — OceanLeo 第一方逐帧程序绘制并编码",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "assetId": "output-example-hard-cut"
+      },
       {
         "text": "OceanLeo 第一方原创流程",
         "licenseCode": "CC0-1.0",
@@ -299,8 +457,8 @@
       "clipCount": 12,
       "layerCount": 4,
       "durationMs": 27000,
-      "sourceBytes": 13630,
-      "canonicalByteSize": 6477,
+      "sourceBytes": 15268,
+      "canonicalByteSize": 7758,
       "paramsNodeCount": 12,
       "paramKeys": [
         "field",
@@ -331,7 +489,59 @@
         "#C74632"
       ],
       "coverColorCount": 992,
-      "coverBytes": 77433
+      "coverBytes": 77433,
+      "carrierSchemaPassed": true,
+      "assetCount": 3,
+      "assetReferenceNodeCount": 3,
+      "referencedAssetCount": 3,
+      "missingAssetReferenceCount": 0,
+      "unreferencedAssetCount": 0,
+      "duplicateAssetIdCount": 0,
+      "dependencyClosureBytes": 106098,
+      "closureHasVideoOrAudio": true,
+      "assets": [
+        {
+          "id": "input-sample-bug",
+          "role": "输入样例",
+          "mediaType": "image/png",
+          "byteSize": 3728,
+          "sha256": "2c437577b5f604653b52eb30581eb65215d035a35673ff51378cea3b51c57fa9",
+          "licenseCode": "CC0-1.0",
+          "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+        },
+        {
+          "id": "rule-basis-checklist",
+          "role": "规则依据",
+          "mediaType": "image/png",
+          "byteSize": 4079,
+          "sha256": "77afb59034760c1a054fd2b7f572ff159cf75853f328297120ed67b10b715764",
+          "licenseCode": "CC0-1.0",
+          "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+        },
+        {
+          "id": "output-example-hard-cut",
+          "role": "输出示例",
+          "mediaType": "video/mp4",
+          "byteSize": 98291,
+          "sha256": "2e76cdb372b890e041f2b7a537d178a52938a46c2a4be03dc7c33c38da10197f",
+          "licenseCode": "CC0-1.0",
+          "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+        }
+      ],
+      "assetBindings": [
+        {
+          "nodeId": "n-src-ticket",
+          "assetId": "input-sample-bug"
+        },
+        {
+          "nodeId": "n-align",
+          "assetId": "rule-basis-checklist"
+        },
+        {
+          "nodeId": "n-out",
+          "assetId": "output-example-hard-cut"
+        }
+      ]
     }
   }
 ]

@@ -18,7 +18,9 @@
       "label": "草稿 · 作者手上",
       "kind": "source",
       "x": 56,
-      "y": 172
+      "y": 172,
+      "assetId": "input-sample-bug",
+      "assetRole": "输入样例：带缺陷的来件，用来演示流程接收的原始对象"
     },
     {
       "id": "n-submitted",
@@ -46,7 +48,9 @@
         "timeoutMs": 28800000,
         "policy": "require-human",
         "templateRef": "workflow/editorial-review-v1"
-      }
+      },
+      "assetId": "rule-basis-checklist",
+      "assetRole": "规则依据：检查清单，用来说明分支或合并节点按什么判定"
     },
     {
       "id": "n-withdrawn",
@@ -126,7 +130,9 @@
         "strategy": "archive",
         "timeoutMs": 5000,
         "policy": "record-only"
-      }
+      },
+      "assetId": "output-example-hard-cut",
+      "assetRole": "输出示例：14 秒硬切字幕成片，用来说明输出节点交付的可播放结果"
     }
   ],
   "edges": [
