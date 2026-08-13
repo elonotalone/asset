@@ -1,0 +1,318 @@
+{
+  "schema": "oceanleo.chart.v1",
+  "version": 1,
+  "title": "单位产品成本构成两期对照（2025 全年 vs 2026 上半年）",
+  "dataset": {
+    "dimensions": [
+      {
+        "name": "成本项",
+        "type": "ordinal"
+      },
+      {
+        "name": "2025 年全年",
+        "type": "number"
+      },
+      {
+        "name": "2026 年上半年",
+        "type": "number"
+      }
+    ],
+    "source": [
+      [
+        "原材料",
+        118.4,
+        121.65
+      ],
+      [
+        "外协加工",
+        34.2,
+        31.8
+      ],
+      [
+        "直接人工",
+        26.5,
+        27.9
+      ],
+      [
+        "能源动力",
+        22.8,
+        17.35
+      ],
+      [
+        "设备折旧",
+        15.6,
+        15.6
+      ],
+      [
+        "质量损失",
+        6.9,
+        8.45
+      ],
+      [
+        "其他",
+        4.3,
+        4.05
+      ]
+    ]
+  },
+  "option": {
+    "color": [
+      "#1F6FEB",
+      "#C47323",
+      "#2E8B6F",
+      "#8E5BA6",
+      "#CF222E",
+      "#57606A",
+      "#0A7EA4",
+      "#B45309"
+    ],
+    "title": {
+      "text": "单位产品成本构成两期对照（2025 全年 vs 2026 上半年）",
+      "subtext": "口径：完全成本法，单位 元/件；2025 全年合计 228.70 元/件，2026 上半年合计 226.80 元/件。长尾已在数据侧并入「其他」，图上不做省略。数值为合成的示例数据。",
+      "textStyle": {
+        "color": "#1F2328",
+        "fontSize": 18,
+        "fontWeight": "bold"
+      },
+      "subtextStyle": {
+        "color": "#57606A",
+        "fontSize": 13
+      }
+    },
+    "grid": {
+      "left": 64,
+      "right": 32,
+      "top": 56,
+      "bottom": 56,
+      "containLabel": true
+    },
+    "xAxis": {
+      "type": "category",
+      "name": "成本项",
+      "axisLabel": {
+        "color": "#57606A",
+        "fontSize": 12
+      },
+      "axisLine": {
+        "lineStyle": {
+          "color": "#B8C2CC"
+        }
+      }
+    },
+    "yAxis": {
+      "type": "value",
+      "name": "单位成本（元/件）",
+      "min": 0,
+      "max": 125,
+      "interval": 25,
+      "axisLabel": {
+        "color": "#57606A",
+        "fontSize": 12
+      },
+      "axisLine": {
+        "lineStyle": {
+          "color": "#B8C2CC"
+        }
+      },
+      "splitLine": {
+        "lineStyle": {
+          "color": "#E6EAF0",
+          "type": "dashed"
+        }
+      }
+    },
+    "series": [
+      {
+        "type": "bar",
+        "name": "2025 年全年",
+        "encode": {
+          "x": "成本项",
+          "y": "2025 年全年"
+        },
+        "symbol": "circle",
+        "itemStyle": {
+          "color": "#1F6FEB"
+        },
+        "decal": {
+          "symbol": "rect",
+          "dashArrayX": [
+            1,
+            0
+          ],
+          "dashArrayY": [
+            2,
+            5
+          ],
+          "rotation": 0.5236
+        }
+      },
+      {
+        "type": "bar",
+        "name": "2026 年上半年",
+        "encode": {
+          "x": "成本项",
+          "y": "2026 年上半年"
+        },
+        "symbol": "rect",
+        "itemStyle": {
+          "color": "#C47323"
+        },
+        "decal": {
+          "symbol": "circle",
+          "dashArrayX": [
+            [
+              8,
+              8
+            ],
+            [
+              0,
+              8,
+              8,
+              0
+            ]
+          ],
+          "dashArrayY": [
+            6,
+            0
+          ],
+          "rotation": 0
+        }
+      }
+    ],
+    "legend": {
+      "data": [
+        "2025 年全年",
+        "2026 年上半年"
+      ],
+      "bottom": 8,
+      "textStyle": {
+        "color": "#57606A",
+        "fontSize": 12
+      }
+    },
+    "tooltip": {
+      "trigger": "axis",
+      "axisPointer": {
+        "type": "shadow"
+      }
+    },
+    "aria": {
+      "enabled": true,
+      "decal": {
+        "show": true,
+        "decals": [
+          {
+            "symbol": "rect",
+            "dashArrayX": [
+              1,
+              0
+            ],
+            "dashArrayY": [
+              2,
+              5
+            ],
+            "rotation": 0.5236
+          },
+          {
+            "symbol": "circle",
+            "dashArrayX": [
+              [
+                8,
+                8
+              ],
+              [
+                0,
+                8,
+                8,
+                0
+              ]
+            ],
+            "dashArrayY": [
+              6,
+              0
+            ],
+            "rotation": 0
+          },
+          {
+            "symbol": "line",
+            "dashArrayX": [
+              1,
+              0
+            ],
+            "dashArrayY": [
+              4,
+              3
+            ],
+            "rotation": -0.7854
+          },
+          {
+            "symbol": "rect",
+            "dashArrayX": [
+              [
+                6,
+                6
+              ],
+              [
+                0,
+                6,
+                6,
+                0
+              ]
+            ],
+            "dashArrayY": [
+              6,
+              0
+            ],
+            "rotation": 0.7854
+          },
+          {
+            "symbol": "triangle",
+            "dashArrayX": [
+              1,
+              0
+            ],
+            "dashArrayY": [
+              3,
+              4
+            ],
+            "rotation": 0
+          },
+          {
+            "symbol": "line",
+            "dashArrayX": [
+              1,
+              0
+            ],
+            "dashArrayY": [
+              5,
+              2
+            ],
+            "rotation": 1.5708
+          }
+        ]
+      }
+    }
+  },
+  "indicators": [
+    {
+      "key": "y2025",
+      "label": "2025 年全年"
+    },
+    {
+      "key": "y2026h1",
+      "label": "2026 年上半年"
+    }
+  ],
+  "narrative": {
+    "takeaway": "2026 上半年单位成本 226.80 元/件，其中原材料一项占 53.6%，前三项合计占 80.0% —— 其余四项加起来还不到两成，改善动作放在它们身上不会有结果。唯一显著下降的是能源动力（22.80 → 17.35 元/件，−23.9%，余热回收 2025Q4 投用）；而质量损失反升 22.5%，吃掉了节能收益的 28%。下一轮改善应对准质量损失，继续压能耗的边际收益已经很薄。"
+  },
+  "attribution": {
+    "entries": [
+      {
+        "text": "OceanLeo 第一方原创；表内数值为合成的示例数据，量纲与勾稽关系按行业常识设定",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ]
+  }
+}
