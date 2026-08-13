@@ -1,0 +1,116 @@
+[
+  {
+    "id": "notice-board-01",
+    "artifactType": "website",
+    "title": "湖景社区卫生服务中心 · 2026 年秋季流感疫苗接种通告",
+    "styleId": "notice-board",
+    "summary": "一张贴在墙上的告示：几号打、在哪打、谁免费、带什么、什么情况不能打、出问题找谁。单列长滚，不设导览，零动效。",
+    "cover": "/works/website/notice-board-01.cover.webp",
+    "view": {
+      "kind": "website",
+      "src": "/works/website/notice-board-01/index.html",
+      "download": "/works/website/notice-board-01-source.zip",
+      "aspect": 1.6
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo (OCEANLEO-AIGEN)",
+        "licenseCode": "OCEANLEO-AIGEN",
+        "licenseUrl": "https://oceanleo.com/licenses/oceanleo-aigen"
+      }
+    ],
+    "readings": {
+      "entryCount": 4,
+      "htmlCount": 1,
+      "assetCount": 0,
+      "totalUncompressedBytes": 16857,
+      "hasIndexHtml": true,
+      "innerEntrypoint": "index.html",
+      "closureShape": "source-zip",
+      "zipByteSize": 8282,
+      "zipSha256": "826c708661e0c10db29169d59cacd98cc8a2cd1d53303982d0c4ff622c4d463a",
+      "sectionCount": 7,
+      "bodyCharCount": 949,
+      "imageCount": 0,
+      "paragraphsReadableWithoutJs": 23,
+      "paragraphsMissingWithoutJs": 0
+    }
+  },
+  {
+    "id": "field-guide-01",
+    "artifactType": "website",
+    "title": "拾光共享厨房 · 商用烤箱与排烟系统现场手册",
+    "styleId": "field-guide",
+    "summary": "站在设备旁边查第几步用的手册：开工、烤制、收工、故障四类入口，每一步自带前提、耗时与安全阈值，从中间任何一处切进来都能直接照做。",
+    "cover": "/works/website/field-guide-01.cover.webp",
+    "view": {
+      "kind": "website",
+      "src": "/works/website/field-guide-01/index.html",
+      "download": "/works/website/field-guide-01-source.zip",
+      "aspect": 1.6
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo (OCEANLEO-AIGEN)",
+        "licenseCode": "OCEANLEO-AIGEN",
+        "licenseUrl": "https://oceanleo.com/licenses/oceanleo-aigen"
+      }
+    ],
+    "readings": {
+      "entryCount": 4,
+      "htmlCount": 1,
+      "assetCount": 0,
+      "totalUncompressedBytes": 24549,
+      "hasIndexHtml": true,
+      "innerEntrypoint": "index.html",
+      "closureShape": "source-zip",
+      "zipByteSize": 11427,
+      "zipSha256": "69055c48456d0783cabb81369ea45929e50fcd5338d73913a8295296835ef2ea",
+      "sectionCount": 9,
+      "bodyCharCount": 2113,
+      "imageCount": 0,
+      "paragraphsReadableWithoutJs": 50,
+      "paragraphsMissingWithoutJs": 0
+    }
+  },
+  {
+    "id": "open-index-01",
+    "artifactType": "website",
+    "title": "云溪镇老照片开放档案 · 1958–1999 全目",
+    "styleId": "open-index",
+    "summary": "412 张老照片的全目索引：按年代、地点、门类三个轴各铺一遍，逐条给编号、年份、来源与使用条件，暂缓公开的 23 张也列在目内。",
+    "cover": "/works/website/open-index-01.cover.webp",
+    "view": {
+      "kind": "website",
+      "src": "/works/website/open-index-01/index.html",
+      "download": "/works/website/open-index-01-source.zip",
+      "aspect": 1.6
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo (OCEANLEO-AIGEN)",
+        "licenseCode": "OCEANLEO-AIGEN",
+        "licenseUrl": "https://oceanleo.com/licenses/oceanleo-aigen"
+      }
+    ],
+    "readings": {
+      "entryCount": 4,
+      "htmlCount": 1,
+      "assetCount": 0,
+      "totalUncompressedBytes": 21304,
+      "hasIndexHtml": true,
+      "innerEntrypoint": "index.html",
+      "closureShape": "source-zip",
+      "zipByteSize": 10108,
+      "zipSha256": "5b0878da748409f413623830dd6b601fbec59091b07cbd6aedea7eb09951082a",
+      "sectionCount": 7,
+      "bodyCharCount": 2202,
+      "imageCount": 0,
+      "paragraphsReadableWithoutJs": 53,
+      "paragraphsMissingWithoutJs": 0
+    }
+  }
+]
