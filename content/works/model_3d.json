@@ -1,0 +1,140 @@
+[
+  {
+    "id": "model-prismatic-massing-01",
+    "artifactType": "model_3d",
+    "title": "滨海科研园区体量研究 · 棱柱阵列",
+    "styleId": "prismatic-massing",
+    "summary": "二十五栋直棱体量按五列五排落在一块基面上，高中低三档分布、高段只有三栋。只交代体量与间距，不带任何立面细节——方案阶段拿它谈的是密度和天际线，不是长什么样。",
+    "cover": "/works/model_3d/model-prismatic-massing-01.cover.webp",
+    "view": {
+      "kind": "model-3d",
+      "src": "/works/model_3d/model-prismatic-massing-01/model-prismatic-massing-01.gltf",
+      "poster": "/works/model_3d/model-prismatic-massing-01/preview.png",
+      "stills": ["/works/model_3d/model-prismatic-massing-01/preview.png"],
+      "download": "/works/model_3d/model-prismatic-massing-01-gltf.zip"
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创体量研究",
+        "licenseCode": "CC0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "entrypoint": "model-prismatic-massing-01.gltf",
+      "bufferUri": "model-prismatic-massing-01.bin",
+      "fileCount": 7,
+      "dependencyCount": 4,
+      "sourceBytes": 21553,
+      "closureBytes": 313377,
+      "nodeCount": 27,
+      "meshCount": 26,
+      "materialCount": 3,
+      "textureCount": 3,
+      "triangleCount": 1208,
+      "drawCallCount": 26,
+      "boundingBox": { "min": [-55, 0, -55], "max": [55, 36, 55], "size": [110, 36, 110] },
+      "previewBytes": 11785,
+      "previewCoverage": 0.3497,
+      "previewColorCount": 76,
+      "modelChecksFailed": 0,
+      "shapeKinds": ["box", "plane"],
+      "segmentBand": "low",
+      "silhouetteAspect": 2.149,
+      "silhouetteFillRatio": 0.521
+    }
+  },
+  {
+    "id": "model-organic-cluster-02",
+    "artifactType": "model_3d",
+    "title": "共生菌群团簇 · 偏置密度中心的膜与核",
+    "styleId": "organic-cluster",
+    "summary": "三十件椭球互相咬合成一团菌群：密度中心压在左前方，四件大膜在那里重叠、各自包住一枚不外露的核；越往右后方越小越疏，散成一条刻意不切齐的稀疏尾。全件没有一个平面、一条直线。",
+    "cover": "/works/model_3d/model-organic-cluster-02.cover.webp",
+    "view": {
+      "kind": "model-3d",
+      "src": "/works/model_3d/model-organic-cluster-02/model-organic-cluster-02.gltf",
+      "poster": "/works/model_3d/model-organic-cluster-02/preview.png",
+      "stills": ["/works/model_3d/model-organic-cluster-02/preview.png"],
+      "download": "/works/model_3d/model-organic-cluster-02-gltf.zip"
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创形体研究",
+        "licenseCode": "CC0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "entrypoint": "model-organic-cluster-02.gltf",
+      "bufferUri": "model-organic-cluster-02.bin",
+      "fileCount": 6,
+      "dependencyCount": 3,
+      "sourceBytes": 25001,
+      "closureBytes": 731065,
+      "nodeCount": 31,
+      "meshCount": 30,
+      "materialCount": 2,
+      "textureCount": 2,
+      "triangleCount": 17280,
+      "drawCallCount": 30,
+      "boundingBox": { "min": [-65, 0, -57.5], "max": [44.5, 32, 44], "size": [109.5, 32, 101.5] },
+      "previewBytes": 78755,
+      "previewCoverage": 0.1606,
+      "previewColorCount": 396,
+      "modelChecksFailed": 0,
+      "shapeKinds": ["sphere"],
+      "segmentBand": "high",
+      "silhouetteAspect": 2.175,
+      "silhouetteFillRatio": 0.314
+    }
+  },
+  {
+    "id": "model-axial-revolve-03",
+    "artifactType": "model_3d",
+    "title": "分级回转柱塞组件 · 四节收径",
+    "styleId": "axial-revolve",
+    "summary": "二十七件回转体全部共轴：底下五道对比色密封环压住最宽的一节，往上分四节收径，每节内部三到五级细收，节与节之间是一次直径突变，顶端收成一根锥针。没有一处离轴的枝节——俯视是一组同心圆。",
+    "cover": "/works/model_3d/model-axial-revolve-03.cover.webp",
+    "view": {
+      "kind": "model-3d",
+      "src": "/works/model_3d/model-axial-revolve-03/model-axial-revolve-03.gltf",
+      "poster": "/works/model_3d/model-axial-revolve-03/preview.png",
+      "stills": ["/works/model_3d/model-axial-revolve-03/preview.png"],
+      "download": "/works/model_3d/model-axial-revolve-03-gltf.zip"
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创零件研究",
+        "licenseCode": "CC0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "entrypoint": "model-axial-revolve-03.gltf",
+      "bufferUri": "model-axial-revolve-03.bin",
+      "fileCount": 6,
+      "dependencyCount": 3,
+      "sourceBytes": 22396,
+      "closureBytes": 290339,
+      "nodeCount": 28,
+      "meshCount": 27,
+      "materialCount": 2,
+      "textureCount": 2,
+      "triangleCount": 2672,
+      "drawCallCount": 27,
+      "boundingBox": { "min": [-44, 0, -44], "max": [44, 108, 44], "size": [88, 108, 88] },
+      "previewBytes": 35977,
+      "previewCoverage": 0.3713,
+      "previewColorCount": 344,
+      "modelChecksFailed": 0,
+      "shapeKinds": ["cone", "cylinder", "torus"],
+      "segmentBand": "medium",
+      "silhouetteAspect": 0.704,
+      "silhouetteFillRatio": 0.256
+    }
+  }
+]
