@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>换算器</title>
+<!--
+  换算器 · 可运行插件实例
+  规格：docs/specs/oceanleo-plugins-v1/plugins/unit-converter.md（oceandino 仓）
+  版面：docs/design-guides/plugin/panel-instrument.md
+
+  承载要求（给嵌入方）：
+    - 必须放进 sandbox="allow-scripts" 的 iframe，**绝不与 allow-same-origin 同给**。
+    - 可执行内容应由 oceanleo.app 隔离域提供，不在 oceanleo.com 同源执行。
+    - 本页零外部资源、零存储、零网络请求、不访问 parent/top，换到任何 origin 都照常跑。
+  详见 signals/G1-hosting.md。
+
+  这里用经典 <script src> 而不是 type="module"：模块脚本按 CORS 取回，
+  不透明源下 Origin 是 null，静态服务器不会给 CORS 头，模块会加载失败。
+-->
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="head">
+    <h1>换算器</h1>
+    <span class="sub">输入一个数，一整列目标单位同时给结果，并说明这是定义值还是近似值</span>
+  </div>
+
+  <div class="cats" id="cats" role="group" aria-label="量纲类别"></div>
+
+  <div class="input-row">
+    <label for="value">换算</label>
+    <input id="value" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"
+           aria-label="要换算的数值">
+    <label for="from" class="visually-hidden-label">从</label>
+    <select id="from" aria-label="源单位"></select>
+  </div>
+  <div class="bad-input" id="bad-input"></div>
+
+  <div class="rows" id="rows"></div>
+
+  <div class="foot">
+    <p id="basis"></p>
+    <p>「精确」指两端都是定义值，逐位可复核；「近似」指这个因子依赖被测物质或口径，换个物质就不成立。</p>
+    <div class="test-row">
+      <button id="run-test" type="button">运行自测</button>
+      <span id="test-out">未运行</span>
+    </div>
+    <ul id="test-detail"></ul>
+  </div>
+
+</div>
+<script src="engine.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>
