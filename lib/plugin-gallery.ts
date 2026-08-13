@@ -40,6 +40,14 @@ export interface PluginEntry {
   firstOpen: string;
   where: string;
   status: PluginStatus;
+  /**
+   * 编辑类工具在平台受信任编辑器注册表里的适配器 id。
+   *
+   * 标「已上线」的唯一凭据：拿这个 id 去 `TRUSTED_EDITOR_REGISTRY` 查，
+   * `routable` 必须为真。测试是这么判的，不是比对文件里有没有这串字。
+   * 非编辑类工具没有适配器，也就没有这个字段——它们一件都还没实装。
+   */
+  adapter?: string;
   /** 为什么敢这么标——写的是可复核的代码位置，不是形容词。 */
   statusNote: string;
   caution?: string;

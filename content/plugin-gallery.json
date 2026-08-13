@@ -520,6 +520,7 @@
       "id": "image-editor",
       "name": "图片编辑器",
       "kind": "editor",
+      "adapter": "image",
       "category": "visual-editor",
       "summary": "打开库里的一张位图，裁切、调色、加字、加形状或签名，存成同一素材的新版本。",
       "does": [
@@ -542,6 +543,7 @@
       "id": "design-canvas",
       "name": "设计画布",
       "kind": "editor",
+      "adapter": "design-canvas",
       "category": "visual-editor",
       "summary": "打开库里的设计稿或矢量图，逐个元素改形状、文字、图片、图层与配色，再导出成品。",
       "does": [
@@ -565,6 +567,7 @@
       "id": "chart-editor",
       "name": "图表编辑器",
       "kind": "editor",
+      "adapter": "chart-editor@1",
       "category": "visual-editor",
       "summary": "打开一张已有图表，改数据、类型、系列、坐标轴、图例与标注，再导出图片、矢量或结构化结果。",
       "does": [
@@ -588,6 +591,7 @@
       "id": "richdoc-editor",
       "name": "文档编辑器",
       "kind": "editor",
+      "adapter": "richdoc",
       "category": "doc-editor",
       "summary": "打开一份已有文档，像用 Word 一样改标题层级、段落、表格和插图，再存新版本或导出 DOCX。",
       "does": [
@@ -610,6 +614,7 @@
       "id": "grid-editor",
       "name": "表格编辑器",
       "kind": "editor",
+      "adapter": "grid",
       "category": "doc-editor",
       "summary": "打开自己的 xlsx 或 csv，改数据、格式、公式、行列、排序与筛选，再导出表格文件。",
       "does": [
@@ -632,6 +637,7 @@
       "id": "deck-editor",
       "name": "PPT 编辑器",
       "kind": "editor",
+      "adapter": "deck",
       "category": "doc-editor",
       "summary": "打开已有演示文稿，逐页调版式、文字、图片、图表、连线与动效，再导出新的 PPTX。",
       "does": [
@@ -654,6 +660,7 @@
       "id": "pdf-editor",
       "name": "PDF 标注",
       "kind": "editor",
+      "adapter": "pdf",
       "category": "doc-editor",
       "summary": "打开已有 PDF，翻页阅读、高亮、批注、旋转、调页序、抽页或合并别的 PDF。",
       "does": [
@@ -676,6 +683,7 @@
       "id": "video-timeline",
       "name": "视频剪辑",
       "kind": "editor",
+      "adapter": "video-timeline",
       "category": "media-editor",
       "summary": "把已有视频铺在时间线上，裁切、排序、加转场、字幕和音轨，再渲出新成片。",
       "does": [
@@ -698,6 +706,7 @@
       "id": "audio-editor",
       "name": "音频编辑器",
       "kind": "editor",
+      "adapter": "audio",
       "category": "media-editor",
       "summary": "打开已有音频，看着波形裁剪、调音量、做淡入淡出、变速或均衡，再存新版本。",
       "does": [
@@ -720,6 +729,7 @@
       "id": "model-3d-editor",
       "name": "3D 编辑器",
       "kind": "editor",
+      "adapter": "threed",
       "category": "media-editor",
       "summary": "打开已有模型，摆镜头、调灯光、改材质、选动画、加标注，再导出模型或定妆截图。",
       "does": [
@@ -743,6 +753,7 @@
       "id": "website-editor",
       "name": "网站编辑器",
       "kind": "editor",
+      "adapter": "website",
       "category": "source-editor",
       "summary": "打开一个已有网站，在真实运行的页面上改文案、样式、结构与图片，预览交互并保存健康版本或导出源码。",
       "does": [
@@ -766,6 +777,7 @@
       "id": "game-editor",
       "name": "游戏编辑器",
       "kind": "editor",
+      "adapter": "game",
       "category": "source-editor",
       "summary": "打开已有游戏源码，说出想改的玩法、试玩新版本、继续调整，满意了再存版本。",
       "does": [
@@ -789,6 +801,7 @@
       "id": "workflow-canvas",
       "name": "工作流画布",
       "kind": "editor",
+      "adapter": "video-canvas",
       "category": "source-editor",
       "summary": "打开一份已有工作流，在节点图上加节点、连端口、调参数、跑一遍并查看输出。",
       "does": [
