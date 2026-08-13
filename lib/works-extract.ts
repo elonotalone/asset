@@ -495,52 +495,119 @@ function decodeCodes(codes: number[], font: PdfFont | undefined): string {
   return s;
 }
 
-/** 一页内容流里的文字，按 Td / TD / T* / ' 断行。 */
-function pageText(content: string, fonts: Map<string, PdfFont>): string[] {
-  const lines: string[] = [];
-  let current = "";
-  let font: PdfFont | undefined;
+const CJK = /[\u2E80-\u9FFF\uF900-\uFAFF\uFF00-\uFFEF\u3000-\u303F]/;
 
-  const flush = () => {
-    const t = current.replace(/\s+/g, " ").trim();
-    if (t) lines.push(t);
-    current = "";
+/**
+ * 一页内容流里的文字。
+ *
+ * **不能按 Td 断行**：排版器（LibreOffice / pdf-lib）会在同一行里为每一段样式、
+ * 每一处中西文切换单独下一次定位，按定位断行会把「2026 年 7 月」拆成三行。
+ * 所以先把每个文字片记在它的落点上，再按纵坐标归行、按横坐标排序拼回去。
+ */
+function pageText(content: string, fonts: Map<string, PdfFont>): string[] {
+  const frags: { x: number; y: number; text: string }[] = [];
+  let font: PdfFont | undefined;
+  let leading = 0;
+  // 行矩阵与文字矩阵：只跟位移，不跟字宽（抽文字不需要精确排版）。
+  let lineX = 0;
+  let lineY = 0;
+  let x = 0;
+  let y = 0;
+
+  const put = (text: string) => {
+    if (text) frags.push({ x, y, text });
   };
 
-  const re =
-    /\/([^\s/<>[\]()]+)\s+[\d.]+\s+Tf|\((?:\\.|[^\\()])*\)\s*(Tj|TJ|'|")|\[((?:\\.|[^\\\]])*)\]\s*TJ|<([0-9A-Fa-f\s]*)>\s*Tj|(T\*|Td|TD|ET)/g;
+  const re = new RegExp(
+    [
+      String.raw`\/([^\s/<>\[\]()]+)\s+[\d.]+\s+Tf`, // 1 选字体
+      String.raw`(-?[\d.]+)\s+(-?[\d.]+)\s+(?:Td|TD)`, // 2,3 相对定位
+      String.raw`(?:(-?[\d.]+)\s+){4}(-?[\d.]+)\s+(-?[\d.]+)\s+Tm`, // 4(末次),5,6 文字矩阵
+      String.raw`(-?[\d.]+)\s+TL`, // 7 行距
+      String.raw`(T\*)`, // 8 换行
+      String.raw`(BT)`, // 9 文字块开始
+      String.raw`\((?:\\.|[^\\()])*\)\s*(Tj|'|")`, // 10 字面量
+      String.raw`\[((?:\\.|[^\\\]])*)\]\s*TJ`, // 11 数组
+      String.raw`<([0-9A-Fa-f\s]*)>\s*Tj`, // 12 十六进制串
+    ].join("|"),
+    "g",
+  );
+
   let m: RegExpExecArray | null;
   while ((m = re.exec(content))) {
     if (m[1] !== undefined) {
       font = fonts.get(m[1]);
-      continue;
-    }
-    if (m[2] !== undefined) {
-      const lit = /\((?:\\.|[^\\()])*\)/.exec(m[0])![0].slice(1, -1);
-      if (m[2] === "'" || m[2] === '"') flush();
-      current += decodeCodes(pdfLiteral(lit), font);
-      continue;
-    }
-    if (m[3] !== undefined) {
-      const parts = [...m[3].matchAll(/\((?:\\.|[^\\()])*\)|<([0-9A-Fa-f\s]+)>|(-?[\d.]+)/g)];
-      for (const p of parts) {
+    } else if (m[2] !== undefined && m[3] !== undefined) {
+      lineX += Number(m[2]);
+      lineY += Number(m[3]);
+      x = lineX;
+      y = lineY;
+    } else if (m[5] !== undefined && m[6] !== undefined) {
+      lineX = Number(m[5]);
+      lineY = Number(m[6]);
+      x = lineX;
+      y = lineY;
+    } else if (m[7] !== undefined) {
+      leading = Number(m[7]);
+    } else if (m[8] !== undefined) {
+      lineY -= leading;
+      x = lineX;
+      y = lineY;
+    } else if (m[9] !== undefined) {
+      lineX = 0;
+      lineY = 0;
+      x = 0;
+      y = 0;
+    } else if (m[10] !== undefined) {
+      if (m[10] === "'" || m[10] === '"') {
+        lineY -= leading;
+        x = lineX;
+        y = lineY;
+      }
+      put(decodeCodes(pdfLiteral(/\((?:\\.|[^\\()])*\)/.exec(m[0])![0].slice(1, -1)), font));
+    } else if (m[11] !== undefined) {
+      let piece = "";
+      for (const p of m[11].matchAll(/\((?:\\.|[^\\()])*\)|<([0-9A-Fa-f\s]+)>|(-?[\d.]+)/g)) {
         if (p[2] !== undefined) {
-          // TJ 数组里的数字是字间微调（单位 1/1000 em）。负得多就是排版拉开的空档，
-          // 抽文字时不补空格，「Site B」和「11 checks」会粘成一个词。
-          if (Number(p[2]) < -120 && current && !/[\s\u3000]$/.test(current)) current += " ";
+          // TJ 数组里的数字是字间微调（1/1000 em）。负得多就是排版拉开的空档，
+          // 不补空格，「Site B」和「11 checks」会粘成一个词。
+          if (Number(p[2]) < -120 && piece && !/[\s\u3000]$/.test(piece)) piece += " ";
         } else if (p[1] !== undefined) {
-          current += decodeCodes(hexToUnits(p[1], 1), font);
+          piece += decodeCodes(hexToUnits(p[1], 1), font);
         } else {
-          current += decodeCodes(pdfLiteral(p[0].slice(1, -1)), font);
+          piece += decodeCodes(pdfLiteral(p[0].slice(1, -1)), font);
         }
       }
-      continue;
+      put(piece);
+    } else if (m[12] !== undefined) {
+      put(decodeCodes(hexToUnits(m[12], 1), font));
     }
-    if (m[4] !== undefined) {
-      current += decodeCodes(hexToUnits(m[4], 1), font);
-      continue;
+  }
+
+  if (frags.length === 0) return [];
+
+  // 纵坐标相近（半个字高以内）的算同一行。PDF 的 y 轴朝上，所以从大到小。
+  const sorted = [...frags].sort((a, b) => b.y - a.y || a.x - b.x);
+  const lines: string[] = [];
+  let group: typeof sorted = [];
+  const flush = () => {
+    if (group.length === 0) return;
+    let text = "";
+    for (const f of group) {
+      const prev = text.slice(-1);
+      const next = f.text.slice(0, 1);
+      // 中西文之间不补空格（中文本来就不用空格分词），西文之间补，
+      // 否则同一行里换字体的地方会把两个英文词粘起来。
+      const glue = text && !/[\s\u3000]$/.test(text) && !CJK.test(prev) && !CJK.test(next) ? " " : "";
+      text += glue + f.text;
     }
-    flush();
+    const t = text.replace(/ {2,}/g, " ").trim();
+    if (t) lines.push(t);
+    group = [];
+  };
+  for (const f of sorted) {
+    if (group.length > 0 && Math.abs(group[0].y - f.y) > 3) flush();
+    group.push(f);
   }
   flush();
   return lines;
