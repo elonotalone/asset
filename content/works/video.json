@@ -106,5 +106,59 @@
       "adjacentDiffPct": 0,
       "staticTailSec": 2.75
     }
+  },
+  {
+    "id": "slow-reveal-24s-01",
+    "artifactType": "video",
+    "title": "缓慢生长 · 一场活动的筹备顺序",
+    "styleId": "slow-reveal-24s",
+    "summary": "24 秒方幅单镜头：十二件筹备事项按真实先后一件件亮起来，亮过的永不消失，等两端都出现了才在它们之间连线。镜头极慢推近，最后两秒完全静止，末帧就是整张筹备图。",
+    "cover": "/works/video/slow-reveal-24s-01.cover.webp",
+    "view": {
+      "kind": "video",
+      "src": "/works/video/slow-reveal-24s-01.mp4",
+      "poster": "/works/video/slow-reveal-24s-01.cover.webp",
+      "frames": [
+        "/works/video/slow-reveal-24s-01.f1.webp",
+        "/works/video/slow-reveal-24s-01.f2.webp",
+        "/works/video/slow-reveal-24s-01.f3.webp"
+      ],
+      "download": "/works/video/slow-reveal-24s-01.mp4",
+      "durationSec": 24,
+      "aspect": 1
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创，逐帧程序绘制后编码，无第三方素材",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "sourceFormat": "mp4",
+      "mediaType": "video/mp4",
+      "byteSize": 518281,
+      "sha256": "a00f3faeed7f7e6a5878747a5bf547d0138bab48804714fdd877c432b635461f",
+      "magicMatched": true,
+      "bytesUnchanged": true,
+      "creditCarriage": "carried-in-band",
+      "creditBlocksShelving": false,
+      "license": {
+        "usage_scope": "standalone",
+        "license_family": "public-domain",
+        "supply_tier": "byte-portable"
+      },
+      "resolution": "900x900",
+      "durationSec": 24,
+      "fps": 30,
+      "frameCount": 720,
+      "audioStreams": 0,
+      "cuts": 0,
+      "maxSceneScore": 0.0035,
+      "firstLastDiffPct": 1.33,
+      "adjacentDiffPct": 0.01,
+      "staticTailSec": 2
+    }
   }
 ]
