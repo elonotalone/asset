@@ -1,0 +1,320 @@
+{
+  "ok": true,
+  "tool": "doc-pdf",
+  "toolVersion": 1,
+  "out": "/tmp/e1-check",
+  "outputs": [
+    {
+      "path": "/tmp/e1-check/ATTRIBUTION.txt",
+      "byteSize": 424,
+      "sha256": "c4e163782057350d05619e3a7edad07b382004656c65f234f069b2152cee13d9"
+    },
+    {
+      "path": "/tmp/e1-check/pdf-field-checklist-01.pdf",
+      "byteSize": 142406,
+      "sha256": "73f5ab32e8d3361be33b8774714af0a45e074bb4d785b63279cbd20d7a7549dd"
+    },
+    {
+      "path": "/tmp/e1-check/preview.png",
+      "byteSize": 229740,
+      "sha256": "7b4a938124d2715ef338164e46c4ab1282cc2f86e4d2394d82771d0f722c0455"
+    }
+  ],
+  "readings": {
+    "entrypoint": "pdf-field-checklist-01.pdf",
+    "route": "cjk-embed",
+    "fileCount": 3,
+    "sourceBytes": 142406,
+    "closureBytes": 372570,
+    "pageCount": 2,
+    "imageCount": 0,
+    "embeddedFonts": [
+      "BAAAAA+NotoSansCJKjp-Bold-VKana",
+      "CAAAAA+NotoSansCJKjp-Regular-VKana",
+      "DAAAAA+DejaVuSans",
+      "EAAAAA+DejaVuSans-Bold",
+      "FAAAAA+NotoSansCJKjp-Regular-VKana"
+    ],
+    "embeddedFontDetails": [
+      {
+        "name": "BAAAAA+NotoSansCJKjp-Bold-VKana",
+        "type": "Type 1",
+        "encoding": "Builtin",
+        "embedded": true,
+        "subset": true,
+        "unicode": true
+      },
+      {
+        "name": "CAAAAA+NotoSansCJKjp-Regular-VKana",
+        "type": "Type 1",
+        "encoding": "Builtin",
+        "embedded": true,
+        "subset": true,
+        "unicode": true
+      },
+      {
+        "name": "DAAAAA+DejaVuSans",
+        "type": "TrueType",
+        "encoding": "WinAnsi",
+        "embedded": true,
+        "subset": true,
+        "unicode": true
+      },
+      {
+        "name": "EAAAAA+DejaVuSans-Bold",
+        "type": "TrueType",
+        "encoding": "WinAnsi",
+        "embedded": true,
+        "subset": true,
+        "unicode": true
+      },
+      {
+        "name": "FAAAAA+NotoSansCJKjp-Regular-VKana",
+        "type": "Type 1",
+        "encoding": "Builtin",
+        "embedded": true,
+        "subset": true,
+        "unicode": true
+      }
+    ],
+    "embeddedFontCount": 5,
+    "extractedChars": 1100,
+    "declaredChars": 864,
+    "textFidelity": {
+      "verdict": "green",
+      "reasons": [],
+      "metrics": {
+        "extractedChars": 980,
+        "residueChars": 5,
+        "residueRatio": 0.005102,
+        "extractedCjk": 806,
+        "declaredCjk": 656,
+        "declaredCoverage": 1,
+        "recoveredEncoding": null,
+        "recoveredCjk": 0,
+        "embeddedFonts": 5,
+        "cidFonts": 0
+      }
+    },
+    "readbackAvailable": true,
+    "blockCount": 30,
+    "figureCount": 0,
+    "layout": {
+      "source": "input",
+      "axesFromInput": [
+        "body.palette",
+        "layout.columns",
+        "layout.lineSpacing",
+        "layout.margins",
+        "layout.page",
+        "theme.bodySize",
+        "theme.fonts",
+        "theme.headingScale"
+      ],
+      "derivedFrom": "writer-layout-model",
+      "derivedNote": "几何是写出器版面模型按字号/字宽常量算出来的声明值,不是渲染实测(工具不许起浏览器)。独立复核以 V2 的量法为准。",
+      "page": {
+        "id": "a5",
+        "orientation": "portrait",
+        "widthTwip": 8391,
+        "heightTwip": 11906
+      },
+      "marginsTwip": {
+        "top": 680,
+        "bottom": 680,
+        "right": 567,
+        "left": 567,
+        "header": 340,
+        "footer": 340
+      },
+      "contentWidthTwip": 7257,
+      "contentHeightTwip": 10546,
+      "columns": 1,
+      "columnSpacingTwip": 425,
+      "columnWidthTwip": 7257,
+      "lineSpacing": "tight",
+      "lineTwip": 252,
+      "paragraphAfterTwip": 80,
+      "headingScale": "flat",
+      "bodySize": "compact",
+      "fontSizesHalfPoint": {
+        "h1": 26,
+        "h2": 24,
+        "h3": 22,
+        "body": 19
+      },
+      "fonts": {
+        "latin": "DejaVu Sans",
+        "eastAsia": "Noto Sans CJK SC",
+        "heading": "DejaVu Sans",
+        "headingEastAsia": "Noto Sans CJK SC"
+      },
+      "figure": {
+        "widthRatio": null,
+        "align": "center"
+      },
+      "palette": [
+        "161514"
+      ],
+      "paletteBySlot": {
+        "accent": "161514",
+        "heading2": "161514",
+        "heading3": "161514",
+        "body": "161514",
+        "tableHeaderFill": "161514",
+        "rule": "161514"
+      },
+      "pageCount": 2,
+      "mainBlockCount": 7,
+      "mainBlocks": [
+        {
+          "kind": "section",
+          "pageIndex": 0,
+          "column": 0,
+          "x": 0.0676,
+          "y": 0.0571,
+          "w": 0.8649,
+          "h": 0.122,
+          "areaRatio": 0.1055
+        },
+        {
+          "kind": "section",
+          "pageIndex": 0,
+          "column": 0,
+          "x": 0.0676,
+          "y": 0.1792,
+          "w": 0.8649,
+          "h": 0.1455,
+          "areaRatio": 0.1258
+        },
+        {
+          "kind": "section",
+          "pageIndex": 0,
+          "column": 0,
+          "x": 0.0676,
+          "y": 0.3246,
+          "w": 0.8649,
+          "h": 0.169,
+          "areaRatio": 0.1462
+        },
+        {
+          "kind": "section",
+          "pageIndex": 0,
+          "column": 0,
+          "x": 0.0676,
+          "y": 0.4936,
+          "w": 0.8649,
+          "h": 0.169,
+          "areaRatio": 0.1462
+        },
+        {
+          "kind": "section",
+          "pageIndex": 0,
+          "column": 0,
+          "x": 0.0676,
+          "y": 0.6626,
+          "w": 0.8649,
+          "h": 0.1455,
+          "areaRatio": 0.1258
+        },
+        {
+          "kind": "section",
+          "pageIndex": 0,
+          "column": 0,
+          "x": 0.0676,
+          "y": 0.8081,
+          "w": 0.8649,
+          "h": 0.1348,
+          "areaRatio": 0.1166
+        },
+        {
+          "kind": "section",
+          "pageIndex": 1,
+          "column": 0,
+          "x": 0.0676,
+          "y": 0.0913,
+          "w": 0.8649,
+          "h": 0.2362,
+          "areaRatio": 0.2043
+        }
+      ],
+      "fingerprint": "4c3c4790c4acc74e",
+      "fingerprintByThreshold": {
+        "6": "4c3c4790c4acc74e",
+        "7": "4c3c4790c4acc74e",
+        "8": "4c3c4790c4acc74e",
+        "9": "4c3c4790c4acc74e",
+        "10": "4c3c4790c4acc74e"
+      }
+    },
+    "measured": {
+      "mediaBoxPt": {
+        "width": 419.555905511811,
+        "height": 595.303937007874
+      },
+      "colors": [
+        "#161514",
+        "#A3252B"
+      ],
+      "colorCount": 2,
+      "derivedFrom": "produced-pdf-bytes",
+      "page": {
+        "swatches": [
+          {
+            "hex": "#FFFFFF",
+            "share": 0.8172
+          },
+          {
+            "hex": "#908F8F",
+            "share": 0.0281
+          },
+          {
+            "hex": "#A2A2A2",
+            "share": 0.0233
+          },
+          {
+            "hex": "#D9D9D9",
+            "share": 0.023
+          },
+          {
+            "hex": "#B3B3B2",
+            "share": 0.023
+          },
+          {
+            "hex": "#C5C5C5",
+            "share": 0.0217
+          },
+          {
+            "hex": "#EBEBEB",
+            "share": 0.0192
+          },
+          {
+            "hex": "#696666",
+            "share": 0.0162
+          },
+          {
+            "hex": "#F6F6F6",
+            "share": 0.0156
+          },
+          {
+            "hex": "#FCFCFC",
+            "share": 0.0093
+          }
+        ],
+        "derivedFrom": "rendered-first-page"
+      }
+    },
+    "previewBytes": 229740,
+    "attributionEntryCount": 1,
+    "license": {
+      "usage_scope": "first-party",
+      "license_family": "CC0",
+      "supply_tier": "original"
+    }
+  },
+  "writer": "assemblers/pdf/emit.mjs（三条渲染路：cjk-embed / ascii-skeleton / inline-figures）",
+  "writerVersion": null,
+  "notes": [
+    "成品里嵌着 5 枚字体:BAAAAA+NotoSansCJKjp-Bold-VKana、CAAAAA+NotoSansCJKjp-Regular-VKana、DAAAAA+DejaVuSans、EAAAAA+DejaVuSans-Bold、FAAAAA+NotoSansCJKjp-Regular-VKana。每一枚都是随字节发给用户的字体程序 —— 账上要有对应的料,否则就是把别人的东西当自己的发出去。"
+  ]
+}
