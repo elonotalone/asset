@@ -1,0 +1,49 @@
+[
+  {
+    "id": "object-spec-plate-01",
+    "artifactType": "single_file_image",
+    "title": "跑鞋 · 中距离训练款 规格板",
+    "styleId": "object-spec-plate",
+    "summary": "一双跑鞋摆在正中，四条引线把鞋领高、鞋带孔、中底厚、外底纹深指出来，底部一条灰带写清材质、重量、落差、码段与建议更换里程。留白比鞋本身大得多。",
+    "cover": "/works/single_file_image/object-spec-plate-01.cover.webp",
+    "view": {
+      "kind": "image",
+      "src": "/works/single_file_image/object-spec-plate-01.png",
+      "download": "/works/single_file_image/object-spec-plate-01.png",
+      "aspect": 1
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创（版面与全部绘制内容）",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      },
+      {
+        "text": "内嵌主体「运动鞋 抠图」：OceanLeo AI（平台素材 fdf43adb-0f37-4aad-85a4-e74086620372，usage_scope=standalone）",
+        "licenseCode": "OCEANLEO-AIGEN",
+        "licenseUrl": "https://oceanleo.com/legal/first-party-assets"
+      }
+    ],
+    "readings": {
+      "sourceFormat": "png",
+      "mediaType": "image/png",
+      "byteSize": 311622,
+      "sha256": "ec302a85e9509bbc51df056e3c50031051d80a046ac4b2535ef59bde665861e7",
+      "magicMatched": true,
+      "bytesUnchanged": true,
+      "creditCarriage": "carried-in-band",
+      "creditSlot": "png-text",
+      "creditBlocksShelving": false,
+      "license": {
+        "usage_scope": "standalone",
+        "license_family": "public-domain",
+        "supply_tier": "byte-portable"
+      },
+      "canvas": "1400x1400",
+      "paletteColorCount": 2,
+      "inkRatio": 0.065,
+      "largestBlockShare": 0.647
+    }
+  }
+]
