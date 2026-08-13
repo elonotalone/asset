@@ -522,10 +522,17 @@ function pageText(content: string, fonts: Map<string, PdfFont>): string[] {
       continue;
     }
     if (m[3] !== undefined) {
-      const parts = [...m[3].matchAll(/\((?:\\.|[^\\()])*\)|<([0-9A-Fa-f\s]+)>/g)];
+      const parts = [...m[3].matchAll(/\((?:\\.|[^\\()])*\)|<([0-9A-Fa-f\s]+)>|(-?[\d.]+)/g)];
       for (const p of parts) {
-        if (p[1] !== undefined) current += decodeCodes(hexToUnits(p[1], 1), font);
-        else current += decodeCodes(pdfLiteral(p[0].slice(1, -1)), font);
+        if (p[2] !== undefined) {
+          // TJ 数组里的数字是字间微调（单位 1/1000 em）。负得多就是排版拉开的空档，
+          // 抽文字时不补空格，「Site B」和「11 checks」会粘成一个词。
+          if (Number(p[2]) < -120 && current && !/[\s\u3000]$/.test(current)) current += " ";
+        } else if (p[1] !== undefined) {
+          current += decodeCodes(hexToUnits(p[1], 1), font);
+        } else {
+          current += decodeCodes(pdfLiteral(p[0].slice(1, -1)), font);
+        }
       }
       continue;
     }
@@ -640,7 +647,8 @@ const PUBLIC_DIR = path.join(process.cwd(), "public");
 /** 同一份文件构建期只抽一次。键里带 mtime，dev 下改了文件会重抽。 */
 const cache = new Map<string, ExtractedContent | null>();
 
-function extractFile(abs: string): ExtractedContent | null {
+/** 按扩展名开一份文件。自检脚本直接打这个入口（不必先造一条清单片段）。 */
+export function extractSourceFile(abs: string): ExtractedContent | null {
   const ext = path.extname(abs).toLowerCase();
   const buf = readFileSync(abs);
   switch (ext) {
@@ -684,7 +692,7 @@ export function extractWorkContent(work: WorkEntry): ExtractedContent | null {
   if (cache.has(key)) return cache.get(key)!;
   let out: ExtractedContent | null = null;
   try {
-    out = extractFile(abs);
+    out = extractSourceFile(abs);
   } catch (err) {
     console.warn(`[works] ${work.id} 的 ${rel} 抽正文失败：${String(err)}`);
   }
