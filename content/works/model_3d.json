@@ -10,7 +10,12 @@
       "kind": "model-3d",
       "src": "/works/model_3d/model-prismatic-massing-01/model-prismatic-massing-01.gltf",
       "poster": "/works/model_3d/model-prismatic-massing-01/preview.png",
-      "stills": ["/works/model_3d/model-prismatic-massing-01/preview.png"],
+      "stills": [
+        "/works/model_3d/model-prismatic-massing-01/stills/three-quarter.png",
+        "/works/model_3d/model-prismatic-massing-01/stills/front.png",
+        "/works/model_3d/model-prismatic-massing-01/stills/side.png",
+        "/works/model_3d/model-prismatic-massing-01/stills/top.png"
+      ],
       "download": "/works/model_3d/model-prismatic-massing-01-gltf.zip"
     },
     "downloadable": true,
@@ -34,15 +39,77 @@
       "textureCount": 3,
       "triangleCount": 1208,
       "drawCallCount": 26,
-      "boundingBox": { "min": [-55, 0, -55], "max": [55, 36, 55], "size": [110, 36, 110] },
+      "boundingBox": {
+        "min": [
+          -55,
+          0,
+          -55
+        ],
+        "max": [
+          55,
+          36,
+          55
+        ],
+        "size": [
+          110,
+          36,
+          110
+        ]
+      },
       "previewBytes": 11785,
       "previewCoverage": 0.3497,
       "previewColorCount": 76,
       "modelChecksFailed": 0,
-      "shapeKinds": ["box", "plane"],
+      "shapeKinds": [
+        "box",
+        "plane"
+      ],
       "segmentBand": "low",
       "silhouetteAspect": 2.149,
-      "silhouetteFillRatio": 0.521
+      "silhouetteFillRatio": 0.521,
+      "stillCount": 4,
+      "stills": [
+        {
+          "id": "three-quarter",
+          "yawDeg": 315,
+          "pitchDeg": 28,
+          "stage": "light",
+          "byteSize": 15191,
+          "nonBlankRatio": 0.1624,
+          "silhouetteContrast": 0.4322,
+          "formRange": 0.6591
+        },
+        {
+          "id": "front",
+          "yawDeg": 0,
+          "pitchDeg": 0,
+          "stage": "light",
+          "byteSize": 7210,
+          "nonBlankRatio": 0.1421,
+          "silhouetteContrast": 0.5561,
+          "formRange": 0.6473
+        },
+        {
+          "id": "side",
+          "yawDeg": 90,
+          "pitchDeg": 0,
+          "stage": "light",
+          "byteSize": 7101,
+          "nonBlankRatio": 0.1389,
+          "silhouetteContrast": 0.5394,
+          "formRange": 0.6473
+        },
+        {
+          "id": "top",
+          "yawDeg": 0,
+          "pitchDeg": 82,
+          "stage": "dark",
+          "byteSize": 6579,
+          "nonBlankRatio": 0.3112,
+          "silhouetteContrast": 0.4372,
+          "formRange": 0.6014
+        }
+      ]
     }
   },
   {
@@ -56,7 +123,12 @@
       "kind": "model-3d",
       "src": "/works/model_3d/model-organic-cluster-02/model-organic-cluster-02.gltf",
       "poster": "/works/model_3d/model-organic-cluster-02/preview.png",
-      "stills": ["/works/model_3d/model-organic-cluster-02/preview.png"],
+      "stills": [
+        "/works/model_3d/model-organic-cluster-02/stills/three-quarter.png",
+        "/works/model_3d/model-organic-cluster-02/stills/front.png",
+        "/works/model_3d/model-organic-cluster-02/stills/side.png",
+        "/works/model_3d/model-organic-cluster-02/stills/top.png"
+      ],
       "download": "/works/model_3d/model-organic-cluster-02-gltf.zip"
     },
     "downloadable": true,
@@ -80,15 +152,76 @@
       "textureCount": 2,
       "triangleCount": 17280,
       "drawCallCount": 30,
-      "boundingBox": { "min": [-65, 0, -57.5], "max": [44.5, 32, 44], "size": [109.5, 32, 101.5] },
+      "boundingBox": {
+        "min": [
+          -65,
+          0,
+          -57.5
+        ],
+        "max": [
+          44.5,
+          32,
+          44
+        ],
+        "size": [
+          109.5,
+          32,
+          101.5
+        ]
+      },
       "previewBytes": 78755,
       "previewCoverage": 0.1606,
       "previewColorCount": 396,
       "modelChecksFailed": 0,
-      "shapeKinds": ["sphere"],
+      "shapeKinds": [
+        "sphere"
+      ],
       "segmentBand": "high",
       "silhouetteAspect": 2.175,
-      "silhouetteFillRatio": 0.314
+      "silhouetteFillRatio": 0.314,
+      "stillCount": 4,
+      "stills": [
+        {
+          "id": "three-quarter",
+          "yawDeg": 315,
+          "pitchDeg": 28,
+          "stage": "light",
+          "byteSize": 74520,
+          "nonBlankRatio": 0.1035,
+          "silhouetteContrast": 0.6058,
+          "formRange": 0.2229
+        },
+        {
+          "id": "front",
+          "yawDeg": 0,
+          "pitchDeg": 0,
+          "stage": "light",
+          "byteSize": 70066,
+          "nonBlankRatio": 0.1291,
+          "silhouetteContrast": 0.5852,
+          "formRange": 0.24
+        },
+        {
+          "id": "side",
+          "yawDeg": 120,
+          "pitchDeg": 8,
+          "stage": "light",
+          "byteSize": 74970,
+          "nonBlankRatio": 0.0979,
+          "silhouetteContrast": 0.592,
+          "formRange": 0.2531
+        },
+        {
+          "id": "top",
+          "yawDeg": 0,
+          "pitchDeg": 82,
+          "stage": "light",
+          "byteSize": 106463,
+          "nonBlankRatio": 0.156,
+          "silhouetteContrast": 0.6688,
+          "formRange": 0.1029
+        }
+      ]
     }
   },
   {
@@ -102,7 +235,12 @@
       "kind": "model-3d",
       "src": "/works/model_3d/model-axial-revolve-03/model-axial-revolve-03.gltf",
       "poster": "/works/model_3d/model-axial-revolve-03/preview.png",
-      "stills": ["/works/model_3d/model-axial-revolve-03/preview.png"],
+      "stills": [
+        "/works/model_3d/model-axial-revolve-03/stills/three-quarter.png",
+        "/works/model_3d/model-axial-revolve-03/stills/front.png",
+        "/works/model_3d/model-axial-revolve-03/stills/top.png",
+        "/works/model_3d/model-axial-revolve-03/stills/underside.png"
+      ],
       "download": "/works/model_3d/model-axial-revolve-03-gltf.zip"
     },
     "downloadable": true,
@@ -126,15 +264,78 @@
       "textureCount": 2,
       "triangleCount": 2672,
       "drawCallCount": 27,
-      "boundingBox": { "min": [-44, 0, -44], "max": [44, 108, 44], "size": [88, 108, 88] },
+      "boundingBox": {
+        "min": [
+          -44,
+          0,
+          -44
+        ],
+        "max": [
+          44,
+          108,
+          44
+        ],
+        "size": [
+          88,
+          108,
+          88
+        ]
+      },
       "previewBytes": 35977,
       "previewCoverage": 0.3713,
       "previewColorCount": 344,
       "modelChecksFailed": 0,
-      "shapeKinds": ["cone", "cylinder", "torus"],
+      "shapeKinds": [
+        "cone",
+        "cylinder",
+        "torus"
+      ],
       "segmentBand": "medium",
       "silhouetteAspect": 0.704,
-      "silhouetteFillRatio": 0.256
+      "silhouetteFillRatio": 0.256,
+      "stillCount": 4,
+      "stills": [
+        {
+          "id": "three-quarter",
+          "yawDeg": 315,
+          "pitchDeg": 45,
+          "stage": "light",
+          "byteSize": 44367,
+          "nonBlankRatio": 0.0635,
+          "silhouetteContrast": 0.5857,
+          "formRange": 0.2257
+        },
+        {
+          "id": "front",
+          "yawDeg": 0,
+          "pitchDeg": 0,
+          "stage": "light",
+          "byteSize": 26427,
+          "nonBlankRatio": 0.096,
+          "silhouetteContrast": 0.5391,
+          "formRange": 0.1492
+        },
+        {
+          "id": "top",
+          "yawDeg": 0,
+          "pitchDeg": 82,
+          "stage": "light",
+          "byteSize": 86600,
+          "nonBlankRatio": 0.1333,
+          "silhouetteContrast": 0.6619,
+          "formRange": 0.1517
+        },
+        {
+          "id": "underside",
+          "yawDeg": 0,
+          "pitchDeg": -65,
+          "stage": "light",
+          "byteSize": 113647,
+          "nonBlankRatio": 0.1421,
+          "silhouetteContrast": 0.4997,
+          "formRange": 0.3188
+        }
+      ]
     }
   }
 ]
