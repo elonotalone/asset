@@ -17,6 +17,7 @@ import {
   PLUGIN_ITEMS,
   filterPlugins,
   findPlugin,
+  pluginDetailHref,
 } from "@/lib/plugin-gallery";
 
 function render(node: React.ReactElement): string {
@@ -233,36 +234,36 @@ test("产物文件没有裸放在 public 下可直接 GET", () => {
   );
 });
 
-test("构建产物里真正发出去的 HTML 也没有下载入口", (t) => {
-  const root = ".next/server/app";
-  if (!existsSync(root)) {
-    t.skip("未构建：先跑 next build 再复核这一条");
+// 上面两条量的是组件渲染结果与磁盘。真正发给用户的是**整页**：站点外壳、左栏、
+// 共享包的组件都在里面，我这两个组件只是其中一块。所以还要对着一个真在跑的
+// 服务器把每条 URL 走一遍。这是非浏览器的 HTTP 检查，不是浏览器验证。
+//
+//   PLUGIN_GALLERY_BASE_URL=http://127.0.0.1:3210 \
+//     node --import ./tests/register-tsx.mjs --test tests/plugin-gallery.test.tsx
+const servedBaseUrl = process.env.PLUGIN_GALLERY_BASE_URL || "";
+
+test("真正发出去的整页上也没有下载入口", async (t) => {
+  if (!servedBaseUrl) {
+    t.skip(
+      "没给 PLUGIN_GALLERY_BASE_URL：起一个 next dev/start，再带这个变量重跑本文件",
+    );
     return;
   }
 
-  const pages = readdirSync(root, { recursive: true })
-    .map((entry) => String(entry))
-    .filter(
-      (entry) =>
-        entry.endsWith(".html") &&
-        (entry === "plugin-gallery.html" || entry.startsWith("plugin-gallery/")),
-    );
-  assert.ok(
-    pages.length >= PLUGIN_ITEMS.length,
-    `预渲染页面只有 ${pages.length} 份，少于 ${PLUGIN_ITEMS.length} 件工具`,
-  );
+  const paths = ["/plugin-gallery", ...PLUGIN_ITEMS.map((item) => pluginDetailHref(item.id))];
+  for (const urlPath of paths) {
+    const response = await fetch(`${servedBaseUrl}${urlPath}`);
+    assert.equal(response.status, 200, `${urlPath} 打不开`);
+    const html = await response.text();
 
-  for (const page of pages) {
-    const html = readFileSync(path.join(root, page), "utf8");
-    // 这是**整页**，含左栏与站点外壳，不只是我这两个组件。
-    assert.doesNotMatch(html, /<a\b[^>]*\bdownload\b/i, `${page} 有下载属性`);
-    assert.doesNotMatch(html, /blob:|data:application/i, `${page} 有内联文件`);
+    assert.doesNotMatch(html, /<a\b[^>]*\bdownload\b/i, `${urlPath} 有下载属性`);
+    assert.doesNotMatch(html, /blob:|data:application/i, `${urlPath} 有内联文件`);
     for (const href of hrefs(html)) {
       for (const pattern of FORBIDDEN_LINK_PATTERNS) {
         assert.equal(
           href.toLowerCase().includes(pattern),
           false,
-          `${page} 的链接指向了一个文件: ${href}`,
+          `${urlPath} 的链接指向了一个文件: ${href}`,
         );
       }
     }
@@ -271,10 +272,29 @@ test("构建产物里真正发出去的 HTML 也没有下载入口", (t) => {
         assert.equal(
           label.toLowerCase().includes(word.toLowerCase()),
           false,
-          `${page} 上有可点的下载入口: ${label}`,
+          `${urlPath} 上有可点的下载入口: ${label}`,
         );
       }
     }
+  }
+});
+
+test("猜路径也 GET 不到这一格的数据", async (t) => {
+  if (!servedBaseUrl) {
+    t.skip("没给 PLUGIN_GALLERY_BASE_URL");
+    return;
+  }
+  // 数据在仓库根的 content/ 下，构建期 import 进包。这几条是最容易猜的 URL，
+  // 都必须打不开——否则「界面上没有按钮」就只是个摆设。
+  for (const urlPath of [
+    "/content/plugin-gallery.json",
+    "/plugin-gallery.json",
+    "/plugin-gallery/plugin-gallery.json",
+    "/plugin-gallery/image-editor.json",
+    "/plugin-gallery/image-editor.zip",
+  ]) {
+    const response = await fetch(`${servedBaseUrl}${urlPath}`);
+    assert.notEqual(response.status, 200, `${urlPath} 居然 GET 得到`);
   }
 });
 
