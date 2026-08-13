@@ -1,0 +1,6 @@
+# 署名与许可 —— 澜屿资本名片反面 · 纯标志
+
+- OceanLeo 第一方原创名片版面
+  许可:CC0(https://creativecommons.org/publicdomain/zero/1.0/)
+- OceanLeo 程序化生成
+  许可:OCEANLEO-AIGEN(https://oceanleo.com/licenses/aigen)
