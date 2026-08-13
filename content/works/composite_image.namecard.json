@@ -1,0 +1,269 @@
+[
+  {
+    "id": "namecard-reversed-field-01",
+    "artifactType": "composite_image",
+    "title": "澜屿资本名片 · 满版反白",
+    "styleId": "namecard-reversed-field",
+    "summary": "投资顾问名片。正面一整块深墨通铺到出血、不分区，信息压在左下角排成一段连续文字，姓名之外全部同一字号，一条强调发丝线是版上唯一的非文字构件；反面只有三道递减横条与字标，没有任何联络方式。矢量出图，90×54mm 含 3mm 出血，可直接送印。",
+    "cover": "/works/composite_image/namecard-reversed-field-01.cover.webp",
+    "view": {
+      "kind": "vector",
+      "src": "/works/composite_image/namecard-reversed-field-01/sheet/namecard-reversed-field-01-sheet.svg",
+      "pages": [
+        "/works/composite_image/namecard-reversed-field-01/front/namecard-reversed-field-01-front.svg",
+        "/works/composite_image/namecard-reversed-field-01/back/namecard-reversed-field-01-back.svg"
+      ],
+      "download": "/works/composite_image/namecard-reversed-field-01/sheet/namecard-reversed-field-01-sheet.svg"
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创名片版面",
+        "licenseCode": "CC0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "printTrimMm": [
+        90,
+        54
+      ],
+      "bleedMm": 3,
+      "dpi": 300,
+      "canvasPx": [
+        1134,
+        709
+      ],
+      "orientation": "landscape",
+      "front": {
+        "sourceBytes": 2331,
+        "irShapeCount": 7,
+        "svgShapeCount": 2,
+        "svgShapeKindCount": 1,
+        "paletteTokenCount": 3,
+        "irChecksFailed": 0,
+        "dangerousConstructResidual": 0,
+        "infoBlocks": [
+          "blk@1,4,7,4"
+        ],
+        "inkCells": 39,
+        "typeLevels": 2,
+        "inkRatio": 0.9859
+      },
+      "back": {
+        "sourceBytes": 1557,
+        "irShapeCount": 5,
+        "svgShapeCount": 4,
+        "paletteTokenCount": 3,
+        "irChecksFailed": 0,
+        "infoBlocks": [],
+        "inkCells": 16,
+        "inkRatio": 0.9871
+      },
+      "sheet": {
+        "sourceBytes": 5043,
+        "canvasPx": [
+          2316,
+          709
+        ],
+        "irChecksFailed": 0
+      },
+      "license": null
+    }
+  },
+  {
+    "id": "namecard-diagonal-wedge-01",
+    "artifactType": "composite_image",
+    "title": "屿白设计工作室名片 · 对角斜楔",
+    "styleId": "namecard-diagonal-wedge",
+    "summary": "设计工作室名片。一条斜线自右边贯到下边，把正面切成两块面积不等的场：大场留白承载全部文字，小场是实心斜楔、只放字标；反面同一枚斜楔在对角镜像出现，与正面拼起来是一条连续的斜线，余下白场只放两行主张。三级字号等比 1.6 递进。",
+    "cover": "/works/composite_image/namecard-diagonal-wedge-01.cover.webp",
+    "view": {
+      "kind": "vector",
+      "src": "/works/composite_image/namecard-diagonal-wedge-01/sheet/namecard-diagonal-wedge-01-sheet.svg",
+      "pages": [
+        "/works/composite_image/namecard-diagonal-wedge-01/front/namecard-diagonal-wedge-01-front.svg",
+        "/works/composite_image/namecard-diagonal-wedge-01/back/namecard-diagonal-wedge-01-back.svg"
+      ],
+      "download": "/works/composite_image/namecard-diagonal-wedge-01/sheet/namecard-diagonal-wedge-01-sheet.svg"
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创名片版面与字标",
+        "licenseCode": "CC0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "printTrimMm": [
+        90,
+        54
+      ],
+      "bleedMm": 3,
+      "dpi": 300,
+      "canvasPx": [
+        1134,
+        709
+      ],
+      "orientation": "landscape",
+      "front": {
+        "sourceBytes": 2442,
+        "irShapeCount": 8,
+        "svgShapeCount": 2,
+        "svgShapeKindCount": 2,
+        "paletteTokenCount": 3,
+        "irChecksFailed": 0,
+        "dangerousConstructResidual": 0,
+        "infoBlocks": [
+          "blk@1,1,9,9"
+        ],
+        "inkCells": 78,
+        "typeLevels": 4,
+        "inkRatio": 0.2386
+      },
+      "back": {
+        "sourceBytes": 1723,
+        "irShapeCount": 5,
+        "svgShapeCount": 2,
+        "paletteTokenCount": 3,
+        "irChecksFailed": 0,
+        "infoBlocks": [
+          "blk@0,0,5,9"
+        ],
+        "inkCells": 50,
+        "inkRatio": 0.2209
+      },
+      "sheet": {
+        "sourceBytes": 5325,
+        "canvasPx": [
+          2316,
+          709
+        ],
+        "irChecksFailed": 0
+      },
+      "license": {
+        "perAsset": [
+          {
+            "id": "wedgeplain",
+            "usage_scope": "component-only",
+            "license_family": "public-domain",
+            "supply_tier": "first-party"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "namecard-vertical-ledger-01",
+    "artifactType": "composite_image",
+    "title": "承和堂中医门诊名片 · 竖版横线台账",
+    "styleId": "namecard-vertical-ledger",
+    "summary": "中医门诊名片，竖幅。一组横线把正面切成抬头 / 姓名职务 / 联络 / 地址与时间四条信息带，单栏、无彩、四级字号等比 1.3 递进，安全区内八成填满；反面沿用同一套横线节奏列五项诊疗，行首一枚平台素材库的公共领域图标作行标记。",
+    "cover": "/works/composite_image/namecard-vertical-ledger-01.cover.webp",
+    "view": {
+      "kind": "vector",
+      "src": "/works/composite_image/namecard-vertical-ledger-01/sheet/namecard-vertical-ledger-01-sheet.svg",
+      "pages": [
+        "/works/composite_image/namecard-vertical-ledger-01/front/namecard-vertical-ledger-01-front.svg",
+        "/works/composite_image/namecard-vertical-ledger-01/back/namecard-vertical-ledger-01-back.svg"
+      ],
+      "download": "/works/composite_image/namecard-vertical-ledger-01/sheet/namecard-vertical-ledger-01-sheet.svg"
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创名片版面",
+        "licenseCode": "CC0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      },
+      {
+        "text": "行标记图标 5 枚:SVGRepo 公共领域图标库(platform_assets · category=icon · CC0)",
+        "licenseCode": "CC0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "printTrimMm": [
+        54,
+        90
+      ],
+      "bleedMm": 3,
+      "dpi": 300,
+      "canvasPx": [
+        709,
+        1134
+      ],
+      "orientation": "portrait",
+      "front": {
+        "sourceBytes": 4010,
+        "irShapeCount": 17,
+        "svgShapeCount": 4,
+        "svgShapeKindCount": 1,
+        "paletteTokenCount": 3,
+        "irChecksFailed": 0,
+        "dangerousConstructResidual": 0,
+        "infoBlocks": [
+          "blk@1,1,7,7"
+        ],
+        "inkCells": 49,
+        "typeLevels": 4,
+        "inkRatio": 0.0642
+      },
+      "back": {
+        "sourceBytes": 6330,
+        "irShapeCount": 23,
+        "svgShapeCount": 12,
+        "paletteTokenCount": 3,
+        "irChecksFailed": 0,
+        "infoBlocks": [
+          "blk@1,1,7,2"
+        ],
+        "inkCells": 59,
+        "inkRatio": 0.0516
+      },
+      "sheet": {
+        "sourceBytes": 11586,
+        "canvasPx": [
+          1466,
+          1134
+        ],
+        "irChecksFailed": 0
+      },
+      "license": {
+        "perAsset": [
+          {
+            "id": "iconpulse",
+            "usage_scope": "standalone",
+            "license_family": "public-domain",
+            "supply_tier": "platform-library"
+          },
+          {
+            "id": "iconhand",
+            "usage_scope": "standalone",
+            "license_family": "public-domain",
+            "supply_tier": "platform-library"
+          },
+          {
+            "id": "iconleaf",
+            "usage_scope": "standalone",
+            "license_family": "public-domain",
+            "supply_tier": "platform-library"
+          },
+          {
+            "id": "iconbaby",
+            "usage_scope": "standalone",
+            "license_family": "public-domain",
+            "supply_tier": "platform-library"
+          },
+          {
+            "id": "iconclock",
+            "usage_scope": "standalone",
+            "license_family": "public-domain",
+            "supply_tier": "platform-library"
+          }
+        ]
+      }
+    }
+  }
+]
