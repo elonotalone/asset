@@ -1,0 +1,128 @@
+{
+  "schema": "oceanleo.workflow-view/v1",
+  "note": "站内查看用的投影。节点与边逐条来自工程文件 versions[0].graph，未增删；工程本体见 project 字段。",
+  "project": "oceanleo.video-canvas.v1",
+  "nodes": [
+    {
+      "id": "n-intake",
+      "label": "原料入列",
+      "kind": "source",
+      "x": 40,
+      "y": 20
+    },
+    {
+      "id": "n-prep",
+      "label": "公共预处理",
+      "kind": "filter",
+      "x": 40,
+      "y": 112
+    },
+    {
+      "id": "n-split",
+      "label": "分流",
+      "kind": "branch",
+      "x": 40,
+      "y": 204
+    },
+    {
+      "id": "n-film",
+      "label": "成片路",
+      "kind": "overlay",
+      "x": 40,
+      "y": 296
+    },
+    {
+      "id": "n-brief",
+      "label": "文案路",
+      "kind": "text",
+      "x": 300,
+      "y": 296
+    },
+    {
+      "id": "n-review",
+      "label": "人工复核闸",
+      "kind": "filter",
+      "x": 40,
+      "y": 388
+    },
+    {
+      "id": "n-merge",
+      "label": "汇合成交付包",
+      "kind": "concat",
+      "x": 40,
+      "y": 480
+    },
+    {
+      "id": "n-deliver",
+      "label": "交付",
+      "kind": "output",
+      "x": 40,
+      "y": 572
+    }
+  ],
+  "edges": [
+    {
+      "id": "e0",
+      "from": "n-intake",
+      "to": "n-prep",
+      "fromPort": "out",
+      "toPort": "in"
+    },
+    {
+      "id": "e1",
+      "from": "n-prep",
+      "to": "n-split",
+      "fromPort": "out",
+      "toPort": "in"
+    },
+    {
+      "id": "e2",
+      "from": "n-split",
+      "to": "n-film",
+      "fromPort": "out-film",
+      "toPort": "in"
+    },
+    {
+      "id": "e3",
+      "from": "n-split",
+      "to": "n-brief",
+      "fromPort": "out-brief",
+      "toPort": "in"
+    },
+    {
+      "id": "e4",
+      "from": "n-film",
+      "to": "n-review",
+      "fromPort": "out",
+      "toPort": "in-film"
+    },
+    {
+      "id": "e5",
+      "from": "n-brief",
+      "to": "n-review",
+      "fromPort": "out",
+      "toPort": "in-brief"
+    },
+    {
+      "id": "e6",
+      "from": "n-review",
+      "to": "n-merge",
+      "fromPort": "out-film",
+      "toPort": "in-film"
+    },
+    {
+      "id": "e7",
+      "from": "n-review",
+      "to": "n-merge",
+      "fromPort": "out-brief",
+      "toPort": "in-brief"
+    },
+    {
+      "id": "e8",
+      "from": "n-merge",
+      "to": "n-deliver",
+      "fromPort": "out",
+      "toPort": "in"
+    }
+  ]
+}

@@ -1,0 +1,143 @@
+{
+  "schema": "oceanleo.workflow-view/v1",
+  "note": "站内查看用的投影。节点与边逐条来自工程文件 versions[0].graph，未增删；工程本体见 project 字段。",
+  "project": "oceanleo.video-canvas.v1",
+  "nodes": [
+    {
+      "id": "n-intake",
+      "label": "取料",
+      "kind": "source",
+      "x": 40,
+      "y": 20
+    },
+    {
+      "id": "n-params",
+      "label": "条件装配",
+      "kind": "filter",
+      "x": 40,
+      "y": 112
+    },
+    {
+      "id": "n-cutout",
+      "label": "抠图执行",
+      "kind": "filter",
+      "x": 40,
+      "y": 204
+    },
+    {
+      "id": "n-score",
+      "label": "置信度判定",
+      "kind": "filter",
+      "x": 40,
+      "y": 296
+    },
+    {
+      "id": "n-gate",
+      "label": "过 / 不过",
+      "kind": "branch",
+      "x": 40,
+      "y": 388
+    },
+    {
+      "id": "n-tune",
+      "label": "换条件 · 记第几遍",
+      "kind": "filter",
+      "x": 40,
+      "y": 480
+    },
+    {
+      "id": "n-fallback",
+      "label": "次数用完 · 兜底",
+      "kind": "filter",
+      "x": 40,
+      "y": 572
+    },
+    {
+      "id": "n-collect",
+      "label": "收口",
+      "kind": "concat",
+      "x": 40,
+      "y": 664
+    },
+    {
+      "id": "n-out",
+      "label": "出片",
+      "kind": "output",
+      "x": 40,
+      "y": 756
+    }
+  ],
+  "edges": [
+    {
+      "id": "e0",
+      "from": "n-intake",
+      "to": "n-params",
+      "fromPort": "out",
+      "toPort": "in"
+    },
+    {
+      "id": "e1",
+      "from": "n-params",
+      "to": "n-cutout",
+      "fromPort": "out",
+      "toPort": "in"
+    },
+    {
+      "id": "e2",
+      "from": "n-cutout",
+      "to": "n-score",
+      "fromPort": "out",
+      "toPort": "in"
+    },
+    {
+      "id": "e3",
+      "from": "n-score",
+      "to": "n-gate",
+      "fromPort": "score",
+      "toPort": "score"
+    },
+    {
+      "id": "e4",
+      "from": "n-gate",
+      "to": "n-collect",
+      "fromPort": "pass",
+      "toPort": "in-pass"
+    },
+    {
+      "id": "e5",
+      "from": "n-gate",
+      "to": "n-tune",
+      "fromPort": "fail",
+      "toPort": "in"
+    },
+    {
+      "id": "e6",
+      "from": "n-tune",
+      "to": "n-cutout",
+      "fromPort": "retry",
+      "toPort": "cond",
+      "back": true
+    },
+    {
+      "id": "e7",
+      "from": "n-tune",
+      "to": "n-fallback",
+      "fromPort": "exhausted",
+      "toPort": "in"
+    },
+    {
+      "id": "e8",
+      "from": "n-fallback",
+      "to": "n-collect",
+      "fromPort": "out",
+      "toPort": "in-fallback"
+    },
+    {
+      "id": "e9",
+      "from": "n-collect",
+      "to": "n-out",
+      "fromPort": "out",
+      "toPort": "in"
+    }
+  ]
+}
