@@ -1,0 +1,178 @@
+{
+  "tool": "deck-pptx",
+  "version": 1,
+  "meta": {
+    "slug": "deck-ukiyo-01",
+    "title": "浪与山：六个版画语汇，做一张能用的文旅海报",
+    "styleId": "ukiyo",
+    "sceneId": "sc-teaching",
+    "domainId": "dm-culture-travel",
+    "usage_scope": "commercial-ok",
+    "license_family": "CC0-1.0",
+    "supply_tier": "first-party"
+  },
+  "media": [
+    { "id": "openwave", "path": "media/ukiyo-p01-0.png" },
+    { "id": "v-wave", "path": "media/ukiyo-p02-0.png" },
+    { "id": "v-mountain", "path": "media/ukiyo-p02-1.png" },
+    { "id": "v-bridge", "path": "media/ukiyo-p02-2.png" },
+    { "id": "v-moon", "path": "media/ukiyo-p02-3.png" },
+    { "id": "v-pine", "path": "media/ukiyo-p02-4.png" },
+    { "id": "v-rain", "path": "media/ukiyo-p02-5.png" },
+    { "id": "layered", "path": "media/ukiyo-p04-0.png" },
+    { "id": "boat", "path": "media/route-ukiyo-p03-0.png" },
+    { "id": "tall", "path": "media/artedu-ukiyo-p05-0.png" }
+  ],
+  "body": {
+    "schema": "oceanleo.deck.v1",
+    "version": 1,
+    "title": "浪与山：六个版画语汇，做一张能用的文旅海报",
+    "packId": "sketchbook-amber",
+    "sequenceId": "teaching-module",
+    "theme": {
+      "accent": "C1452E",
+      "fontMajor": "Noto Serif CJK SC",
+      "fontMinor": "Noto Sans CJK SC"
+    },
+    "master": {
+      "footerText": "浪与山 · 文旅海报工作坊 第 2 讲 · 90 分钟",
+      "showPageNumber": true,
+      "creditsBar": true
+    },
+    "assets": [
+      { "id": "openwave", "mediaType": "image/png", "width": 1404, "height": 528, "byteSize": 1557526, "sha256": "4832a46e9b7d28bf8cc87a85ab587af5040d8f2c69fac5b16771c643e62dc166", "licenseCode": "OceanLeo-Free-1.0" },
+      { "id": "v-wave", "mediaType": "image/png", "width": 518, "height": 290, "byteSize": 306415, "sha256": "0f5080a9445628fe5a8f1495da64d74fac63b5c3875a88c6979ea9909892865a", "licenseCode": "OceanLeo-Free-1.0" },
+      { "id": "v-mountain", "mediaType": "image/png", "width": 518, "height": 290, "byteSize": 341138, "sha256": "a35f7334179ba666f140b6968bcb665417a35c522b3cac23e252abfa213d9682", "licenseCode": "OceanLeo-Free-1.0" },
+      { "id": "v-bridge", "mediaType": "image/png", "width": 518, "height": 290, "byteSize": 327732, "sha256": "005e3165dcad4823b040ddcef8b9b3c606841c51fd3e8f78b2d7bc15ff289bcf", "licenseCode": "OceanLeo-Free-1.0" },
+      { "id": "v-moon", "mediaType": "image/png", "width": 518, "height": 290, "byteSize": 282845, "sha256": "e4b143d89bbcd3fbdd89ae30dc7302fd7aa69a1567ec7ba2fa37a5791057c7b2", "licenseCode": "OceanLeo-Free-1.0" },
+      { "id": "v-pine", "mediaType": "image/png", "width": 518, "height": 290, "byteSize": 294227, "sha256": "b344fd0a4bc764957659f5a3404b3ca779e4079f04bc05a9c88038b4639f4fca", "licenseCode": "OceanLeo-Free-1.0" },
+      { "id": "v-rain", "mediaType": "image/png", "width": 516, "height": 288, "byteSize": 356619, "sha256": "72bf88d32a72a44fc203c4c377f368fe1a8e05ab0027e380fe6f6b8bc6179d4d", "licenseCode": "OceanLeo-Free-1.0" },
+      { "id": "layered", "mediaType": "image/png", "width": 1556, "height": 490, "byteSize": 1753285, "sha256": "357a1b2fa394e8e987564b004e4314ae479fa8704bca6dd5b4933fa5c5043291", "licenseCode": "OceanLeo-Free-1.0" },
+      { "id": "boat", "mediaType": "image/png", "width": 684, "height": 590, "byteSize": 286346, "sha256": "55d96e97e96eb350ea5a332d657e170c88a60373b70fbf34265c62ba1281a5ac", "licenseCode": "OceanLeo-Free-1.0" },
+      { "id": "tall", "mediaType": "image/png", "width": 626, "height": 722, "byteSize": 1082184, "sha256": "45d7a5551172ebee1ca7fdf85a3a73bfed0d1e19640aefde7d4265206ff16e9c", "licenseCode": "OceanLeo-Free-1.0" }
+    ],
+    "slides": [
+      {
+        "layout": "title",
+        "title": "浪与山",
+        "subtitle": "六个版画语汇，做一张能用的文旅海报 · 90 分钟工作坊 第 2 讲",
+        "note": "先说清楚这节课不教画画，教的是从版画里拆出来的构图规则，今天下课前每人交一版草图。"
+      },
+      {
+        "layout": "image-full",
+        "title": "三百年前就有一套设计系统",
+        "body": "木版画受工艺限制：套色有限、轮廓必须清楚、远近只能靠分层。限制逼出了一套稳定的规则，今天做海报照样成立。",
+        "note": "让大家先看 20 秒再讲。看的时候问一句：这张画里最远的东西是什么颜色？",
+        "images": [
+          { "assetId": "openwave", "alt": "宽幅木版画：靛蓝浪头与朱红日轮，纸纹底", "fit": "cover" }
+        ]
+      },
+      {
+        "layout": "image-grid",
+        "title": "六个语汇，今天只用前两个",
+        "body": "先认全，后面每讲一节课拆一个。",
+        "note": "念到哪一格就指哪一格，不要按顺序念完再讲。",
+        "images": [
+          { "assetId": "v-wave", "alt": "浪：卷曲的浪头与细密浪花", "fit": "cover", "caption": "波 · 把动势刻进定格" },
+          { "assetId": "v-mountain", "alt": "山：远处雪顶富士与前景浪", "fit": "cover", "caption": "山 · 远景只需一个三角" },
+          { "assetId": "v-bridge", "alt": "桥：拱桥与桥上行人", "fit": "cover", "caption": "桥 · 让人出现在结构里" },
+          { "assetId": "v-moon", "alt": "月：夜色屋檐与塔影", "fit": "cover", "caption": "月 · 夜色只用三种蓝" },
+          { "assetId": "v-pine", "alt": "松：松枝斜出，远处红日与浪", "fit": "cover", "caption": "松 · 一棵树撑起前景" },
+          { "assetId": "v-rain", "alt": "雨：斜线雨脚与屋顶", "fit": "cover", "caption": "雨 · 斜线就是暴雨" }
+        ]
+      },
+      {
+        "layout": "image-left",
+        "title": "语汇一 · 空处是主体，不是背景",
+        "bullets": [
+          "先定「空」的位置和大小，再把物件摆进剩下的地方——顺序反过来就会画满。",
+          "空的地方不要平涂：留纸纹、留一点晕，它得像纸，不能像色块。",
+          "文旅海报的落款、二维码、活动信息，全部放进这块空里，别压在画上。"
+        ],
+        "note": "现场提问：你们上一版海报里，最大的一块空白在哪？多半在最下面，那是版式剩下的，不是设计出来的。",
+        "images": [
+          { "assetId": "boat", "alt": "大片留白的水面与一叶小舟，纸纹清晰", "fit": "contain", "caption": "一叶舟，其余全是纸" }
+        ]
+      },
+      {
+        "layout": "image-right",
+        "title": "语汇二 · 前景压边，画面才有远近",
+        "bullets": [
+          "让一样近处的东西（树枝、屋檐、栏杆）压住画面边缘，并且允许它被裁断。",
+          "前景只用最深的那一档颜色，中景次之，远景最淡——三层，不要第四层。",
+          "竖构图尤其吃这一招：上下各压一点，中间那块才站得住。"
+        ],
+        "note": "这一步做完再看一眼第 2 页那张浪，它的前景也是被裁断的。",
+        "images": [
+          { "assetId": "tall", "alt": "竖构图木版画：近景枝叶压边，远处山与云", "fit": "contain", "caption": "竖幅：上下都压一点" }
+        ]
+      },
+      {
+        "layout": "two-column",
+        "title": "课堂练习 · 把你的目的地拆成三层",
+        "left": [
+          "第一步：写下三个词——最远、最近、最要人记住的。",
+          "第二步：给最远的那样东西挑一个三角或弧线的外形。",
+          "第三步：给最近的那样东西挑一个能被裁断的形状。",
+          "第四步：把活动信息塞进空处，不许压到画上。"
+        ],
+        "right": [
+          "判断标准一：眯眼看，三层的深浅能不能分出来。",
+          "判断标准二：把文字全部盖住，画面还看得出讲的是哪个地方吗。",
+          "判断标准三：颜色是不是超过四种（纸底不算）。",
+          "三条都过了才叫完成，过两条的回去改。"
+        ],
+        "note": "给 15 分钟，不许打开素材网站，先用铅笔。"
+      },
+      {
+        "layout": "image-full",
+        "title": "示范：三层叠出来是这个样子",
+        "body": "远处的山最淡，中间的水面是主色，近处的岸线最深并且被画框裁断。整张画只有四种颜色。",
+        "note": "指给他们看被裁断的那条岸线。这是全课最容易被忽略的一笔。",
+        "images": [
+          { "assetId": "layered", "alt": "宽幅木版画风景：远山、水面、被裁断的近岸三层", "fit": "cover" }
+        ]
+      },
+      {
+        "layout": "comparison",
+        "title": "三个常见错误，和它们的改法",
+        "left": [
+          "错误一：颜色越加越多，最后有七八种。",
+          "错误二：把版画当底纹，上面盖一层半透明白，再压满字。",
+          "错误三：所有元素都完整，谁也不裁断，画面像贴纸集合。"
+        ],
+        "right": [
+          "改法：删到四种以内，其中一种只用于点睛。",
+          "改法：给文字留出真正的空处，画就让它是画。",
+          "改法：挑一样近景，大胆裁掉它三分之一。"
+        ],
+        "note": "错误二最常见，也最难劝——它看起来最省事。"
+      },
+      {
+        "layout": "bullets",
+        "title": "作业 · 下周带来什么",
+        "bullets": [
+          "一张 A3 草图：三层分明，四色以内，前景有裁断。",
+          "一句话说明：你想让人记住这个地方的哪一点。",
+          "一张失败稿：把你自己判定不合格的那版也带来，我们看它坏在哪。",
+          "交付时间：下周同一时间，纸质稿，不收截图。"
+        ],
+        "note": "强调那张失败稿。上一期只有三个人带了，讲得最透的就是那三张。"
+      }
+    ],
+    "attribution": {
+      "entries": [
+        {
+          "text": "配图复用自 OceanLeo 平台既有浮世绘和风演示模板（ukiyo / route-ukiyo / artedu-ukiyo 三套整页图裁切），第一方素材",
+          "licenseCode": "OceanLeo-Free-1.0",
+          "licenseUrl": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/ppt/decks/ukiyo/deck.html"
+        },
+        {
+          "text": "课程文字为 OceanLeo 第一方原创示例",
+          "licenseCode": "CC0-1.0",
+          "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+        }
+      ]
+    }
+  }
+}
