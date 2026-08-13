@@ -1,0 +1,227 @@
+{
+  "ok": true,
+  "tool": "doc-docx",
+  "toolVersion": 1,
+  "out": "/root/projects/asset/public/works/document/document-field-manual-01.docx",
+  "outputs": [
+    {
+      "path": "/root/projects/asset/public/works/document/document-field-manual-01.docx",
+      "byteSize": 213732,
+      "sha256": "ce22c4ce527b01e5cd0325c2bef4cd294a6dd8762ec570771ca759563b3e937f"
+    }
+  ],
+  "readings": {
+    "partCount": 15,
+    "sectionCount": 38,
+    "pictureCount": 4,
+    "chartPartCount": 0,
+    "parts": [
+      "[Content_Types].xml",
+      "_rels/.rels",
+      "docProps/app.xml",
+      "docProps/core.xml",
+      "docProps/custom.xml",
+      "word/_rels/document.xml.rels",
+      "word/document.xml",
+      "word/fontTable.xml",
+      "word/media/image1.png",
+      "word/media/image2.png",
+      "word/media/image3.png",
+      "word/media/image4.png",
+      "word/settings.xml",
+      "word/styles.xml",
+      "word/theme/theme1.xml"
+    ],
+    "layout": {
+      "source": "input",
+      "axesFromInput": [
+        "body.palette",
+        "layout.columns",
+        "layout.figure",
+        "layout.lineSpacing",
+        "layout.margins",
+        "layout.page",
+        "theme.bodySize",
+        "theme.fonts",
+        "theme.headingScale"
+      ],
+      "derivedFrom": "writer-layout-model",
+      "derivedNote": "几何是写出器版面模型按字号/字宽常量算出来的声明值,不是渲染实测(工具不许起浏览器)。独立复核以 V2 的量法为准。",
+      "page": {
+        "id": "a4",
+        "orientation": "portrait",
+        "widthTwip": 11906,
+        "heightTwip": 16838
+      },
+      "marginsTwip": {
+        "top": 1814,
+        "bottom": 1814,
+        "right": 1985,
+        "left": 1985,
+        "header": 907,
+        "footer": 907
+      },
+      "contentWidthTwip": 7936,
+      "contentHeightTwip": 13210,
+      "columns": 1,
+      "columnSpacingTwip": 425,
+      "columnWidthTwip": 7936,
+      "lineSpacing": "loose",
+      "lineTwip": 360,
+      "paragraphAfterTwip": 200,
+      "headingScale": "flat",
+      "bodySize": "large",
+      "fontSizesHalfPoint": {
+        "h1": 26,
+        "h2": 24,
+        "h3": 22,
+        "body": 24
+      },
+      "fonts": {
+        "latin": "Noto Sans",
+        "eastAsia": "Noto Sans CJK SC",
+        "heading": "Noto Sans",
+        "headingEastAsia": "Noto Sans CJK SC"
+      },
+      "figure": {
+        "widthRatio": 1,
+        "align": "center"
+      },
+      "palette": [
+        "3A3A3A",
+        "8A6A3A",
+        "B45309",
+        "E3D9C8",
+        "FBF3E6"
+      ],
+      "paletteBySlot": {
+        "accent": "B45309",
+        "heading2": "B45309",
+        "heading3": "8A6A3A",
+        "body": "3A3A3A",
+        "tableHeaderFill": "FBF3E6",
+        "rule": "E3D9C8"
+      },
+      "pageCount": 4,
+      "mainBlockCount": 10,
+      "mainBlocks": [
+        {
+          "kind": "section",
+          "pageIndex": 0,
+          "column": 0,
+          "x": 0.1667,
+          "y": 0.1077,
+          "w": 0.6666,
+          "h": 0.1241,
+          "areaRatio": 0.0827
+        },
+        {
+          "kind": "image",
+          "pageIndex": 0,
+          "column": 0,
+          "x": 0.1667,
+          "y": 0.2319,
+          "w": 0.6666,
+          "h": 0.3397,
+          "areaRatio": 0.2264
+        },
+        {
+          "kind": "section",
+          "pageIndex": 0,
+          "column": 0,
+          "x": 0.1667,
+          "y": 0.6476,
+          "w": 0.6666,
+          "h": 0.2447,
+          "areaRatio": 0.1631
+        },
+        {
+          "kind": "image",
+          "pageIndex": 1,
+          "column": 0,
+          "x": 0.1667,
+          "y": 0.2218,
+          "w": 0.6666,
+          "h": 0.2916,
+          "areaRatio": 0.1944
+        },
+        {
+          "kind": "section",
+          "pageIndex": 1,
+          "column": 0,
+          "x": 0.1667,
+          "y": 0.5134,
+          "w": 0.6666,
+          "h": 0.2518,
+          "areaRatio": 0.1678
+        },
+        {
+          "kind": "image",
+          "pageIndex": 2,
+          "column": 0,
+          "x": 0.1667,
+          "y": 0.1077,
+          "w": 0.6666,
+          "h": 0.1752,
+          "areaRatio": 0.1168
+        },
+        {
+          "kind": "section",
+          "pageIndex": 2,
+          "column": 0,
+          "x": 0.1667,
+          "y": 0.2829,
+          "w": 0.6666,
+          "h": 0.2851,
+          "areaRatio": 0.19
+        },
+        {
+          "kind": "image",
+          "pageIndex": 2,
+          "column": 0,
+          "x": 0.1667,
+          "y": 0.6108,
+          "w": 0.6666,
+          "h": 0.2756,
+          "areaRatio": 0.1837
+        },
+        {
+          "kind": "section",
+          "pageIndex": 3,
+          "column": 0,
+          "x": 0.1667,
+          "y": 0.1077,
+          "w": 0.6666,
+          "h": 0.2459,
+          "areaRatio": 0.1639
+        },
+        {
+          "kind": "section",
+          "pageIndex": 3,
+          "column": 0,
+          "x": 0.1667,
+          "y": 0.3536,
+          "w": 0.6666,
+          "h": 0.316,
+          "areaRatio": 0.2106
+        }
+      ],
+      "fingerprint": "37fd32b59280ce4f",
+      "fingerprintByThreshold": {
+        "6": "37fd32b59280ce4f",
+        "7": "37fd32b59280ce4f",
+        "8": "37fd32b59280ce4f",
+        "9": "70d2e1086a62bb92",
+        "10": "70d2e1086a62bb92"
+      }
+    },
+    "license": {
+      "usage_scope": "first-party",
+      "license_family": "CC0",
+      "supply_tier": "original"
+    }
+  },
+  "writer": "assemblers/ooxml/write-docx.mjs",
+  "writerVersion": null,
+  "notes": []
+}

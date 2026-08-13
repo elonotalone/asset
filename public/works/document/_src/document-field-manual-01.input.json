@@ -10,57 +10,231 @@
     "supply_tier": "original"
   },
   "media": [
-    { "id": "printer-overview", "path": "media/printer-overview.png", "mediaType": "image/png" },
-    { "id": "bed-leveling", "path": "media/bed-leveling.png", "mediaType": "image/png" },
-    { "id": "filament-path", "path": "media/filament-path.png", "mediaType": "image/png" },
-    { "id": "first-print-check", "path": "media/first-print-check.png", "mediaType": "image/png" }
+    {
+      "id": "printer-overview",
+      "path": "media/printer-overview.png",
+      "mediaType": "image/png"
+    },
+    {
+      "id": "bed-leveling",
+      "path": "media/bed-leveling.png",
+      "mediaType": "image/png"
+    },
+    {
+      "id": "filament-path",
+      "path": "media/filament-path.png",
+      "mediaType": "image/png"
+    },
+    {
+      "id": "first-print-check",
+      "path": "media/first-print-check.png",
+      "mediaType": "image/png"
+    }
   ],
   "body": {
     "accent": "B45309",
     "blocks": [
-      { "kind": "heading", "level": 1, "text": "桌面 3D 打印机首件操作手册（FDM 机型通用）" },
-      { "kind": "paragraph", "text": "适用于机身自带触摸屏、单喷头、可加热平台的桌面熔丝成型机。照本手册走完四步，你会拿到一件 20 毫米的标定方块，并知道这台机器现在准不准。" },
-      { "kind": "image", "assetId": "printer-overview", "widthPx": 620, "heightPx": 431, "name": "总览：机身五处关键部件" },
-      { "kind": "paragraph", "text": "上图圈出的五处，是全篇只会反复提到的五处：① 打印头与喷嘴、② 热床、③ 料盘与送料轮、④ 触摸屏与急停、⑤ 电源与总开关。看清它们各在机身哪一侧，再往下翻。" },
-
-      { "kind": "heading", "level": 2, "text": "步骤一　通电自检：先让机器自己走一遍" },
-      { "kind": "paragraph", "text": "拆掉运输固定件——机身两侧的橙色扎带与热床下方的泡沫块，共四处。固定件不拆就通电，电机会带着卡死的轴走，声音是明显的顿挫。" },
-      { "kind": "paragraph", "text": "按总览图 ⑤ 处的总开关送电，在触摸屏（④）上选「归零」。三个轴会各自走到行程末端，各触发一次限位开关。" },
-      { "kind": "bullet", "text": "算做对了：三轴依次归零，全程无金属摩擦声，屏上坐标显示 X0 Y0 Z0。" },
-      { "kind": "bullet", "text": "某一轴一路顶到底不停：立刻按急停，那一轴的限位开关插头松了，重插后再来一次。" },
-      { "kind": "bullet", "text": "屏幕不亮：先看电源开关旁的指示灯，灯不亮是外部供电问题，不要拆机身。" },
-
-      { "kind": "heading", "level": 2, "text": "步骤二　调平：四角同一手感，不是四角同一高度" },
-      { "kind": "image", "assetId": "bed-leveling", "widthPx": 620, "heightPx": 368, "name": "调平：四角旋钮与 0.1 毫米手感" },
-      { "kind": "paragraph", "text": "把喷嘴移到热床一角上方，拿一张 A4 纸垫在喷嘴与热床之间，拧那一角的旋钮，直到纸能抽动但明显有阻力。" },
-      { "kind": "paragraph", "text": "四个旋钮各拧四分之一圈就换到对角，绕两轮。一次把一角拧到底，会把已经调好的那一角带偏。" },
-      { "kind": "bullet", "text": "算做对了：四角抽纸的手感一致，纸面有轻微刮擦但不被压死。" },
-      { "kind": "bullet", "text": "纸完全抽不动：喷嘴离床太近，先降半圈再重来，不要硬拉纸——喷嘴会被顶偏。" },
-      { "kind": "bullet", "text": "四角怎么调都差一大截：热床本身翘了，改用屏上的「网格补偿」，不要继续拧旋钮。" },
-
-      { "kind": "heading", "level": 2, "text": "步骤三　装料：听到「咔」一声之前不要松手" },
-      { "kind": "image", "assetId": "filament-path", "widthPx": 620, "heightPx": 326, "name": "装料：料盘到喷嘴的整条料路" },
-      { "kind": "paragraph", "text": "先把喷嘴预热到耗材标称温度（PLA 一般 200 ℃ 上下），冷态强行推料会顶弯送料齿。" },
-      { "kind": "paragraph", "text": "把料头剪成 45 度斜口，捏住送料轮右侧的压紧手柄，把料一直推到听见轻微的「咔」，再松手柄。" },
-      { "kind": "paragraph", "text": "在屏上选「进料」，看着喷嘴出料，直到颜色由旧料完全过渡到新料，通常要挤出 8 到 10 厘米。" },
-      { "kind": "bullet", "text": "算做对了：出料是一条连续的细丝，笔直下垂，不打卷、不断续。" },
-      { "kind": "bullet", "text": "出料打卷或发脆：温度偏低，每次加 5 ℃ 重试，不要一次加到 230 ℃。" },
-      { "kind": "bullet", "text": "推不进去：料在送料轮处被削出了缺口，把那一段剪掉重新剪斜口。" },
-
-      { "kind": "heading", "level": 2, "text": "步骤四　首件检查：量三条边，看一处首层" },
-      { "kind": "image", "assetId": "first-print-check", "widthPx": 620, "heightPx": 347, "name": "首件检查：三条边与首层边缘" },
-      { "kind": "paragraph", "text": "打印机内置的 20 毫米标定方块，用默认配置直接开印，约 25 分钟。印完等热床降到 40 ℃ 以下再取件，热态硬撬会带下一层床垫膜。" },
-      { "kind": "paragraph", "text": "拿卡尺量三条边，再翻过来看首层：这两件事分别回答「尺寸准不准」和「第一层贴得牢不牢」。" },
-      { "kind": "bullet", "text": "算做对了：三条边都在 20.0 ± 0.2 毫米以内，首层边缘压实、无翘起、无缝隙。" },
-      { "kind": "bullet", "text": "任一条边超差 0.4 毫米以上：回到步骤二重新调平，不要直接改切片里的缩放系数。" },
-      { "kind": "bullet", "text": "首层边缘翘起：热床温度上调 5 ℃，或改用带裙边的切片配置。" },
-
-      { "kind": "heading", "level": 2, "text": "常见故障与处理" },
-      { "kind": "paragraph", "text": "下面三种是首件阶段最常见的，处理办法都能在前面四步里找到落点，不需要拆机。" },
-      { "kind": "bullet", "text": "打到一半整件从热床上脱落：多半是首层没贴牢，回到步骤四的首层判据，先加热床温度再考虑换胶。" },
-      { "kind": "bullet", "text": "件上出现横向断层：送料被卡过一次，回到步骤三检查料路是否被料盘边缘别住。" },
-      { "kind": "bullet", "text": "喷嘴拖着一坨料走：上一件的残料没清，加热到 200 ℃ 用铜刷顺着一个方向刷，不要用刀刮。" },
-      { "kind": "paragraph", "text": "（本件为 OceanLeo 第一方原创示例文档，四张示意图为本件自绘，参数为演示取值，请以你手上机型的说明书为准。）" }
-    ]
+      {
+        "kind": "heading",
+        "level": 1,
+        "text": "桌面 3D 打印机首件操作手册（FDM 机型通用）"
+      },
+      {
+        "kind": "paragraph",
+        "text": "适用于机身自带触摸屏、单喷头、可加热平台的桌面熔丝成型机。照本手册走完四步，你会拿到一件 20 毫米的标定方块，并知道这台机器现在准不准。"
+      },
+      {
+        "kind": "image",
+        "assetId": "printer-overview",
+        "widthPx": 620,
+        "heightPx": 431,
+        "name": "总览：机身五处关键部件"
+      },
+      {
+        "kind": "paragraph",
+        "text": "上图圈出的五处，是全篇只会反复提到的五处：① 打印头与喷嘴、② 热床、③ 料盘与送料轮、④ 触摸屏与急停、⑤ 电源与总开关。看清它们各在机身哪一侧，再往下翻。"
+      },
+      {
+        "kind": "heading",
+        "level": 2,
+        "text": "步骤一　通电自检：先让机器自己走一遍"
+      },
+      {
+        "kind": "paragraph",
+        "text": "拆掉运输固定件——机身两侧的橙色扎带与热床下方的泡沫块，共四处。固定件不拆就通电，电机会带着卡死的轴走，声音是明显的顿挫。"
+      },
+      {
+        "kind": "paragraph",
+        "text": "按总览图 ⑤ 处的总开关送电，在触摸屏（④）上选「归零」。三个轴会各自走到行程末端，各触发一次限位开关。"
+      },
+      {
+        "kind": "bullet",
+        "text": "算做对了：三轴依次归零，全程无金属摩擦声，屏上坐标显示 X0 Y0 Z0。"
+      },
+      {
+        "kind": "bullet",
+        "text": "某一轴一路顶到底不停：立刻按急停，那一轴的限位开关插头松了，重插后再来一次。"
+      },
+      {
+        "kind": "bullet",
+        "text": "屏幕不亮：先看电源开关旁的指示灯，灯不亮是外部供电问题，不要拆机身。"
+      },
+      {
+        "kind": "heading",
+        "level": 2,
+        "text": "步骤二　调平：四角同一手感，不是四角同一高度"
+      },
+      {
+        "kind": "image",
+        "assetId": "bed-leveling",
+        "widthPx": 620,
+        "heightPx": 368,
+        "name": "调平：四角旋钮与 0.1 毫米手感"
+      },
+      {
+        "kind": "paragraph",
+        "text": "把喷嘴移到热床一角上方，拿一张 A4 纸垫在喷嘴与热床之间，拧那一角的旋钮，直到纸能抽动但明显有阻力。"
+      },
+      {
+        "kind": "paragraph",
+        "text": "四个旋钮各拧四分之一圈就换到对角，绕两轮。一次把一角拧到底，会把已经调好的那一角带偏。"
+      },
+      {
+        "kind": "bullet",
+        "text": "算做对了：四角抽纸的手感一致，纸面有轻微刮擦但不被压死。"
+      },
+      {
+        "kind": "bullet",
+        "text": "纸完全抽不动：喷嘴离床太近，先降半圈再重来，不要硬拉纸——喷嘴会被顶偏。"
+      },
+      {
+        "kind": "bullet",
+        "text": "四角怎么调都差一大截：热床本身翘了，改用屏上的「网格补偿」，不要继续拧旋钮。"
+      },
+      {
+        "kind": "heading",
+        "level": 2,
+        "text": "步骤三　装料：听到「咔」一声之前不要松手"
+      },
+      {
+        "kind": "image",
+        "assetId": "filament-path",
+        "widthPx": 620,
+        "heightPx": 326,
+        "name": "装料：料盘到喷嘴的整条料路"
+      },
+      {
+        "kind": "paragraph",
+        "text": "先把喷嘴预热到耗材标称温度（PLA 一般 200 ℃ 上下），冷态强行推料会顶弯送料齿。"
+      },
+      {
+        "kind": "paragraph",
+        "text": "把料头剪成 45 度斜口，捏住送料轮右侧的压紧手柄，把料一直推到听见轻微的「咔」，再松手柄。"
+      },
+      {
+        "kind": "paragraph",
+        "text": "在屏上选「进料」，看着喷嘴出料，直到颜色由旧料完全过渡到新料，通常要挤出 8 到 10 厘米。"
+      },
+      {
+        "kind": "bullet",
+        "text": "算做对了：出料是一条连续的细丝，笔直下垂，不打卷、不断续。"
+      },
+      {
+        "kind": "bullet",
+        "text": "出料打卷或发脆：温度偏低，每次加 5 ℃ 重试，不要一次加到 230 ℃。"
+      },
+      {
+        "kind": "bullet",
+        "text": "推不进去：料在送料轮处被削出了缺口，把那一段剪掉重新剪斜口。"
+      },
+      {
+        "kind": "heading",
+        "level": 2,
+        "text": "步骤四　首件检查：量三条边，看一处首层"
+      },
+      {
+        "kind": "image",
+        "assetId": "first-print-check",
+        "widthPx": 620,
+        "heightPx": 347,
+        "name": "首件检查：三条边与首层边缘"
+      },
+      {
+        "kind": "paragraph",
+        "text": "打印机内置的 20 毫米标定方块，用默认配置直接开印，约 25 分钟。印完等热床降到 40 ℃ 以下再取件，热态硬撬会带下一层床垫膜。"
+      },
+      {
+        "kind": "paragraph",
+        "text": "拿卡尺量三条边，再翻过来看首层：这两件事分别回答「尺寸准不准」和「第一层贴得牢不牢」。"
+      },
+      {
+        "kind": "bullet",
+        "text": "算做对了：三条边都在 20.0 ± 0.2 毫米以内，首层边缘压实、无翘起、无缝隙。"
+      },
+      {
+        "kind": "bullet",
+        "text": "任一条边超差 0.4 毫米以上：回到步骤二重新调平，不要直接改切片里的缩放系数。"
+      },
+      {
+        "kind": "bullet",
+        "text": "首层边缘翘起：热床温度上调 5 ℃，或改用带裙边的切片配置。"
+      },
+      {
+        "kind": "heading",
+        "level": 2,
+        "text": "常见故障与处理"
+      },
+      {
+        "kind": "paragraph",
+        "text": "下面三种是首件阶段最常见的，处理办法都能在前面四步里找到落点，不需要拆机。"
+      },
+      {
+        "kind": "bullet",
+        "text": "打到一半整件从热床上脱落：多半是首层没贴牢，回到步骤四的首层判据，先加热床温度再考虑换胶。"
+      },
+      {
+        "kind": "bullet",
+        "text": "件上出现横向断层：送料被卡过一次，回到步骤三检查料路是否被料盘边缘别住。"
+      },
+      {
+        "kind": "bullet",
+        "text": "喷嘴拖着一坨料走：上一件的残料没清，加热到 200 ℃ 用铜刷顺着一个方向刷，不要用刀刮。"
+      },
+      {
+        "kind": "paragraph",
+        "text": "（本件为 OceanLeo 第一方原创示例文档，四张示意图为本件自绘，参数为演示取值，请以你手上机型的说明书为准。）"
+      }
+    ],
+    "layout": {
+      "page": "a4",
+      "margins": {
+        "top": 32,
+        "right": 35,
+        "bottom": 32,
+        "left": 35
+      },
+      "columns": 1,
+      "lineSpacing": "loose",
+      "figure": {
+        "width": "column",
+        "align": "center"
+      }
+    },
+    "theme": {
+      "fonts": {
+        "latin": "Noto Sans",
+        "eastAsia": "Noto Sans CJK SC"
+      },
+      "headingScale": "flat",
+      "bodySize": "large"
+    },
+    "palette": {
+      "accent": "#B45309",
+      "heading2": "#B45309",
+      "heading3": "#8A6A3A",
+      "body": "#3A3A3A",
+      "rule": "#E3D9C8",
+      "tableHeaderFill": "#FBF3E6"
+    }
   }
 }
