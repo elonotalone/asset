@@ -1,0 +1,152 @@
+[
+  {
+    "id": "logo-grid-monogram-01",
+    "artifactType": "composite_image",
+    "title": "泓远港运 · 模数切分字组标志",
+    "styleId": "logo-grid-monogram",
+    "summary": "HY 两个字母不是画上去的笔画，是一块实心方场被七列六行的模数网格切掉沟槽之后剩下来的模块。深底浅字、横向锁定，全篇只用「沟槽」一种手段。规范用法（最小尺寸 / 单色版 / 留白）随件附 USAGE.md。",
+    "cover": "/works/composite_image/logo-grid-monogram-01.cover.webp",
+    "view": {
+      "kind": "vector",
+      "src": "/works/composite_image/logo-grid-monogram-01/logo-grid-monogram-01.svg",
+      "download": "/works/composite_image/logo-grid-monogram-01/logo-grid-monogram-01.svg"
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创标志设计（模数切分字组）",
+        "licenseCode": "CC0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "entrypoint": "logo-grid-monogram-01.svg",
+      "fileCount": 2,
+      "sourceBytes": 2846,
+      "closureBytes": 3129,
+      "canvasKind": "logo",
+      "canvasWidth": 1120,
+      "canvasHeight": 560,
+      "elementCount": 11,
+      "svgShapeCount": 9,
+      "svgShapeKindCount": 2,
+      "svgAnchorCount": 0,
+      "irShapeCount": 11,
+      "paletteTokenCount": 3,
+      "dangerousConstructResidual": 0,
+      "irChecksFailed": 0,
+      "attributionEntryCount": 2,
+      "layoutBlockCount8pct": 2,
+      "layoutBlockCount4pct": 2,
+      "shapeKinds": [
+        "line",
+        "rect",
+        "text"
+      ],
+      "canvasAspect": 2,
+      "monoInkRatio": 0.1215,
+      "monoInkBoxAspect": 1.186,
+      "coverBytes": 10138
+    }
+  },
+  {
+    "id": "logo-counterform-crescent-02",
+    "artifactType": "composite_image",
+    "title": "屿汐鲜运 · 负形反切标志",
+    "styleId": "logo-counterform-crescent",
+    "summary": "唯一的正形是一枚实心圆盘，标志是底色反切三刀之后剩下的那一弯：错位的圆切出弯身，横向窄椭圆把它分成上下两段，负形里留一颗实心占位。三道反切件用的都是底色本身，所以单色版与彩色版逐形相同。",
+    "cover": "/works/composite_image/logo-counterform-crescent-02.cover.webp",
+    "view": {
+      "kind": "vector",
+      "src": "/works/composite_image/logo-counterform-crescent-02/logo-counterform-crescent-02.svg",
+      "download": "/works/composite_image/logo-counterform-crescent-02/logo-counterform-crescent-02.svg"
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创标志设计（负形反切）",
+        "licenseCode": "CC0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "entrypoint": "logo-counterform-crescent-02.svg",
+      "fileCount": 2,
+      "sourceBytes": 2508,
+      "closureBytes": 2779,
+      "canvasKind": "logo",
+      "canvasWidth": 800,
+      "canvasHeight": 940,
+      "elementCount": 10,
+      "svgShapeCount": 5,
+      "svgShapeKindCount": 3,
+      "svgAnchorCount": 0,
+      "irShapeCount": 10,
+      "paletteTokenCount": 3,
+      "dangerousConstructResidual": 0,
+      "irChecksFailed": 0,
+      "attributionEntryCount": 2,
+      "layoutBlockCount8pct": 3,
+      "layoutBlockCount4pct": 3,
+      "shapeKinds": [
+        "circle",
+        "ellipse",
+        "rect",
+        "text"
+      ],
+      "canvasAspect": 0.851,
+      "monoInkRatio": 0.1327,
+      "monoInkBoxAspect": 1.154,
+      "coverBytes": 22824
+    }
+  },
+  {
+    "id": "logo-seal-grid-03",
+    "artifactType": "composite_image",
+    "title": "叁两茶事 · 方印格徽记标志",
+    "styleId": "logo-seal-grid",
+    "summary": "一枚正方印：薄板拼出锐利的边栏，印床四等分，对角两格阳文（实心底、字反白）、另外对角两格阴文（空底、字为印色），四字按印文读法排，印面右下缺一角。罗马商号在印面之外，属说明不属印。",
+    "cover": "/works/composite_image/logo-seal-grid-03.cover.webp",
+    "view": {
+      "kind": "vector",
+      "src": "/works/composite_image/logo-seal-grid-03/logo-seal-grid-03.svg",
+      "download": "/works/composite_image/logo-seal-grid-03/logo-seal-grid-03.svg"
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创标志设计（方印格）",
+        "licenseCode": "CC0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "entrypoint": "logo-seal-grid-03.svg",
+      "fileCount": 2,
+      "sourceBytes": 3138,
+      "closureBytes": 3409,
+      "canvasKind": "logo",
+      "canvasWidth": 840,
+      "canvasHeight": 840,
+      "elementCount": 13,
+      "svgShapeCount": 8,
+      "svgShapeKindCount": 1,
+      "svgAnchorCount": 0,
+      "irShapeCount": 13,
+      "paletteTokenCount": 3,
+      "dangerousConstructResidual": 0,
+      "irChecksFailed": 0,
+      "attributionEntryCount": 2,
+      "layoutBlockCount8pct": 3,
+      "layoutBlockCount4pct": 7,
+      "shapeKinds": [
+        "rect",
+        "text"
+      ],
+      "canvasAspect": 1,
+      "monoInkRatio": 0.2559,
+      "monoInkBoxAspect": 0.896,
+      "coverBytes": 23000
+    }
+  }
+]
