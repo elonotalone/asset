@@ -1,0 +1,433 @@
+{
+  "schemaVersion": "oceanleo.video-canvas.v1",
+  "headVersionId": "v1",
+  "versions": [
+    {
+      "id": "v1",
+      "createdAt": "2026-08-13T00:00:00.000Z",
+      "note": "工单系统、交易后台、舆情监控三路互不相干的来源各自成入口，各走一段只服务于自己的归一化（时间窗、单位、缺数表示各不相同），到齐或到截止时间在唯一的合并点汇成一份日报；哪一路没到齐会被标注，并随成品交出一份来源清单。缺一路不把整份日报卡住。",
+      "graph": {
+        "nodes": [
+          {
+            "id": "n-src-ticket",
+            "kind": "source",
+            "label": "入口一 · 工单系统导出",
+            "x": 0,
+            "y": 0,
+            "ports": {
+              "inputs": [],
+              "outputs": [
+                {
+                  "name": "rows",
+                  "dataType": "text"
+                }
+              ]
+            }
+          },
+          {
+            "id": "n-src-trade",
+            "kind": "source",
+            "label": "入口二 · 交易后台导出",
+            "x": 120,
+            "y": 0,
+            "ports": {
+              "inputs": [],
+              "outputs": [
+                {
+                  "name": "rows",
+                  "dataType": "number"
+                }
+              ]
+            }
+          },
+          {
+            "id": "n-src-voice",
+            "kind": "source",
+            "label": "入口三 · 舆情监控导出",
+            "x": 240,
+            "y": 0,
+            "ports": {
+              "inputs": [],
+              "outputs": [
+                {
+                  "name": "rows",
+                  "dataType": "text"
+                }
+              ]
+            }
+          },
+          {
+            "id": "n-norm-ticket",
+            "kind": "filter",
+            "label": "工单归一 · 按创建时间切自然日",
+            "x": 360,
+            "y": 0,
+            "ports": {
+              "inputs": [
+                {
+                  "name": "in",
+                  "dataType": "text"
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "out",
+                  "dataType": "text"
+                }
+              ]
+            }
+          },
+          {
+            "id": "n-norm-trade",
+            "kind": "filter",
+            "label": "交易归一 · 分转元、退款并账",
+            "x": 480,
+            "y": 0,
+            "ports": {
+              "inputs": [
+                {
+                  "name": "in",
+                  "dataType": "number"
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "out",
+                  "dataType": "text"
+                }
+              ]
+            }
+          },
+          {
+            "id": "n-dedupe-trade",
+            "kind": "filter",
+            "label": "交易去重 · 同一笔重复上报只留一条",
+            "x": 0,
+            "y": 48,
+            "ports": {
+              "inputs": [
+                {
+                  "name": "in",
+                  "dataType": "text"
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "out",
+                  "dataType": "text"
+                }
+              ]
+            }
+          },
+          {
+            "id": "n-norm-voice",
+            "kind": "filter",
+            "label": "舆情归一 · 情感标签收敛到三档",
+            "x": 120,
+            "y": 48,
+            "ports": {
+              "inputs": [
+                {
+                  "name": "in",
+                  "dataType": "text"
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "out",
+                  "dataType": "text"
+                }
+              ]
+            }
+          },
+          {
+            "id": "n-align",
+            "kind": "concat",
+            "label": "合并点 · 时间窗对齐（唯一一个）",
+            "x": 240,
+            "y": 48,
+            "ports": {
+              "inputs": [
+                {
+                  "name": "in-ticket",
+                  "dataType": "text"
+                },
+                {
+                  "name": "in-trade",
+                  "dataType": "text"
+                },
+                {
+                  "name": "in-voice",
+                  "dataType": "text"
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "out",
+                  "dataType": "text"
+                }
+              ]
+            }
+          },
+          {
+            "id": "n-absence",
+            "kind": "filter",
+            "label": "缺席标注 · 谁没到齐写在成品上",
+            "x": 360,
+            "y": 48,
+            "ports": {
+              "inputs": [
+                {
+                  "name": "in",
+                  "dataType": "text"
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "out",
+                  "dataType": "text"
+                }
+              ]
+            }
+          },
+          {
+            "id": "n-compose",
+            "kind": "overlay",
+            "label": "拼装日报 · 同口径记录成一份",
+            "x": 480,
+            "y": 48,
+            "ports": {
+              "inputs": [
+                {
+                  "name": "in",
+                  "dataType": "text"
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "out",
+                  "dataType": "text"
+                }
+              ]
+            }
+          },
+          {
+            "id": "n-manifest",
+            "kind": "text",
+            "label": "来源清单 · 哪一路、取数区间、齐否",
+            "x": 0,
+            "y": 96,
+            "ports": {
+              "inputs": [
+                {
+                  "name": "in",
+                  "dataType": "text"
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "out",
+                  "dataType": "text"
+                }
+              ]
+            }
+          },
+          {
+            "id": "n-out",
+            "kind": "output",
+            "label": "出片 · 日报 + 来源清单",
+            "x": 120,
+            "y": 96,
+            "ports": {
+              "inputs": [
+                {
+                  "name": "in",
+                  "dataType": "text"
+                }
+              ],
+              "outputs": []
+            }
+          }
+        ],
+        "edges": [
+          {
+            "id": "e0",
+            "fromNodeId": "n-src-ticket",
+            "fromPort": "rows",
+            "toNodeId": "n-norm-ticket",
+            "toPort": "in"
+          },
+          {
+            "id": "e1",
+            "fromNodeId": "n-src-trade",
+            "fromPort": "rows",
+            "toNodeId": "n-norm-trade",
+            "toPort": "in"
+          },
+          {
+            "id": "e2",
+            "fromNodeId": "n-norm-trade",
+            "fromPort": "out",
+            "toNodeId": "n-dedupe-trade",
+            "toPort": "in"
+          },
+          {
+            "id": "e3",
+            "fromNodeId": "n-src-voice",
+            "fromPort": "rows",
+            "toNodeId": "n-norm-voice",
+            "toPort": "in"
+          },
+          {
+            "id": "e4",
+            "fromNodeId": "n-norm-ticket",
+            "fromPort": "out",
+            "toNodeId": "n-align",
+            "toPort": "in-ticket"
+          },
+          {
+            "id": "e5",
+            "fromNodeId": "n-dedupe-trade",
+            "fromPort": "out",
+            "toNodeId": "n-align",
+            "toPort": "in-trade"
+          },
+          {
+            "id": "e6",
+            "fromNodeId": "n-norm-voice",
+            "fromPort": "out",
+            "toNodeId": "n-align",
+            "toPort": "in-voice"
+          },
+          {
+            "id": "e7",
+            "fromNodeId": "n-align",
+            "fromPort": "out",
+            "toNodeId": "n-absence",
+            "toPort": "in"
+          },
+          {
+            "id": "e8",
+            "fromNodeId": "n-absence",
+            "fromPort": "out",
+            "toNodeId": "n-compose",
+            "toPort": "in"
+          },
+          {
+            "id": "e9",
+            "fromNodeId": "n-compose",
+            "fromPort": "out",
+            "toNodeId": "n-manifest",
+            "toPort": "in"
+          },
+          {
+            "id": "e10",
+            "fromNodeId": "n-manifest",
+            "fromPort": "out",
+            "toNodeId": "n-out",
+            "toPort": "in"
+          }
+        ]
+      },
+      "timeline": {
+        "durationMs": 27000,
+        "clips": [
+          {
+            "id": "c0",
+            "nodeId": "n-src-ticket",
+            "startMs": 0,
+            "durationMs": 4000,
+            "layer": 0
+          },
+          {
+            "id": "c1",
+            "nodeId": "n-norm-ticket",
+            "startMs": 4000,
+            "durationMs": 6000,
+            "layer": 0
+          },
+          {
+            "id": "c2",
+            "nodeId": "n-src-trade",
+            "startMs": 0,
+            "durationMs": 5000,
+            "layer": 1
+          },
+          {
+            "id": "c3",
+            "nodeId": "n-norm-trade",
+            "startMs": 5000,
+            "durationMs": 4000,
+            "layer": 1
+          },
+          {
+            "id": "c4",
+            "nodeId": "n-dedupe-trade",
+            "startMs": 9000,
+            "durationMs": 4000,
+            "layer": 1
+          },
+          {
+            "id": "c5",
+            "nodeId": "n-src-voice",
+            "startMs": 0,
+            "durationMs": 6000,
+            "layer": 2
+          },
+          {
+            "id": "c6",
+            "nodeId": "n-norm-voice",
+            "startMs": 6000,
+            "durationMs": 5000,
+            "layer": 2
+          },
+          {
+            "id": "c7",
+            "nodeId": "n-align",
+            "startMs": 14000,
+            "durationMs": 4000,
+            "layer": 3
+          },
+          {
+            "id": "c8",
+            "nodeId": "n-absence",
+            "startMs": 18000,
+            "durationMs": 3000,
+            "layer": 3
+          },
+          {
+            "id": "c9",
+            "nodeId": "n-compose",
+            "startMs": 21000,
+            "durationMs": 3000,
+            "layer": 3
+          },
+          {
+            "id": "c10",
+            "nodeId": "n-manifest",
+            "startMs": 24000,
+            "durationMs": 2000,
+            "layer": 3
+          },
+          {
+            "id": "c11",
+            "nodeId": "n-out",
+            "startMs": 26000,
+            "durationMs": 1000,
+            "layer": 3
+          }
+        ]
+      }
+    }
+  ],
+  "assets": [],
+  "attribution": {
+    "entries": [
+      {
+        "text": "OceanLeo 第一方原创流程",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ]
+  }
+}

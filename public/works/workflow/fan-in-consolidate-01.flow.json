@@ -1,0 +1,170 @@
+{
+  "schema": "oceanleo.workflow-view/v1",
+  "note": "站内查看用的投影。节点与边逐条来自工程文件 versions[0].graph，未增删；工程本体见 project 字段。",
+  "project": "oceanleo.video-canvas.v1",
+  "nodes": [
+    {
+      "id": "n-src-ticket",
+      "label": "入口一 · 工单系统导出",
+      "kind": "source",
+      "x": 40,
+      "y": 20
+    },
+    {
+      "id": "n-src-trade",
+      "label": "入口二 · 交易后台导出",
+      "kind": "source",
+      "x": 300,
+      "y": 20
+    },
+    {
+      "id": "n-src-voice",
+      "label": "入口三 · 舆情监控导出",
+      "kind": "source",
+      "x": 560,
+      "y": 20
+    },
+    {
+      "id": "n-norm-ticket",
+      "label": "工单归一 · 按创建时间切自然日",
+      "kind": "filter",
+      "x": 40,
+      "y": 112
+    },
+    {
+      "id": "n-norm-trade",
+      "label": "交易归一 · 分转元、退款并账",
+      "kind": "filter",
+      "x": 300,
+      "y": 112
+    },
+    {
+      "id": "n-norm-voice",
+      "label": "舆情归一 · 情感标签收敛到三档",
+      "kind": "filter",
+      "x": 560,
+      "y": 112
+    },
+    {
+      "id": "n-dedupe-trade",
+      "label": "交易去重 · 同一笔重复上报只留一条",
+      "kind": "filter",
+      "x": 40,
+      "y": 204
+    },
+    {
+      "id": "n-align",
+      "label": "合并点 · 时间窗对齐（唯一一个）",
+      "kind": "concat",
+      "x": 40,
+      "y": 296
+    },
+    {
+      "id": "n-absence",
+      "label": "缺席标注 · 谁没到齐写在成品上",
+      "kind": "filter",
+      "x": 40,
+      "y": 388
+    },
+    {
+      "id": "n-compose",
+      "label": "拼装日报 · 同口径记录成一份",
+      "kind": "overlay",
+      "x": 40,
+      "y": 480
+    },
+    {
+      "id": "n-manifest",
+      "label": "来源清单 · 哪一路、取数区间、齐否",
+      "kind": "text",
+      "x": 40,
+      "y": 572
+    },
+    {
+      "id": "n-out",
+      "label": "出片 · 日报 + 来源清单",
+      "kind": "output",
+      "x": 40,
+      "y": 664
+    }
+  ],
+  "edges": [
+    {
+      "id": "e0",
+      "from": "n-src-ticket",
+      "to": "n-norm-ticket",
+      "fromPort": "rows",
+      "toPort": "in"
+    },
+    {
+      "id": "e1",
+      "from": "n-src-trade",
+      "to": "n-norm-trade",
+      "fromPort": "rows",
+      "toPort": "in"
+    },
+    {
+      "id": "e2",
+      "from": "n-norm-trade",
+      "to": "n-dedupe-trade",
+      "fromPort": "out",
+      "toPort": "in"
+    },
+    {
+      "id": "e3",
+      "from": "n-src-voice",
+      "to": "n-norm-voice",
+      "fromPort": "rows",
+      "toPort": "in"
+    },
+    {
+      "id": "e4",
+      "from": "n-norm-ticket",
+      "to": "n-align",
+      "fromPort": "out",
+      "toPort": "in-ticket"
+    },
+    {
+      "id": "e5",
+      "from": "n-dedupe-trade",
+      "to": "n-align",
+      "fromPort": "out",
+      "toPort": "in-trade"
+    },
+    {
+      "id": "e6",
+      "from": "n-norm-voice",
+      "to": "n-align",
+      "fromPort": "out",
+      "toPort": "in-voice"
+    },
+    {
+      "id": "e7",
+      "from": "n-align",
+      "to": "n-absence",
+      "fromPort": "out",
+      "toPort": "in"
+    },
+    {
+      "id": "e8",
+      "from": "n-absence",
+      "to": "n-compose",
+      "fromPort": "out",
+      "toPort": "in"
+    },
+    {
+      "id": "e9",
+      "from": "n-compose",
+      "to": "n-manifest",
+      "fromPort": "out",
+      "toPort": "in"
+    },
+    {
+      "id": "e10",
+      "from": "n-manifest",
+      "to": "n-out",
+      "fromPort": "out",
+      "toPort": "in"
+    }
+  ]
+}

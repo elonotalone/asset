@@ -109,5 +109,125 @@
       "sourceBytes": 9103,
       "canonicalByteSize": 3896
     }
+  },
+  {
+    "id": "exclusive-triage-01",
+    "artifactType": "workflow",
+    "title": "互斥分诊 · 一张工单只走一条路",
+    "styleId": "exclusive-triage",
+    "summary": "客服来件天生分几类：能自助答的、要坐席接的、要走退款审批的。受理后分诊一次，此后各走各的路、长短各不同，最后交到同一个结案登记处——登记只记「走了哪条路、依据是什么」，不把几条路的产物拼成一份。",
+    "cover": "/works/workflow/exclusive-triage-01.cover.png",
+    "view": {
+      "kind": "workflow",
+      "src": "/works/workflow/exclusive-triage-01.flow.json",
+      "download": "/works/workflow/exclusive-triage-01.project.json"
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创流程",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "envelope": "oceanleo.video-canvas.v1",
+      "nodeCount": 12,
+      "edgeCount": 14,
+      "longestPath": 8,
+      "branchCount": 1,
+      "backEdgeCount": 0,
+      "fingerprint": "12/14/8/1/0",
+      "entryNodeCount": 1,
+      "nodeKindCount": 6,
+      "outputNodeCount": 1,
+      "clipCount": 12,
+      "layerCount": 5,
+      "durationMs": 30000,
+      "canonicalByteSize": 5427,
+      "flowScenariosRun": 4,
+      "flowScenariosReachedOutput": 4,
+      "portTypeMismatches": 0
+    }
+  },
+  {
+    "id": "state-machine-review-01",
+    "artifactType": "workflow",
+    "title": "状态机审校 · 稿子在两个人手里来回几趟",
+    "styleId": "state-machine-review",
+    "summary": "教辅稿件从草稿到归档：节点是状态不是工序，边是登记在册的转移。打回、撤回、核红退改各成回边，同一个状态会被走很多遍；打回次数用尽转主编裁定，终态只有归档一个，记结果是发布还是废弃。",
+    "cover": "/works/workflow/state-machine-review-01.cover.png",
+    "view": {
+      "kind": "workflow",
+      "src": "/works/workflow/state-machine-review-01.flow.json",
+      "download": "/works/workflow/state-machine-review-01.project.json"
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创流程",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "envelope": "oceanleo.video-canvas.v1",
+      "nodeCount": 10,
+      "edgeCount": 14,
+      "longestPath": 9,
+      "branchCount": 4,
+      "backEdgeCount": 2,
+      "fingerprint": "10/14/9/4/2",
+      "entryNodeCount": 1,
+      "nodeKindCount": 4,
+      "outputNodeCount": 1,
+      "clipCount": 12,
+      "layerCount": 2,
+      "durationMs": 36000,
+      "canonicalByteSize": 5311,
+      "flowScenariosRun": 5,
+      "flowScenariosReachedOutput": 5,
+      "portTypeMismatches": 0
+    }
+  },
+  {
+    "id": "fan-in-consolidate-01",
+    "artifactType": "workflow",
+    "title": "多源汇一 · 三路来源拼一份运营日报",
+    "styleId": "fan-in-consolidate",
+    "summary": "工单、交易、舆情三路互不相干的来源各自成入口，各走一段只服务于自己的归一化，在唯一的合并点汇成一份日报。哪一路没到齐就标注着出片，绝不把整份日报卡住等它，来源清单随成品一起交。",
+    "cover": "/works/workflow/fan-in-consolidate-01.cover.png",
+    "view": {
+      "kind": "workflow",
+      "src": "/works/workflow/fan-in-consolidate-01.flow.json",
+      "download": "/works/workflow/fan-in-consolidate-01.project.json"
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创流程",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "envelope": "oceanleo.video-canvas.v1",
+      "nodeCount": 12,
+      "edgeCount": 11,
+      "longestPath": 8,
+      "branchCount": 0,
+      "backEdgeCount": 0,
+      "fingerprint": "12/11/8/0/0",
+      "entryNodeCount": 3,
+      "nodeKindCount": 6,
+      "outputNodeCount": 1,
+      "clipCount": 12,
+      "layerCount": 4,
+      "durationMs": 27000,
+      "canonicalByteSize": 5073,
+      "flowScenariosRun": 3,
+      "flowScenariosReachedOutput": 3,
+      "portTypeMismatches": 0
+    }
   }
 ]

@@ -1,0 +1,191 @@
+{
+  "schema": "oceanleo.workflow-view/v1",
+  "note": "站内查看用的投影。节点与边逐条来自工程文件 versions[0].graph，未增删；工程本体见 project 字段。",
+  "project": "oceanleo.video-canvas.v1",
+  "nodes": [
+    {
+      "id": "n-intake",
+      "label": "受理 · 工单入口",
+      "kind": "source",
+      "x": 40,
+      "y": 20
+    },
+    {
+      "id": "n-enrich",
+      "label": "补齐信息 · 订单/物流/历史工单",
+      "kind": "filter",
+      "x": 40,
+      "y": 112
+    },
+    {
+      "id": "n-classify",
+      "label": "分诊判定 · 出结论并写明依据",
+      "kind": "filter",
+      "x": 40,
+      "y": 204
+    },
+    {
+      "id": "n-triage",
+      "label": "互斥分诊口 · 三条路 + 兜底",
+      "kind": "branch",
+      "x": 40,
+      "y": 296
+    },
+    {
+      "id": "n-auto-reply",
+      "label": "自助路 · 套话术库回复",
+      "kind": "text",
+      "x": 40,
+      "y": 388
+    },
+    {
+      "id": "n-queue",
+      "label": "人工路 · 按技能组排队",
+      "kind": "filter",
+      "x": 300,
+      "y": 388
+    },
+    {
+      "id": "n-verify",
+      "label": "退款路 · 核对金额与凭证",
+      "kind": "filter",
+      "x": 560,
+      "y": 388
+    },
+    {
+      "id": "n-fallback",
+      "label": "兜底 · 三条都不命中转总台",
+      "kind": "filter",
+      "x": 820,
+      "y": 388
+    },
+    {
+      "id": "n-agent",
+      "label": "人工路 · 坐席处理并回访",
+      "kind": "filter",
+      "x": 40,
+      "y": 480
+    },
+    {
+      "id": "n-approve",
+      "label": "退款路 · 审批（超额转人工复核）",
+      "kind": "filter",
+      "x": 300,
+      "y": 480
+    },
+    {
+      "id": "n-refund",
+      "label": "退款路 · 发起退款并留痕",
+      "kind": "overlay",
+      "x": 40,
+      "y": 572
+    },
+    {
+      "id": "n-close",
+      "label": "结案登记 · 记走了哪条路",
+      "kind": "output",
+      "x": 40,
+      "y": 664
+    }
+  ],
+  "edges": [
+    {
+      "id": "e0",
+      "from": "n-intake",
+      "to": "n-enrich",
+      "fromPort": "ticket",
+      "toPort": "ticket"
+    },
+    {
+      "id": "e1",
+      "from": "n-enrich",
+      "to": "n-classify",
+      "fromPort": "full",
+      "toPort": "full"
+    },
+    {
+      "id": "e2",
+      "from": "n-classify",
+      "to": "n-triage",
+      "fromPort": "tagged",
+      "toPort": "tagged"
+    },
+    {
+      "id": "e3",
+      "from": "n-triage",
+      "to": "n-auto-reply",
+      "fromPort": "self",
+      "toPort": "in"
+    },
+    {
+      "id": "e4",
+      "from": "n-triage",
+      "to": "n-queue",
+      "fromPort": "agent",
+      "toPort": "in"
+    },
+    {
+      "id": "e5",
+      "from": "n-triage",
+      "to": "n-verify",
+      "fromPort": "refund",
+      "toPort": "in"
+    },
+    {
+      "id": "e6",
+      "from": "n-triage",
+      "to": "n-fallback",
+      "fromPort": "other",
+      "toPort": "in"
+    },
+    {
+      "id": "e7",
+      "from": "n-auto-reply",
+      "to": "n-close",
+      "fromPort": "out",
+      "toPort": "in-self"
+    },
+    {
+      "id": "e8",
+      "from": "n-queue",
+      "to": "n-agent",
+      "fromPort": "out",
+      "toPort": "in"
+    },
+    {
+      "id": "e9",
+      "from": "n-agent",
+      "to": "n-close",
+      "fromPort": "out",
+      "toPort": "in-agent"
+    },
+    {
+      "id": "e10",
+      "from": "n-verify",
+      "to": "n-approve",
+      "fromPort": "out",
+      "toPort": "in"
+    },
+    {
+      "id": "e11",
+      "from": "n-approve",
+      "to": "n-refund",
+      "fromPort": "out",
+      "toPort": "in"
+    },
+    {
+      "id": "e12",
+      "from": "n-refund",
+      "to": "n-close",
+      "fromPort": "out",
+      "toPort": "in-refund"
+    },
+    {
+      "id": "e13",
+      "from": "n-fallback",
+      "to": "n-close",
+      "fromPort": "out",
+      "toPort": "in-fallback"
+    }
+  ]
+}

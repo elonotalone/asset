@@ -1,0 +1,455 @@
+{
+  "schemaVersion": "oceanleo.video-canvas.v1",
+  "headVersionId": "v1",
+  "versions": [
+    {
+      "id": "v1",
+      "createdAt": "2026-08-13T00:00:00.000Z",
+      "note": "教辅稿件从草稿到归档：节点是状态不是工序，边是登记在册的转移，每一次转移都要记「谁、什么时候、因为什么」。打回、撤回、核红退改各是一条回边；打回次数用尽就升级主编裁定，不在原地无限打转。终态只有一个：归档，记结果是发布还是废弃。",
+      "graph": {
+        "nodes": [
+          {
+            "id": "n-draft",
+            "kind": "source",
+            "label": "草稿 · 作者手上",
+            "x": 0,
+            "y": 0,
+            "ports": {
+              "inputs": [
+                {
+                  "name": "back",
+                  "dataType": "text"
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "submit",
+                  "dataType": "text"
+                }
+              ]
+            }
+          },
+          {
+            "id": "n-submitted",
+            "kind": "filter",
+            "label": "已送审 · 编辑手上",
+            "x": 120,
+            "y": 0,
+            "ports": {
+              "inputs": [
+                {
+                  "name": "from-draft",
+                  "dataType": "text"
+                },
+                {
+                  "name": "resubmit",
+                  "dataType": "text"
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "out",
+                  "dataType": "text"
+                }
+              ]
+            }
+          },
+          {
+            "id": "n-review",
+            "kind": "branch",
+            "label": "审读判定 · 通过/退改/准撤回",
+            "x": 240,
+            "y": 0,
+            "ports": {
+              "inputs": [
+                {
+                  "name": "in",
+                  "dataType": "text"
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "pass",
+                  "dataType": "text"
+                },
+                {
+                  "name": "revise",
+                  "dataType": "text"
+                },
+                {
+                  "name": "withdraw",
+                  "dataType": "text"
+                }
+              ]
+            }
+          },
+          {
+            "id": "n-revising",
+            "kind": "filter",
+            "label": "退改中 · 作者手上（记第几次）",
+            "x": 360,
+            "y": 0,
+            "ports": {
+              "inputs": [
+                {
+                  "name": "from-review",
+                  "dataType": "text"
+                },
+                {
+                  "name": "from-check",
+                  "dataType": "text"
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "resubmit",
+                  "dataType": "text"
+                },
+                {
+                  "name": "exhausted",
+                  "dataType": "number"
+                }
+              ]
+            }
+          },
+          {
+            "id": "n-withdrawn",
+            "kind": "filter",
+            "label": "已撤回 · 作者取回",
+            "x": 480,
+            "y": 0,
+            "ports": {
+              "inputs": [
+                {
+                  "name": "in",
+                  "dataType": "text"
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "to-draft",
+                  "dataType": "text"
+                }
+              ]
+            }
+          },
+          {
+            "id": "n-factcheck",
+            "kind": "filter",
+            "label": "校对核红 · 校对手上",
+            "x": 0,
+            "y": 48,
+            "ports": {
+              "inputs": [
+                {
+                  "name": "in",
+                  "dataType": "text"
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "out",
+                  "dataType": "text"
+                }
+              ]
+            }
+          },
+          {
+            "id": "n-check",
+            "kind": "branch",
+            "label": "核红判定 · 清白/带红回退改",
+            "x": 120,
+            "y": 48,
+            "ports": {
+              "inputs": [
+                {
+                  "name": "in",
+                  "dataType": "text"
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "clean",
+                  "dataType": "text"
+                },
+                {
+                  "name": "red",
+                  "dataType": "text"
+                }
+              ]
+            }
+          },
+          {
+            "id": "n-escalate",
+            "kind": "filter",
+            "label": "主编裁定 · 打回次数已用尽",
+            "x": 240,
+            "y": 48,
+            "ports": {
+              "inputs": [
+                {
+                  "name": "in",
+                  "dataType": "number"
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "keep",
+                  "dataType": "text"
+                },
+                {
+                  "name": "drop",
+                  "dataType": "text"
+                }
+              ]
+            }
+          },
+          {
+            "id": "n-approved",
+            "kind": "filter",
+            "label": "定稿待发 · 等排期",
+            "x": 360,
+            "y": 48,
+            "ports": {
+              "inputs": [
+                {
+                  "name": "from-check",
+                  "dataType": "text"
+                },
+                {
+                  "name": "from-chief",
+                  "dataType": "text"
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "out",
+                  "dataType": "text"
+                }
+              ]
+            }
+          },
+          {
+            "id": "n-archive",
+            "kind": "output",
+            "label": "归档 · 唯一终态（发布/废弃）",
+            "x": 480,
+            "y": 48,
+            "ports": {
+              "inputs": [
+                {
+                  "name": "in-published",
+                  "dataType": "text"
+                },
+                {
+                  "name": "in-dropped",
+                  "dataType": "text"
+                }
+              ],
+              "outputs": []
+            }
+          }
+        ],
+        "edges": [
+          {
+            "id": "e0",
+            "fromNodeId": "n-draft",
+            "fromPort": "submit",
+            "toNodeId": "n-submitted",
+            "toPort": "from-draft"
+          },
+          {
+            "id": "e1",
+            "fromNodeId": "n-submitted",
+            "fromPort": "out",
+            "toNodeId": "n-review",
+            "toPort": "in"
+          },
+          {
+            "id": "e2",
+            "fromNodeId": "n-review",
+            "fromPort": "pass",
+            "toNodeId": "n-factcheck",
+            "toPort": "in"
+          },
+          {
+            "id": "e3",
+            "fromNodeId": "n-review",
+            "fromPort": "revise",
+            "toNodeId": "n-revising",
+            "toPort": "from-review"
+          },
+          {
+            "id": "e4",
+            "fromNodeId": "n-review",
+            "fromPort": "withdraw",
+            "toNodeId": "n-withdrawn",
+            "toPort": "in"
+          },
+          {
+            "id": "e5",
+            "fromNodeId": "n-revising",
+            "fromPort": "resubmit",
+            "toNodeId": "n-submitted",
+            "toPort": "resubmit"
+          },
+          {
+            "id": "e6",
+            "fromNodeId": "n-withdrawn",
+            "fromPort": "to-draft",
+            "toNodeId": "n-draft",
+            "toPort": "back"
+          },
+          {
+            "id": "e7",
+            "fromNodeId": "n-factcheck",
+            "fromPort": "out",
+            "toNodeId": "n-check",
+            "toPort": "in"
+          },
+          {
+            "id": "e8",
+            "fromNodeId": "n-check",
+            "fromPort": "clean",
+            "toNodeId": "n-approved",
+            "toPort": "from-check"
+          },
+          {
+            "id": "e9",
+            "fromNodeId": "n-check",
+            "fromPort": "red",
+            "toNodeId": "n-revising",
+            "toPort": "from-check"
+          },
+          {
+            "id": "e10",
+            "fromNodeId": "n-revising",
+            "fromPort": "exhausted",
+            "toNodeId": "n-escalate",
+            "toPort": "in"
+          },
+          {
+            "id": "e11",
+            "fromNodeId": "n-escalate",
+            "fromPort": "keep",
+            "toNodeId": "n-approved",
+            "toPort": "from-chief"
+          },
+          {
+            "id": "e12",
+            "fromNodeId": "n-escalate",
+            "fromPort": "drop",
+            "toNodeId": "n-archive",
+            "toPort": "in-dropped"
+          },
+          {
+            "id": "e13",
+            "fromNodeId": "n-approved",
+            "fromPort": "out",
+            "toNodeId": "n-archive",
+            "toPort": "in-published"
+          }
+        ]
+      },
+      "timeline": {
+        "durationMs": 36000,
+        "clips": [
+          {
+            "id": "c0",
+            "nodeId": "n-draft",
+            "startMs": 0,
+            "durationMs": 5000,
+            "layer": 0
+          },
+          {
+            "id": "c1",
+            "nodeId": "n-submitted",
+            "startMs": 5000,
+            "durationMs": 4000,
+            "layer": 0
+          },
+          {
+            "id": "c2",
+            "nodeId": "n-review",
+            "startMs": 9000,
+            "durationMs": 2000,
+            "layer": 0
+          },
+          {
+            "id": "c3",
+            "nodeId": "n-factcheck",
+            "startMs": 20000,
+            "durationMs": 4000,
+            "layer": 0
+          },
+          {
+            "id": "c4",
+            "nodeId": "n-check",
+            "startMs": 24000,
+            "durationMs": 2000,
+            "layer": 0
+          },
+          {
+            "id": "c5",
+            "nodeId": "n-approved",
+            "startMs": 30000,
+            "durationMs": 4000,
+            "layer": 0
+          },
+          {
+            "id": "c6",
+            "nodeId": "n-archive",
+            "startMs": 34000,
+            "durationMs": 2000,
+            "layer": 0
+          },
+          {
+            "id": "c7",
+            "nodeId": "n-revising",
+            "startMs": 11000,
+            "durationMs": 6000,
+            "layer": 1
+          },
+          {
+            "id": "c8",
+            "nodeId": "n-submitted",
+            "startMs": 17000,
+            "durationMs": 3000,
+            "layer": 1
+          },
+          {
+            "id": "c9",
+            "nodeId": "n-withdrawn",
+            "startMs": 11000,
+            "durationMs": 3000,
+            "layer": 1
+          },
+          {
+            "id": "c10",
+            "nodeId": "n-revising",
+            "startMs": 26000,
+            "durationMs": 2000,
+            "layer": 1
+          },
+          {
+            "id": "c11",
+            "nodeId": "n-escalate",
+            "startMs": 28000,
+            "durationMs": 2000,
+            "layer": 1
+          }
+        ]
+      }
+    }
+  ],
+  "assets": [],
+  "attribution": {
+    "entries": [
+      {
+        "text": "OceanLeo 第一方原创流程",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ]
+  }
+}

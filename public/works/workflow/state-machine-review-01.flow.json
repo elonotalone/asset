@@ -1,0 +1,179 @@
+{
+  "schema": "oceanleo.workflow-view/v1",
+  "note": "站内查看用的投影。节点与边逐条来自工程文件 versions[0].graph，未增删；工程本体见 project 字段。",
+  "project": "oceanleo.video-canvas.v1",
+  "nodes": [
+    {
+      "id": "n-draft",
+      "label": "草稿 · 作者手上",
+      "kind": "source",
+      "x": 40,
+      "y": 20
+    },
+    {
+      "id": "n-submitted",
+      "label": "已送审 · 编辑手上",
+      "kind": "filter",
+      "x": 40,
+      "y": 112
+    },
+    {
+      "id": "n-review",
+      "label": "审读判定 · 通过/退改/准撤回",
+      "kind": "branch",
+      "x": 40,
+      "y": 204
+    },
+    {
+      "id": "n-withdrawn",
+      "label": "已撤回 · 作者取回",
+      "kind": "filter",
+      "x": 40,
+      "y": 296
+    },
+    {
+      "id": "n-factcheck",
+      "label": "校对核红 · 校对手上",
+      "kind": "filter",
+      "x": 300,
+      "y": 296
+    },
+    {
+      "id": "n-check",
+      "label": "核红判定 · 清白/带红回退改",
+      "kind": "branch",
+      "x": 40,
+      "y": 388
+    },
+    {
+      "id": "n-revising",
+      "label": "退改中 · 作者手上（记第几次）",
+      "kind": "filter",
+      "x": 40,
+      "y": 480
+    },
+    {
+      "id": "n-escalate",
+      "label": "主编裁定 · 打回次数已用尽",
+      "kind": "filter",
+      "x": 40,
+      "y": 572
+    },
+    {
+      "id": "n-approved",
+      "label": "定稿待发 · 等排期",
+      "kind": "filter",
+      "x": 40,
+      "y": 664
+    },
+    {
+      "id": "n-archive",
+      "label": "归档 · 唯一终态（发布/废弃）",
+      "kind": "output",
+      "x": 40,
+      "y": 756
+    }
+  ],
+  "edges": [
+    {
+      "id": "e0",
+      "from": "n-draft",
+      "to": "n-submitted",
+      "fromPort": "submit",
+      "toPort": "from-draft"
+    },
+    {
+      "id": "e1",
+      "from": "n-submitted",
+      "to": "n-review",
+      "fromPort": "out",
+      "toPort": "in"
+    },
+    {
+      "id": "e2",
+      "from": "n-review",
+      "to": "n-factcheck",
+      "fromPort": "pass",
+      "toPort": "in"
+    },
+    {
+      "id": "e3",
+      "from": "n-review",
+      "to": "n-revising",
+      "fromPort": "revise",
+      "toPort": "from-review"
+    },
+    {
+      "id": "e4",
+      "from": "n-review",
+      "to": "n-withdrawn",
+      "fromPort": "withdraw",
+      "toPort": "in"
+    },
+    {
+      "id": "e5",
+      "from": "n-revising",
+      "to": "n-submitted",
+      "fromPort": "resubmit",
+      "toPort": "resubmit",
+      "back": true
+    },
+    {
+      "id": "e6",
+      "from": "n-withdrawn",
+      "to": "n-draft",
+      "fromPort": "to-draft",
+      "toPort": "back",
+      "back": true
+    },
+    {
+      "id": "e7",
+      "from": "n-factcheck",
+      "to": "n-check",
+      "fromPort": "out",
+      "toPort": "in"
+    },
+    {
+      "id": "e8",
+      "from": "n-check",
+      "to": "n-approved",
+      "fromPort": "clean",
+      "toPort": "from-check"
+    },
+    {
+      "id": "e9",
+      "from": "n-check",
+      "to": "n-revising",
+      "fromPort": "red",
+      "toPort": "from-check"
+    },
+    {
+      "id": "e10",
+      "from": "n-revising",
+      "to": "n-escalate",
+      "fromPort": "exhausted",
+      "toPort": "in"
+    },
+    {
+      "id": "e11",
+      "from": "n-escalate",
+      "to": "n-approved",
+      "fromPort": "keep",
+      "toPort": "from-chief"
+    },
+    {
+      "id": "e12",
+      "from": "n-escalate",
+      "to": "n-archive",
+      "fromPort": "drop",
+      "toPort": "in-dropped"
+    },
+    {
+      "id": "e13",
+      "from": "n-approved",
+      "to": "n-archive",
+      "fromPort": "out",
+      "toPort": "in-published"
+    }
+  ]
+}
