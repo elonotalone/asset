@@ -1,0 +1,23 @@
+{
+  "tool": "cover-frame",
+  "version": 1,
+  "meta": {
+    "title": "关于滨河苑二次供水设施改造期间停水的通告",
+    "usage_scope": "first-party",
+    "license_family": "CC0",
+    "supply_tier": "original"
+  },
+  "media": [
+    {
+      "id": "artifact",
+      "path": "../pdf-public-notice-01.pdf"
+    }
+  ],
+  "body": {
+    "sourceFormat": "pdf"
+  },
+  "options": {
+    "dpi": 130,
+    "maxEdge": 1000
+  }
+}

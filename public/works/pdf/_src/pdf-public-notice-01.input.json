@@ -1,0 +1,115 @@
+{
+  "tool": "doc-pdf",
+  "version": 1,
+  "meta": {
+    "slug": "pdf-public-notice-01",
+    "title": "关于滨河苑二次供水设施改造期间停水的通告",
+    "summary": "按张贴通告体排的一张告示：单栏大字、宽留白、五段定序，全篇不到六块，一米外看得清。",
+    "creator": "OceanLeo",
+    "entrypointName": "pdf-public-notice-01.pdf",
+    "usage_scope": "first-party",
+    "license_family": "CC0",
+    "supply_tier": "original",
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创示例通告，小区名称、时间与联系方式均为演示内容。",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ]
+  },
+  "media": [],
+  "body": {
+    "blocks": [
+      {
+        "kind": "heading",
+        "level": 1,
+        "text": "关于滨河苑二次供水设施改造期间停水的通告"
+      },
+      {
+        "kind": "paragraph",
+        "text": "滨河苑 1 至 6 号楼的屋顶水箱与增压泵组整体更换，施工期间全天停水。"
+      },
+      {
+        "kind": "heading",
+        "level": 2,
+        "text": "停水时间与范围"
+      },
+      {
+        "kind": "paragraph",
+        "text": "2026 年 8 月 18 日 8:00 至 8 月 20 日 18:00 连续停水，夜间不恢复。范围为 1 至 6 号楼全部住户与沿街商铺；7、8 号楼正常供水。"
+      },
+      {
+        "kind": "heading",
+        "level": 2,
+        "text": "您需要做的三件事"
+      },
+      {
+        "kind": "paragraph",
+        "text": "一、8 月 18 日 8:00 前按每人每天 10 升储水。"
+      },
+      {
+        "kind": "paragraph",
+        "text": "二、停水期间关闭户内总阀，防止复水气锤漏水。"
+      },
+      {
+        "kind": "paragraph",
+        "text": "三、复水后先放水三到五分钟，水色发黄放清即可。"
+      },
+      {
+        "kind": "heading",
+        "level": 2,
+        "text": "取水与咨询"
+      },
+      {
+        "kind": "paragraph",
+        "text": "东门广场设临时取水点两处，每日 8:00 至 20:00 供水。行动不便的住户致电登记后送水上门。服务电话 0000-00000000（8:00—20:00），详细资料在物业前台查阅。"
+      },
+      {
+        "kind": "paragraph",
+        "runs": [
+          {
+            "text": "滨河苑物业服务中心",
+            "color": "#8A6D1F"
+          },
+          {
+            "text": "　2026 年 8 月 11 日"
+          }
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "（OceanLeo 第一方原创示例通告，小区、时间与电话均为演示内容。）"
+      }
+    ],
+    "layout": {
+      "page": "a4",
+      "margins": {
+        "top": 30,
+        "right": 28,
+        "bottom": 30,
+        "left": 28
+      },
+      "columns": 1,
+      "lineSpacing": "loose"
+    },
+    "theme": {
+      "fonts": {
+        "latin": "DejaVu Serif",
+        "eastAsia": "Noto Serif CJK SC",
+        "heading": "DejaVu Sans",
+        "headingEastAsia": "Noto Sans CJK SC"
+      },
+      "headingScale": "dramatic",
+      "bodySize": "large"
+    },
+    "palette": {
+      "accent": "#8A6D1F",
+      "heading2": "#1B1A16",
+      "heading3": "#1B1A16",
+      "body": "#1B1A16",
+      "rule": "#1B1A16",
+      "tableHeaderFill": "#1B1A16"
+    }
+  }
+}
