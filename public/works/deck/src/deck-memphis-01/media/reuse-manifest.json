@@ -1,0 +1,122 @@
+[
+  {
+    "file": "brand-memphis-p04-0.png",
+    "sourceRef": "brand-memphis/p04",
+    "sourceUrl": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/ppt/decks/brand-memphis/p04.webp",
+    "sourcePageSha256": "fe69de24ba84024d0d83c82ca91bc19ba7617dbc65b54ec890cd74d491e96290",
+    "cropRect": {
+      "x": 1147,
+      "y": 179,
+      "w": 650,
+      "h": 422
+    },
+    "pageBackground": "#f9f4ec",
+    "width": 650,
+    "height": 422,
+    "byteSize": 373087,
+    "sha256": "f8a5510d2c8c81ceed3281397cc1b8917d85e63ccd224527125ce9e869c8bc4a",
+    "origin": "reused-platform-asset",
+    "licenseCode": "OceanLeo-Free-1.0",
+    "licenseFamily": "first-party",
+    "usageScope": "standalone",
+    "supplyTier": "byte-portable",
+    "attributionRequired": false,
+    "author": "OceanLeo Design"
+  },
+  {
+    "file": "memphis-p02-0.png",
+    "sourceRef": "memphis/p02",
+    "sourceUrl": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/ppt/decks/memphis/p02.webp",
+    "sourcePageSha256": "f4a1d008ac89cbc4fe0ee1855a1c62df2127c33e35d5b3ff11cf12abbbbcb302",
+    "cropRect": {
+      "x": 163,
+      "y": 230,
+      "w": 458,
+      "h": 271
+    },
+    "pageBackground": "#f9f4ec",
+    "width": 458,
+    "height": 271,
+    "byteSize": 116786,
+    "sha256": "5786934145ee03f5ae5e0042e2ea301ef07a957a46c47d97af8f17051e9ad4a8",
+    "origin": "reused-platform-asset",
+    "licenseCode": "OceanLeo-Free-1.0",
+    "licenseFamily": "first-party",
+    "usageScope": "standalone",
+    "supplyTier": "byte-portable",
+    "attributionRequired": false,
+    "author": "OceanLeo Design"
+  },
+  {
+    "file": "memphis-p02-2.png",
+    "sourceRef": "memphis/p02",
+    "sourceUrl": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/ppt/decks/memphis/p02.webp",
+    "sourcePageSha256": "f4a1d008ac89cbc4fe0ee1855a1c62df2127c33e35d5b3ff11cf12abbbbcb302",
+    "cropRect": {
+      "x": 283,
+      "y": 619,
+      "w": 218,
+      "h": 282
+    },
+    "pageBackground": "#f9f4ec",
+    "width": 218,
+    "height": 282,
+    "byteSize": 56749,
+    "sha256": "94bc040867990b7424a0b7cd5e6a9e5b9c5aa2eeea69cebd928a00bfd356803e",
+    "origin": "reused-platform-asset",
+    "licenseCode": "OceanLeo-Free-1.0",
+    "licenseFamily": "first-party",
+    "usageScope": "standalone",
+    "supplyTier": "byte-portable",
+    "attributionRequired": false,
+    "author": "OceanLeo Design"
+  },
+  {
+    "file": "memphis-p02-3.png",
+    "sourceRef": "memphis/p02",
+    "sourceUrl": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/ppt/decks/memphis/p02.webp",
+    "sourcePageSha256": "f4a1d008ac89cbc4fe0ee1855a1c62df2127c33e35d5b3ff11cf12abbbbcb302",
+    "cropRect": {
+      "x": 803,
+      "y": 683,
+      "w": 341,
+      "h": 186
+    },
+    "pageBackground": "#f9f4ec",
+    "width": 341,
+    "height": 186,
+    "byteSize": 81022,
+    "sha256": "b77216cfef523dcd7bf4485c9a3833c27ae0a4ce68c18c9b05c1be9a534c170e",
+    "origin": "reused-platform-asset",
+    "licenseCode": "OceanLeo-Free-1.0",
+    "licenseFamily": "first-party",
+    "usageScope": "standalone",
+    "supplyTier": "byte-portable",
+    "attributionRequired": false,
+    "author": "OceanLeo Design"
+  },
+  {
+    "file": "memphis-p04-0.png",
+    "sourceRef": "memphis/p04",
+    "sourceUrl": "https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/ppt/decks/memphis/p04.webp",
+    "sourcePageSha256": "8d1c596c54c247333d33831aba5637b758a6ba37795df39f624103845779b04e",
+    "cropRect": {
+      "x": 182,
+      "y": 225,
+      "w": 751,
+      "h": 491
+    },
+    "pageBackground": "#f9f4ec",
+    "width": 751,
+    "height": 491,
+    "byteSize": 340662,
+    "sha256": "6f144e538db4c33f29afd5e67bf115aebd47ac7a098afc389ef99d707ce4780f",
+    "origin": "reused-platform-asset",
+    "licenseCode": "OceanLeo-Free-1.0",
+    "licenseFamily": "first-party",
+    "usageScope": "standalone",
+    "supplyTier": "byte-portable",
+    "attributionRequired": false,
+    "author": "OceanLeo Design"
+  }
+]

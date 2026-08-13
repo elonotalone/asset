@@ -1,0 +1,109 @@
+{
+  "source": "/root/projects/asset/public/works/deck/deck-memphis-01.pptx",
+  "sourceSha256": "2cec06b93c656909e5b6c1a283adda9b1dec05eda95b9515d737e93f845693e3",
+  "via": "soffice --headless --convert-to pdf → pdftoppm -r 150 → @napi-rs/canvas 重采样 + webp",
+  "container": "oceanleo-convert",
+  "pageCount": 9,
+  "pages": [
+    {
+      "page": 1,
+      "file": "01.webp",
+      "width": 1280,
+      "height": 720,
+      "byteSize": 13466,
+      "sha256": "1056fb5f7db702e786e0ebec82a1f29d8ad1810f380e7e072ef10f3ee1d595b3",
+      "nonBlankRatio": 0.030647,
+      "colorCount": 1037
+    },
+    {
+      "page": 2,
+      "file": "02.webp",
+      "width": 1280,
+      "height": 720,
+      "byteSize": 101746,
+      "sha256": "e44e2cacffc7de0d39a4a9eb4d770afd9c9fa4d83a2bc7ee6e388e6425af01e7",
+      "nonBlankRatio": 0.735713,
+      "colorCount": 223869
+    },
+    {
+      "page": 3,
+      "file": "03.webp",
+      "width": 1280,
+      "height": 720,
+      "byteSize": 22238,
+      "sha256": "28b030dd23a84744d5a9159a00c4f4df4c79aac39eb2c4b81c5ea73b5b2d6870",
+      "nonBlankRatio": 0.032919,
+      "colorCount": 1302
+    },
+    {
+      "page": 4,
+      "file": "04.webp",
+      "width": 1280,
+      "height": 720,
+      "byteSize": 23606,
+      "sha256": "559147156e672903d6a5d354e2eb7e664c53fafdbc5861b02d8886ec7ae6298d",
+      "nonBlankRatio": 0.033977,
+      "colorCount": 2068
+    },
+    {
+      "page": 5,
+      "file": "05.webp",
+      "width": 1280,
+      "height": 720,
+      "byteSize": 35314,
+      "sha256": "5c648187250d039a1e3a766d09d9bdbc7df6f9e9836861b014319c7eee01d110",
+      "nonBlankRatio": 0.139769,
+      "colorCount": 31808
+    },
+    {
+      "page": 6,
+      "file": "06.webp",
+      "width": 1280,
+      "height": 720,
+      "byteSize": 46508,
+      "sha256": "6a6dd4b42c7d626b48383515c70adfdffc70e88b8fabcb6ab4bdc44623009640",
+      "nonBlankRatio": 0.124168,
+      "colorCount": 38884
+    },
+    {
+      "page": 7,
+      "file": "07.webp",
+      "width": 1280,
+      "height": 720,
+      "byteSize": 77926,
+      "sha256": "e075409827528a6dba8dfe249b49e889cadfd00ff9f65ab904e53f5ffa00cc3d",
+      "nonBlankRatio": 0.725051,
+      "colorCount": 49107
+    },
+    {
+      "page": 8,
+      "file": "08.webp",
+      "width": 1280,
+      "height": 720,
+      "byteSize": 21134,
+      "sha256": "e01bf0d9c0939af20678e3ad6ae981d7077800fc3a1fbdc0e0c89bec371fb627",
+      "nonBlankRatio": 0.029395,
+      "colorCount": 1569
+    },
+    {
+      "page": 9,
+      "file": "09.webp",
+      "width": 1280,
+      "height": 720,
+      "byteSize": 47540,
+      "sha256": "d554f0dcccb033a0691ef188fa0bba1c18de2a37d4acd32afd8be848224804c9",
+      "nonBlankRatio": 0.161787,
+      "colorCount": 48190
+    }
+  ],
+  "cover": {
+    "file": "deck-memphis-01.cover.webp",
+    "width": 1280,
+    "height": 720,
+    "byteSize": 13466,
+    "sha256": "1056fb5f7db702e786e0ebec82a1f29d8ad1810f380e7e072ef10f3ee1d595b3",
+    "nonBlankRatio": 0.030647,
+    "colorCount": 1037,
+    "origin": "rendered-page-1"
+  }
+}
