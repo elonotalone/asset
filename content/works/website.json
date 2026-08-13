@@ -39,23 +39,36 @@
         "file": "/works/website/law-intake-01/site.json",
         "starter": "/works/website/law-intake-01/oceanleo.starter.json",
         "compiler": "scripts/material-infra/assemblers/web/site-config.mjs",
-        "deterministic": "从 site.json 重编译得到的 zip 与本条的 zip 逐字节相同（sha256 916ebf164d64…）",
+        "deterministic": "从 site.json 重编译得到的 zip 与本条的 zip 逐字节相同（sha256 ad83e882dda0…）",
         "sectionCount": 8,
         "sectionTypes": ["contact", "faq", "timeline", "cases", "pricing", "about", "cta", "footer"]
       },
-      "entryCount": 4,
+      "entryCount": 6,
       "htmlCount": 1,
       "assetCount": 0,
-      "totalUncompressedBytes": 30939,
+      "companionCount": 2,
+      "companions": [
+        {
+          "path": "site.json",
+          "byteSize": 37018,
+          "sha256": "58d32bb5b03f09ce6cd3188c5120ac0cf61d382143bc5c98080d1530f5a26868"
+        },
+        {
+          "path": "oceanleo.starter.json",
+          "byteSize": 1351,
+          "sha256": "82aa065d1a3f66ff0257a8d91df6b9cf83e7b4cd355ff8551f5053571f279b87"
+        }
+      ],
+      "totalUncompressedBytes": 69861,
       "hasIndexHtml": true,
       "innerEntrypoint": "index.html",
       "closureShape": "source-zip",
-      "zipByteSize": 14284,
-      "zipSha256": "916ebf164d643666a87d54bae83ca31b9d58e2f27db77b54d94c5b05db499b64",
+      "zipByteSize": 22964,
+      "zipSha256": "ad83e882dda0c9f6fbb06e9e3634fe65216a5d6f384883b34c7bd50a0add60bf",
       "sectionCount": 7,
-      "bodyCharCount": 3124,
+      "bodyCharCount": 3188,
       "imageCount": 0,
-      "paragraphsReadableWithoutJs": 70,
+      "paragraphsReadableWithoutJs": 74,
       "paragraphsMissingWithoutJs": 0,
       "layout": {
         "source": "input",
@@ -66,7 +79,7 @@
         "measureCh": 72,
         "mainBlockCount": 2,
         "fingerprint": "c1167d0f8280bd84",
-        "documentHeight": 5397,
+        "documentHeight": 5569,
         "derivedFrom": "writer-layout-model",
         "stylesCssSha12": "ed7329651b7b",
         "palette": {
@@ -126,19 +139,32 @@
         "file": "/works/website/salon-booking-01/site.json",
         "starter": "/works/website/salon-booking-01/oceanleo.starter.json",
         "compiler": "scripts/material-infra/assemblers/web/site-config.mjs",
-        "deterministic": "从 site.json 重编译得到的 zip 与本条的 zip 逐字节相同（sha256 c99e7474ea07…）",
+        "deterministic": "从 site.json 重编译得到的 zip 与本条的 zip 逐字节相同（sha256 f6e349cc4736…）",
         "sectionCount": 7,
         "sectionTypes": ["hero", "menu", "pricing", "team", "faq", "contact", "footer"]
       },
-      "entryCount": 6,
+      "entryCount": 8,
       "htmlCount": 1,
       "assetCount": 1,
-      "totalUncompressedBytes": 160089,
+      "companionCount": 2,
+      "companions": [
+        {
+          "path": "site.json",
+          "byteSize": 28612,
+          "sha256": "f71d149aa9a0dc6b8aee91594d6300a4c86a0ce3b24e711e35dece93c01cfafd"
+        },
+        {
+          "path": "oceanleo.starter.json",
+          "byteSize": 1911,
+          "sha256": "ce258758181e2d757a343b1991376d2d421c82d4e8f18cd8e9575dff60e16e1b"
+        }
+      ],
+      "totalUncompressedBytes": 190913,
       "hasIndexHtml": true,
       "innerEntrypoint": "index.html",
       "closureShape": "source-zip",
-      "zipByteSize": 147626,
-      "zipSha256": "c99e7474ea0707e626d8687fc74b8657f32370d3e225ac2132789f39e5ac6adb",
+      "zipByteSize": 154057,
+      "zipSha256": "f6e349cc473655dc08b76282e677c874fd2b8e9b38772279b630e4b9f6eb687a",
       "sectionCount": 6,
       "bodyCharCount": 1986,
       "imageCount": 1,
@@ -213,23 +239,36 @@
         "file": "/works/website/docfilm-portfolio-01/site.json",
         "starter": "/works/website/docfilm-portfolio-01/oceanleo.starter.json",
         "compiler": "scripts/material-infra/assemblers/web/site-config.mjs",
-        "deterministic": "从 site.json 重编译得到的 zip 与本条的 zip 逐字节相同（sha256 9b49900b5955…）",
+        "deterministic": "从 site.json 重编译得到的 zip 与本条的 zip 逐字节相同（sha256 5df9526ef3a8…）",
         "sectionCount": 9,
         "sectionTypes": ["hero", "about", "about", "about", "cases", "stats", "faq", "cta", "footer"]
       },
-      "entryCount": 6,
+      "entryCount": 8,
       "htmlCount": 1,
       "assetCount": 1,
-      "totalUncompressedBytes": 114205,
+      "companionCount": 2,
+      "companions": [
+        {
+          "path": "site.json",
+          "byteSize": 37158,
+          "sha256": "5cca29f1729930f26c5f40cbbf439e712ecf4310ce0de2f99a14525005c0f197"
+        },
+        {
+          "path": "oceanleo.starter.json",
+          "byteSize": 1769,
+          "sha256": "c84a8f30f5e76d414bb5016e45a07c2783a7f80bef06f0146b411ef92ea7dbc7"
+        }
+      ],
+      "totalUncompressedBytes": 153685,
       "hasIndexHtml": true,
       "innerEntrypoint": "index.html",
       "closureShape": "source-zip",
-      "zipByteSize": 95440,
-      "zipSha256": "9b49900b5955dcb95ec50fd70ff2f338643ff9108124773f306fd51e13b86816",
+      "zipByteSize": 104188,
+      "zipSha256": "5df9526ef3a898123801a48ed60a6547df53e6fdc9280964d53631ef4c40b013",
       "sectionCount": 9,
-      "bodyCharCount": 3693,
+      "bodyCharCount": 3757,
       "imageCount": 1,
-      "paragraphsReadableWithoutJs": 75,
+      "paragraphsReadableWithoutJs": 79,
       "paragraphsMissingWithoutJs": 0,
       "layout": {
         "source": "input",
@@ -239,8 +278,8 @@
         "gridColumns": null,
         "measureCh": 84,
         "mainBlockCount": 4,
-        "fingerprint": "9f6966862d3d5a24",
-        "documentHeight": 6328,
+        "fingerprint": "4024f011ab0ee19c",
+        "documentHeight": 6500,
         "derivedFrom": "writer-layout-model",
         "stylesCssSha12": "3b00d851b02b",
         "palette": {

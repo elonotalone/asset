@@ -10,13 +10,389 @@
     "headingWeight": 700
   },
   "navigation": [
-    { "label": "先说案情", "href": "#intake" },
-    { "label": "你最想问的", "href": "#judgement" },
-    { "label": "时效", "href": "#deadline" },
-    { "label": "收费", "href": "#fee" }
+    {
+      "label": "先说案情",
+      "href": "#intake"
+    },
+    {
+      "label": "你最想问的",
+      "href": "#judgement"
+    },
+    {
+      "label": "时效",
+      "href": "#deadline"
+    },
+    {
+      "label": "收费",
+      "href": "#fee"
+    }
   ],
-  "layoutFamily": "legal-pro",
-  "theme": { "radius": "sharp", "density": "compact", "headingFont": "serif", "bodyFont": "sans" },
+  "sections": [
+    {
+      "id": "intake",
+      "type": "contact",
+      "style": {
+        "paddingTop": 64,
+        "paddingBottom": 48,
+        "contentWidth": "normal",
+        "alignment": "left",
+        "layout": "default",
+        "cornerRadius": 0,
+        "borderWidth": 0
+      },
+      "layout": {},
+      "content": {
+        "title": "收到仲裁通知书的头 72 小时，先把事情说清楚",
+        "subtitle": "你现在最需要知道的不是我们有多专业，是这个案子你有没有理、答辩期还剩几天。把下面四件事写下来，我们在一个工作日内回你一次 20 分钟的评估电话——评估之后如果不需要请律师，我们会直接说。",
+        "phone": "010-8829 6640（工作日 9:00–19:00）",
+        "email": "intake@hengming-labor.example.cn",
+        "address": "北京市朝阳区建国路 88 号 SOHO 现代城 B 座 1704",
+        "formTitle": "案情自述",
+        "nameLabel": "怎么称呼你，公司叫什么",
+        "phoneLabel": "手机号（评估电话打这个号）",
+        "emailLabel": "邮箱（用来发回评估纪要，可不填）",
+        "messageLabel": "请写清这四件事：① 争议类型（违法解除 / 加班费 / 未签书面合同二倍工资 / 竞业限制 / 工伤 / 其他）；② 涉及几个人；③ 有没有签书面劳动合同、有没有考勤与工资流水；④ 仲裁通知书上的答辩期截止到哪一天",
+        "submitLabel": "发出案情，约评估电话",
+        "image": {
+          "keyword": "law office desk documents",
+          "alt": "受理台上摊开的仲裁受理通知书与劳动合同"
+        }
+      }
+    },
+    {
+      "id": "judgement",
+      "type": "faq",
+      "style": {
+        "paddingTop": 48,
+        "paddingBottom": 48,
+        "contentWidth": "normal",
+        "alignment": "left",
+        "layout": "default",
+        "cornerRadius": 0,
+        "borderWidth": 0
+      },
+      "layout": {},
+      "content": {
+        "title": "你今晚真正想知道的是这五件事",
+        "subtitle": "下面每一条都是我们在评估电话里被问过最多次的原话。答案按北京地区的裁审口径写，其他地区会有出入，评估时会当面更正。",
+        "footnote": "以上答复只对应北京地区 2026 年的裁审口径，不构成对你具体案件的法律意见。",
+        "contactLabel": "有本节没覆盖的问题，直接打",
+        "contactHref": "tel:01088296640",
+        "items": [
+          {
+            "question": "员工申请仲裁，是不是公司一定会输？",
+            "answer": "不是。但要认清一个事实：劳动争议里举证责任大量落在用人单位身上。考勤记录、工资发放记录、规章制度公示记录、解除通知的送达凭证，这些拿不出来的，法律上默认按员工的说法认定。我们评估时第一件事就是问你手里有哪几样，而不是问事情经过。"
+          },
+          {
+            "question": "违法解除要赔多少？有没有一个能先估的数？",
+            "answer": "违法解除的赔偿金是经济补偿标准的二倍，经济补偿按在本单位工作年限，每满一年支付一个月工资，六个月以上不满一年按一年算，不满六个月支付半个月。月工资按解除前十二个月的平均应发工资算，包含奖金与津贴，高于当地社平工资三倍的按三倍封顶、且年限最高十二年。多数案子在你自己算完之后就能有个八九不离十的数。"
+          },
+          {
+            "question": "整个流程要多久？会不会拖上一年？",
+            "answer": "仲裁自受理之日起四十五日内结案，案情复杂经批准可以延长十五日。一审普通程序六个月内，简易程序三个月内。真实节奏是：单人案件从收到通知书到拿到仲裁裁决，普遍三到四个月；对方或我方不服起诉到法院，再加四到六个月。所谓拖一年，通常是走完仲裁加一审加二审。"
+          },
+          {
+            "question": "不请律师自己去开庭行不行？",
+            "answer": "标的清楚、事实简单、证据齐全的单人案件，公司 HR 自己出庭完全可以，我们评估之后会直接这么建议。真正需要律师的是三类：涉及五人以上的群体性争议、解除理由建立在规章制度上但制度公示存在瑕疵、以及已经进入二审或再审的案子。"
+          },
+          {
+            "question": "怎么收费？会不会评估完就被推销一整套服务？",
+            "answer": "评估电话不收费，也不做打包推销。评估之后需要代理的，按下面「收费」一节的三档报价，签书面委托合同再开始工作。我们不做风险代理，不承诺结果。"
+          }
+        ],
+        "image": {
+          "keyword": "questions answers legal",
+          "alt": "常见问题"
+        }
+      }
+    },
+    {
+      "id": "deadline",
+      "type": "timeline",
+      "style": {
+        "paddingTop": 48,
+        "paddingBottom": 48,
+        "contentWidth": "normal",
+        "alignment": "left",
+        "layout": "default",
+        "cornerRadius": 0,
+        "borderWidth": 0
+      },
+      "layout": {},
+      "content": {
+        "title": "会让你直接输掉的，通常不是道理，是日期",
+        "subtitle": "下面五个期限，任何一个错过都不可逆，也不能靠事后补材料挽回。收到通知书当天就把这五个日子写进日历。",
+        "items": [
+          {
+            "label": "收到通知书 +10 日",
+            "title": "提交答辩书与证据",
+            "description": "仲裁委送达申请书副本后，用人单位应在十日内提交答辩书。逾期不影响审理，但你会在第一次开庭时处于完全被动——对方的主张已经成文，你的还没有。"
+          },
+          {
+            "label": "收到通知书 +10 日",
+            "title": "提出管辖异议",
+            "description": "认为该仲裁委没有管辖权的，必须在答辩期内书面提出。过了这个窗口，后续再谈管辖法院不会支持。"
+          },
+          {
+            "label": "开庭前 3 日",
+            "title": "证据交换与补充举证",
+            "description": "超过举证期限提交的证据，对方有权拒绝质证，仲裁庭可以不予采纳。补充证据要在这一天之前递到。"
+          },
+          {
+            "label": "收到裁决书 +15 日",
+            "title": "向法院起诉",
+            "description": "对仲裁裁决不服的，十五日内向有管辖权的人民法院起诉。过期裁决书生效，对方可以直接申请强制执行。注意这里是十五日，不是一个月。"
+          },
+          {
+            "label": "争议发生 +1 年",
+            "title": "仲裁时效",
+            "description": "劳动争议申请仲裁的时效期间为一年，自当事人知道或应当知道权利被侵害之日起算。拖欠劳动报酬的争议不受这一年的限制，但劳动关系终止的，应当自终止之日起一年内提出。"
+          }
+        ],
+        "image": {
+          "keyword": "calendar deadline",
+          "alt": "期限表"
+        }
+      }
+    },
+    {
+      "id": "record",
+      "type": "cases",
+      "style": {
+        "paddingTop": 48,
+        "paddingBottom": 48,
+        "contentWidth": "normal",
+        "alignment": "left",
+        "layout": "default",
+        "cornerRadius": 0,
+        "borderWidth": 0
+      },
+      "layout": {},
+      "content": {
+        "title": "近两年办过的同类案子，包括没办好的那两件",
+        "subtitle": "下面是脱敏后的处置记录。写上结果与用时，也写上我们判断失误的地方——只列赢的那些，你没法用它判断我们。",
+        "items": [
+          {
+            "tag": "违法解除 · 制造业 · 1 人",
+            "title": "以「不能胜任工作」解除，未经调岗或培训",
+            "description": "公司在绩效考核末位后直接解除。我们评估后建议不要硬抗：单位没有履行调岗或培训的前置程序，仲裁阶段几乎必败。转为调解，以经济补偿的一点五倍达成，用时二十六天，避免了二倍赔偿金加上四个月的诉讼周期。",
+            "linkLabel": "View details",
+            "href": "#",
+            "image": {
+              "keyword": "business case study 1",
+              "alt": "以「不能胜任工作」解除，未经调岗或培训"
+            }
+          },
+          {
+            "tag": "未签书面合同 · 连锁餐饮 · 9 人",
+            "title": "群体性二倍工资请求，跨度十一个月",
+            "description": "门店换了三任店长，入职登记表在，合同没签。我们没有争「有没有签」，而是逐人核算实际用工起止与二倍工资的十一个月上限，并主张其中四人已过仲裁时效。最终裁决支持金额约为对方请求的四成，用时三个月零九天。",
+            "linkLabel": "View details",
+            "href": "#",
+            "image": {
+              "keyword": "business case study 2",
+              "alt": "群体性二倍工资请求，跨度十一个月"
+            }
+          },
+          {
+            "tag": "竞业限制 · 科技公司 · 1 人",
+            "title": "离职后违反竞业限制，主张返还补偿并支付违约金",
+            "description": "公司胜诉但只拿回违约金的三成。失误在我们身上：没有在诉前固定对方新入职单位的社保缴纳证据，仅凭工商关联推定，仲裁庭不予采信关联部分。用时四个月。这件事之后我们把竞业案的证据固定挪到了立案之前。",
+            "linkLabel": "View details",
+            "href": "#",
+            "image": {
+              "keyword": "business case study 3",
+              "alt": "离职后违反竞业限制，主张返还补偿并支付违约金"
+            }
+          },
+          {
+            "tag": "工伤 · 物流 · 1 人",
+            "title": "认定为工伤后的停工留薪期争议",
+            "description": "争议不在认定，在停工留薪期的长短与原工资福利待遇的口径。我们提交了医疗机构的诊断建议与同岗位工资构成明细，把停工留薪期从对方主张的十二个月压到六个月。用时两个月零十一天。",
+            "linkLabel": "View details",
+            "href": "#",
+            "image": {
+              "keyword": "business case study 4",
+              "alt": "认定为工伤后的停工留薪期争议"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "fee",
+      "type": "pricing",
+      "style": {
+        "paddingTop": 48,
+        "paddingBottom": 48,
+        "contentWidth": "normal",
+        "alignment": "left",
+        "layout": "default",
+        "cornerRadius": 0,
+        "borderWidth": 0
+      },
+      "layout": {},
+      "content": {
+        "title": "收费三档，写在页面上而不是等你问",
+        "subtitle": "以下为北京地区 2026 年报价，含税，不含差旅与鉴定、公证等第三方费用。签书面委托合同后生效，中途终止按已完成阶段结算。",
+        "plans": [
+          {
+            "name": "只做评估",
+            "price": "0 元",
+            "description": "一次 20 分钟电话评估，给出胜负判断、金额区间与是否需要委托律师的结论。评估之后不再联系你。",
+            "ctaLabel": "填上面的表就行",
+            "highlights": [
+              "不限行业",
+              "一个工作日内回电",
+              "评估纪要发到邮箱"
+            ],
+            "featured": false
+          },
+          {
+            "name": "仲裁阶段代理",
+            "price": "1.8 万 – 3.5 万元",
+            "description": "从答辩书到仲裁裁决的全程代理。单人案件按下限，涉及五人以上或需要现场取证的按上限。",
+            "ctaLabel": "评估之后再决定",
+            "highlights": [
+              "答辩书与证据目录",
+              "全程出庭",
+              "调解方案测算",
+              "裁决后十五日内的起诉建议"
+            ],
+            "featured": true
+          },
+          {
+            "name": "一审加二审",
+            "price": "3.5 万 – 6.8 万元",
+            "description": "仲裁裁决之后进入诉讼的全程代理。已在我们这里做过仲裁阶段的，按差额补收。",
+            "ctaLabel": "评估之后再决定",
+            "highlights": [
+              "起诉状与上诉状",
+              "二审出庭",
+              "执行阶段的衔接建议"
+            ],
+            "featured": false
+          }
+        ],
+        "image": {
+          "keyword": "pricing",
+          "alt": "收费"
+        }
+      }
+    },
+    {
+      "id": "decline",
+      "type": "about",
+      "style": {
+        "paddingTop": 48,
+        "paddingBottom": 48,
+        "contentWidth": "normal",
+        "alignment": "left",
+        "layout": "default",
+        "cornerRadius": 0,
+        "borderWidth": 0
+      },
+      "layout": {},
+      "content": {
+        "eyebrow": "这一节请读完再决定要不要填表",
+        "title": "以下情况我们不接，说清楚比接下来再退给你强",
+        "body": [
+          "一家什么都接的所不可信。下面六种我们会在评估电话里直接劝退，不收费也不推荐给同行。",
+          "被劝退不代表你的事没救，只代表这件事请我们不划算，或者我们做不好。"
+        ],
+        "bullets": [
+          "员工方的委托。本所只代理用人单位一侧，长期只做一侧才有稳定的判断口径。",
+          "答辩期只剩三天以内的。这个时间做不出像样的证据目录，仓促接手等于收钱陪跑。",
+          "希望通过伪造考勤、补签合同、倒签文件来赢的。这类要求提出即终止沟通。",
+          "标的额低于三万元的单人案件。委托费会接近甚至超过争议金额，自己去开庭更合算，我们会在评估里教你怎么准备。",
+          "已经在其他所代理、只想找第二个人背书的。同一案件我们不做平行代理。",
+          "希望承诺结果的。我们不做风险代理，也不会给出「一定不赔」这样的话。"
+        ],
+        "image": {
+          "keyword": "decline",
+          "alt": "不受理的情形"
+        }
+      }
+    },
+    {
+      "id": "act",
+      "type": "cta",
+      "style": {
+        "paddingTop": 48,
+        "paddingBottom": 40,
+        "contentWidth": "normal",
+        "alignment": "left",
+        "layout": "default",
+        "cornerRadius": 0,
+        "borderWidth": 0
+      },
+      "layout": {},
+      "content": {
+        "eyebrow": "答辩期是十天，读到这里已经过去一点了",
+        "title": "把四件事写下来，其余的明天再说",
+        "subtitle": "争议类型、涉及几个人、有没有书面合同与考勤流水、答辩期截止到哪天。这四件写清楚，评估电话就能给出有用的判断；写不清楚，我们只能在电话里从头问一遍。",
+        "primaryLabel": "回到页面顶部填写案情",
+        "primaryHref": "#intake",
+        "secondaryLabel": "现在就打电话",
+        "secondaryHref": "tel:01088296640",
+        "note": "工作日 9:00 至 19:00 有人接。非工作时间请留言，第二天上午回。",
+        "image": {
+          "keyword": "call to action",
+          "alt": "行动"
+        }
+      }
+    },
+    {
+      "id": "site-foot",
+      "type": "footer",
+      "style": {
+        "paddingTop": 32,
+        "paddingBottom": 32,
+        "contentWidth": "normal",
+        "alignment": "left",
+        "layout": "default",
+        "cornerRadius": 0,
+        "borderWidth": 0
+      },
+      "layout": {},
+      "content": {
+        "title": "衡明劳动法律师事务所",
+        "description": "北京市朝阳区建国路 88 号 SOHO 现代城 B 座 1704。执业许可证号 21101202611234567（示例）。本站内容为一般性法律信息，不构成对具体案件的法律意见，也不因你阅读本站而在你我之间建立委托关系。",
+        "ctaLabel": "受理电话 010-8829 6640",
+        "ctaHref": "tel:01088296640",
+        "links": [
+          {
+            "label": "先说案情",
+            "href": "#intake"
+          },
+          {
+            "label": "你最想问的五件事",
+            "href": "#judgement"
+          },
+          {
+            "label": "五个不可逆的期限",
+            "href": "#deadline"
+          },
+          {
+            "label": "处置记录",
+            "href": "#record"
+          },
+          {
+            "label": "收费三档",
+            "href": "#fee"
+          },
+          {
+            "label": "我们不接什么",
+            "href": "#decline"
+          }
+        ],
+        "image": {
+          "keyword": "footer",
+          "alt": "页脚"
+        }
+      }
+    }
+  ],
   "pages": [
     {
       "id": "home",
@@ -28,7 +404,16 @@
         {
           "id": "intake",
           "type": "contact",
-          "style": { "paddingTop": 64, "paddingBottom": 48, "contentWidth": "normal", "alignment": "left", "layout": "default", "cornerRadius": 0, "borderWidth": 0 },
+          "style": {
+            "paddingTop": 64,
+            "paddingBottom": 48,
+            "contentWidth": "normal",
+            "alignment": "left",
+            "layout": "default",
+            "cornerRadius": 0,
+            "borderWidth": 0
+          },
+          "layout": {},
           "content": {
             "title": "收到仲裁通知书的头 72 小时，先把事情说清楚",
             "subtitle": "你现在最需要知道的不是我们有多专业，是这个案子你有没有理、答辩期还剩几天。把下面四件事写下来，我们在一个工作日内回你一次 20 分钟的评估电话——评估之后如果不需要请律师，我们会直接说。",
@@ -41,16 +426,31 @@
             "emailLabel": "邮箱（用来发回评估纪要，可不填）",
             "messageLabel": "请写清这四件事：① 争议类型（违法解除 / 加班费 / 未签书面合同二倍工资 / 竞业限制 / 工伤 / 其他）；② 涉及几个人；③ 有没有签书面劳动合同、有没有考勤与工资流水；④ 仲裁通知书上的答辩期截止到哪一天",
             "submitLabel": "发出案情，约评估电话",
-            "image": { "keyword": "law office desk documents", "alt": "受理台上摊开的仲裁受理通知书与劳动合同" }
+            "image": {
+              "keyword": "law office desk documents",
+              "alt": "受理台上摊开的仲裁受理通知书与劳动合同"
+            }
           }
         },
         {
           "id": "judgement",
           "type": "faq",
-          "style": { "paddingTop": 48, "paddingBottom": 48, "contentWidth": "normal", "alignment": "left", "layout": "default", "cornerRadius": 0, "borderWidth": 0 },
+          "style": {
+            "paddingTop": 48,
+            "paddingBottom": 48,
+            "contentWidth": "normal",
+            "alignment": "left",
+            "layout": "default",
+            "cornerRadius": 0,
+            "borderWidth": 0
+          },
+          "layout": {},
           "content": {
             "title": "你今晚真正想知道的是这五件事",
             "subtitle": "下面每一条都是我们在评估电话里被问过最多次的原话。答案按北京地区的裁审口径写，其他地区会有出入，评估时会当面更正。",
+            "footnote": "以上答复只对应北京地区 2026 年的裁审口径，不构成对你具体案件的法律意见。",
+            "contactLabel": "有本节没覆盖的问题，直接打",
+            "contactHref": "tel:01088296640",
             "items": [
               {
                 "question": "员工申请仲裁，是不是公司一定会输？",
@@ -73,64 +473,199 @@
                 "answer": "评估电话不收费，也不做打包推销。评估之后需要代理的，按下面「收费」一节的三档报价，签书面委托合同再开始工作。我们不做风险代理，不承诺结果。"
               }
             ],
-            "footnote": "以上答复只对应北京地区 2026 年的裁审口径，不构成对你具体案件的法律意见。",
-            "contactLabel": "有本节没覆盖的问题，直接打",
-            "contactHref": "tel:01088296640",
-            "image": { "keyword": "questions answers legal", "alt": "常见问题" }
+            "image": {
+              "keyword": "questions answers legal",
+              "alt": "常见问题"
+            }
           }
         },
         {
           "id": "deadline",
           "type": "timeline",
-          "style": { "paddingTop": 48, "paddingBottom": 48, "contentWidth": "normal", "alignment": "left", "layout": "default", "cornerRadius": 0, "borderWidth": 0 },
+          "style": {
+            "paddingTop": 48,
+            "paddingBottom": 48,
+            "contentWidth": "normal",
+            "alignment": "left",
+            "layout": "default",
+            "cornerRadius": 0,
+            "borderWidth": 0
+          },
+          "layout": {},
           "content": {
             "title": "会让你直接输掉的，通常不是道理，是日期",
             "subtitle": "下面五个期限，任何一个错过都不可逆，也不能靠事后补材料挽回。收到通知书当天就把这五个日子写进日历。",
             "items": [
-              { "label": "收到通知书 +10 日", "title": "提交答辩书与证据", "description": "仲裁委送达申请书副本后，用人单位应在十日内提交答辩书。逾期不影响审理，但你会在第一次开庭时处于完全被动——对方的主张已经成文，你的还没有。" },
-              { "label": "收到通知书 +10 日", "title": "提出管辖异议", "description": "认为该仲裁委没有管辖权的，必须在答辩期内书面提出。过了这个窗口，后续再谈管辖法院不会支持。" },
-              { "label": "开庭前 3 日", "title": "证据交换与补充举证", "description": "超过举证期限提交的证据，对方有权拒绝质证，仲裁庭可以不予采纳。补充证据要在这一天之前递到。" },
-              { "label": "收到裁决书 +15 日", "title": "向法院起诉", "description": "对仲裁裁决不服的，十五日内向有管辖权的人民法院起诉。过期裁决书生效，对方可以直接申请强制执行。注意这里是十五日，不是一个月。" },
-              { "label": "争议发生 +1 年", "title": "仲裁时效", "description": "劳动争议申请仲裁的时效期间为一年，自当事人知道或应当知道权利被侵害之日起算。拖欠劳动报酬的争议不受这一年的限制，但劳动关系终止的，应当自终止之日起一年内提出。" }
+              {
+                "label": "收到通知书 +10 日",
+                "title": "提交答辩书与证据",
+                "description": "仲裁委送达申请书副本后，用人单位应在十日内提交答辩书。逾期不影响审理，但你会在第一次开庭时处于完全被动——对方的主张已经成文，你的还没有。"
+              },
+              {
+                "label": "收到通知书 +10 日",
+                "title": "提出管辖异议",
+                "description": "认为该仲裁委没有管辖权的，必须在答辩期内书面提出。过了这个窗口，后续再谈管辖法院不会支持。"
+              },
+              {
+                "label": "开庭前 3 日",
+                "title": "证据交换与补充举证",
+                "description": "超过举证期限提交的证据，对方有权拒绝质证，仲裁庭可以不予采纳。补充证据要在这一天之前递到。"
+              },
+              {
+                "label": "收到裁决书 +15 日",
+                "title": "向法院起诉",
+                "description": "对仲裁裁决不服的，十五日内向有管辖权的人民法院起诉。过期裁决书生效，对方可以直接申请强制执行。注意这里是十五日，不是一个月。"
+              },
+              {
+                "label": "争议发生 +1 年",
+                "title": "仲裁时效",
+                "description": "劳动争议申请仲裁的时效期间为一年，自当事人知道或应当知道权利被侵害之日起算。拖欠劳动报酬的争议不受这一年的限制，但劳动关系终止的，应当自终止之日起一年内提出。"
+              }
             ],
-            "image": { "keyword": "calendar deadline", "alt": "期限表" }
+            "image": {
+              "keyword": "calendar deadline",
+              "alt": "期限表"
+            }
           }
         },
         {
           "id": "record",
           "type": "cases",
-          "style": { "paddingTop": 48, "paddingBottom": 48, "contentWidth": "normal", "alignment": "left", "layout": "default", "cornerRadius": 0, "borderWidth": 0 },
+          "style": {
+            "paddingTop": 48,
+            "paddingBottom": 48,
+            "contentWidth": "normal",
+            "alignment": "left",
+            "layout": "default",
+            "cornerRadius": 0,
+            "borderWidth": 0
+          },
+          "layout": {},
           "content": {
             "title": "近两年办过的同类案子，包括没办好的那两件",
             "subtitle": "下面是脱敏后的处置记录。写上结果与用时，也写上我们判断失误的地方——只列赢的那些，你没法用它判断我们。",
             "items": [
-              { "tag": "违法解除 · 制造业 · 1 人", "title": "以「不能胜任工作」解除，未经调岗或培训", "description": "公司在绩效考核末位后直接解除。我们评估后建议不要硬抗：单位没有履行调岗或培训的前置程序，仲裁阶段几乎必败。转为调解，以经济补偿的一点五倍达成，用时二十六天，避免了二倍赔偿金加上四个月的诉讼周期。", "linkLabel": "", "href": "" },
-              { "tag": "未签书面合同 · 连锁餐饮 · 9 人", "title": "群体性二倍工资请求，跨度十一个月", "description": "门店换了三任店长，入职登记表在，合同没签。我们没有争「有没有签」，而是逐人核算实际用工起止与二倍工资的十一个月上限，并主张其中四人已过仲裁时效。最终裁决支持金额约为对方请求的四成，用时三个月零九天。", "linkLabel": "", "href": "" },
-              { "tag": "竞业限制 · 科技公司 · 1 人", "title": "离职后违反竞业限制，主张返还补偿并支付违约金", "description": "公司胜诉但只拿回违约金的三成。失误在我们身上：没有在诉前固定对方新入职单位的社保缴纳证据，仅凭工商关联推定，仲裁庭不予采信关联部分。用时四个月。这件事之后我们把竞业案的证据固定挪到了立案之前。", "linkLabel": "", "href": "" },
-              { "tag": "工伤 · 物流 · 1 人", "title": "认定为工伤后的停工留薪期争议", "description": "争议不在认定，在停工留薪期的长短与原工资福利待遇的口径。我们提交了医疗机构的诊断建议与同岗位工资构成明细，把停工留薪期从对方主张的十二个月压到六个月。用时两个月零十一天。", "linkLabel": "", "href": "" }
-            ],
-            "image": { "keyword": "case files", "alt": "案例记录" }
+              {
+                "tag": "违法解除 · 制造业 · 1 人",
+                "title": "以「不能胜任工作」解除，未经调岗或培训",
+                "description": "公司在绩效考核末位后直接解除。我们评估后建议不要硬抗：单位没有履行调岗或培训的前置程序，仲裁阶段几乎必败。转为调解，以经济补偿的一点五倍达成，用时二十六天，避免了二倍赔偿金加上四个月的诉讼周期。",
+                "linkLabel": "View details",
+                "href": "#",
+                "image": {
+                  "keyword": "business case study 1",
+                  "alt": "以「不能胜任工作」解除，未经调岗或培训"
+                }
+              },
+              {
+                "tag": "未签书面合同 · 连锁餐饮 · 9 人",
+                "title": "群体性二倍工资请求，跨度十一个月",
+                "description": "门店换了三任店长，入职登记表在，合同没签。我们没有争「有没有签」，而是逐人核算实际用工起止与二倍工资的十一个月上限，并主张其中四人已过仲裁时效。最终裁决支持金额约为对方请求的四成，用时三个月零九天。",
+                "linkLabel": "View details",
+                "href": "#",
+                "image": {
+                  "keyword": "business case study 2",
+                  "alt": "群体性二倍工资请求，跨度十一个月"
+                }
+              },
+              {
+                "tag": "竞业限制 · 科技公司 · 1 人",
+                "title": "离职后违反竞业限制，主张返还补偿并支付违约金",
+                "description": "公司胜诉但只拿回违约金的三成。失误在我们身上：没有在诉前固定对方新入职单位的社保缴纳证据，仅凭工商关联推定，仲裁庭不予采信关联部分。用时四个月。这件事之后我们把竞业案的证据固定挪到了立案之前。",
+                "linkLabel": "View details",
+                "href": "#",
+                "image": {
+                  "keyword": "business case study 3",
+                  "alt": "离职后违反竞业限制，主张返还补偿并支付违约金"
+                }
+              },
+              {
+                "tag": "工伤 · 物流 · 1 人",
+                "title": "认定为工伤后的停工留薪期争议",
+                "description": "争议不在认定，在停工留薪期的长短与原工资福利待遇的口径。我们提交了医疗机构的诊断建议与同岗位工资构成明细，把停工留薪期从对方主张的十二个月压到六个月。用时两个月零十一天。",
+                "linkLabel": "View details",
+                "href": "#",
+                "image": {
+                  "keyword": "business case study 4",
+                  "alt": "认定为工伤后的停工留薪期争议"
+                }
+              }
+            ]
           }
         },
         {
           "id": "fee",
           "type": "pricing",
-          "style": { "paddingTop": 48, "paddingBottom": 48, "contentWidth": "normal", "alignment": "left", "layout": "default", "cornerRadius": 0, "borderWidth": 0 },
+          "style": {
+            "paddingTop": 48,
+            "paddingBottom": 48,
+            "contentWidth": "normal",
+            "alignment": "left",
+            "layout": "default",
+            "cornerRadius": 0,
+            "borderWidth": 0
+          },
+          "layout": {},
           "content": {
             "title": "收费三档，写在页面上而不是等你问",
             "subtitle": "以下为北京地区 2026 年报价，含税，不含差旅与鉴定、公证等第三方费用。签书面委托合同后生效，中途终止按已完成阶段结算。",
             "plans": [
-              { "name": "只做评估", "price": "0 元", "description": "一次 20 分钟电话评估，给出胜负判断、金额区间与是否需要委托律师的结论。评估之后不再联系你。", "ctaLabel": "填上面的表就行", "highlights": ["不限行业", "一个工作日内回电", "评估纪要发到邮箱"] },
-              { "name": "仲裁阶段代理", "price": "1.8 万 – 3.5 万元", "description": "从答辩书到仲裁裁决的全程代理。单人案件按下限，涉及五人以上或需要现场取证的按上限。", "ctaLabel": "评估之后再决定", "highlights": ["答辩书与证据目录", "全程出庭", "调解方案测算", "裁决后十五日内的起诉建议"], "featured": true },
-              { "name": "一审加二审", "price": "3.5 万 – 6.8 万元", "description": "仲裁裁决之后进入诉讼的全程代理。已在我们这里做过仲裁阶段的，按差额补收。", "ctaLabel": "评估之后再决定", "highlights": ["起诉状与上诉状", "二审出庭", "执行阶段的衔接建议"] }
+              {
+                "name": "只做评估",
+                "price": "0 元",
+                "description": "一次 20 分钟电话评估，给出胜负判断、金额区间与是否需要委托律师的结论。评估之后不再联系你。",
+                "ctaLabel": "填上面的表就行",
+                "highlights": [
+                  "不限行业",
+                  "一个工作日内回电",
+                  "评估纪要发到邮箱"
+                ],
+                "featured": false
+              },
+              {
+                "name": "仲裁阶段代理",
+                "price": "1.8 万 – 3.5 万元",
+                "description": "从答辩书到仲裁裁决的全程代理。单人案件按下限，涉及五人以上或需要现场取证的按上限。",
+                "ctaLabel": "评估之后再决定",
+                "highlights": [
+                  "答辩书与证据目录",
+                  "全程出庭",
+                  "调解方案测算",
+                  "裁决后十五日内的起诉建议"
+                ],
+                "featured": true
+              },
+              {
+                "name": "一审加二审",
+                "price": "3.5 万 – 6.8 万元",
+                "description": "仲裁裁决之后进入诉讼的全程代理。已在我们这里做过仲裁阶段的，按差额补收。",
+                "ctaLabel": "评估之后再决定",
+                "highlights": [
+                  "起诉状与上诉状",
+                  "二审出庭",
+                  "执行阶段的衔接建议"
+                ],
+                "featured": false
+              }
             ],
-            "image": { "keyword": "pricing", "alt": "收费" }
+            "image": {
+              "keyword": "pricing",
+              "alt": "收费"
+            }
           }
         },
         {
           "id": "decline",
           "type": "about",
-          "style": { "paddingTop": 48, "paddingBottom": 48, "contentWidth": "normal", "alignment": "left", "layout": "default", "cornerRadius": 0, "borderWidth": 0 },
+          "style": {
+            "paddingTop": 48,
+            "paddingBottom": 48,
+            "contentWidth": "normal",
+            "alignment": "left",
+            "layout": "default",
+            "cornerRadius": 0,
+            "borderWidth": 0
+          },
+          "layout": {},
           "content": {
             "eyebrow": "这一节请读完再决定要不要填表",
             "title": "以下情况我们不接，说清楚比接下来再退给你强",
@@ -146,13 +681,25 @@
               "已经在其他所代理、只想找第二个人背书的。同一案件我们不做平行代理。",
               "希望承诺结果的。我们不做风险代理，也不会给出「一定不赔」这样的话。"
             ],
-            "image": { "keyword": "decline", "alt": "不受理的情形" }
+            "image": {
+              "keyword": "decline",
+              "alt": "不受理的情形"
+            }
           }
         },
         {
           "id": "act",
           "type": "cta",
-          "style": { "paddingTop": 48, "paddingBottom": 40, "contentWidth": "normal", "alignment": "left", "layout": "default", "cornerRadius": 0, "borderWidth": 0 },
+          "style": {
+            "paddingTop": 48,
+            "paddingBottom": 40,
+            "contentWidth": "normal",
+            "alignment": "left",
+            "layout": "default",
+            "cornerRadius": 0,
+            "borderWidth": 0
+          },
+          "layout": {},
           "content": {
             "eyebrow": "答辩期是十天，读到这里已经过去一点了",
             "title": "把四件事写下来，其余的明天再说",
@@ -162,30 +709,70 @@
             "secondaryLabel": "现在就打电话",
             "secondaryHref": "tel:01088296640",
             "note": "工作日 9:00 至 19:00 有人接。非工作时间请留言，第二天上午回。",
-            "image": { "keyword": "call to action", "alt": "行动" }
+            "image": {
+              "keyword": "call to action",
+              "alt": "行动"
+            }
           }
         },
         {
           "id": "site-foot",
           "type": "footer",
-          "style": { "paddingTop": 32, "paddingBottom": 32, "contentWidth": "normal", "alignment": "left", "layout": "default", "cornerRadius": 0, "borderWidth": 0 },
+          "style": {
+            "paddingTop": 32,
+            "paddingBottom": 32,
+            "contentWidth": "normal",
+            "alignment": "left",
+            "layout": "default",
+            "cornerRadius": 0,
+            "borderWidth": 0
+          },
+          "layout": {},
           "content": {
             "title": "衡明劳动法律师事务所",
             "description": "北京市朝阳区建国路 88 号 SOHO 现代城 B 座 1704。执业许可证号 21101202611234567（示例）。本站内容为一般性法律信息，不构成对具体案件的法律意见，也不因你阅读本站而在你我之间建立委托关系。",
             "ctaLabel": "受理电话 010-8829 6640",
             "ctaHref": "tel:01088296640",
             "links": [
-              { "label": "先说案情", "href": "#intake" },
-              { "label": "你最想问的五件事", "href": "#judgement" },
-              { "label": "五个不可逆的期限", "href": "#deadline" },
-              { "label": "处置记录", "href": "#record" },
-              { "label": "收费三档", "href": "#fee" },
-              { "label": "我们不接什么", "href": "#decline" }
+              {
+                "label": "先说案情",
+                "href": "#intake"
+              },
+              {
+                "label": "你最想问的五件事",
+                "href": "#judgement"
+              },
+              {
+                "label": "五个不可逆的期限",
+                "href": "#deadline"
+              },
+              {
+                "label": "处置记录",
+                "href": "#record"
+              },
+              {
+                "label": "收费三档",
+                "href": "#fee"
+              },
+              {
+                "label": "我们不接什么",
+                "href": "#decline"
+              }
             ],
-            "image": { "keyword": "footer", "alt": "页脚" }
+            "image": {
+              "keyword": "footer",
+              "alt": "页脚"
+            }
           }
         }
       ]
     }
-  ]
+  ],
+  "theme": {
+    "radius": "sharp",
+    "density": "compact",
+    "headingFont": "serif",
+    "bodyFont": "sans"
+  },
+  "layoutFamily": "legal-pro"
 }

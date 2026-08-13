@@ -16,8 +16,8 @@
     },
     {
       "path": "app.js",
-      "blob_sha256": "2de000f16e068d8d5f740e623154cda98d8bfe5e90d7c1f2444589020465855b",
-      "byteSize": 2290,
+      "blob_sha256": "e178694251bc77706610c88f6ed8ea97f1ba072a76621ae24798121d0982ca31",
+      "byteSize": 2591,
       "mediaType": "text/javascript"
     },
     {
@@ -31,6 +31,18 @@
       "blob_sha256": "6d193c0c4d98bb5d27370436ce0215022898e8fe49e310fad06ce5963a7599f5",
       "byteSize": 137160,
       "mediaType": "image/webp"
+    },
+    {
+      "path": "site.json",
+      "blob_sha256": "f71d149aa9a0dc6b8aee91594d6300a4c86a0ce3b24e711e35dece93c01cfafd",
+      "byteSize": 28612,
+      "mediaType": "application/json"
+    },
+    {
+      "path": "oceanleo.starter.json",
+      "blob_sha256": "ce258758181e2d757a343b1991376d2d421c82d4e8f18cd8e9575dff60e16e1b",
+      "byteSize": 1911,
+      "mediaType": "application/json"
     },
     {
       "path": "ATTRIBUTION.txt",

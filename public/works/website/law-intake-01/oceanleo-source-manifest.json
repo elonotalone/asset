@@ -4,8 +4,8 @@
   "files": [
     {
       "path": "index.html",
-      "blob_sha256": "ae73194c5ae80bc04b78d522185b3e9f9ae8ae5837c832e8c50d2eebe3aa22cb",
-      "byteSize": 13443,
+      "blob_sha256": "3b328a3cc384b648847d9701d93ae5f0a0e9c37ba5de961b16f87e705b793673",
+      "byteSize": 13615,
       "mediaType": "text/html"
     },
     {
@@ -16,14 +16,26 @@
     },
     {
       "path": "app.js",
-      "blob_sha256": "2de000f16e068d8d5f740e623154cda98d8bfe5e90d7c1f2444589020465855b",
-      "byteSize": 2290,
+      "blob_sha256": "e178694251bc77706610c88f6ed8ea97f1ba072a76621ae24798121d0982ca31",
+      "byteSize": 2591,
       "mediaType": "text/javascript"
     },
     {
       "path": "content.json",
-      "blob_sha256": "3932546bba8a746ca15a4fc400dc83d01e95406dc15d9c337494150ec7d2de85",
-      "byteSize": 10954,
+      "blob_sha256": "b3bc3ff564fa80aba017090c529fca170f539795aba170e14633f5bb1cdffe68",
+      "byteSize": 11034,
+      "mediaType": "application/json"
+    },
+    {
+      "path": "site.json",
+      "blob_sha256": "58d32bb5b03f09ce6cd3188c5120ac0cf61d382143bc5c98080d1530f5a26868",
+      "byteSize": 37018,
+      "mediaType": "application/json"
+    },
+    {
+      "path": "oceanleo.starter.json",
+      "blob_sha256": "82aa065d1a3f66ff0257a8d91df6b9cf83e7b4cd355ff8551f5053571f279b87",
+      "byteSize": 1351,
       "mediaType": "application/json"
     }
   ]

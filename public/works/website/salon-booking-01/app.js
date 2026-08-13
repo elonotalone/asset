@@ -31,12 +31,20 @@
     var box = document.createElement("aside");
     box.className = "site-toc";
     box.setAttribute("aria-label", "contents");
-    var html = ["<strong>本页共 " + sections.length + " 个区块</strong><ol>"];
+    var summary = document.createElement("strong");
+    summary.textContent = "本页共 " + sections.length + " 个区块";
+    box.appendChild(summary);
+    var list = document.createElement("ol");
     sections.forEach(function (s) {
-      html.push("<li><a href=\"#" + s.id + "\">" + (s.heading || s.id) + "</a></li>");
+      var id = String((s && s.id) || "");
+      var item = document.createElement("li");
+      var link = document.createElement("a");
+      link.setAttribute("href", "#" + id);
+      link.textContent = String((s && (s.heading || s.id)) || "");
+      item.appendChild(link);
+      list.appendChild(item);
     });
-    html.push("</ol>");
-    box.innerHTML = html.join("");
+    box.appendChild(list);
     main.insertBefore(box, main.firstChild);
   }
 
