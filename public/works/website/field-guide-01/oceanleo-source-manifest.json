@@ -4,14 +4,14 @@
   "files": [
     {
       "path": "index.html",
-      "blob_sha256": "e7f7da4c7b4b6ad90fcfad43568785ab3dbe5f92dd1ae0a3da577b555445b6c8",
-      "byteSize": 10132,
+      "blob_sha256": "195d7bcfbf2d92c84473590deba7763181ba3bdc9fa60a42ef2983e8889dab8c",
+      "byteSize": 11869,
       "mediaType": "text/html"
     },
     {
       "path": "styles.css",
-      "blob_sha256": "932c033007d98ab64e0a7255a54fa600e8ea3ade7bec755cf275adcd6cbc455d",
-      "byteSize": 4027,
+      "blob_sha256": "42f08532d6e94e6becc6a80f1e054ca10dead03430ead23fbe0477b87eb87b74",
+      "byteSize": 5504,
       "mediaType": "text/css"
     },
     {
@@ -22,9 +22,21 @@
     },
     {
       "path": "content.json",
-      "blob_sha256": "adf0ae8533d78ddba46f308de2216e52d7dec73f85108a97554541f08052d83a",
-      "byteSize": 8100,
+      "blob_sha256": "e53bb5a08a7837ecdb74f33a7c005f54edb8d132b56ce4e052be96ca7d6e6673",
+      "byteSize": 8682,
       "mediaType": "application/json"
+    },
+    {
+      "path": "assets/station-map.png",
+      "blob_sha256": "21b64e694c3235d28a6ed3365a27f9c99c3d57bbe1d8b7c7ac78e948203c521c",
+      "byteSize": 124127,
+      "mediaType": "image/png"
+    },
+    {
+      "path": "ATTRIBUTION.txt",
+      "blob_sha256": "3db8411616a97a28d9e0173ea5f9bf1510b2a22ba3015794b1292c6934d377d8",
+      "byteSize": 208,
+      "mediaType": "text/plain"
     }
   ]
 }

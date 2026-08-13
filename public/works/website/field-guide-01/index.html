@@ -11,8 +11,44 @@
 </head>
 <body>
 <header class="site-head">
+<div>
 <h1 class="site-title">拾光共享厨房 · 商用烤箱与排烟系统现场手册</h1>
 <p class="site-summary">开工、烤制、收工、故障四类入口。每一步自带前提与耗时，从任何一步切进来都能直接照做。</p>
+</div>
+<div class="site-form">
+<h2>先选，再登记</h2>
+<form action="mailto:jiaoban@shiguang-kitchen.cn" method="post">
+<label class="field">
+<span>你现在要做哪件事</span>
+<select name="task" required>
+<option value="刚到店，准备开工">刚到店，准备开工</option>
+<option value="设备已开，要烤东西">设备已开，要烤东西</option>
+<option value="今天结束，准备走人">今天结束，准备走人</option>
+<option value="有东西不对劲">有东西不对劲</option>
+</select>
+</label>
+<label class="field">
+<span>灶位</span>
+<select name="station" required>
+<option value="三号灶位 · 四层燃气烤箱（本手册）">三号灶位 · 四层燃气烤箱（本手册）</option>
+<option value="二号灶位 · 电烤箱（另有一份）">二号灶位 · 电烤箱（另有一份）</option>
+</select>
+</label>
+<label class="field">
+<span>使用人姓名</span>
+<input type="text" name="operator" required>
+</label>
+<label class="field">
+<span>手机号</span>
+<input type="tel" name="phone" placeholder="出事时值班人打这个号">
+</label>
+<label class="field">
+<span>接手时发现的异常（没有就写「无」）</span>
+<textarea name="handover" rows="4" placeholder="空白会被下一班当成没人用过" required></textarea>
+</label>
+<button type="submit">登记并开工</button>
+</form>
+</div>
 </header>
 <nav class="site-nav" aria-label="section navigation">
 <ul>
@@ -29,6 +65,7 @@
 </nav>
 <main class="site-main">
 <div class="page" data-page-id="entry">
+<div class="page-blocks">
 <section id="entry" class="block block-entry" data-kind="entry">
 <h3 class="block-heading">你现在要做哪件事</h3>
 <p class="block-copy">刚到店、准备开工：从「开工前六项检查」开始，大约 12 分钟。</p>
@@ -43,6 +80,7 @@
 <p class="block-copy">烤箱内明火窜出炉门或排烟管道起火：不要泼水，不要打开炉门查看。关闭墙面上的燃气总阀（红色手柄，在洗手池左侧一米），拉下排烟主控开关，用店内 4 公斤干粉灭火器对准火根喷射，然后撤离。</p>
 <p class="block-copy">有人被高温灼伤面积超过一个手掌：冷水持续冲淋 20 分钟，不要涂任何东西，不要挑破水泡，同时叫救护车。</p>
 <p class="block-copy">三种情形都要在离开后拨打 24 小时值班电话 138-5711-2064，由值班人通知消防与燃气公司。自己判断「好像没事了」再回去是最常见的二次事故原因。</p>
+<img class="block-figure" src="assets/station-map.png" alt="三号灶位平面示意图：燃气总阀在洗手池左侧一米（红色手柄），排烟主控与 4 公斤干粉灭火器在灶位右侧墙上，后门在下墙，二号灶位电烤箱不适用本手册。">
 </section>
 <section id="check" class="block block-prepare" data-kind="prepare">
 <h3 class="block-heading">开工前六项检查</h3>
@@ -107,9 +145,10 @@
 <p class="block-copy">值班电话 138-5711-2064，24 小时。</p>
 </section>
 </div>
+</div>
 </main>
 <footer class="site-foot">
-<p>OceanLeo (OCEANLEO-AIGEN)</p>
+<p>OceanLeo (OCEANLEO-AIGEN);随附原料:OceanLeo 第一方原创示意图(CC0-1.0)</p>
 </footer>
 <script src="app.js"></script>
 </body>
