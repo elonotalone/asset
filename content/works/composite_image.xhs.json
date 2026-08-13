@@ -1,0 +1,237 @@
+[
+  {
+    "id": "xhs-photo-press-01",
+    "artifactType": "composite_image",
+    "title": "城里 5 家坐到打烊的咖啡馆",
+    "styleId": "xhs-photo-press",
+    "summary": "探店清单封面：整幅一张夜色露台照，白字直压在照片的暗部，只有标题与落款两层信息。",
+    "cover": "/works/composite_image/xhs-photo-press-01.cover.webp",
+    "view": {
+      "kind": "design-document",
+      "src": "/works/composite_image/xhs-photo-press-01.json",
+      "assets": {
+        "bg": "/works/composite_image/xhs-photo-press-01.bg.webp"
+      },
+      "download": "/works/composite_image/xhs-photo-press-01.full.webp",
+      "aspect": 0.75
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "背景照片：Hilmi Işılak / Pexels（平台素材库 ph-coffee；仅作本复合件的组成部分使用，已按 3:4 裁切缩放）",
+        "licenseCode": "PEXELS",
+        "licenseUrl": "https://www.pexels.com/license/"
+      },
+      {
+        "text": "版面、文字与配色：OceanLeo 第一方原创",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "canvas": "1242x1656",
+      "axes": {
+        "style": "xhs-photo-press",
+        "hook": "count-list",
+        "topic": "shop-visit",
+        "composition": "fullbleed"
+      },
+      "receipt": {
+        "envelope": "oceanleo.design-document.v1",
+        "bodyShape": "scene",
+        "entrypoint": "design-document.json",
+        "sourceBytes": 2375,
+        "canonicalByteSize": 1615,
+        "indentOverheadBytes": 760,
+        "declaredAssets": [
+          {
+            "assetId": "bg",
+            "path": "xhs-photo-press-01.bg.webp",
+            "sha256": "d0fb73bf5cc0ccf488750cfe2f1a9789a0d05af14965130443012d73ddcb11b1",
+            "byteSize": 52648
+          }
+        ],
+        "declaredAssetCount": 1,
+        "attributionCount": 3,
+        "metrics": {
+          "elementCount": 4,
+          "elementTypeCount": 3,
+          "textElementCount": 2,
+          "paletteColorCount": 4,
+          "distinctZCount": 4,
+          "assetCount": 1,
+          "titleLength": 22,
+          "attributionCount": 3
+        },
+        "license": null
+      },
+      "selfCheck": {
+        "titlePx": 116,
+        "titlePxAt180": 16.8,
+        "titleContrast": 17.94,
+        "bandEnergyAt180": 69.3,
+        "infoLayers": 2,
+        "blockFingerprint": "image@0.0,0.0,1.0,1.0 | text@0.1,0.7,0.8,0.2"
+      }
+    }
+  },
+  {
+    "id": "xhs-split-note-01",
+    "artifactType": "composite_image",
+    "title": "扔掉 6 箱杂物，阳台才坐得下人",
+    "styleId": "xhs-split-note",
+    "summary": "改造前后对比封面：上半是同角度、同尺寸的两张实景，下半一整块米纸色底承住标题、做法与标签。",
+    "cover": "/works/composite_image/xhs-split-note-01.cover.webp",
+    "view": {
+      "kind": "design-document",
+      "src": "/works/composite_image/xhs-split-note-01.json",
+      "assets": {
+        "before": "/works/composite_image/xhs-split-note-01.before.webp",
+        "after": "/works/composite_image/xhs-split-note-01.after.webp"
+      },
+      "download": "/works/composite_image/xhs-split-note-01.full.webp",
+      "aspect": 0.75
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "前后两张阳台图：OceanLeo 第一方生成（同角度改造前 / 改造后示意）",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      },
+      {
+        "text": "版面、文字与配色：OceanLeo 第一方原创",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "canvas": "1242x1656",
+      "axes": {
+        "style": "xhs-split-note",
+        "hook": "before-after",
+        "topic": "home",
+        "composition": "stack"
+      },
+      "receipt": {
+        "envelope": "oceanleo.design-document.v1",
+        "bodyShape": "scene",
+        "entrypoint": "design-document.json",
+        "sourceBytes": 4141,
+        "canonicalByteSize": 2801,
+        "indentOverheadBytes": 1340,
+        "declaredAssets": [
+          {
+            "assetId": "before",
+            "path": "xhs-split-note-01.before.webp",
+            "sha256": "c1bfd6c8d10c6f840f7ad5093609ae950284f4e2bc1eb64fdc106d104e28ee08",
+            "byteSize": 62848
+          },
+          {
+            "assetId": "after",
+            "path": "xhs-split-note-01.after.webp",
+            "sha256": "c85f75d4f8c51b08a5e22184df823e7541f84c2b58f7d25fc5238be755dba9b8",
+            "byteSize": 61950
+          }
+        ],
+        "declaredAssetCount": 2,
+        "attributionCount": 4,
+        "metrics": {
+          "elementCount": 8,
+          "elementTypeCount": 3,
+          "textElementCount": 5,
+          "paletteColorCount": 4,
+          "distinctZCount": 6,
+          "assetCount": 2,
+          "titleLength": 23,
+          "attributionCount": 4
+        },
+        "license": null
+      },
+      "selfCheck": {
+        "titlePx": 116,
+        "titlePxAt180": 16.8,
+        "titleContrast": 13.32,
+        "bandEnergyAt180": 60.4,
+        "infoLayers": 3,
+        "blockFingerprint": "rect@0.0,0.4,1.0,0.6 | image@0.0,0.0,0.4,0.3 | image@0.5,0.0,0.4,0.3 | text@0.1,0.5,0.8,0.2"
+      }
+    }
+  },
+  {
+    "id": "xhs-card-claim-01",
+    "artifactType": "composite_image",
+    "title": "简历投得越多，面试反而越少",
+    "styleId": "xhs-card-claim",
+    "summary": "观点封面：低饱和蓝绿渐变铺底，一张偏上的白卡里只关一句反常识断言，卡外一行署名。",
+    "cover": "/works/composite_image/xhs-card-claim-01.cover.webp",
+    "view": {
+      "kind": "design-document",
+      "src": "/works/composite_image/xhs-card-claim-01.json",
+      "assets": {
+        "bg": "/works/composite_image/xhs-card-claim-01.bg.webp"
+      },
+      "download": "/works/composite_image/xhs-card-claim-01.full.webp",
+      "aspect": 0.75
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "背景渐变：Артем Дворецкий / Pexels（平台素材库 background；仅作本复合件的组成部分使用，已按 3:4 裁切并整体压暗）",
+        "licenseCode": "PEXELS",
+        "licenseUrl": "https://www.pexels.com/license/"
+      },
+      {
+        "text": "版面、文字与配色：OceanLeo 第一方原创",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "canvas": "1242x1656",
+      "axes": {
+        "style": "xhs-card-claim",
+        "hook": "counterclaim",
+        "topic": "career",
+        "composition": "card"
+      },
+      "receipt": {
+        "envelope": "oceanleo.design-document.v1",
+        "bodyShape": "scene",
+        "entrypoint": "design-document.json",
+        "sourceBytes": 2394,
+        "canonicalByteSize": 1634,
+        "indentOverheadBytes": 760,
+        "declaredAssets": [
+          {
+            "assetId": "bg",
+            "path": "xhs-card-claim-01.bg.webp",
+            "sha256": "e32e725ba1175138052f2d9ae8b41e109fa1ea7e695439a7336460e13b3039ad",
+            "byteSize": 87634
+          }
+        ],
+        "declaredAssetCount": 1,
+        "attributionCount": 3,
+        "metrics": {
+          "elementCount": 4,
+          "elementTypeCount": 3,
+          "textElementCount": 2,
+          "paletteColorCount": 4,
+          "distinctZCount": 4,
+          "assetCount": 1,
+          "titleLength": 20,
+          "attributionCount": 3
+        },
+        "license": null
+      },
+      "selfCheck": {
+        "titlePx": 116,
+        "titlePxAt180": 16.8,
+        "titleContrast": 16.1,
+        "bandEnergyAt180": 71.5,
+        "infoLayers": 2,
+        "blockFingerprint": "image@0.0,0.0,1.0,1.0 | rect@0.1,0.1,0.8,0.4 | text@0.2,0.2,0.7,0.3"
+      }
+    }
+  }
+]
