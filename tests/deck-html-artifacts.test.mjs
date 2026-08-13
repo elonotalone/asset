@@ -79,6 +79,9 @@ test("three official HTML decks close source, preview, runtime and receipt bytes
   const publishSummary = readJson(
     "content/receipts/deck-html/shelf-publish-summary.json",
   );
+  const shelfVisibility = readJson(
+    "content/receipts/deck-html/shelf-visibility.json",
+  );
 
   assert.deepEqual(
     works.map((item) => item.id),
@@ -344,6 +347,15 @@ test("three official HTML decks close source, preview, runtime and receipt bytes
     // 查看入口只能是 F9 算出来的隔离域身份，不许手拼。
     assert.equal(readback.after.runtimeUrl, planItem.entryUrl);
     assert.equal(readback.after.runtimePublished, "false");
+
+    // 货架列表只投影 published 行，所以「在列表里」是真上架，不是静态卡片。
+    const visible = shelfVisibility.items.find((item) => item.id === work.id);
+    assert.ok(visible, `${work.id}/visibility`);
+    assert.equal(visible.shelfRowId, readback.after.shelfRow.id);
+    assert.equal(visible.appId, readback.after.shelfRow.app_id);
+    assert.equal(visible.listStatus, 200);
+    assert.equal(visible.present, true);
+    assert.equal(visible.artifactType, "deck");
 
     assert.equal(published.shelfRowId, readback.after.shelfRow.id);
     assert.equal(published.contextBindingId, readback.after.contextBinding.binding_id);
