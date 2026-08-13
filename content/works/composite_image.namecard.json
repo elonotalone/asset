@@ -30,13 +30,29 @@
       ],
       "bleedMm": 3,
       "dpi": 300,
+      "rootPhysicalSizeMm": [
+        96,
+        60
+      ],
       "canvasPx": [
         1134,
         709
       ],
       "orientation": "landscape",
       "front": {
-        "sourceBytes": 2331,
+        "sourceBytes": 2332,
+        "rootSize": {
+          "width": "96mm",
+          "height": "60mm"
+        },
+        "viewBox": [
+          0,
+          0,
+          1134,
+          709
+        ],
+        "utf8Valid": true,
+        "cjkCodepoints": 208,
         "irShapeCount": 7,
         "svgShapeCount": 2,
         "svgShapeKindCount": 1,
@@ -51,7 +67,19 @@
         "inkRatio": 0.9859
       },
       "back": {
-        "sourceBytes": 1557,
+        "sourceBytes": 1558,
+        "rootSize": {
+          "width": "96mm",
+          "height": "60mm"
+        },
+        "viewBox": [
+          0,
+          0,
+          1134,
+          709
+        ],
+        "utf8Valid": true,
+        "cjkCodepoints": 100,
         "irShapeCount": 5,
         "svgShapeCount": 4,
         "paletteTokenCount": 3,
@@ -61,7 +89,19 @@
         "inkRatio": 0.9871
       },
       "sheet": {
-        "sourceBytes": 5043,
+        "sourceBytes": 5049,
+        "rootSize": {
+          "width": "196.064mm",
+          "height": "60mm"
+        },
+        "viewBox": [
+          0,
+          0,
+          2316,
+          709
+        ],
+        "utf8Valid": true,
+        "cjkCodepoints": 432,
         "canvasPx": [
           2316,
           709
@@ -102,13 +142,29 @@
       ],
       "bleedMm": 3,
       "dpi": 300,
+      "rootPhysicalSizeMm": [
+        96,
+        60
+      ],
       "canvasPx": [
         1134,
         709
       ],
       "orientation": "landscape",
       "front": {
-        "sourceBytes": 2442,
+        "sourceBytes": 2443,
+        "rootSize": {
+          "width": "96mm",
+          "height": "60mm"
+        },
+        "viewBox": [
+          0,
+          0,
+          1134,
+          709
+        ],
+        "utf8Valid": true,
+        "cjkCodepoints": 185,
         "irShapeCount": 8,
         "svgShapeCount": 2,
         "svgShapeKindCount": 2,
@@ -123,7 +179,19 @@
         "inkRatio": 0.2386
       },
       "back": {
-        "sourceBytes": 1723,
+        "sourceBytes": 1724,
+        "rootSize": {
+          "width": "96mm",
+          "height": "60mm"
+        },
+        "viewBox": [
+          0,
+          0,
+          1134,
+          709
+        ],
+        "utf8Valid": true,
+        "cjkCodepoints": 133,
         "irShapeCount": 5,
         "svgShapeCount": 2,
         "paletteTokenCount": 3,
@@ -135,7 +203,19 @@
         "inkRatio": 0.2209
       },
       "sheet": {
-        "sourceBytes": 5325,
+        "sourceBytes": 5331,
+        "rootSize": {
+          "width": "196.064mm",
+          "height": "60mm"
+        },
+        "viewBox": [
+          0,
+          0,
+          2316,
+          709
+        ],
+        "utf8Valid": true,
+        "cjkCodepoints": 446,
         "canvasPx": [
           2316,
           709
@@ -190,13 +270,29 @@
       ],
       "bleedMm": 3,
       "dpi": 300,
+      "rootPhysicalSizeMm": [
+        60,
+        96
+      ],
       "canvasPx": [
         709,
         1134
       ],
       "orientation": "portrait",
       "front": {
-        "sourceBytes": 4010,
+        "sourceBytes": 4011,
+        "rootSize": {
+          "width": "60mm",
+          "height": "96mm"
+        },
+        "viewBox": [
+          0,
+          0,
+          709,
+          1134
+        ],
+        "utf8Valid": true,
+        "cjkCodepoints": 281,
         "irShapeCount": 17,
         "svgShapeCount": 4,
         "svgShapeKindCount": 1,
@@ -211,7 +307,19 @@
         "inkRatio": 0.0642
       },
       "back": {
-        "sourceBytes": 6330,
+        "sourceBytes": 6331,
+        "rootSize": {
+          "width": "60mm",
+          "height": "96mm"
+        },
+        "viewBox": [
+          0,
+          0,
+          709,
+          1134
+        ],
+        "utf8Valid": true,
+        "cjkCodepoints": 314,
         "irShapeCount": 23,
         "svgShapeCount": 12,
         "paletteTokenCount": 3,
@@ -223,7 +331,19 @@
         "inkRatio": 0.0516
       },
       "sheet": {
-        "sourceBytes": 11586,
+        "sourceBytes": 11591,
+        "rootSize": {
+          "width": "124.064mm",
+          "height": "96mm"
+        },
+        "viewBox": [
+          0,
+          0,
+          1466,
+          1134
+        ],
+        "utf8Valid": true,
+        "cjkCodepoints": 729,
         "canvasPx": [
           1466,
           1134
