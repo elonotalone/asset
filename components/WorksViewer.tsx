@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useUI } from "@oceanleo/ui/i18n";
-import type { WorkEntry, WorkSheet } from "@/lib/works";
+import type { WorkEntry, WorkSheet } from "@/components/WorksKinds";
 
 // 成品查看器。**每一类都要真的把东西打开给人看**，不是把封面放大，
 // 更不是把字节当文字摆出来（那正是这一波在修的病：网站预览一屏乱码）。

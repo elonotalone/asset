@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useUI } from "@oceanleo/ui/i18n";
-import { VIEW_KINDS, type ArtifactType, type WorkEntry } from "@/lib/works";
+import { VIEW_KINDS, type ArtifactType, type WorkEntry } from "@/components/WorksKinds";
 
 // 成品展厅列表页。按 artifact type 分格，卡片走**真封面**。
 // 卡片点进去是详情页（真的能打开看），不是放大封面。

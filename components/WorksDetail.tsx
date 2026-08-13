@@ -7,7 +7,7 @@ import {
   VIEW_KINDS,
   downloadHref,
   type WorkEntry,
-} from "@/lib/works";
+} from "@/components/WorksKinds";
 import { WorksViewer, type WorkPayload } from "@/components/WorksViewer";
 
 // 一件成品的详情页：左边是**真的打开看**，右边是它是什么、谁做的、读数多少。
