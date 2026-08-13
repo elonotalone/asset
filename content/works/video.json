@@ -1,0 +1,56 @@
+[
+  {
+    "id": "loop-seamless-6s-01",
+    "artifactType": "video",
+    "title": "无缝循环 · 斜带与同心环",
+    "styleId": "loop-seamless-6s",
+    "summary": "6 秒竖幅循环：一层斜带恒速漂过，一层同心环从中心往外推。两层的周期都整除 6 秒，所以接回第一帧时看不出接口。一个字都没有，也没有声音，可以垫在别的内容底下一直放。",
+    "cover": "/works/video/loop-seamless-6s-01.cover.webp",
+    "view": {
+      "kind": "video",
+      "src": "/works/video/loop-seamless-6s-01.mp4",
+      "poster": "/works/video/loop-seamless-6s-01.cover.webp",
+      "frames": [
+        "/works/video/loop-seamless-6s-01.f1.webp",
+        "/works/video/loop-seamless-6s-01.f2.webp",
+        "/works/video/loop-seamless-6s-01.f3.webp"
+      ],
+      "download": "/works/video/loop-seamless-6s-01.mp4",
+      "durationSec": 6,
+      "aspect": 0.5625
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创，逐帧程序绘制后编码，无第三方素材",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "sourceFormat": "mp4",
+      "mediaType": "video/mp4",
+      "byteSize": 880452,
+      "sha256": "1623e54b7bc26bf028d081114f7d771445d12931d2696a6d8d80fa3ac9786024",
+      "magicMatched": true,
+      "bytesUnchanged": true,
+      "creditCarriage": "carried-in-band",
+      "creditBlocksShelving": false,
+      "license": {
+        "usage_scope": "standalone",
+        "license_family": "public-domain",
+        "supply_tier": "byte-portable"
+      },
+      "resolution": "720x1280",
+      "durationSec": 6,
+      "fps": 30,
+      "frameCount": 180,
+      "audioStreams": 0,
+      "cuts": 0,
+      "maxSceneScore": 0.0149,
+      "firstLastDiffPct": 0.73,
+      "adjacentDiffPct": 0.73,
+      "staticTailSec": 0
+    }
+  }
+]
