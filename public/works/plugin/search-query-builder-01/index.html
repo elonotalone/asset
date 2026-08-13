@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>检索式构造</title>
+<!--
+  检索式构造 · 可运行插件实例
+  规格：docs/specs/oceanleo-plugins-v1/plugins/search-query-builder.md（oceandino 仓）
+  版面：docs/design-guides/plugin/dialog-wizard.md
+
+  承载要求（给嵌入方）：
+    - 必须放进 sandbox="allow-scripts" 的 iframe，绝不与 allow-same-origin 同给。
+    - 可执行内容应由 oceanleo.app 隔离域提供，不在 oceanleo.com 同源执行。
+    - 零外部资源、零存储、零网络请求、不访问 parent/top。
+  详见 signals/G1-hosting.md。
+
+  经典 <script src> 而非 type="module"：不透明源下模块脚本按 CORS 取回会失败。
+
+  它编译查询串，**不替用户执行检索**（规格原话）。
+-->
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="col">
+
+  <div class="head">
+    <h1>检索式构造</h1>
+    <span class="sub">把研究问题拆成概念块与同义词，编成各数据库能直接用的查询串</span>
+  </div>
+
+  <div class="done" id="done"></div>
+
+  <h2 class="q" id="q"></h2>
+  <p class="q-hint" id="q-hint"></p>
+
+  <div class="stage" id="stage"></div>
+
+  <div class="product">
+    <div class="cap">
+      <span id="cap"></span>
+      <span id="cap-meta"></span>
+    </div>
+    <div class="box"><p id="query"></p></div>
+    <div class="copy-row">
+      <button id="copy" class="plain" type="button">复制</button>
+      <span id="copy-hint"></span>
+    </div>
+    <textarea id="copy-area" readonly tabindex="-1" aria-hidden="true"></textarea>
+    <ul class="notes" id="notes"></ul>
+  </div>
+
+  <div class="foot">
+    <div class="test-row">
+      <button id="run-test" class="plain" type="button">运行自测</button>
+      <span id="test-out">未运行</span>
+    </div>
+    <ul id="test-detail"></ul>
+  </div>
+
+</div>
+<script src="engine.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

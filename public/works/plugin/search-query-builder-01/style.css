@@ -1,0 +1,260 @@
+/*
+ * 检索式构造 · 版面
+ * 指导：docs/design-guides/plugin/dialog-wizard.md（oceandino 仓）
+ *
+ * 守着指导里的硬话：
+ *   - 居中一栏，四周留白，宽度收到一段文字舒服的行长。
+ *   - 一屏一问：问句是整屏唯一的大字（38 / 正文 19 = 2.0，不超过 2 倍）。
+ *   - 强调手段只有「留白」：步骤之间不靠线、不靠框、不靠底色，只靠明度差。
+ *   - 产物预览是唯一允许有边界的元素，从第一步起就在。
+ *   - 强调色只用于当前焦点输入，与产物里**工具替用户加上的结构符号**。
+ *   - 没有编号圆点步骤条、没有吉祥物、没有庆祝动画。
+ */
+
+:root {
+  --ink: #1a1a1a;
+  --dim: #6a6a6a;
+  --faint: #a3a3a3;
+  --hair: #dcdcdc;
+  --accent: #7c2d12;
+  --bg: #fbfaf9;
+  --paper: #ffffff;
+
+  /* 四级字号：问句 38 / 正文 19 / 小字 15 / 产物 15。 */
+  --fs-q: 38px;
+  --fs-body: 19px;
+  --fs-fine: 15px;
+
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --sans: system-ui, -apple-system, "Segoe UI", "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei", sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: var(--fs-body);
+  line-height: 1.55;
+}
+
+.col {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 30px 24px 60px;
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding-bottom: 30px;
+}
+.head h1 { margin: 0; font-size: var(--fs-fine); font-weight: 600; letter-spacing: 0.04em; }
+.head .sub { font-size: var(--fs-fine); color: var(--faint); }
+
+/* ---------- 已答步骤：压暗的摘要，可点回去改。不做圆点步骤条。 ---------- */
+
+.done { padding-bottom: 26px; }
+.done:empty { padding-bottom: 0; }
+.done-row {
+  display: flex;
+  gap: 14px;
+  align-items: baseline;
+  width: 100%;
+  text-align: left;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 4px 0;
+  font: inherit;
+  font-size: var(--fs-fine);
+  color: var(--dim);
+  cursor: pointer;
+}
+.done-row:hover { color: var(--ink); }
+.done-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.done-row .k { color: var(--faint); flex: 0 0 96px; }
+.done-row .v { flex: 1 1 auto; }
+
+/* ---------- 当前这一问：整屏唯一的大字 ---------- */
+
+.q {
+  font-size: var(--fs-q);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  margin: 0 0 8px;
+  font-weight: 400;
+}
+.q-hint {
+  font-size: var(--fs-fine);
+  color: var(--faint);
+  margin: 0 0 26px;
+}
+
+.stage { padding-bottom: 34px; }
+
+input[type="text"], textarea {
+  width: 100%;
+  appearance: none;
+  border: 0;
+  border-bottom: 1px solid var(--hair);
+  background: transparent;
+  padding: 7px 0;
+  font: inherit;
+  font-size: var(--fs-body);
+  color: var(--ink);
+}
+input[type="text"]:focus, textarea:focus {
+  outline: none;
+  border-bottom-color: var(--accent);
+}
+::placeholder { color: var(--faint); }
+
+/* ---------- 概念块 ---------- */
+
+.block { padding: 0 0 22px; }
+.block-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding-bottom: 4px;
+}
+.block-head .label {
+  font-size: var(--fs-body);
+  flex: 0 0 auto;
+}
+.block-head .count { font-size: var(--fs-fine); color: var(--faint); }
+
+.terms { padding-top: 4px; }
+.term {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 3px 0;
+  font-size: var(--fs-fine);
+}
+.term .t { flex: 1 1 auto; color: var(--dim); }
+.term select {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: var(--fs-fine);
+  color: var(--faint);
+  cursor: pointer;
+}
+.term select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+button.plain {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 2px 0;
+  font: inherit;
+  font-size: var(--fs-fine);
+  color: var(--dim);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--hair);
+}
+button.plain:hover { color: var(--ink); }
+button.plain:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.actions {
+  display: flex;
+  gap: 22px;
+  flex-wrap: wrap;
+  padding-top: 8px;
+}
+
+/* ---------- 方言选择：文字，不是彩色标签页 ---------- */
+
+.dialects { display: flex; gap: 24px; flex-wrap: wrap; padding-top: 4px; }
+.dialects button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 3px 0;
+  font: inherit;
+  font-size: var(--fs-body);
+  color: var(--faint);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+.dialects button[aria-pressed="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+.dialects button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ---------- 产物预览：唯一允许有边界的元素 ---------- */
+
+.product { padding-top: 6px; }
+.product .cap {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  font-size: var(--fs-fine);
+  color: var(--faint);
+  padding-bottom: 8px;
+}
+.box {
+  border: 1px solid var(--hair);
+  background: var(--paper);
+  padding: 14px 16px;
+  min-height: 74px;
+}
+#query {
+  font-family: var(--mono);
+  font-size: var(--fs-fine);
+  line-height: 1.65;
+  word-break: break-word;
+  white-space: pre-wrap;
+  margin: 0;
+  user-select: text;
+}
+#query .s { color: var(--accent); }   /* 工具替你加上的结构符号 */
+#query .empty { color: var(--faint); font-family: var(--sans); }
+
+.copy-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-top: 10px;
+  font-size: var(--fs-fine);
+  color: var(--faint);
+}
+#copy-area {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+}
+
+.notes {
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--fs-fine);
+  color: var(--dim);
+}
+.notes li { padding: 3px 0 3px 14px; text-indent: -14px; }
+.notes li::before { content: "· "; color: var(--faint); }
+
+.foot {
+  padding-top: 34px;
+  font-size: var(--fs-fine);
+  color: var(--faint);
+}
+.test-row { display: flex; align-items: center; gap: 14px; }
+#test-detail { margin: 8px 0 0; padding-left: 1.1em; }
+
+@media (max-width: 560px) {
+  :root { --fs-q: 27px; --fs-body: 17px; --fs-fine: 14px; }
+  .col { padding: 22px 18px 44px; }
+  .done-row .k { flex-basis: 72px; }
+}
