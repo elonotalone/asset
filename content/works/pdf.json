@@ -726,5 +726,769 @@
         "supply_tier": "original"
       }
     }
+  },
+  {
+    "id": "pdf-column-digest-01",
+    "artifactType": "pdf",
+    "title": "职业院校产教融合季度观察（2026 年第二季 · 第 14 期）",
+    "styleId": "column-digest",
+    "summary": "一期读物而不是一叠条目：双栏连排，四篇长短有意不等，每篇导语整句重字就是本期的目录。",
+    "cover": "/works/pdf/pdf-column-digest-01.cover.webp",
+    "view": {
+      "kind": "pdf",
+      "src": "/works/pdf/pdf-column-digest-01.pdf",
+      "download": "/works/pdf/pdf-column-digest-01.pdf"
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创示例刊物，机构、数据与案例均为演示内容。",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      },
+      {
+        "text": "成品内嵌 Noto CJK 字族的字形子集（由转换容器内的 LibreOffice 在导出 PDF 时嵌入）。",
+        "licenseCode": "OFL-1.1",
+        "licenseUrl": "https://openfontlicense.org/"
+      },
+      {
+        "text": "成品内嵌 DejaVu 字族的字形子集，用于拉丁字符与数字。",
+        "licenseCode": "Bitstream-Vera",
+        "licenseUrl": "https://dejavu-fonts.github.io/License.html"
+      }
+    ],
+    "readings": {
+      "route": "cjk-embed",
+      "sourceBytes": 186498,
+      "closureBytes": 831608,
+      "pageCount": 2,
+      "imageCount": 0,
+      "embeddedFonts": [
+        "BAAAAA+NotoSerifCJKjp-Bold-VKana",
+        "CAAAAA+DejaVuSerif-Bold",
+        "DAAAAA+NotoSerifCJKjp-Regular-VKana",
+        "EAAAAA+DejaVuSerif",
+        "FAAAAA+NotoSerifCJKjp-Regular-VKana"
+      ],
+      "embeddedFontCount": 5,
+      "extractedChars": 1666,
+      "declaredChars": 1378,
+      "textFidelity": {
+        "verdict": "green",
+        "reasons": [],
+        "metrics": {
+          "extractedChars": 1501,
+          "residueChars": 5,
+          "residueRatio": 0.003331,
+          "extractedCjk": 1420,
+          "declaredCjk": 1250,
+          "declaredCoverage": 1,
+          "recoveredEncoding": null,
+          "recoveredCjk": 0,
+          "embeddedFonts": 5,
+          "cidFonts": 0
+        }
+      },
+      "readbackAvailable": true,
+      "blockCount": 16,
+      "figureCount": 0,
+      "layout": {
+        "source": "input",
+        "axesFromInput": [
+          "body.palette",
+          "layout.columnSpacing",
+          "layout.columns",
+          "layout.lineSpacing",
+          "layout.margins",
+          "layout.page",
+          "theme.bodySize",
+          "theme.fonts",
+          "theme.headingScale"
+        ],
+        "derivedFrom": "writer-layout-model",
+        "derivedNote": "几何是写出器版面模型按字号/字宽常量算出来的声明值,不是渲染实测(工具不许起浏览器)。独立复核以 V2 的量法为准。",
+        "page": {
+          "id": "a4",
+          "orientation": "portrait",
+          "widthTwip": 11906,
+          "heightTwip": 16838
+        },
+        "marginsTwip": {
+          "top": 1247,
+          "bottom": 1247,
+          "right": 1134,
+          "left": 1134,
+          "header": 624,
+          "footer": 624
+        },
+        "contentWidthTwip": 9638,
+        "contentHeightTwip": 14344,
+        "columns": 2,
+        "columnSpacingTwip": 340,
+        "columnWidthTwip": 4649,
+        "lineSpacing": "normal",
+        "lineTwip": 288,
+        "paragraphAfterTwip": 120,
+        "headingScale": "normal",
+        "bodySize": "compact",
+        "fontSizesHalfPoint": {
+          "h1": 36,
+          "h2": 28,
+          "h3": 24,
+          "body": 19
+        },
+        "fonts": {
+          "latin": "DejaVu Serif",
+          "eastAsia": "Noto Serif CJK SC",
+          "heading": "DejaVu Serif",
+          "headingEastAsia": "Noto Serif CJK SC"
+        },
+        "figure": {
+          "widthRatio": null,
+          "align": "center"
+        },
+        "palette": [
+          "1F1E17",
+          "5B6428",
+          "6E7440",
+          "CFD2B8"
+        ],
+        "paletteBySlot": {
+          "accent": "5B6428",
+          "heading2": "5B6428",
+          "heading3": "6E7440",
+          "body": "1F1E17",
+          "tableHeaderFill": "CFD2B8",
+          "rule": "CFD2B8"
+        },
+        "pageCount": 1,
+        "mainBlockCount": 3,
+        "mainBlocks": [
+          {
+            "kind": "section",
+            "pageIndex": 0,
+            "column": 0,
+            "x": 0.0952,
+            "y": 0.2237,
+            "w": 0.3905,
+            "h": 0.4354,
+            "areaRatio": 0.17
+          },
+          {
+            "kind": "section",
+            "pageIndex": 0,
+            "column": 0,
+            "x": 0.0952,
+            "y": 0.6592,
+            "w": 0.3905,
+            "h": 0.2668,
+            "areaRatio": 0.1042
+          },
+          {
+            "kind": "section",
+            "pageIndex": 0,
+            "column": 1,
+            "x": 0.5143,
+            "y": 0.0938,
+            "w": 0.3905,
+            "h": 0.2252,
+            "areaRatio": 0.0879
+          }
+        ],
+        "fingerprint": "3d9e894c4fed97b3",
+        "fingerprintByThreshold": {
+          "6": "310fd19dce5b1b63",
+          "7": "310fd19dce5b1b63",
+          "8": "3d9e894c4fed97b3",
+          "9": "618c390e8e51b0b2",
+          "10": "618c390e8e51b0b2"
+        }
+      },
+      "measured": {
+        "mediaBoxPt": {
+          "width": 595.303937007874,
+          "height": 841.889763779528
+        },
+        "colors": [
+          "#1F1E17",
+          "#5B6428"
+        ],
+        "colorCount": 2,
+        "derivedFrom": "produced-pdf-bytes",
+        "page": {
+          "swatches": [
+            {
+              "hex": "#FFFFFF",
+              "share": 0.7072
+            },
+            {
+              "hex": "#B6B7B0",
+              "share": 0.0405
+            },
+            {
+              "hex": "#E9E9E8",
+              "share": 0.0394
+            },
+            {
+              "hex": "#C3C4BF",
+              "share": 0.038
+            },
+            {
+              "hex": "#D0D1CD",
+              "share": 0.0362
+            },
+            {
+              "hex": "#DDDEDB",
+              "share": 0.0348
+            },
+            {
+              "hex": "#F3F3F2",
+              "share": 0.0333
+            },
+            {
+              "hex": "#9C9E91",
+              "share": 0.0274
+            },
+            {
+              "hex": "#FAFAF9",
+              "share": 0.0232
+            },
+            {
+              "hex": "#FDFDFD",
+              "share": 0.0119
+            },
+            {
+              "hex": "#FFFFFE",
+              "share": 0.0079
+            }
+          ],
+          "derivedFrom": "rendered-first-page"
+        }
+      },
+      "previewBytes": 644718,
+      "attributionEntryCount": 1,
+      "license": {
+        "usage_scope": "first-party",
+        "license_family": "CC0",
+        "supply_tier": "original"
+      }
+    }
+  },
+  {
+    "id": "pdf-field-checklist-01",
+    "artifactType": "pdf",
+    "title": "注塑车间班前设备点检与安全核查单（A5 手持版）",
+    "styleId": "field-checklist",
+    "summary": "一张夹在板夹上站着用的核查单：A5 小开本按现场动线分组，□ 待核、▲ 高风险、— 备注三种符号分级，黑白打印也不丢信息。",
+    "cover": "/works/pdf/pdf-field-checklist-01.cover.webp",
+    "view": {
+      "kind": "pdf",
+      "src": "/works/pdf/pdf-field-checklist-01.pdf",
+      "download": "/works/pdf/pdf-field-checklist-01.pdf"
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创示例核查单，条目与阈值均为演示内容，不替代任何设备的原厂操作规程。",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      },
+      {
+        "text": "成品内嵌 Noto CJK 字族的字形子集（由转换容器内的 LibreOffice 在导出 PDF 时嵌入）。",
+        "licenseCode": "OFL-1.1",
+        "licenseUrl": "https://openfontlicense.org/"
+      },
+      {
+        "text": "成品内嵌 DejaVu 字族的字形子集，用于拉丁字符与数字。",
+        "licenseCode": "Bitstream-Vera",
+        "licenseUrl": "https://dejavu-fonts.github.io/License.html"
+      }
+    ],
+    "readings": {
+      "route": "cjk-embed",
+      "sourceBytes": 142406,
+      "closureBytes": 372570,
+      "pageCount": 2,
+      "imageCount": 0,
+      "embeddedFonts": [
+        "BAAAAA+NotoSansCJKjp-Bold-VKana",
+        "CAAAAA+NotoSansCJKjp-Regular-VKana",
+        "DAAAAA+DejaVuSans",
+        "EAAAAA+DejaVuSans-Bold",
+        "FAAAAA+NotoSansCJKjp-Regular-VKana"
+      ],
+      "embeddedFontCount": 5,
+      "extractedChars": 1100,
+      "declaredChars": 864,
+      "textFidelity": {
+        "verdict": "green",
+        "reasons": [],
+        "metrics": {
+          "extractedChars": 980,
+          "residueChars": 5,
+          "residueRatio": 0.005102,
+          "extractedCjk": 806,
+          "declaredCjk": 656,
+          "declaredCoverage": 1,
+          "recoveredEncoding": null,
+          "recoveredCjk": 0,
+          "embeddedFonts": 5,
+          "cidFonts": 0
+        }
+      },
+      "readbackAvailable": true,
+      "blockCount": 30,
+      "figureCount": 0,
+      "layout": {
+        "source": "input",
+        "axesFromInput": [
+          "body.palette",
+          "layout.columns",
+          "layout.lineSpacing",
+          "layout.margins",
+          "layout.page",
+          "theme.bodySize",
+          "theme.fonts",
+          "theme.headingScale"
+        ],
+        "derivedFrom": "writer-layout-model",
+        "derivedNote": "几何是写出器版面模型按字号/字宽常量算出来的声明值,不是渲染实测(工具不许起浏览器)。独立复核以 V2 的量法为准。",
+        "page": {
+          "id": "a5",
+          "orientation": "portrait",
+          "widthTwip": 8391,
+          "heightTwip": 11906
+        },
+        "marginsTwip": {
+          "top": 680,
+          "bottom": 680,
+          "right": 567,
+          "left": 567,
+          "header": 340,
+          "footer": 340
+        },
+        "contentWidthTwip": 7257,
+        "contentHeightTwip": 10546,
+        "columns": 1,
+        "columnSpacingTwip": 425,
+        "columnWidthTwip": 7257,
+        "lineSpacing": "tight",
+        "lineTwip": 252,
+        "paragraphAfterTwip": 80,
+        "headingScale": "flat",
+        "bodySize": "compact",
+        "fontSizesHalfPoint": {
+          "h1": 26,
+          "h2": 24,
+          "h3": 22,
+          "body": 19
+        },
+        "fonts": {
+          "latin": "DejaVu Sans",
+          "eastAsia": "Noto Sans CJK SC",
+          "heading": "DejaVu Sans",
+          "headingEastAsia": "Noto Sans CJK SC"
+        },
+        "figure": {
+          "widthRatio": null,
+          "align": "center"
+        },
+        "palette": [
+          "161514"
+        ],
+        "paletteBySlot": {
+          "accent": "161514",
+          "heading2": "161514",
+          "heading3": "161514",
+          "body": "161514",
+          "tableHeaderFill": "161514",
+          "rule": "161514"
+        },
+        "pageCount": 2,
+        "mainBlockCount": 7,
+        "mainBlocks": [
+          {
+            "kind": "section",
+            "pageIndex": 0,
+            "column": 0,
+            "x": 0.0676,
+            "y": 0.0571,
+            "w": 0.8649,
+            "h": 0.122,
+            "areaRatio": 0.1055
+          },
+          {
+            "kind": "section",
+            "pageIndex": 0,
+            "column": 0,
+            "x": 0.0676,
+            "y": 0.1792,
+            "w": 0.8649,
+            "h": 0.1455,
+            "areaRatio": 0.1258
+          },
+          {
+            "kind": "section",
+            "pageIndex": 0,
+            "column": 0,
+            "x": 0.0676,
+            "y": 0.3246,
+            "w": 0.8649,
+            "h": 0.169,
+            "areaRatio": 0.1462
+          },
+          {
+            "kind": "section",
+            "pageIndex": 0,
+            "column": 0,
+            "x": 0.0676,
+            "y": 0.4936,
+            "w": 0.8649,
+            "h": 0.169,
+            "areaRatio": 0.1462
+          },
+          {
+            "kind": "section",
+            "pageIndex": 0,
+            "column": 0,
+            "x": 0.0676,
+            "y": 0.6626,
+            "w": 0.8649,
+            "h": 0.1455,
+            "areaRatio": 0.1258
+          },
+          {
+            "kind": "section",
+            "pageIndex": 0,
+            "column": 0,
+            "x": 0.0676,
+            "y": 0.8081,
+            "w": 0.8649,
+            "h": 0.1348,
+            "areaRatio": 0.1166
+          },
+          {
+            "kind": "section",
+            "pageIndex": 1,
+            "column": 0,
+            "x": 0.0676,
+            "y": 0.0913,
+            "w": 0.8649,
+            "h": 0.2362,
+            "areaRatio": 0.2043
+          }
+        ],
+        "fingerprint": "4c3c4790c4acc74e",
+        "fingerprintByThreshold": {
+          "6": "4c3c4790c4acc74e",
+          "7": "4c3c4790c4acc74e",
+          "8": "4c3c4790c4acc74e",
+          "9": "4c3c4790c4acc74e",
+          "10": "4c3c4790c4acc74e"
+        }
+      },
+      "measured": {
+        "mediaBoxPt": {
+          "width": 419.555905511811,
+          "height": 595.303937007874
+        },
+        "colors": [
+          "#161514",
+          "#A3252B"
+        ],
+        "colorCount": 2,
+        "derivedFrom": "produced-pdf-bytes",
+        "page": {
+          "swatches": [
+            {
+              "hex": "#FFFFFF",
+              "share": 0.8172
+            },
+            {
+              "hex": "#908F8F",
+              "share": 0.0281
+            },
+            {
+              "hex": "#A2A2A2",
+              "share": 0.0233
+            },
+            {
+              "hex": "#D9D9D9",
+              "share": 0.023
+            },
+            {
+              "hex": "#B3B3B2",
+              "share": 0.023
+            },
+            {
+              "hex": "#C5C5C5",
+              "share": 0.0217
+            },
+            {
+              "hex": "#EBEBEB",
+              "share": 0.0192
+            },
+            {
+              "hex": "#696666",
+              "share": 0.0162
+            },
+            {
+              "hex": "#F6F6F6",
+              "share": 0.0156
+            },
+            {
+              "hex": "#FCFCFC",
+              "share": 0.0093
+            }
+          ],
+          "derivedFrom": "rendered-first-page"
+        }
+      },
+      "previewBytes": 229740,
+      "attributionEntryCount": 1,
+      "license": {
+        "usage_scope": "first-party",
+        "license_family": "CC0",
+        "supply_tier": "original"
+      }
+    }
+  },
+  {
+    "id": "pdf-public-notice-01",
+    "artifactType": "pdf",
+    "title": "关于滨河苑二次供水设施改造期间停水的通告",
+    "styleId": "public-notice",
+    "summary": "一张贴在单元门口、一米外三秒看清的告示：单页大字宽留白，时间与范围独占一段，影响与应对逐条落到「你要做什么」。",
+    "cover": "/works/pdf/pdf-public-notice-01.cover.webp",
+    "view": {
+      "kind": "pdf",
+      "src": "/works/pdf/pdf-public-notice-01.pdf",
+      "download": "/works/pdf/pdf-public-notice-01.pdf"
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创示例通告，小区、时间与联系方式均为演示内容。",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      },
+      {
+        "text": "成品内嵌 Noto CJK 字族的字形子集（由转换容器内的 LibreOffice 在导出 PDF 时嵌入）。",
+        "licenseCode": "OFL-1.1",
+        "licenseUrl": "https://openfontlicense.org/"
+      },
+      {
+        "text": "成品内嵌 DejaVu 字族的字形子集，用于拉丁字符与数字。",
+        "licenseCode": "Bitstream-Vera",
+        "licenseUrl": "https://dejavu-fonts.github.io/License.html"
+      }
+    ],
+    "readings": {
+      "route": "cjk-embed",
+      "sourceBytes": 67471,
+      "closureBytes": 271393,
+      "pageCount": 1,
+      "imageCount": 0,
+      "embeddedFonts": [
+        "BAAAAA+NotoSansCJKjp-Bold-VKana",
+        "CAAAAA+NotoSerifCJKjp-Regular-VKana",
+        "DAAAAA+DejaVuSerif"
+      ],
+      "embeddedFontCount": 3,
+      "extractedChars": 408,
+      "declaredChars": 371,
+      "textFidelity": {
+        "verdict": "green",
+        "reasons": [],
+        "metrics": {
+          "extractedChars": 345,
+          "residueChars": 1,
+          "residueRatio": 0.002899,
+          "extractedCjk": 264,
+          "declaredCjk": 252,
+          "declaredCoverage": 1,
+          "recoveredEncoding": null,
+          "recoveredCjk": 0,
+          "embeddedFonts": 3,
+          "cidFonts": 0
+        }
+      },
+      "readbackAvailable": true,
+      "blockCount": 10,
+      "figureCount": 0,
+      "layout": {
+        "source": "input",
+        "axesFromInput": [
+          "body.palette",
+          "layout.columns",
+          "layout.lineSpacing",
+          "layout.margins",
+          "layout.page",
+          "theme.bodySize",
+          "theme.fonts",
+          "theme.headingScale"
+        ],
+        "derivedFrom": "writer-layout-model",
+        "derivedNote": "几何是写出器版面模型按字号/字宽常量算出来的声明值,不是渲染实测(工具不许起浏览器)。独立复核以 V2 的量法为准。",
+        "page": {
+          "id": "a4",
+          "orientation": "portrait",
+          "widthTwip": 11906,
+          "heightTwip": 16838
+        },
+        "marginsTwip": {
+          "top": 1701,
+          "bottom": 1701,
+          "right": 1588,
+          "left": 1588,
+          "header": 851,
+          "footer": 851
+        },
+        "contentWidthTwip": 8730,
+        "contentHeightTwip": 13436,
+        "columns": 1,
+        "columnSpacingTwip": 425,
+        "columnWidthTwip": 8730,
+        "lineSpacing": "loose",
+        "lineTwip": 360,
+        "paragraphAfterTwip": 200,
+        "headingScale": "dramatic",
+        "bodySize": "large",
+        "fontSizesHalfPoint": {
+          "h1": 56,
+          "h2": 34,
+          "h3": 26,
+          "body": 24
+        },
+        "fonts": {
+          "latin": "DejaVu Serif",
+          "eastAsia": "Noto Serif CJK SC",
+          "heading": "DejaVu Sans",
+          "headingEastAsia": "Noto Sans CJK SC"
+        },
+        "figure": {
+          "widthRatio": null,
+          "align": "center"
+        },
+        "palette": [
+          "1B1A16",
+          "8A6D1F"
+        ],
+        "paletteBySlot": {
+          "accent": "8A6D1F",
+          "heading2": "1B1A16",
+          "heading3": "1B1A16",
+          "body": "1B1A16",
+          "tableHeaderFill": "1B1A16",
+          "rule": "1B1A16"
+        },
+        "pageCount": 1,
+        "mainBlockCount": 3,
+        "mainBlocks": [
+          {
+            "kind": "section",
+            "pageIndex": 0,
+            "column": 0,
+            "x": 0.1334,
+            "y": 0.101,
+            "w": 0.7332,
+            "h": 0.158,
+            "areaRatio": 0.1158
+          },
+          {
+            "kind": "section",
+            "pageIndex": 0,
+            "column": 0,
+            "x": 0.1334,
+            "y": 0.3653,
+            "w": 0.7332,
+            "h": 0.1514,
+            "areaRatio": 0.111
+          },
+          {
+            "kind": "section",
+            "pageIndex": 0,
+            "column": 0,
+            "x": 0.1334,
+            "y": 0.5167,
+            "w": 0.7332,
+            "h": 0.1942,
+            "areaRatio": 0.1424
+          }
+        ],
+        "fingerprint": "e803c4ba066a5e5c",
+        "fingerprintByThreshold": {
+          "6": "1df6495b1fe8db9e",
+          "7": "1df6495b1fe8db9e",
+          "8": "e803c4ba066a5e5c",
+          "9": "e803c4ba066a5e5c",
+          "10": "e803c4ba066a5e5c"
+        }
+      },
+      "measured": {
+        "mediaBoxPt": {
+          "width": 595.303937007874,
+          "height": 841.889763779528
+        },
+        "colors": [
+          "#1B1A16",
+          "#8A6D1F"
+        ],
+        "colorCount": 2,
+        "derivedFrom": "produced-pdf-bytes",
+        "page": {
+          "swatches": [
+            {
+              "hex": "#FFFFFF",
+              "share": 0.8886
+            },
+            {
+              "hex": "#E4E3DF",
+              "share": 0.0139
+            },
+            {
+              "hex": "#B7B4AD",
+              "share": 0.0138
+            },
+            {
+              "hex": "#F1F0EE",
+              "share": 0.0133
+            },
+            {
+              "hex": "#807045",
+              "share": 0.0132
+            },
+            {
+              "hex": "#A59F8D",
+              "share": 0.0119
+            },
+            {
+              "hex": "#FBFBFA",
+              "share": 0.0114
+            },
+            {
+              "hex": "#D6D4CF",
+              "share": 0.0112
+            },
+            {
+              "hex": "#C3C1BB",
+              "share": 0.0095
+            },
+            {
+              "hex": "#CBC9C3",
+              "share": 0.0088
+            }
+          ],
+          "derivedFrom": "rendered-first-page"
+        }
+      },
+      "previewBytes": 203531,
+      "attributionEntryCount": 1,
+      "license": {
+        "usage_scope": "first-party",
+        "license_family": "CC0",
+        "supply_tier": "original"
+      }
+    }
   }
 ]
