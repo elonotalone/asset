@@ -35,5 +35,42 @@
       "playtestPass": 9,
       "playtestFail": 0
     }
+  },
+  {
+    "id": "slow-ledger-tactics-01",
+    "artifactType": "game",
+    "title": "堤坝调水",
+    "styleId": "slow-ledger-tactics",
+    "summary": "十六段堤，水位全公开。点一格开闸注水，水位到四就漫堤、四份水平分给上下左右，漫出堤外的记进排海账。八次闸、三十份配额，把全盘降到安全线以内。没有计时器，想多久都行。",
+    "cover": "/works/game/slow-ledger-tactics-01.cover.png",
+    "view": {
+      "kind": "game",
+      "src": "/works/game/slow-ledger-tactics-01.html",
+      "download": "/works/game/slow-ledger-tactics-01.game.json",
+      "aspect": 1.45
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo (OCEANLEO-AIGEN)",
+        "licenseCode": "OCEANLEO-AIGEN",
+        "licenseUrl": "https://oceanleo.com/licenses/oceanleo-aigen"
+      }
+    ],
+    "readings": {
+      "entryCount": 1,
+      "hasEntrypoint": true,
+      "entrypoint": "slow-ledger-tactics-01.game.json",
+      "assetCount": 0,
+      "totalUncompressedBytes": 20778,
+      "entrypointByteSize": 20778,
+      "closureShape": "single-file",
+      "playSourceByteSize": 19460,
+      "coverNonBlankRatio": 0.212705078125,
+      "coverColorCount": 511,
+      "coverFrameIndex": 6,
+      "playtestPass": 8,
+      "playtestFail": 0
+    }
   }
 ]
