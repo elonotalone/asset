@@ -1,0 +1,154 @@
+[
+  {
+    "id": "pdf-interview-record-01",
+    "artifactType": "pdf",
+    "title": "社区食堂运营访谈纪要（枫林街道 · 2026 年 7 月 22 日）",
+    "styleId": "interview-record",
+    "summary": "一次社区食堂走访的逐字留档：导语之后全是「谁说的、原话是什么」的短块，结尾只列五条待核事项，不下结论。",
+    "cover": "/works/pdf/pdf-interview-record-01.cover.webp",
+    "view": {
+      "kind": "pdf",
+      "src": "/works/pdf/pdf-interview-record-01.pdf",
+      "download": "/works/pdf/pdf-interview-record-01.pdf"
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创示例文档，人物、机构与内容均为演示虚构。",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      },
+      {
+        "text": "成品内嵌 Noto Sans CJK 与 Noto Serif CJK 的字形子集。",
+        "licenseCode": "OFL-1.1",
+        "licenseUrl": "https://openfontlicense.org/"
+      },
+      {
+        "text": "成品内嵌 DejaVu Sans 的字形子集，用于拉丁字符与数字。",
+        "licenseCode": "Bitstream-Vera",
+        "licenseUrl": "https://dejavu-fonts.github.io/License.html"
+      }
+    ],
+    "readings": {
+      "route": "cjk-embed",
+      "sourceBytes": 155202,
+      "closureBytes": 656419,
+      "pageCount": 2,
+      "imageCount": 0,
+      "blockCount": 52,
+      "figureCount": 0,
+      "extractedChars": 2295,
+      "declaredChars": 2275,
+      "textFidelity": "green",
+      "embeddedFontCount": 4,
+      "embeddedFonts": [
+        "BAAAAA+NotoSansCJKjp-Regular-VKana",
+        "CAAAAA+DejaVuSans",
+        "DAAAAA+NotoSerifCJKjp-Regular-VKana",
+        "EAAAAA+NotoSerifCJKjp-Regular-VKana"
+      ],
+      "license": { "usage_scope": "first-party", "license_family": "CC0", "supply_tier": "original" }
+    }
+  },
+  {
+    "id": "pdf-figure-led-01",
+    "artifactType": "pdf",
+    "title": "县域冷链物流现状图解（临溪县，2026 年上半年）",
+    "styleId": "figure-led-brief",
+    "summary": "三张图讲清一条冷链：网长什么样、链断在哪一段、断在什么时候；文字只做注解，最后一节收口给改造顺序。",
+    "cover": "/works/pdf/pdf-figure-led-01.cover.webp",
+    "view": {
+      "kind": "pdf",
+      "src": "/works/pdf/pdf-figure-led-01.pdf",
+      "download": "/works/pdf/pdf-figure-led-01.pdf"
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创示例文档，三张图为本件自绘，数据为演示数据。",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      },
+      {
+        "text": "成品内嵌 Noto Sans CJK 与 Noto Serif CJK 的字形子集。",
+        "licenseCode": "OFL-1.1",
+        "licenseUrl": "https://openfontlicense.org/"
+      },
+      {
+        "text": "成品内嵌 DejaVu Sans 的字形子集，用于拉丁字符与数字。",
+        "licenseCode": "Bitstream-Vera",
+        "licenseUrl": "https://dejavu-fonts.github.io/License.html"
+      }
+    ],
+    "readings": {
+      "route": "cjk-embed",
+      "sourceBytes": 337063,
+      "closureBytes": 590278,
+      "pageCount": 3,
+      "imageCount": 3,
+      "blockCount": 19,
+      "figureCount": 3,
+      "extractedChars": 1160,
+      "declaredChars": 1137,
+      "textFidelity": "green",
+      "embeddedFontCount": 4,
+      "embeddedFonts": [
+        "BAAAAA+NotoSansCJKjp-Regular-VKana",
+        "CAAAAA+DejaVuSans",
+        "DAAAAA+NotoSerifCJKjp-Regular-VKana",
+        "EAAAAA+NotoSerifCJKjp-Regular-VKana"
+      ],
+      "license": { "usage_scope": "first-party", "license_family": "CC0", "supply_tier": "original" }
+    }
+  },
+  {
+    "id": "pdf-bulletin-numeric-01",
+    "artifactType": "pdf",
+    "title": "城市轨道交通客流月度快报（2026 年 7 月 · 第 79 期）",
+    "styleId": "bulletin-numeric",
+    "summary": "每期形状完全一样的一页快报：五组指标行，每行「指标、本期值、环比、判读」按同一顺序排，一张趋势小图。",
+    "cover": "/works/pdf/pdf-bulletin-numeric-01.cover.webp",
+    "view": {
+      "kind": "pdf",
+      "src": "/works/pdf/pdf-bulletin-numeric-01.pdf",
+      "download": "/works/pdf/pdf-bulletin-numeric-01.pdf"
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创示例文档，趋势小图为本件自绘，全部数字为演示数据。",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      },
+      {
+        "text": "成品内嵌 Noto Sans CJK 与 Noto Serif CJK 的字形子集。",
+        "licenseCode": "OFL-1.1",
+        "licenseUrl": "https://openfontlicense.org/"
+      },
+      {
+        "text": "成品内嵌 DejaVu Sans 的字形子集，用于拉丁字符与数字。",
+        "licenseCode": "Bitstream-Vera",
+        "licenseUrl": "https://dejavu-fonts.github.io/License.html"
+      }
+    ],
+    "readings": {
+      "route": "cjk-embed",
+      "sourceBytes": 136427,
+      "closureBytes": 359487,
+      "pageCount": 2,
+      "imageCount": 1,
+      "blockCount": 38,
+      "figureCount": 1,
+      "extractedChars": 1242,
+      "declaredChars": 1318,
+      "textFidelity": "green",
+      "embeddedFontCount": 3,
+      "embeddedFonts": [
+        "BAAAAA+NotoSansCJKjp-Regular-VKana",
+        "CAAAAA+DejaVuSans",
+        "DAAAAA+NotoSerifCJKjp-Regular-VKana"
+      ],
+      "license": { "usage_scope": "first-party", "license_family": "CC0", "supply_tier": "original" }
+    }
+  }
+]

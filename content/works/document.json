@@ -1,0 +1,89 @@
+[
+  {
+    "id": "document-regulation-01",
+    "artifactType": "document",
+    "title": "远程与混合办公设备借用管理办法（试行）",
+    "styleId": "regulation-clause",
+    "summary": "一份可以被逐条引用的内部管理办法：章、条、项三层编号，无图无表，从申请到追责一条不落。",
+    "cover": "/works/document/document-regulation-01.cover.webp",
+    "view": {
+      "kind": "document",
+      "src": "/works/document/document-regulation-01.docx",
+      "download": "/works/document/document-regulation-01.docx"
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创示例文档，条款与机构均为演示虚构。",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "byteSize": 8675,
+      "partCount": 11,
+      "sectionCount": 48,
+      "pictureCount": 0,
+      "chartPartCount": 0,
+      "license": { "usage_scope": "first-party", "license_family": "CC0", "supply_tier": "original" }
+    }
+  },
+  {
+    "id": "document-metric-review-01",
+    "artifactType": "document",
+    "title": "共享单车调度效能专项评审报告（2026 年上半年）",
+    "styleId": "metric-review",
+    "summary": "一份会上要被逐项质询的复盘材料：四个议题，每个都是「一句结论、一段口径、一片数据」，配一张趋势图。",
+    "cover": "/works/document/document-metric-review-01.cover.webp",
+    "view": {
+      "kind": "document",
+      "src": "/works/document/document-metric-review-01.docx",
+      "download": "/works/document/document-metric-review-01.docx"
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创示例文档，趋势图为本件自绘，全部数字为演示数据。",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "byteSize": 51766,
+      "partCount": 12,
+      "sectionCount": 58,
+      "pictureCount": 1,
+      "chartPartCount": 0,
+      "license": { "usage_scope": "first-party", "license_family": "CC0", "supply_tier": "original" }
+    }
+  },
+  {
+    "id": "document-field-manual-01",
+    "artifactType": "document",
+    "title": "桌面 3D 打印机首件操作手册（FDM 机型通用）",
+    "styleId": "field-manual",
+    "summary": "一边看一边动手的上手手册：先一整幅总览图，再四步，每步都是「图、动作、算不算做对了」。",
+    "cover": "/works/document/document-field-manual-01.cover.webp",
+    "view": {
+      "kind": "document",
+      "src": "/works/document/document-field-manual-01.docx",
+      "download": "/works/document/document-field-manual-01.docx"
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创示例文档，四张示意图为本件自绘，参数为演示取值。",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "byteSize": 213752,
+      "partCount": 15,
+      "sectionCount": 38,
+      "pictureCount": 4,
+      "chartPartCount": 0,
+      "license": { "usage_scope": "first-party", "license_family": "CC0", "supply_tier": "original" }
+    }
+  }
+]
