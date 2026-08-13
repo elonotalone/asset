@@ -87,5 +87,47 @@
       "inkRatio": 0.664,
       "largestBlockShare": 0.336
     }
+  },
+  {
+    "id": "field-repeat-texture-01",
+    "artifactType": "single_file_image",
+    "title": "折角阵列 底纹",
+    "styleId": "field-repeat-texture",
+    "summary": "同一个折角图元铺满整幅，朝向随位置缓慢转动，色相在青绿与蓝绿之间渐变。没有主体、没有一个字，四边被裁断，可以直接当背景铺。",
+    "cover": "/works/single_file_image/field-repeat-texture-01.cover.webp",
+    "view": {
+      "kind": "image",
+      "src": "/works/single_file_image/field-repeat-texture-01.png",
+      "download": "/works/single_file_image/field-repeat-texture-01.png",
+      "aspect": 1.778
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创，图元按规则程序化铺排，无第三方素材",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "sourceFormat": "png",
+      "mediaType": "image/png",
+      "byteSize": 398518,
+      "sha256": "6e8fd05529816a485d45673d0bdc225c8553d9240e3189785045a1b67a292197",
+      "magicMatched": true,
+      "bytesUnchanged": true,
+      "creditCarriage": "carried-in-band",
+      "creditSlot": "png-text",
+      "creditBlocksShelving": false,
+      "license": {
+        "usage_scope": "standalone",
+        "license_family": "public-domain",
+        "supply_tier": "byte-portable"
+      },
+      "canvas": "1920x1080",
+      "paletteColorCount": 4,
+      "inkRatio": 0.078,
+      "largestBlockShare": 0.914
+    }
   }
 ]
