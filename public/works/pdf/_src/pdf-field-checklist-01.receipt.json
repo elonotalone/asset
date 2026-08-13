@@ -2,38 +2,37 @@
   "ok": true,
   "tool": "doc-pdf",
   "toolVersion": 1,
-  "out": "/tmp/e1-check",
+  "out": "/tmp/f3-field-checklist-20260813-v2",
   "outputs": [
     {
-      "path": "/tmp/e1-check/ATTRIBUTION.txt",
+      "path": "/tmp/f3-field-checklist-20260813-v2/ATTRIBUTION.txt",
       "byteSize": 424,
       "sha256": "c4e163782057350d05619e3a7edad07b382004656c65f234f069b2152cee13d9"
     },
     {
-      "path": "/tmp/e1-check/pdf-field-checklist-01.pdf",
-      "byteSize": 142406,
-      "sha256": "73f5ab32e8d3361be33b8774714af0a45e074bb4d785b63279cbd20d7a7549dd"
+      "path": "/tmp/f3-field-checklist-20260813-v2/pdf-field-checklist-01.pdf",
+      "byteSize": 111617,
+      "sha256": "2499d729096bb0e6d2388e61bf278136eb559f0eee8a07aefd31d07c93607be7"
     },
     {
-      "path": "/tmp/e1-check/preview.png",
-      "byteSize": 229740,
-      "sha256": "7b4a938124d2715ef338164e46c4ab1282cc2f86e4d2394d82771d0f722c0455"
+      "path": "/tmp/f3-field-checklist-20260813-v2/preview.png",
+      "byteSize": 141393,
+      "sha256": "8ae6ea574b764ac55aa39689da1073730be8bde1e35aca08bdf0f970dca31053"
     }
   ],
   "readings": {
     "entrypoint": "pdf-field-checklist-01.pdf",
     "route": "cjk-embed",
     "fileCount": 3,
-    "sourceBytes": 142406,
-    "closureBytes": 372570,
-    "pageCount": 2,
+    "sourceBytes": 111617,
+    "closureBytes": 253434,
+    "pageCount": 3,
     "imageCount": 0,
     "embeddedFonts": [
       "BAAAAA+NotoSansCJKjp-Bold-VKana",
       "CAAAAA+NotoSansCJKjp-Regular-VKana",
       "DAAAAA+DejaVuSans",
-      "EAAAAA+DejaVuSans-Bold",
-      "FAAAAA+NotoSansCJKjp-Regular-VKana"
+      "EAAAAA+DejaVuSans-Bold"
     ],
     "embeddedFontDetails": [
       {
@@ -67,38 +66,121 @@
         "embedded": true,
         "subset": true,
         "unicode": true
-      },
-      {
-        "name": "FAAAAA+NotoSansCJKjp-Regular-VKana",
-        "type": "Type 1",
-        "encoding": "Builtin",
-        "embedded": true,
-        "subset": true,
-        "unicode": true
       }
     ],
-    "embeddedFontCount": 5,
-    "extractedChars": 1100,
-    "declaredChars": 864,
+    "embeddedFontCount": 4,
+    "extractedChars": 1435,
+    "declaredChars": 1427,
     "textFidelity": {
       "verdict": "green",
       "reasons": [],
       "metrics": {
-        "extractedChars": 980,
-        "residueChars": 5,
-        "residueRatio": 0.005102,
-        "extractedCjk": 806,
-        "declaredCjk": 656,
+        "extractedChars": 1173,
+        "residueChars": 6,
+        "residueRatio": 0.005115,
+        "extractedCjk": 725,
+        "declaredCjk": 725,
         "declaredCoverage": 1,
         "recoveredEncoding": null,
         "recoveredCjk": 0,
-        "embeddedFonts": 5,
+        "embeddedFonts": 4,
         "cidFonts": 0
       }
     },
     "readbackAvailable": true,
-    "blockCount": 30,
+    "blockCount": 44,
     "figureCount": 0,
+    "tableProjection": {
+      "tableCount": 7,
+      "headerCellCount": 14,
+      "dataRowCount": 28,
+      "declaredCellCount": 70,
+      "declaredTextCellCount": 70,
+      "observedCellCount": 70,
+      "cellCoverage": 1,
+      "orderedCellCount": 70,
+      "orderedCellCoverage": 1,
+      "declaredCjkCoverage": {
+        "declared": 183,
+        "observed": 183,
+        "ratio": 1
+      },
+      "missingCells": [],
+      "tables": [
+        {
+          "tableIndex": 0,
+          "headerCellCount": 2,
+          "dataRowCount": 4,
+          "columnCount": 2,
+          "gridColumnWidthTwip": 3628,
+          "alignment": "left",
+          "borderColor": "A9A29C",
+          "headerFill": "E9E3DD"
+        },
+        {
+          "tableIndex": 1,
+          "headerCellCount": 2,
+          "dataRowCount": 5,
+          "columnCount": 2,
+          "gridColumnWidthTwip": 3628,
+          "alignment": "left",
+          "borderColor": "A9A29C",
+          "headerFill": "E9E3DD"
+        },
+        {
+          "tableIndex": 2,
+          "headerCellCount": 2,
+          "dataRowCount": 5,
+          "columnCount": 2,
+          "gridColumnWidthTwip": 3628,
+          "alignment": "left",
+          "borderColor": "A9A29C",
+          "headerFill": "E9E3DD"
+        },
+        {
+          "tableIndex": 3,
+          "headerCellCount": 2,
+          "dataRowCount": 4,
+          "columnCount": 2,
+          "gridColumnWidthTwip": 3628,
+          "alignment": "left",
+          "borderColor": "A9A29C",
+          "headerFill": "E9E3DD"
+        },
+        {
+          "tableIndex": 4,
+          "headerCellCount": 2,
+          "dataRowCount": 5,
+          "columnCount": 2,
+          "gridColumnWidthTwip": 3628,
+          "alignment": "left",
+          "borderColor": "A9A29C",
+          "headerFill": "E9E3DD"
+        },
+        {
+          "tableIndex": 5,
+          "headerCellCount": 2,
+          "dataRowCount": 3,
+          "columnCount": 2,
+          "gridColumnWidthTwip": 3628,
+          "alignment": "left",
+          "borderColor": "A9A29C",
+          "headerFill": "E9E3DD"
+        },
+        {
+          "tableIndex": 6,
+          "headerCellCount": 2,
+          "dataRowCount": 2,
+          "columnCount": 2,
+          "gridColumnWidthTwip": 3628,
+          "alignment": "left",
+          "borderColor": "A9A29C",
+          "headerFill": "E9E3DD"
+        }
+      ],
+      "readbackDerivedFrom": "produced-pdf-text-layer",
+      "layoutDerivedFrom": "writer-layout-model"
+    },
     "layout": {
       "source": "input",
       "axesFromInput": [
@@ -154,18 +236,21 @@
         "align": "center"
       },
       "palette": [
-        "161514"
+        "161514",
+        "A3252B",
+        "A9A29C",
+        "E9E3DD"
       ],
       "paletteBySlot": {
-        "accent": "161514",
+        "accent": "A3252B",
         "heading2": "161514",
         "heading3": "161514",
         "body": "161514",
-        "tableHeaderFill": "161514",
-        "rule": "161514"
+        "tableHeaderFill": "E9E3DD",
+        "rule": "A9A29C"
       },
       "pageCount": 2,
-      "mainBlockCount": 7,
+      "mainBlockCount": 6,
       "mainBlocks": [
         {
           "kind": "section",
@@ -178,73 +263,63 @@
           "areaRatio": 0.1055
         },
         {
-          "kind": "section",
+          "kind": "table",
           "pageIndex": 0,
           "column": 0,
           "x": 0.0676,
-          "y": 0.1792,
+          "y": 0.2306,
           "w": 0.8649,
-          "h": 0.1455,
-          "areaRatio": 0.1258
+          "h": 0.1445,
+          "areaRatio": 0.1249
         },
         {
-          "kind": "section",
+          "kind": "table",
           "pageIndex": 0,
           "column": 0,
           "x": 0.0676,
-          "y": 0.3246,
+          "y": 0.4264,
           "w": 0.8649,
-          "h": 0.169,
-          "areaRatio": 0.1462
+          "h": 0.1734,
+          "areaRatio": 0.1499
         },
         {
-          "kind": "section",
+          "kind": "table",
           "pageIndex": 0,
           "column": 0,
           "x": 0.0676,
-          "y": 0.4936,
+          "y": 0.6512,
           "w": 0.8649,
-          "h": 0.169,
-          "areaRatio": 0.1462
+          "h": 0.1734,
+          "areaRatio": 0.1499
         },
         {
-          "kind": "section",
-          "pageIndex": 0,
-          "column": 0,
-          "x": 0.0676,
-          "y": 0.6626,
-          "w": 0.8649,
-          "h": 0.1455,
-          "areaRatio": 0.1258
-        },
-        {
-          "kind": "section",
-          "pageIndex": 0,
-          "column": 0,
-          "x": 0.0676,
-          "y": 0.8081,
-          "w": 0.8649,
-          "h": 0.1348,
-          "areaRatio": 0.1166
-        },
-        {
-          "kind": "section",
+          "kind": "table",
           "pageIndex": 1,
           "column": 0,
           "x": 0.0676,
-          "y": 0.0913,
+          "y": 0.186,
           "w": 0.8649,
-          "h": 0.2362,
-          "areaRatio": 0.2043
+          "h": 0.1734,
+          "areaRatio": 0.1499
+        },
+        {
+          "kind": "table",
+          "pageIndex": 1,
+          "column": 0,
+          "x": 0.0676,
+          "y": 0.4108,
+          "w": 0.8649,
+          "h": 0.166,
+          "areaRatio": 0.1435
         }
       ],
-      "fingerprint": "4c3c4790c4acc74e",
+      "fingerprint": "ed4107df18bbc66b",
       "fingerprintByThreshold": {
-        "6": "4c3c4790c4acc74e",
-        "7": "4c3c4790c4acc74e",
-        "8": "4c3c4790c4acc74e",
-        "9": "4c3c4790c4acc74e",
-        "10": "4c3c4790c4acc74e"
+        "6": "979767a7148213f9",
+        "7": "9874962a5ca3f678",
+        "8": "ed4107df18bbc66b",
+        "9": "ed4107df18bbc66b",
+        "10": "ed4107df18bbc66b"
       }
     },
     "measured": {
@@ -254,57 +329,63 @@
       },
       "colors": [
         "#161514",
-        "#A3252B"
+        "#A3252B",
+        "#A9A29C",
+        "#E9E3DD"
       ],
-      "colorCount": 2,
+      "colorCount": 4,
       "derivedFrom": "produced-pdf-bytes",
       "page": {
         "swatches": [
           {
             "hex": "#FFFFFF",
-            "share": 0.8172
+            "share": 0.7619
           },
           {
-            "hex": "#908F8F",
-            "share": 0.0281
+            "hex": "#E9E3DD",
+            "share": 0.0464
           },
           {
-            "hex": "#A2A2A2",
-            "share": 0.0233
+            "hex": "#A6A2A2",
+            "share": 0.0311
           },
           {
-            "hex": "#D9D9D9",
+            "hex": "#EDEBEA",
+            "share": 0.0295
+          },
+          {
+            "hex": "#F9F9F8",
+            "share": 0.0293
+          },
+          {
+            "hex": "#E1DCD9",
             "share": 0.023
           },
           {
-            "hex": "#B3B3B2",
-            "share": 0.023
+            "hex": "#C7C4C4",
+            "share": 0.022
           },
           {
-            "hex": "#C5C5C5",
-            "share": 0.0217
+            "hex": "#816E6E",
+            "share": 0.0213
           },
           {
-            "hex": "#EBEBEB",
-            "share": 0.0192
+            "hex": "#E6E4E3",
+            "share": 0.0177
           },
           {
-            "hex": "#696666",
-            "share": 0.0162
-          },
-          {
-            "hex": "#F6F6F6",
-            "share": 0.0156
-          },
-          {
-            "hex": "#FCFCFC",
+            "hex": "#EBE4DF",
             "share": 0.0093
+          },
+          {
+            "hex": "#FFFFFE",
+            "share": 0.0085
           }
         ],
         "derivedFrom": "rendered-first-page"
       }
     },
-    "previewBytes": 229740,
+    "previewBytes": 141393,
     "attributionEntryCount": 1,
     "license": {
       "usage_scope": "first-party",
@@ -315,6 +396,6 @@
   "writer": "assemblers/pdf/emit.mjs（三条渲染路：cjk-embed / ascii-skeleton / inline-figures）",
   "writerVersion": null,
   "notes": [
-    "成品里嵌着 5 枚字体:BAAAAA+NotoSansCJKjp-Bold-VKana、CAAAAA+NotoSansCJKjp-Regular-VKana、DAAAAA+DejaVuSans、EAAAAA+DejaVuSans-Bold、FAAAAA+NotoSansCJKjp-Regular-VKana。每一枚都是随字节发给用户的字体程序 —— 账上要有对应的料,否则就是把别人的东西当自己的发出去。"
+    "成品里嵌着 4 枚字体:BAAAAA+NotoSansCJKjp-Bold-VKana、CAAAAA+NotoSansCJKjp-Regular-VKana、DAAAAA+DejaVuSans、EAAAAA+DejaVuSans-Bold。每一枚都是随字节发给用户的字体程序 —— 账上要有对应的料,否则就是把别人的东西当自己的发出去。"
   ]
 }
