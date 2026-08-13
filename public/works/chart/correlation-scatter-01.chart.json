@@ -240,45 +240,52 @@
   },
   "option": {
     "color": [
-      "#1F6FEB",
-      "#C47323",
-      "#2E8B6F",
-      "#8E5BA6",
-      "#CF222E",
-      "#57606A",
-      "#0A7EA4",
-      "#B45309"
+      "#7E22CE",
+      "#047857",
+      "#C2410C",
+      "#BE123C",
+      "#075985",
+      "#0891B2",
+      "#4D7C0F",
+      "#9D174D"
     ],
     "title": {
       "text": "30 家门店的营业面积与坪效相关性（按商圈类型分组）",
       "subtext": "口径：坪效 = 近 12 个月月均销售额 ÷ 营业面积，单位 元/(㎡·月)；一个点是一家门店，一家门店只属于一种商圈类型，另两列留空。数值为合成的示例数据。",
+      "left": "center",
       "textStyle": {
-        "color": "#1F2328",
-        "fontSize": 18,
+        "color": "#1B1226",
+        "fontSize": 26,
         "fontWeight": "bold"
       },
       "subtextStyle": {
-        "color": "#57606A",
-        "fontSize": 13
+        "color": "#5B4A6B",
+        "fontSize": 15
       }
     },
     "grid": {
-      "left": 64,
-      "right": 32,
-      "top": 56,
-      "bottom": 56,
+      "left": 68,
+      "right": 188,
+      "top": 132,
+      "bottom": 96,
       "containLabel": true
     },
     "xAxis": {
       "type": "value",
       "name": "营业面积（㎡）",
       "axisLabel": {
-        "color": "#57606A",
-        "fontSize": 12
+        "color": "#5B4A6B",
+        "fontSize": 13
       },
       "axisLine": {
         "lineStyle": {
-          "color": "#B8C2CC"
+          "color": "#C6B8D2"
+        }
+      },
+      "splitLine": {
+        "lineStyle": {
+          "color": "#EDE7F3",
+          "type": "dashed"
         }
       }
     },
@@ -289,17 +296,17 @@
       "max": 5000,
       "interval": 1000,
       "axisLabel": {
-        "color": "#57606A",
-        "fontSize": 12
+        "color": "#5B4A6B",
+        "fontSize": 13
       },
       "axisLine": {
         "lineStyle": {
-          "color": "#B8C2CC"
+          "color": "#C6B8D2"
         }
       },
       "splitLine": {
         "lineStyle": {
-          "color": "#E6EAF0",
+          "color": "#EDE7F3",
           "type": "dashed"
         }
       }
@@ -314,7 +321,7 @@
         },
         "symbol": "circle",
         "itemStyle": {
-          "color": "#1F6FEB"
+          "color": "#7E22CE"
         },
         "decal": {
           "symbol": "rect",
@@ -338,7 +345,7 @@
         },
         "symbol": "rect",
         "itemStyle": {
-          "color": "#C47323"
+          "color": "#047857"
         },
         "decal": {
           "symbol": "circle",
@@ -370,7 +377,7 @@
         },
         "symbol": "triangle",
         "itemStyle": {
-          "color": "#2E8B6F"
+          "color": "#C2410C"
         },
         "decal": {
           "symbol": "line",
@@ -392,10 +399,11 @@
         "交通枢纽型",
         "购物中心型"
       ],
-      "bottom": 8,
+      "right": 12,
+      "orient": "vertical",
       "textStyle": {
-        "color": "#57606A",
-        "fontSize": 12
+        "color": "#5B4A6B",
+        "fontSize": 13
       }
     },
     "tooltip": {
@@ -503,24 +511,26 @@
   },
   "indicators": [
     {
-      "key": "area",
+      "key": "营业面积（㎡）",
       "label": "营业面积（㎡）"
     },
     {
-      "key": "community",
+      "key": "社区型坪效",
       "label": "社区型坪效"
     },
     {
-      "key": "transit",
+      "key": "交通枢纽型坪效",
       "label": "交通枢纽型坪效"
     },
     {
-      "key": "mall",
+      "key": "购物中心型坪效",
       "label": "购物中心型坪效"
     }
   ],
   "narrative": {
-    "takeaway": "三类门店都呈同一条规律：面积越大坪效越低。社区型从 62 ㎡ 的 2260 元降到 178 ㎡ 的 1425 元（−37%），购物中心型从 1780 元降到 965 元。同等面积下交通枢纽型的坪效是社区型的 1.47 倍 —— 位置带来的差距比面积带来的更大。真正值得单独看的是 MC-371：386 ㎡ 是全样本最大，坪效 1760 元却与本组面积最小的 MC-302（156 ㎡，1780 元）基本持平，比同组次大的 MC-363 高出 82%，与同组趋势线明显背离，应当去现场核实它是不是被记错了业态，而不是把它当作「大店也能高坪效」的证据。"
+    "takeaway": "三类门店都呈同一条规律：面积越大坪效越低。社区型从 62 ㎡ 的 2260 元降到 178 ㎡ 的 1425 元（−37%），购物中心型从 1780 元降到 965 元。同等面积下交通枢纽型的坪效是社区型的 1.47 倍 —— 位置带来的差距比面积带来的更大。真正值得单独看的是 MC-371：386 ㎡ 是全样本最大，坪效 1760 元却与本组面积最小的 MC-302（156 ㎡，1780 元）基本持平，比同组次大的 MC-363 高出 82%，与同组趋势线明显背离，应当去现场核实它是不是被记错了业态，而不是把它当作「大店也能高坪效」的证据。",
+    "method": "口径：坪效 = 近 12 个月月均销售额 ÷ 营业面积，单位 元/(㎡·月)。横轴放原因侧（营业面积），纵轴放结果侧（坪效）；一个点是一家门店，不是一个时间片。",
+    "caveat": "缺失值处置：一家门店只属于一种商圈类型，另两列**按设计留空**——这些空格不是缺测，不插补、不按 0 计，图上直接不画点。坐标轴范围把最远的 MC-371 完整包进来，宁可留白也不裁点。"
   },
   "attribution": {
     "entries": [

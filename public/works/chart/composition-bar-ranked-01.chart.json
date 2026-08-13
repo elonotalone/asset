@@ -57,45 +57,40 @@
   },
   "option": {
     "color": [
-      "#1F6FEB",
-      "#C47323",
-      "#2E8B6F",
-      "#8E5BA6",
-      "#CF222E",
-      "#57606A",
-      "#0A7EA4",
-      "#B45309"
+      "#7C2D12",
+      "#A16207",
+      "#0F766E",
+      "#65A30D",
+      "#3F3F46",
+      "#9A3412",
+      "#155E75",
+      "#78350F"
     ],
     "title": {
       "text": "单位产品成本构成两期对照（2025 全年 vs 2026 上半年）",
-      "subtext": "口径：完全成本法，单位 元/件；2025 全年合计 228.70 元/件，2026 上半年合计 226.80 元/件。长尾已在数据侧并入「其他」，图上不做省略。数值为合成的示例数据。",
       "textStyle": {
-        "color": "#1F2328",
-        "fontSize": 18,
-        "fontWeight": "bold"
-      },
-      "subtextStyle": {
-        "color": "#57606A",
-        "fontSize": 13
+        "color": "#231A14",
+        "fontSize": 15,
+        "fontWeight": "600"
       }
     },
     "grid": {
-      "left": 64,
-      "right": 32,
-      "top": 56,
-      "bottom": 56,
+      "left": 76,
+      "right": 40,
+      "top": 108,
+      "bottom": 104,
       "containLabel": true
     },
     "xAxis": {
       "type": "category",
       "name": "成本项",
       "axisLabel": {
-        "color": "#57606A",
-        "fontSize": 12
+        "color": "#6B5A4E",
+        "fontSize": 10
       },
       "axisLine": {
         "lineStyle": {
-          "color": "#B8C2CC"
+          "color": "#C9BBAE"
         }
       }
     },
@@ -106,17 +101,17 @@
       "max": 125,
       "interval": 25,
       "axisLabel": {
-        "color": "#57606A",
-        "fontSize": 12
+        "color": "#6B5A4E",
+        "fontSize": 10
       },
       "axisLine": {
         "lineStyle": {
-          "color": "#B8C2CC"
+          "color": "#C9BBAE"
         }
       },
       "splitLine": {
         "lineStyle": {
-          "color": "#E6EAF0",
+          "color": "#EFE7DF",
           "type": "dashed"
         }
       }
@@ -131,7 +126,7 @@
         },
         "symbol": "circle",
         "itemStyle": {
-          "color": "#1F6FEB"
+          "color": "#7C2D12"
         },
         "decal": {
           "symbol": "rect",
@@ -155,7 +150,7 @@
         },
         "symbol": "rect",
         "itemStyle": {
-          "color": "#C47323"
+          "color": "#A16207"
         },
         "decal": {
           "symbol": "circle",
@@ -184,10 +179,10 @@
         "2025 年全年",
         "2026 年上半年"
       ],
-      "bottom": 8,
+      "top": 8,
       "textStyle": {
-        "color": "#57606A",
-        "fontSize": 12
+        "color": "#6B5A4E",
+        "fontSize": 10
       }
     },
     "tooltip": {
@@ -295,16 +290,18 @@
   },
   "indicators": [
     {
-      "key": "y2025",
+      "key": "2025 年全年",
       "label": "2025 年全年"
     },
     {
-      "key": "y2026h1",
+      "key": "2026 年上半年",
       "label": "2026 年上半年"
     }
   ],
   "narrative": {
-    "takeaway": "2026 上半年单位成本 226.80 元/件，其中原材料一项占 53.6%，前三项合计占 80.0% —— 其余四项加起来还不到两成，改善动作放在它们身上不会有结果。唯一显著下降的是能源动力（22.80 → 17.35 元/件，−23.9%，余热回收 2025Q4 投用）；而质量损失反升 22.5%，吃掉了节能收益的 28%。下一轮改善应对准质量损失，继续压能耗的边际收益已经很薄。"
+    "takeaway": "2026 上半年单位成本 226.80 元/件，其中原材料一项占 53.6%，前三项合计占 80.0% —— 其余四项加起来还不到两成，改善动作放在它们身上不会有结果。唯一显著下降的是能源动力（22.80 → 17.35 元/件，−23.9%，余热回收 2025Q4 投用）；而质量损失反升 22.5%，吃掉了节能收益的 28%。下一轮改善应对准质量损失，继续压能耗的边际收益已经很薄。",
+    "method": "口径：完全成本法，单位 元/件；2025 全年合计 228.70 元/件，2026 上半年合计 226.80 元/件。类目按 2026 上半年量值从大到小重排，两期并置不堆叠。",
+    "caveat": "缺失值处置：无缺报项。长尾已在数据侧并入「其他」并固定排在末位——图上不做省略，所以七根柱的合计就是全部成本，不存在「其余部分」。两期口径一致，未追溯调整。"
   },
   "attribution": {
     "entries": [

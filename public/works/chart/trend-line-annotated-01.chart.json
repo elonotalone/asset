@@ -242,45 +242,45 @@
   },
   "option": {
     "color": [
-      "#1F6FEB",
-      "#C47323",
-      "#2E8B6F",
-      "#8E5BA6",
-      "#CF222E",
-      "#57606A",
-      "#0A7EA4",
-      "#B45309"
+      "#1D4ED8",
+      "#B45309",
+      "#334155",
+      "#9F1239",
+      "#0F766E",
+      "#3F6212",
+      "#0E7490",
+      "#475569"
     ],
     "title": {
       "text": "三条地铁线路日均客运量 36 个月走势（2023-07 ~ 2026-06）",
       "subtext": "口径：工作日与休息日合并的月度日均进站客运量，单位万人次；2024-08 含台风停运 3 天，2025-05 起含 2 号线南延段，2026-01 起含机场线 T3 段。数值为合成的示例数据。",
       "textStyle": {
-        "color": "#1F2328",
+        "color": "#0F1B2A",
         "fontSize": 18,
         "fontWeight": "bold"
       },
       "subtextStyle": {
-        "color": "#57606A",
+        "color": "#4A5B6C",
         "fontSize": 13
       }
     },
     "grid": {
-      "left": 64,
-      "right": 32,
-      "top": 56,
-      "bottom": 56,
+      "left": 56,
+      "right": 28,
+      "top": 112,
+      "bottom": 96,
       "containLabel": true
     },
     "xAxis": {
       "type": "category",
       "name": "月份",
       "axisLabel": {
-        "color": "#57606A",
+        "color": "#4A5B6C",
         "fontSize": 12
       },
       "axisLine": {
         "lineStyle": {
-          "color": "#B8C2CC"
+          "color": "#AFC0CE"
         }
       }
     },
@@ -291,17 +291,17 @@
       "max": 80,
       "interval": 20,
       "axisLabel": {
-        "color": "#57606A",
+        "color": "#4A5B6C",
         "fontSize": 12
       },
       "axisLine": {
         "lineStyle": {
-          "color": "#B8C2CC"
+          "color": "#AFC0CE"
         }
       },
       "splitLine": {
         "lineStyle": {
-          "color": "#E6EAF0",
+          "color": "#E3EAF1",
           "type": "dashed"
         }
       }
@@ -316,7 +316,7 @@
         },
         "symbol": "circle",
         "itemStyle": {
-          "color": "#1F6FEB"
+          "color": "#1D4ED8"
         },
         "decal": {
           "symbol": "rect",
@@ -340,7 +340,7 @@
         },
         "symbol": "rect",
         "itemStyle": {
-          "color": "#C47323"
+          "color": "#B45309"
         },
         "decal": {
           "symbol": "circle",
@@ -372,7 +372,7 @@
         },
         "symbol": "triangle",
         "itemStyle": {
-          "color": "#2E8B6F"
+          "color": "#334155"
         },
         "decal": {
           "symbol": "line",
@@ -396,7 +396,7 @@
       ],
       "bottom": 8,
       "textStyle": {
-        "color": "#57606A",
+        "color": "#4A5B6C",
         "fontSize": 12
       }
     },
@@ -505,20 +505,22 @@
   },
   "indicators": [
     {
-      "key": "l1",
+      "key": "1 号线",
       "label": "1 号线"
     },
     {
-      "key": "l2",
+      "key": "2 号线",
       "label": "2 号线"
     },
     {
-      "key": "air",
+      "key": "机场线",
       "label": "机场线"
     }
   ],
   "narrative": {
-    "takeaway": "36 个月里机场线日均客运量从 15.7 万人次升到 18.2 万人次（+15.9%），同期 1 号线只从 58.7 万升到 70.9 万（+20.8%），机场线的增速是 1 号线的 0.8 倍；2 号线在 2025 年 5 月南延段开通后台阶式跳升，此后季节形态才与 1 号线趋同。全期最高点出现在 2026-02（机场线 21.7 万人次），2 月春运是次峰 —— 运力与排班应按这两个时点分别配置，按年均值排班会在暑运连续缺员。"
+    "takeaway": "36 个月里机场线日均客运量从 15.7 万人次升到 18.2 万人次（+15.9%），同期 1 号线只从 58.7 万升到 70.9 万（+20.8%），机场线的增速是 1 号线的 0.8 倍；2 号线在 2025 年 5 月南延段开通后台阶式跳升，此后季节形态才与 1 号线趋同。全期最高点出现在 2026-02（机场线 21.7 万人次），2 月春运是次峰 —— 运力与排班应按这两个时点分别配置，按年均值排班会在暑运连续缺员。",
+    "method": "口径：工作日与休息日合并的月度日均进站客运量，单位万人次。三条线路共用同一量纲，故并置在一个绘图区里；比率类指标另出图，本图不引双轴。",
+    "caveat": "缺失值处置：本期无缺测月份，故图上不存在断线。口径变更已在数据里对齐——2024-08 含台风停运 3 天（按当月实际运营日计算日均，未按 31 天摊薄），2025-05 起含 2 号线南延段，2026-01 起含机场线 T3 段；这三处是台阶而非异常。"
   },
   "attribution": {
     "entries": [
