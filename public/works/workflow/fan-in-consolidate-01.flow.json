@@ -119,10 +119,26 @@
       "assetRole": "规则依据：UI 提示音组，用来给分支、复核和合并节点定义可试听的判定基准"
     },
     {
+      "id": "n-readiness",
+      "label": "齐备判断 · 齐全或缺一路",
+      "kind": "branch",
+      "x": 1056,
+      "y": 172,
+      "params": {
+        "strategy": "route-by-value",
+        "field": "sourceCompleteness",
+        "operator": "eq",
+        "defaultPort": "incomplete",
+        "timeoutMs": 5000,
+        "policy": "fail-closed",
+        "templateRef": "workflow/source-readiness-v1"
+      }
+    },
+    {
       "id": "n-absence",
       "label": "缺席标注 · 谁没到齐写在成品上",
       "kind": "filter",
-      "x": 1056,
+      "x": 1306,
       "y": 172,
       "params": {
         "strategy": "template",
@@ -135,7 +151,7 @@
       "id": "n-compose",
       "label": "拼装日报 · 同口径记录成一份",
       "kind": "overlay",
-      "x": 1306,
+      "x": 1556,
       "y": 172,
       "params": {
         "strategy": "render",
@@ -148,7 +164,7 @@
       "id": "n-manifest",
       "label": "来源清单 · 哪一路、取数区间、齐否",
       "kind": "text",
-      "x": 1556,
+      "x": 1806,
       "y": 172,
       "params": {
         "strategy": "template",
@@ -161,7 +177,7 @@
       "id": "n-out",
       "label": "出片 · 日报 + 来源清单",
       "kind": "output",
-      "x": 1806,
+      "x": 2056,
       "y": 172,
       "params": {
         "strategy": "archive",
@@ -225,26 +241,40 @@
     {
       "id": "e7",
       "from": "n-align",
-      "to": "n-absence",
+      "to": "n-readiness",
       "fromPort": "out",
       "toPort": "in"
     },
     {
       "id": "e8",
+      "from": "n-readiness",
+      "to": "n-compose",
+      "fromPort": "complete",
+      "toPort": "in"
+    },
+    {
+      "id": "e9",
+      "from": "n-readiness",
+      "to": "n-absence",
+      "fromPort": "incomplete",
+      "toPort": "in"
+    },
+    {
+      "id": "e10",
       "from": "n-absence",
       "to": "n-compose",
       "fromPort": "out",
       "toPort": "in"
     },
     {
-      "id": "e9",
+      "id": "e11",
       "from": "n-compose",
       "to": "n-manifest",
       "fromPort": "out",
       "toPort": "in"
     },
     {
-      "id": "e10",
+      "id": "e12",
       "from": "n-manifest",
       "to": "n-out",
       "fromPort": "out",

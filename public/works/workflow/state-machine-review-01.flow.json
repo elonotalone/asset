@@ -54,7 +54,7 @@
     },
     {
       "id": "n-withdrawn",
-      "label": "已撤回 · 作者取回",
+      "label": "已撤回 · 修订后进入下游复审",
       "kind": "filter",
       "x": 806,
       "y": 172
@@ -84,7 +84,7 @@
     },
     {
       "id": "n-revising",
-      "label": "退改中 · 作者手上（记第几次）",
+      "label": "退改中 · 产出新的修订稿",
       "kind": "filter",
       "x": 1306,
       "y": 172,
@@ -97,10 +97,49 @@
       }
     },
     {
+      "id": "n-rereview",
+      "label": "修订稿复审 · 通过或升级",
+      "kind": "branch",
+      "x": 1556,
+      "y": 172,
+      "params": {
+        "strategy": "route-by-value",
+        "field": "reviewDecision",
+        "operator": "eq",
+        "defaultPort": "escalate",
+        "timeoutMs": 28800000,
+        "policy": "require-human",
+        "templateRef": "workflow/editorial-rereview-v1"
+      }
+    },
+    {
+      "id": "n-factcheck-after",
+      "label": "修订稿核红 · 新一轮校对",
+      "kind": "filter",
+      "x": 1806,
+      "y": 172
+    },
+    {
+      "id": "n-check-after",
+      "label": "复核判定 · 清白或升级",
+      "kind": "branch",
+      "x": 2056,
+      "y": 172,
+      "params": {
+        "strategy": "route-by-value",
+        "field": "factCheckDecision",
+        "operator": "eq",
+        "defaultPort": "red",
+        "timeoutMs": 14400000,
+        "policy": "fail-closed",
+        "templateRef": "workflow/fact-check-after-revision-v1"
+      }
+    },
+    {
       "id": "n-escalate",
       "label": "主编裁定 · 打回次数已用尽",
       "kind": "filter",
-      "x": 1556,
+      "x": 2306,
       "y": 172,
       "params": {
         "strategy": "route-by-value",
@@ -117,14 +156,14 @@
       "id": "n-approved",
       "label": "定稿待发 · 等排期",
       "kind": "filter",
-      "x": 1806,
+      "x": 2556,
       "y": 172
     },
     {
       "id": "n-archive",
       "label": "归档 · 唯一终态（发布/废弃）",
       "kind": "output",
-      "x": 2056,
+      "x": 2806,
       "y": 172,
       "params": {
         "strategy": "archive",
@@ -173,64 +212,97 @@
     },
     {
       "id": "e5",
-      "from": "n-revising",
-      "to": "n-submitted",
-      "fromPort": "resubmit",
-      "toPort": "resubmit",
-      "back": true
-    },
-    {
-      "id": "e6",
-      "from": "n-withdrawn",
-      "to": "n-draft",
-      "fromPort": "to-draft",
-      "toPort": "back",
-      "back": true
-    },
-    {
-      "id": "e7",
       "from": "n-factcheck",
       "to": "n-check",
       "fromPort": "out",
       "toPort": "in"
     },
     {
-      "id": "e8",
+      "id": "e6",
       "from": "n-check",
       "to": "n-approved",
       "fromPort": "clean",
       "toPort": "from-check"
     },
     {
-      "id": "e9",
+      "id": "e7",
       "from": "n-check",
       "to": "n-revising",
       "fromPort": "red",
       "toPort": "from-check"
     },
     {
-      "id": "e10",
+      "id": "e8",
+      "from": "n-revising",
+      "to": "n-rereview",
+      "fromPort": "resubmit",
+      "toPort": "from-revision"
+    },
+    {
+      "id": "e9",
       "from": "n-revising",
       "to": "n-escalate",
       "fromPort": "exhausted",
       "toPort": "in"
     },
     {
+      "id": "e10",
+      "from": "n-withdrawn",
+      "to": "n-rereview",
+      "fromPort": "to-rereview",
+      "toPort": "from-withdrawal"
+    },
+    {
       "id": "e11",
+      "from": "n-rereview",
+      "to": "n-factcheck-after",
+      "fromPort": "pass",
+      "toPort": "in"
+    },
+    {
+      "id": "e12",
+      "from": "n-rereview",
+      "to": "n-escalate",
+      "fromPort": "escalate",
+      "toPort": "in"
+    },
+    {
+      "id": "e13",
+      "from": "n-factcheck-after",
+      "to": "n-check-after",
+      "fromPort": "out",
+      "toPort": "in"
+    },
+    {
+      "id": "e14",
+      "from": "n-check-after",
+      "to": "n-approved",
+      "fromPort": "clean",
+      "toPort": "from-check"
+    },
+    {
+      "id": "e15",
+      "from": "n-check-after",
+      "to": "n-escalate",
+      "fromPort": "red",
+      "toPort": "in"
+    },
+    {
+      "id": "e16",
       "from": "n-escalate",
       "to": "n-approved",
       "fromPort": "keep",
       "toPort": "from-chief"
     },
     {
-      "id": "e12",
+      "id": "e17",
       "from": "n-escalate",
       "to": "n-archive",
       "fromPort": "drop",
       "toPort": "in-dropped"
     },
     {
-      "id": "e13",
+      "id": "e18",
       "from": "n-approved",
       "to": "n-archive",
       "fromPort": "out",

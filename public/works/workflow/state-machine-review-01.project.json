@@ -5,7 +5,7 @@
     {
       "id": "v1",
       "createdAt": "2026-08-13T00:00:00.000Z",
-      "note": "教辅稿件从草稿到归档：节点是状态不是工序，边是登记在册的转移，每一次转移都要记「谁、什么时候、因为什么」。打回、撤回、核红退改各是一条回边；打回次数用尽就升级主编裁定，不在原地无限打转。终态只有一个：归档，记结果是发布还是废弃。",
+      "note": "教辅稿件从草稿到归档：初审通过直接核红；退改或撤回则进入新的下游复审状态，不回指已经走过的节点；核红不过且累计退改已满三次时升级主编裁定。审核通过、退回重做与升级三种业务结果都保留，最终统一归档并记录发布或废弃。",
       "graph": {
         "nodes": [
           {
@@ -15,12 +15,7 @@
             "x": 0,
             "y": 0,
             "ports": {
-              "inputs": [
-                {
-                  "name": "back",
-                  "dataType": "text"
-                }
-              ],
+              "inputs": [],
               "outputs": [
                 {
                   "name": "submit",
@@ -40,10 +35,6 @@
               "inputs": [
                 {
                   "name": "from-draft",
-                  "dataType": "text"
-                },
-                {
-                  "name": "resubmit",
                   "dataType": "text"
                 }
               ],
@@ -102,7 +93,7 @@
           {
             "id": "n-revising",
             "kind": "filter",
-            "label": "退改中 · 作者手上（记第几次）",
+            "label": "退改中 · 产出新的修订稿",
             "x": 360,
             "y": 0,
             "ports": {
@@ -138,7 +129,7 @@
           {
             "id": "n-withdrawn",
             "kind": "filter",
-            "label": "已撤回 · 作者取回",
+            "label": "已撤回 · 修订后进入下游复审",
             "x": 480,
             "y": 0,
             "ports": {
@@ -150,7 +141,7 @@
               ],
               "outputs": [
                 {
-                  "name": "to-draft",
+                  "name": "to-rereview",
                   "dataType": "text"
                 }
               ]
@@ -296,6 +287,99 @@
               "policy": "record-only"
             },
             "assetId": "assets/audio/sfx/freesound-442583.mp3"
+          },
+          {
+            "id": "n-rereview",
+            "kind": "branch",
+            "label": "修订稿复审 · 通过或升级",
+            "x": 0,
+            "y": 96,
+            "ports": {
+              "inputs": [
+                {
+                  "name": "from-revision",
+                  "dataType": "text"
+                },
+                {
+                  "name": "from-withdrawal",
+                  "dataType": "text"
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "pass",
+                  "dataType": "text"
+                },
+                {
+                  "name": "escalate",
+                  "dataType": "number"
+                }
+              ]
+            },
+            "params": {
+              "strategy": "route-by-value",
+              "field": "reviewDecision",
+              "operator": "eq",
+              "defaultPort": "escalate",
+              "timeoutMs": 28800000,
+              "policy": "require-human",
+              "templateRef": "workflow/editorial-rereview-v1"
+            }
+          },
+          {
+            "id": "n-factcheck-after",
+            "kind": "filter",
+            "label": "修订稿核红 · 新一轮校对",
+            "x": 120,
+            "y": 96,
+            "ports": {
+              "inputs": [
+                {
+                  "name": "in",
+                  "dataType": "text"
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "out",
+                  "dataType": "text"
+                }
+              ]
+            }
+          },
+          {
+            "id": "n-check-after",
+            "kind": "branch",
+            "label": "复核判定 · 清白或升级",
+            "x": 240,
+            "y": 96,
+            "ports": {
+              "inputs": [
+                {
+                  "name": "in",
+                  "dataType": "text"
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "clean",
+                  "dataType": "text"
+                },
+                {
+                  "name": "red",
+                  "dataType": "number"
+                }
+              ]
+            },
+            "params": {
+              "strategy": "route-by-value",
+              "field": "factCheckDecision",
+              "operator": "eq",
+              "defaultPort": "red",
+              "timeoutMs": 14400000,
+              "policy": "fail-closed",
+              "templateRef": "workflow/fact-check-after-revision-v1"
+            }
           }
         ],
         "edges": [
@@ -336,62 +420,97 @@
           },
           {
             "id": "e5",
-            "fromNodeId": "n-revising",
-            "fromPort": "resubmit",
-            "toNodeId": "n-submitted",
-            "toPort": "resubmit"
-          },
-          {
-            "id": "e6",
-            "fromNodeId": "n-withdrawn",
-            "fromPort": "to-draft",
-            "toNodeId": "n-draft",
-            "toPort": "back"
-          },
-          {
-            "id": "e7",
             "fromNodeId": "n-factcheck",
             "fromPort": "out",
             "toNodeId": "n-check",
             "toPort": "in"
           },
           {
-            "id": "e8",
+            "id": "e6",
             "fromNodeId": "n-check",
             "fromPort": "clean",
             "toNodeId": "n-approved",
             "toPort": "from-check"
           },
           {
-            "id": "e9",
+            "id": "e7",
             "fromNodeId": "n-check",
             "fromPort": "red",
             "toNodeId": "n-revising",
             "toPort": "from-check"
           },
           {
-            "id": "e10",
+            "id": "e8",
+            "fromNodeId": "n-revising",
+            "fromPort": "resubmit",
+            "toNodeId": "n-rereview",
+            "toPort": "from-revision"
+          },
+          {
+            "id": "e9",
             "fromNodeId": "n-revising",
             "fromPort": "exhausted",
             "toNodeId": "n-escalate",
             "toPort": "in"
           },
           {
+            "id": "e10",
+            "fromNodeId": "n-withdrawn",
+            "fromPort": "to-rereview",
+            "toNodeId": "n-rereview",
+            "toPort": "from-withdrawal"
+          },
+          {
             "id": "e11",
+            "fromNodeId": "n-rereview",
+            "fromPort": "pass",
+            "toNodeId": "n-factcheck-after",
+            "toPort": "in"
+          },
+          {
+            "id": "e12",
+            "fromNodeId": "n-rereview",
+            "fromPort": "escalate",
+            "toNodeId": "n-escalate",
+            "toPort": "in"
+          },
+          {
+            "id": "e13",
+            "fromNodeId": "n-factcheck-after",
+            "fromPort": "out",
+            "toNodeId": "n-check-after",
+            "toPort": "in"
+          },
+          {
+            "id": "e14",
+            "fromNodeId": "n-check-after",
+            "fromPort": "clean",
+            "toNodeId": "n-approved",
+            "toPort": "from-check"
+          },
+          {
+            "id": "e15",
+            "fromNodeId": "n-check-after",
+            "fromPort": "red",
+            "toNodeId": "n-escalate",
+            "toPort": "in"
+          },
+          {
+            "id": "e16",
             "fromNodeId": "n-escalate",
             "fromPort": "keep",
             "toNodeId": "n-approved",
             "toPort": "from-chief"
           },
           {
-            "id": "e12",
+            "id": "e17",
             "fromNodeId": "n-escalate",
             "fromPort": "drop",
             "toNodeId": "n-archive",
             "toPort": "in-dropped"
           },
           {
-            "id": "e13",
+            "id": "e18",
             "fromNodeId": "n-approved",
             "fromPort": "out",
             "toNodeId": "n-archive",
@@ -406,84 +525,91 @@
             "id": "c0",
             "nodeId": "n-draft",
             "startMs": 0,
-            "durationMs": 5000,
+            "durationMs": 4000,
             "layer": 0
           },
           {
             "id": "c1",
             "nodeId": "n-submitted",
-            "startMs": 5000,
-            "durationMs": 4000,
+            "startMs": 4000,
+            "durationMs": 3000,
             "layer": 0
           },
           {
             "id": "c2",
             "nodeId": "n-review",
-            "startMs": 9000,
+            "startMs": 7000,
             "durationMs": 2000,
             "layer": 0
           },
           {
             "id": "c3",
             "nodeId": "n-factcheck",
-            "startMs": 20000,
+            "startMs": 9000,
             "durationMs": 4000,
             "layer": 0
           },
           {
             "id": "c4",
             "nodeId": "n-check",
-            "startMs": 24000,
+            "startMs": 13000,
             "durationMs": 2000,
             "layer": 0
           },
           {
             "id": "c5",
+            "nodeId": "n-rereview",
+            "startMs": 19000,
+            "durationMs": 3000,
+            "layer": 0
+          },
+          {
+            "id": "c6",
+            "nodeId": "n-factcheck-after",
+            "startMs": 22000,
+            "durationMs": 3000,
+            "layer": 0
+          },
+          {
+            "id": "c7",
+            "nodeId": "n-check-after",
+            "startMs": 25000,
+            "durationMs": 2000,
+            "layer": 0
+          },
+          {
+            "id": "c8",
             "nodeId": "n-approved",
             "startMs": 30000,
             "durationMs": 4000,
             "layer": 0
           },
           {
-            "id": "c6",
+            "id": "c9",
             "nodeId": "n-archive",
             "startMs": 34000,
             "durationMs": 2000,
             "layer": 0
           },
           {
-            "id": "c7",
-            "nodeId": "n-revising",
-            "startMs": 11000,
-            "durationMs": 6000,
-            "layer": 1
-          },
-          {
-            "id": "c8",
-            "nodeId": "n-submitted",
-            "startMs": 17000,
-            "durationMs": 3000,
-            "layer": 1
-          },
-          {
-            "id": "c9",
-            "nodeId": "n-withdrawn",
-            "startMs": 11000,
-            "durationMs": 3000,
-            "layer": 1
-          },
-          {
             "id": "c10",
             "nodeId": "n-revising",
-            "startMs": 26000,
-            "durationMs": 2000,
+            "startMs": 15000,
+            "durationMs": 4000,
             "layer": 1
           },
           {
             "id": "c11",
+            "nodeId": "n-withdrawn",
+            "startMs": 15000,
+            "durationMs": 4000,
+            "layer": 1
+          },
+          {
+            "id": "c12",
             "nodeId": "n-escalate",
-            "startMs": 28000,
-            "durationMs": 2000,
+            "startMs": 27000,
+            "durationMs": 3000,
             "layer": 1
           }
         ]

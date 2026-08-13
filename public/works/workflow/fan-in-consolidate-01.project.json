@@ -5,7 +5,7 @@
     {
       "id": "v1",
       "createdAt": "2026-08-13T00:00:00.000Z",
-      "note": "工单系统、交易后台、舆情监控三路互不相干的来源各自成入口，各走一段只服务于自己的归一化（时间窗、单位、缺数表示各不相同），到齐或到截止时间在唯一的合并点汇成一份日报；哪一路没到齐会被标注，并随成品交出一份来源清单。缺一路不把整份日报卡住。",
+      "note": "工单、交易、舆情三路各自归一化后在唯一合并点收束；齐备判断把三路齐全与缺一路分成两条真实可达路径，齐全直接拼装，缺一路先写缺席标注，两路随后在日报拼装处汇合。",
       "graph": {
         "nodes": [
           {
@@ -217,10 +217,44 @@
             "assetId": "assets/audio/sfx/freesound-855481.mp3"
           },
           {
+            "id": "n-readiness",
+            "kind": "branch",
+            "label": "齐备判断 · 齐全或缺一路",
+            "x": 360,
+            "y": 48,
+            "ports": {
+              "inputs": [
+                {
+                  "name": "in",
+                  "dataType": "text"
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "complete",
+                  "dataType": "text"
+                },
+                {
+                  "name": "incomplete",
+                  "dataType": "text"
+                }
+              ]
+            },
+            "params": {
+              "strategy": "route-by-value",
+              "field": "sourceCompleteness",
+              "operator": "eq",
+              "defaultPort": "incomplete",
+              "timeoutMs": 5000,
+              "policy": "fail-closed",
+              "templateRef": "workflow/source-readiness-v1"
+            }
+          },
+          {
             "id": "n-absence",
             "kind": "filter",
             "label": "缺席标注 · 谁没到齐写在成品上",
-            "x": 360,
+            "x": 480,
             "y": 48,
             "ports": {
               "inputs": [
@@ -247,8 +281,8 @@
             "id": "n-compose",
             "kind": "overlay",
             "label": "拼装日报 · 同口径记录成一份",
-            "x": 480,
-            "y": 48,
+            "x": 0,
+            "y": 96,
             "ports": {
               "inputs": [
                 {
@@ -274,7 +308,7 @@
             "id": "n-manifest",
             "kind": "text",
             "label": "来源清单 · 哪一路、取数区间、齐否",
-            "x": 0,
+            "x": 120,
             "y": 96,
             "ports": {
               "inputs": [
@@ -301,7 +335,7 @@
             "id": "n-out",
             "kind": "output",
             "label": "出片 · 日报 + 来源清单",
-            "x": 120,
+            "x": 240,
             "y": 96,
             "ports": {
               "inputs": [
@@ -374,25 +408,39 @@
             "id": "e7",
             "fromNodeId": "n-align",
             "fromPort": "out",
-            "toNodeId": "n-absence",
+            "toNodeId": "n-readiness",
             "toPort": "in"
           },
           {
             "id": "e8",
+            "fromNodeId": "n-readiness",
+            "fromPort": "complete",
+            "toNodeId": "n-compose",
+            "toPort": "in"
+          },
+          {
+            "id": "e9",
+            "fromNodeId": "n-readiness",
+            "fromPort": "incomplete",
+            "toNodeId": "n-absence",
+            "toPort": "in"
+          },
+          {
+            "id": "e10",
             "fromNodeId": "n-absence",
             "fromPort": "out",
             "toNodeId": "n-compose",
             "toPort": "in"
           },
           {
-            "id": "e9",
+            "id": "e11",
             "fromNodeId": "n-compose",
             "fromPort": "out",
             "toNodeId": "n-manifest",
             "toPort": "in"
           },
           {
-            "id": "e10",
+            "id": "e12",
             "fromNodeId": "n-manifest",
             "fromPort": "out",
             "toNodeId": "n-out",
@@ -461,27 +509,34 @@
           },
           {
             "id": "c8",
-            "nodeId": "n-absence",
+            "nodeId": "n-readiness",
             "startMs": 18000,
-            "durationMs": 3000,
+            "durationMs": 1000,
             "layer": 3
           },
           {
             "id": "c9",
+            "nodeId": "n-absence",
+            "startMs": 19000,
+            "durationMs": 2000,
+            "layer": 3
+          },
+          {
+            "id": "c10",
             "nodeId": "n-compose",
             "startMs": 21000,
             "durationMs": 3000,
             "layer": 3
           },
           {
-            "id": "c10",
+            "id": "c11",
             "nodeId": "n-manifest",
             "startMs": 24000,
             "durationMs": 2000,
             "layer": 3
           },
           {
-            "id": "c11",
+            "id": "c12",
             "nodeId": "n-out",
             "startMs": 26000,
             "durationMs": 1000,
