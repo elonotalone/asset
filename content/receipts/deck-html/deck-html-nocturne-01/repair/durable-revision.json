@@ -1,0 +1,138 @@
+{
+  "schema": "oceanleo.h1f-durable-revision-receipt/v1",
+  "id": "deck-html-nocturne-01",
+  "assetCommit": "1e19a88",
+  "artifactId": "7e40ddbf-a4e5-4c51-8072-b8ff275c98b0",
+  "previousRevisionId": "f8b9de73-1bc3-47b5-9e33-6fee6f83439a",
+  "revisionId": "55590698-12e1-4c08-9736-3637eda10b8c",
+  "createdAt": "2026-08-13T16:33:46.207484+00:00",
+  "idempotencyRerun": {
+    "ok": true,
+    "reusedRevisionId": "55590698-12e1-4c08-9736-3637eda10b8c"
+  },
+  "source": {
+    "path": "public/works/deck/src/deck-html-nocturne-01/deck.json",
+    "byteSize": 9392,
+    "sha256": "dd0b1edcb4e291fdaf074bf850036bf7117c29e565b0898aa9965a0bb8fb971f",
+    "mediaType": "application/vnd.oceanleo.deck+json"
+  },
+  "fullRendition": {
+    "path": "content/active-runtime/website/deck-html-nocturne-01/index.html",
+    "byteSize": 1948262,
+    "sha256": "852738ceab5a974d7d504278cc37cd5f28fe44a48c33620126b7c501449ab14b",
+    "format": "html",
+    "mediaType": "text/html"
+  },
+  "preview": {
+    "path": "public/works/deck/deck-html-nocturne-01.cover.webp",
+    "byteSize": 50692,
+    "sha256": "90fe5178910349138a7fee36f90a4ac360277acaa01ba658eeed87e56e88ab7b",
+    "mediaType": "image/webp",
+    "origin": "byte-identical static cover from deck-nocturne-01",
+    "purpose": "preview",
+    "format": "webp"
+  },
+  "thumbnail": {
+    "path": "public/works/deck/deck-html-nocturne-01.cover.webp",
+    "byteSize": 50692,
+    "sha256": "90fe5178910349138a7fee36f90a4ac360277acaa01ba658eeed87e56e88ab7b",
+    "mediaType": "image/webp",
+    "origin": "byte-identical static cover from deck-nocturne-01",
+    "purpose": "thumbnail",
+    "format": "webp"
+  },
+  "sourceResolver": {
+    "strategy": "payload.assetUrls",
+    "assetUrls": {
+      "night-cover": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F23%2F2345c0a2a6e95e295ccc604f18df4ec3a5ffa68495e0b7686ebc4d63bc008615",
+      "tide-lines": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F23%2F23341a82b0b1266d20c2330b5671443156e2f3f3ba71d55007a165122d8481c8",
+      "buoy-field": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F16%2F16b081dba9b9bad309789333fcaff1d7bd2472f72dc706d316f7e5235a885144",
+      "storm-front": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F78%2F781668e9bcf7087130a88b92449808c01263fdcbedb7427e49cd809c2e41d939",
+      "dawn-handover": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F8a%2F8a6d3c174d6aa6b53ed609a6965ed86b799ff95cfbb8736668e42669843b42fc"
+    },
+    "resolvedCount": 5,
+    "assets": [
+      {
+        "id": "night-cover",
+        "reference": "asset://media/night-cover",
+        "mediaType": "image/png",
+        "licenseCode": "CC0-1.0",
+        "path": "public/works/deck/src/deck-html-nocturne-01/media/night-cover.png",
+        "byteSize": 193431,
+        "sha256": "2345c0a2a6e95e295ccc604f18df4ec3a5ffa68495e0b7686ebc4d63bc008615",
+        "sourcePath": "public/works/deck/src/deck-nocturne-01/media/night-cover.png",
+        "url": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F23%2F2345c0a2a6e95e295ccc604f18df4ec3a5ffa68495e0b7686ebc4d63bc008615",
+        "origin": "byte-identical licensed source media from deck-nocturne-01"
+      },
+      {
+        "id": "tide-lines",
+        "reference": "asset://media/tide-lines",
+        "mediaType": "image/png",
+        "licenseCode": "CC0-1.0",
+        "path": "public/works/deck/src/deck-html-nocturne-01/media/tide-lines.png",
+        "byteSize": 233521,
+        "sha256": "23341a82b0b1266d20c2330b5671443156e2f3f3ba71d55007a165122d8481c8",
+        "sourcePath": "public/works/deck/src/deck-nocturne-01/media/tide-lines.png",
+        "url": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F23%2F23341a82b0b1266d20c2330b5671443156e2f3f3ba71d55007a165122d8481c8",
+        "origin": "byte-identical licensed source media from deck-nocturne-01"
+      },
+      {
+        "id": "buoy-field",
+        "reference": "asset://media/buoy-field",
+        "mediaType": "image/png",
+        "licenseCode": "CC0-1.0",
+        "path": "public/works/deck/src/deck-html-nocturne-01/media/buoy-field.png",
+        "byteSize": 290455,
+        "sha256": "16b081dba9b9bad309789333fcaff1d7bd2472f72dc706d316f7e5235a885144",
+        "sourcePath": "public/works/deck/src/deck-nocturne-01/media/buoy-field.png",
+        "url": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F16%2F16b081dba9b9bad309789333fcaff1d7bd2472f72dc706d316f7e5235a885144",
+        "origin": "byte-identical licensed source media from deck-nocturne-01"
+      },
+      {
+        "id": "storm-front",
+        "reference": "asset://media/storm-front",
+        "mediaType": "image/png",
+        "licenseCode": "CC0-1.0",
+        "path": "public/works/deck/src/deck-html-nocturne-01/media/storm-front.png",
+        "byteSize": 549673,
+        "sha256": "781668e9bcf7087130a88b92449808c01263fdcbedb7427e49cd809c2e41d939",
+        "sourcePath": "public/works/deck/src/deck-nocturne-01/media/storm-front.png",
+        "url": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F78%2F781668e9bcf7087130a88b92449808c01263fdcbedb7427e49cd809c2e41d939",
+        "origin": "byte-identical licensed source media from deck-nocturne-01"
+      },
+      {
+        "id": "dawn-handover",
+        "reference": "asset://media/dawn-handover",
+        "mediaType": "image/png",
+        "licenseCode": "CC0-1.0",
+        "path": "public/works/deck/src/deck-html-nocturne-01/media/dawn-handover.png",
+        "byteSize": 179361,
+        "sha256": "8a6d3c174d6aa6b53ed609a6965ed86b799ff95cfbb8736668e42669843b42fc",
+        "sourcePath": "public/works/deck/src/deck-nocturne-01/media/dawn-handover.png",
+        "url": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F8a%2F8a6d3c174d6aa6b53ed609a6965ed86b799ff95cfbb8736668e42669843b42fc",
+        "origin": "byte-identical licensed source media from deck-nocturne-01"
+      }
+    ]
+  },
+  "runtime": {
+    "manifestSha256": "551d1bdc9ddec564f4c0b5ecc51967f482d2fb24fe150464b17b9ef7fe50baae",
+    "kind": "website",
+    "host": "s-b15b61eb08dfb478236383d2408a7507.oceanleo.app",
+    "entryUrl": "https://s-b15b61eb08dfb478236383d2408a7507.oceanleo.app/embed",
+    "closureSha256": "a2ccdb9922870505856ea0343e5e483ed4f757dc0fa68a7590e2e8cf063e1b6f",
+    "fullSha256": "852738ceab5a974d7d504278cc37cd5f28fe44a48c33620126b7c501449ab14b",
+    "published": false
+  },
+  "databaseReadback": {
+    "rootIsUnchanged": true,
+    "headIsRevisionId": true,
+    "revisionCount": 2,
+    "sourceFormat": "oceanleo.deck.v1",
+    "deliveryFamily": "html",
+    "sourceDigestMatches": true,
+    "fullDigestMatches": true,
+    "previewAndThumbnailAreWebp": true,
+    "shelfRows": 0,
+    "contextBindings": 0
+  }
+}

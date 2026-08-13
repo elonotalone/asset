@@ -1,0 +1,164 @@
+{
+  "schema": "oceanleo.h1f-durable-revision-receipt/v1",
+  "id": "deck-html-manual-01",
+  "assetCommit": "1e19a88",
+  "artifactId": "7d63fbff-8376-4232-b7c6-dd2b06253ceb",
+  "previousRevisionId": "6f6351e5-1c55-46c3-a506-38b4b92d0443",
+  "revisionId": "1bb64b2f-7127-4416-a063-8d2e8d1dc1c6",
+  "createdAt": "2026-08-13T16:33:58.823597+00:00",
+  "idempotencyRerun": {
+    "ok": true,
+    "reusedRevisionId": "1bb64b2f-7127-4416-a063-8d2e8d1dc1c6"
+  },
+  "source": {
+    "path": "public/works/deck/src/deck-html-manual-01/deck.json",
+    "byteSize": 17067,
+    "sha256": "3b25d226f8af2392e4f626a9c4dd1469994d132ab2fb687ea85f0415b4546355",
+    "mediaType": "application/vnd.oceanleo.deck+json"
+  },
+  "fullRendition": {
+    "path": "content/active-runtime/website/deck-html-manual-01/index.html",
+    "byteSize": 177501,
+    "sha256": "82ec18836cd3f787d2c5d59a54742c96557e2325f9312e1986dc28de166c1047",
+    "format": "html",
+    "mediaType": "text/html"
+  },
+  "preview": {
+    "path": "public/works/deck/deck-html-manual-01.cover.webp",
+    "byteSize": 20960,
+    "sha256": "bb73b074e6816182c76e98682bbc13663943e066480cadbdb66826f6a4422fba",
+    "mediaType": "image/webp",
+    "origin": "byte-identical static cover from deck-manual-01",
+    "purpose": "preview",
+    "format": "webp"
+  },
+  "thumbnail": {
+    "path": "public/works/deck/deck-html-manual-01.cover.webp",
+    "byteSize": 20960,
+    "sha256": "bb73b074e6816182c76e98682bbc13663943e066480cadbdb66826f6a4422fba",
+    "mediaType": "image/webp",
+    "origin": "byte-identical static cover from deck-manual-01",
+    "purpose": "thumbnail",
+    "format": "webp"
+  },
+  "sourceResolver": {
+    "strategy": "payload.assetUrls",
+    "assetUrls": {
+      "site-plan": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F05%2F0558c8df9ccc78a3efc577697597ced80c55ce24660c64bb5e9db50f2c8e5d4f",
+      "book-sort": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2Fa6%2Fa6c90e322b5c4b10e06500744e11b7ee871a663e476937751d15511557c4644c",
+      "shelf-flow": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2Fab%2Fab8b55b217b85358487fe694cf63f1d4299622cbd6858949882bc838dced8807",
+      "open-day": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2Faa%2Faa779a5ceab850bc022c833bd90923fb2a39b9da4f46fdea289507902b287ad1",
+      "kit-shelf": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F8e%2F8e2592774564e06130d19440d91ae1a72b09b7f8589339f6ff402da9b5e316ac",
+      "kit-signage": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F22%2F22033122e3cca7865c5ca2a40d240b8371ddc9856b15b89e7dd423c133430fc9",
+      "kit-loanbox": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2Fab%2Fab8fb1edb57dd25256bcc3f84cf7af68cf86d29339f03c1d8cca0c7c000ae487"
+    },
+    "resolvedCount": 7,
+    "assets": [
+      {
+        "id": "site-plan",
+        "reference": "asset://media/site-plan",
+        "mediaType": "image/png",
+        "licenseCode": "CC0-1.0",
+        "path": "public/works/deck/src/deck-html-manual-01/media/site-plan.png",
+        "byteSize": 13468,
+        "sha256": "0558c8df9ccc78a3efc577697597ced80c55ce24660c64bb5e9db50f2c8e5d4f",
+        "sourcePath": "public/works/deck/src/deck-manual-01/media/site-plan.png",
+        "url": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F05%2F0558c8df9ccc78a3efc577697597ced80c55ce24660c64bb5e9db50f2c8e5d4f",
+        "origin": "byte-identical licensed source media from deck-manual-01"
+      },
+      {
+        "id": "book-sort",
+        "reference": "asset://media/book-sort",
+        "mediaType": "image/png",
+        "licenseCode": "CC0-1.0",
+        "path": "public/works/deck/src/deck-html-manual-01/media/book-sort.png",
+        "byteSize": 12916,
+        "sha256": "a6c90e322b5c4b10e06500744e11b7ee871a663e476937751d15511557c4644c",
+        "sourcePath": "public/works/deck/src/deck-manual-01/media/book-sort.png",
+        "url": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2Fa6%2Fa6c90e322b5c4b10e06500744e11b7ee871a663e476937751d15511557c4644c",
+        "origin": "byte-identical licensed source media from deck-manual-01"
+      },
+      {
+        "id": "shelf-flow",
+        "reference": "asset://media/shelf-flow",
+        "mediaType": "image/png",
+        "licenseCode": "CC0-1.0",
+        "path": "public/works/deck/src/deck-html-manual-01/media/shelf-flow.png",
+        "byteSize": 23094,
+        "sha256": "ab8b55b217b85358487fe694cf63f1d4299622cbd6858949882bc838dced8807",
+        "sourcePath": "public/works/deck/src/deck-manual-01/media/shelf-flow.png",
+        "url": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2Fab%2Fab8b55b217b85358487fe694cf63f1d4299622cbd6858949882bc838dced8807",
+        "origin": "byte-identical licensed source media from deck-manual-01"
+      },
+      {
+        "id": "open-day",
+        "reference": "asset://media/open-day",
+        "mediaType": "image/png",
+        "licenseCode": "CC0-1.0",
+        "path": "public/works/deck/src/deck-html-manual-01/media/open-day.png",
+        "byteSize": 18785,
+        "sha256": "aa779a5ceab850bc022c833bd90923fb2a39b9da4f46fdea289507902b287ad1",
+        "sourcePath": "public/works/deck/src/deck-manual-01/media/open-day.png",
+        "url": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2Faa%2Faa779a5ceab850bc022c833bd90923fb2a39b9da4f46fdea289507902b287ad1",
+        "origin": "byte-identical licensed source media from deck-manual-01"
+      },
+      {
+        "id": "kit-shelf",
+        "reference": "asset://media/kit-shelf",
+        "mediaType": "image/png",
+        "licenseCode": "CC0-1.0",
+        "path": "public/works/deck/src/deck-html-manual-01/media/kit-shelf.png",
+        "byteSize": 11205,
+        "sha256": "8e2592774564e06130d19440d91ae1a72b09b7f8589339f6ff402da9b5e316ac",
+        "sourcePath": "public/works/deck/src/deck-manual-01/media/kit-shelf.png",
+        "url": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F8e%2F8e2592774564e06130d19440d91ae1a72b09b7f8589339f6ff402da9b5e316ac",
+        "origin": "byte-identical licensed source media from deck-manual-01"
+      },
+      {
+        "id": "kit-signage",
+        "reference": "asset://media/kit-signage",
+        "mediaType": "image/png",
+        "licenseCode": "CC0-1.0",
+        "path": "public/works/deck/src/deck-html-manual-01/media/kit-signage.png",
+        "byteSize": 9196,
+        "sha256": "22033122e3cca7865c5ca2a40d240b8371ddc9856b15b89e7dd423c133430fc9",
+        "sourcePath": "public/works/deck/src/deck-manual-01/media/kit-signage.png",
+        "url": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2F22%2F22033122e3cca7865c5ca2a40d240b8371ddc9856b15b89e7dd423c133430fc9",
+        "origin": "byte-identical licensed source media from deck-manual-01"
+      },
+      {
+        "id": "kit-loanbox",
+        "reference": "asset://media/kit-loanbox",
+        "mediaType": "image/png",
+        "licenseCode": "CC0-1.0",
+        "path": "public/works/deck/src/deck-html-manual-01/media/kit-loanbox.png",
+        "byteSize": 19541,
+        "sha256": "ab8fb1edb57dd25256bcc3f84cf7af68cf86d29339f03c1d8cca0c7c000ae487",
+        "sourcePath": "public/works/deck/src/deck-manual-01/media/kit-loanbox.png",
+        "url": "https://api.oceanleo.com/v1/media/proxy?url=https%3A%2F%2Fkvrtcumcmhyqhmawpzyc.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmedia-uploads%2F_typed-artifacts%2Fsha256%2Fab%2Fab8fb1edb57dd25256bcc3f84cf7af68cf86d29339f03c1d8cca0c7c000ae487",
+        "origin": "byte-identical licensed source media from deck-manual-01"
+      }
+    ]
+  },
+  "runtime": {
+    "manifestSha256": "551d1bdc9ddec564f4c0b5ecc51967f482d2fb24fe150464b17b9ef7fe50baae",
+    "kind": "website",
+    "host": "s-8fe57ddda07cf9c733583721b30d7579.oceanleo.app",
+    "entryUrl": "https://s-8fe57ddda07cf9c733583721b30d7579.oceanleo.app/embed",
+    "closureSha256": "20bf60ca5cb2c6e85156b7c9751c666eb275f91daa8244aa96b07d7e3c55f387",
+    "fullSha256": "82ec18836cd3f787d2c5d59a54742c96557e2325f9312e1986dc28de166c1047",
+    "published": false
+  },
+  "databaseReadback": {
+    "rootIsUnchanged": true,
+    "headIsRevisionId": true,
+    "revisionCount": 2,
+    "sourceFormat": "oceanleo.deck.v1",
+    "deliveryFamily": "html",
+    "sourceDigestMatches": true,
+    "fullDigestMatches": true,
+    "previewAndThumbnailAreWebp": true,
+    "shelfRows": 0,
+    "contextBindings": 0
+  }
+}

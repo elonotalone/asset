@@ -73,6 +73,9 @@ test("three official HTML decks close source, preview, runtime and receipt bytes
   const summary = readJson(
     "content/receipts/deck-html/production-summary.json",
   );
+  const resolverVerification = readJson(
+    "content/receipts/deck-html/source-resolver-verification.json",
+  );
 
   assert.deepEqual(
     works.map((item) => item.id),
@@ -92,6 +95,7 @@ test("three official HTML decks close source, preview, runtime and receipt bytes
     IDS,
   );
   assert.equal(summary.count, 3);
+  assert.equal(resolverVerification.ok, true);
 
   assert.equal(new Set(works.map((item) => item.styleId)).size, 3);
   assert.equal(new Set(summary.items.map((item) => item.purpose)).size, 3);
@@ -122,6 +126,12 @@ test("three official HTML decks close source, preview, runtime and receipt bytes
     );
     const ingested = readJson(
       `content/receipts/deck-html/${work.id}/ingest/ingested-attested.json`,
+    );
+    const repaired = readJson(
+      `content/receipts/deck-html/${work.id}/repair/durable-revision.json`,
+    );
+    const resolverReadback = resolverVerification.items.find(
+      (item) => item.id === work.id,
     );
     const planItem = plan.items.find((item) => item.item.id === work.id);
 
@@ -168,6 +178,14 @@ test("three official HTML decks close source, preview, runtime and receipt bytes
       assert.equal(media.reference, `asset://media/${asset.id}`);
       assert.equal(resolved[asset.id], media.url);
       assert.equal(sha256(await simulateEditorFetch(resolved[asset.id], receipt.sourceMedia)), asset.sha256);
+      const remote = resolverReadback.media.find(
+        (item) => item.id === asset.id,
+      );
+      assert.ok(remote, `${work.id}/${asset.id}/remote`);
+      assert.equal(remote.status, 200);
+      assert.equal(remote.sha256, asset.sha256);
+      assert.equal(remote.byteSize, asset.byteSize);
+      assert.equal(remote.licenseCode, asset.licenseCode);
       const gateway = new URL(media.url);
       assert.equal(gateway.origin, "https://api.oceanleo.com");
       assert.equal(gateway.pathname, "/v1/media/proxy");
@@ -234,8 +252,29 @@ test("three official HTML decks close source, preview, runtime and receipt bytes
     assert.equal(ingested.closureDigest, planned.closureDigest);
     assert.match(ingested.artifactId, UUID);
     assert.match(ingested.artifactRevisionId, UUID);
-    artifactIds.add(ingested.artifactId);
-    revisionIds.add(ingested.artifactRevisionId);
+    assert.equal(repaired.schema, "oceanleo.h1f-durable-revision-receipt/v1");
+    assert.equal(repaired.assetCommit, "1e19a88");
+    assert.equal(repaired.artifactId, ingested.artifactId);
+    assert.equal(repaired.previousRevisionId, ingested.artifactRevisionId);
+    assert.match(repaired.revisionId, UUID);
+    assert.equal(repaired.source.sha256, receipt.structuredSource.sha256);
+    assert.equal(repaired.fullRendition.sha256, receipt.fullRendition.sha256);
+    assert.equal(repaired.preview.sha256, receipt.cover.sha256);
+    assert.equal(repaired.thumbnail.sha256, receipt.cover.sha256);
+    assert.equal(repaired.sourceResolver.resolvedCount, receipt.sourceMedia.length);
+    assert.equal(repaired.idempotencyRerun.reusedRevisionId, repaired.revisionId);
+    assert.equal(repaired.databaseReadback.sourceDigestMatches, true);
+    assert.equal(repaired.databaseReadback.fullDigestMatches, true);
+    assert.equal(repaired.databaseReadback.previewAndThumbnailAreWebp, true);
+    assert.equal(resolverReadback.artifactId, repaired.artifactId);
+    assert.equal(resolverReadback.revisionId, repaired.revisionId);
+    assert.equal(resolverReadback.detailStatus, 200);
+    assert.equal(resolverReadback.sourceStatus, 200);
+    assert.equal(resolverReadback.sourceSha256, repaired.source.sha256);
+    assert.equal(resolverReadback.payloadResolverCount, receipt.sourceMedia.length);
+    assert.equal(resolverReadback.media.length, receipt.sourceMedia.length);
+    artifactIds.add(repaired.artifactId);
+    revisionIds.add(repaired.revisionId);
   }
   assert.equal(artifactIds.size, 3);
   assert.equal(revisionIds.size, 3);

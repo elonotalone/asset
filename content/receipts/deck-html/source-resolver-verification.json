@@ -1,0 +1,142 @@
+{
+  "ok": true,
+  "items": [
+    {
+      "id": "deck-html-nocturne-01",
+      "artifactId": "7e40ddbf-a4e5-4c51-8072-b8ff275c98b0",
+      "revisionId": "55590698-12e1-4c08-9736-3637eda10b8c",
+      "detailStatus": 200,
+      "sourceUrl": "https://api.oceanleo.com/v1/artifacts/7e40ddbf-a4e5-4c51-8072-b8ff275c98b0/revisions/55590698-12e1-4c08-9736-3637eda10b8c/source-tree/@source",
+      "sourceStatus": 200,
+      "sourceMediaType": "application/vnd.oceanleo.deck+json; charset=utf-8",
+      "sourceSha256": "dd0b1edcb4e291fdaf074bf850036bf7117c29e565b0898aa9965a0bb8fb971f",
+      "metadataResolverCount": 0,
+      "payloadResolverCount": 5,
+      "media": [
+        {
+          "id": "night-cover",
+          "status": 200,
+          "mediaType": "image/png",
+          "byteSize": 193431,
+          "sha256": "2345c0a2a6e95e295ccc604f18df4ec3a5ffa68495e0b7686ebc4d63bc008615",
+          "licenseCode": "CC0-1.0"
+        },
+        {
+          "id": "tide-lines",
+          "status": 200,
+          "mediaType": "image/png",
+          "byteSize": 233521,
+          "sha256": "23341a82b0b1266d20c2330b5671443156e2f3f3ba71d55007a165122d8481c8",
+          "licenseCode": "CC0-1.0"
+        },
+        {
+          "id": "buoy-field",
+          "status": 200,
+          "mediaType": "image/png",
+          "byteSize": 290455,
+          "sha256": "16b081dba9b9bad309789333fcaff1d7bd2472f72dc706d316f7e5235a885144",
+          "licenseCode": "CC0-1.0"
+        },
+        {
+          "id": "storm-front",
+          "status": 200,
+          "mediaType": "image/png",
+          "byteSize": 549673,
+          "sha256": "781668e9bcf7087130a88b92449808c01263fdcbedb7427e49cd809c2e41d939",
+          "licenseCode": "CC0-1.0"
+        },
+        {
+          "id": "dawn-handover",
+          "status": 200,
+          "mediaType": "image/png",
+          "byteSize": 179361,
+          "sha256": "8a6d3c174d6aa6b53ed609a6965ed86b799ff95cfbb8736668e42669843b42fc",
+          "licenseCode": "CC0-1.0"
+        }
+      ]
+    },
+    {
+      "id": "deck-html-monotype-01",
+      "artifactId": "aa2d4d9c-2360-4eb9-8d99-bcc56e3580e0",
+      "revisionId": "fe3bff44-2545-4e26-9d4f-f07b0137a6b9",
+      "detailStatus": 200,
+      "sourceUrl": "https://api.oceanleo.com/v1/artifacts/aa2d4d9c-2360-4eb9-8d99-bcc56e3580e0/revisions/fe3bff44-2545-4e26-9d4f-f07b0137a6b9/source-tree/@source",
+      "sourceStatus": 200,
+      "sourceMediaType": "application/vnd.oceanleo.deck+json; charset=utf-8",
+      "sourceSha256": "9a62eb63cd76a62dfd53eb94f36baa17b4fda2c208712f23e26f5890c3b8ec9f",
+      "metadataResolverCount": 0,
+      "payloadResolverCount": 0,
+      "media": []
+    },
+    {
+      "id": "deck-html-manual-01",
+      "artifactId": "7d63fbff-8376-4232-b7c6-dd2b06253ceb",
+      "revisionId": "1bb64b2f-7127-4416-a063-8d2e8d1dc1c6",
+      "detailStatus": 200,
+      "sourceUrl": "https://api.oceanleo.com/v1/artifacts/7d63fbff-8376-4232-b7c6-dd2b06253ceb/revisions/1bb64b2f-7127-4416-a063-8d2e8d1dc1c6/source-tree/@source",
+      "sourceStatus": 200,
+      "sourceMediaType": "application/vnd.oceanleo.deck+json; charset=utf-8",
+      "sourceSha256": "3b25d226f8af2392e4f626a9c4dd1469994d132ab2fb687ea85f0415b4546355",
+      "metadataResolverCount": 0,
+      "payloadResolverCount": 7,
+      "media": [
+        {
+          "id": "site-plan",
+          "status": 200,
+          "mediaType": "image/png",
+          "byteSize": 13468,
+          "sha256": "0558c8df9ccc78a3efc577697597ced80c55ce24660c64bb5e9db50f2c8e5d4f",
+          "licenseCode": "CC0-1.0"
+        },
+        {
+          "id": "book-sort",
+          "status": 200,
+          "mediaType": "image/png",
+          "byteSize": 12916,
+          "sha256": "a6c90e322b5c4b10e06500744e11b7ee871a663e476937751d15511557c4644c",
+          "licenseCode": "CC0-1.0"
+        },
+        {
+          "id": "shelf-flow",
+          "status": 200,
+          "mediaType": "image/png",
+          "byteSize": 23094,
+          "sha256": "ab8b55b217b85358487fe694cf63f1d4299622cbd6858949882bc838dced8807",
+          "licenseCode": "CC0-1.0"
+        },
+        {
+          "id": "open-day",
+          "status": 200,
+          "mediaType": "image/png",
+          "byteSize": 18785,
+          "sha256": "aa779a5ceab850bc022c833bd90923fb2a39b9da4f46fdea289507902b287ad1",
+          "licenseCode": "CC0-1.0"
+        },
+        {
+          "id": "kit-shelf",
+          "status": 200,
+          "mediaType": "image/png",
+          "byteSize": 11205,
+          "sha256": "8e2592774564e06130d19440d91ae1a72b09b7f8589339f6ff402da9b5e316ac",
+          "licenseCode": "CC0-1.0"
+        },
+        {
+          "id": "kit-signage",
+          "status": 200,
+          "mediaType": "image/png",
+          "byteSize": 9196,
+          "sha256": "22033122e3cca7865c5ca2a40d240b8371ddc9856b15b89e7dd423c133430fc9",
+          "licenseCode": "CC0-1.0"
+        },
+        {
+          "id": "kit-loanbox",
+          "status": 200,
+          "mediaType": "image/png",
+          "byteSize": 19541,
+          "sha256": "ab8fb1edb57dd25256bcc3f84cf7af68cf86d29339f03c1d8cca0c7c000ae487",
+          "licenseCode": "CC0-1.0"
+        }
+      ]
+    }
+  ]
+}
