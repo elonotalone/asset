@@ -87,5 +87,47 @@
       "canvas": "1240x1754",
       "license": null
     }
+  },
+  {
+    "id": "resume-clinical-01",
+    "artifactType": "composite_image",
+    "title": "资质先行风格简历 · ICU 重症护理岗",
+    "styleId": "resume-clinical",
+    "summary": "横向三段分区的护理简历：执业资质、临床能力、岗位经历各占一条通栏色带，资质永远在最上面，每项能力后面都跟一个可核的量。",
+    "cover": "/works/composite_image/resume-clinical-01.cover.webp",
+    "view": {
+      "kind": "design-document",
+      "src": "/works/composite_image/resume-clinical-01.json"
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "envelope": "oceanleo.design-document.v1",
+      "bodyShape": "scene",
+      "entrypoint": "design-document.json",
+      "sourceBytes": 18083,
+      "canonicalByteSize": 11532,
+      "indentOverheadBytes": 6551,
+      "declaredAssetCount": 0,
+      "attributionCount": 1,
+      "metrics": {
+        "elementCount": 52,
+        "elementTypeCount": 2,
+        "textElementCount": 48,
+        "paletteColorCount": 4,
+        "distinctZCount": 52,
+        "assetCount": 0,
+        "titleLength": 20,
+        "attributionCount": 1
+      },
+      "canvas": "1240x1871",
+      "license": null
+    }
   }
 ]
