@@ -72,7 +72,9 @@ export const VIEW_KINDS: Readonly<Record<ViewKind, ViewKindSpec>> = {
     label: "演示文稿",
     src: ".pptx（或 oceanleo.deck.v1 的 .json）",
     extras: ["pages", "download"],
-    note: "有 pages[]（每页一张预览图）就翻页看；没有就封面 + 下载入口。字节绝不当文字摆出来。",
+    note:
+      "站内**一定打得开**：没给 pages[] 时构建期直接解 .pptx，逐页渲染标题/要点/演讲备注；" +
+      "给了 pages[] 就多一个「原版式」开关。两样都没有（解不开的加密件）才退回封面 + 下载。",
   },
   website: {
     mode: "frame",
@@ -90,28 +92,36 @@ export const VIEW_KINDS: Readonly<Record<ViewKind, ViewKindSpec>> = {
     extras: ["download", "aspect"],
     note:
       "受限 iframe，sandbox=\"allow-scripts\"（游戏要跑脚本；**不给 allow-same-origin**，" +
-      "两者同给等于把本站源交出去，见 tests/untrusted-render-surface.test.mjs UC-3）。",
+      "两者同给等于把本站源交出去，见 tests/untrusted-render-surface.test.mjs UC-3）。" +
+      "src 只认解包后的 .html：`.game.json` 信封里的整份 HTML **站内不跑**" +
+      "（塞 srcdoc 会继承本站 origin，域隔离作废），只出玩法说明 + 下载。",
   },
   document: {
     mode: "paged",
     label: "文档",
     src: ".docx",
     extras: ["pages", "download"],
-    note: "同 deck：有 pages[] 翻页，没有就封面 + 下载。不许把 docx 字节渲染成乱码文字。",
+    note:
+      "同 deck：没给 pages[] 时构建期解 .docx，按标题/正文/列表/表格重排出可读文档。" +
+      "解出来的是 w:t 里的正文，**不是把字节当文字摆出来**。",
   },
   pdf: {
     mode: "paged",
     label: "PDF",
     src: ".pdf",
     extras: ["pages", "download"],
-    note: "优先 pages[] 翻页（不依赖浏览器内置 PDF 插件）；没有就封面 + 下载。",
+    note:
+      "优先 pages[] 翻页（不依赖浏览器内置 PDF 插件）；没给就构建期抽 PDF 文本算子逐页出文字版。" +
+      "扫描件（页面里只有位图、没有文本算子）抽不出，那种才退回封面 + 下载。",
   },
   grid: {
     mode: "paged",
     label: "表格",
     src: ".xlsx",
     extras: ["pages", "download", "sheets"],
-    note: "有 sheets[]（表头 + 行数据）就站内画表；否则 pages[] 翻页；再否则封面 + 下载。",
+    note:
+      "有 sheets[]（表头 + 行数据）就照它画；没给就构建期解 .xlsx，逐张工作表画表" +
+      "（跨列标题行会被提到表上方，不会被当成表头）。再没有才是 pages[] / 封面。",
   },
   chart: {
     mode: "canvas",

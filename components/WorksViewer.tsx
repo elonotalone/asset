@@ -2,7 +2,16 @@
 
 import { useState } from "react";
 import { useUI } from "@oceanleo/ui/i18n";
-import type { WorkEntry, WorkSheet } from "@/components/WorksKinds";
+import {
+  EXTRACT_SOURCE_LABELS,
+  type DeckSlide,
+  type DocBlock,
+  type ExtractedContent,
+  type ExtractedSheet,
+  type PdfPage,
+  type WorkEntry,
+  type WorkSheet,
+} from "@/components/WorksKinds";
 
 // 成品查看器。**每一类都要真的把东西打开给人看**，不是把封面放大，
 // 更不是把字节当文字摆出来（那正是这一波在修的病：网站预览一屏乱码）。
@@ -384,6 +393,50 @@ function WorkflowViewer({ work, payload }: { work: WorkEntry; payload: WorkPaylo
   );
 }
 
+/* ---------------- game：没有解包入口时的可读说明 ---------------- */
+
+// `oceanleo.game-bundle.v1` 信封里那段 `source` 是整份 HTML。它**不进 DOM**：
+// 既不 srcdoc、也不 dangerouslySetInnerHTML —— 见上方安全说明。
+// 装载器已在服务端把 `source` 摘掉，这里拿到的 payload 里根本没有源码。
+
+function GameBriefViewer({ work, payload }: { work: WorkEntry; payload: WorkPayload }) {
+  const tt = useUI();
+  const body = (payload && typeof payload === "object" ? payload : {}) as Record<string, unknown>;
+  const manifest = (body.manifest && typeof body.manifest === "object" ? body.manifest : {}) as Record<
+    string,
+    unknown
+  >;
+  const summary = typeof manifest.summary === "string" ? manifest.summary : work.summary;
+  const tags = Array.isArray(manifest.tags) ? manifest.tags.map((t) => String(t)) : [];
+
+  return (
+    <div className="flex flex-col gap-4 rounded-xl border border-zinc-200 bg-white p-5">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={work.cover} alt={work.title} className="w-full rounded-lg border border-zinc-100" />
+      <div className="flex flex-col gap-2">
+        <h3 className="text-base font-semibold text-zinc-900">
+          {typeof manifest.title === "string" && manifest.title ? manifest.title : work.title}
+        </h3>
+        {summary && <p className="text-sm leading-relaxed text-zinc-600">{summary}</p>}
+        {tags.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {tags.map((t) => (
+              <span key={t} className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-600">
+                {t}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+      <p className="rounded-lg border border-dashed border-amber-300 bg-amber-50 px-3 py-2 text-xs leading-relaxed text-amber-800">
+        {tt(
+          "这一件交上来的是游戏信封（整份网页打包成一个 JSON），站内不解包运行：可运行的网页必须由沙箱域取回并在那边合成，塞进本页的 iframe 会让它继承本站身份。要试玩请下载后本地打开，或等这一件补上解包后的入口页。",
+        )}
+      </p>
+    </div>
+  );
+}
+
 /* ---------------- paged：分页预览图 / 表格 ---------------- */
 
 function Pager({ pages, title }: { pages: string[]; title: string }) {
@@ -435,7 +488,248 @@ function Pager({ pages, title }: { pages: string[]; title: string }) {
   );
 }
 
-function SheetsViewer({ sheets }: { sheets: WorkSheet[] }) {
+/* ---------------- 从真字节抽出来的正文：幻灯片 / 文档 / PDF 页 ---------------- */
+
+// 这几个查看器是「打开」这件事的落点：deck / document / pdf / grid 交上来的是
+// .pptx / .docx / .xlsx / .pdf 裸字节，产线位没有额外给每页预览图。
+// 以前这种情况一律落回封面 —— 用户点开只看到一张放大的图，等于打不开。
+// 现在构建期把字节真的解开（lib/works-extract.ts），这里渲染解出来的**文档结构**：
+// 不是把字节当文字摆出来，是把 OOXML / PDF 里的段落、幻灯片、单元格取出来重排。
+
+function ExtractNote({ from }: { from: string }) {
+  const tt = useUI();
+  const label = EXTRACT_SOURCE_LABELS[from] ?? from;
+  return (
+    <p className="text-[11px] text-zinc-400">
+      {tt("站内文字版：由 {format} 原件在构建期解出，版式为站内重排，与原件排版不完全一致。", {
+        format: tt(label),
+      })}
+    </p>
+  );
+}
+
+function SlidesViewer({ slides }: { slides: DeckSlide[] }) {
+  const tt = useUI();
+  const [i, setI] = useState(0);
+  const [showNotes, setShowNotes] = useState(false);
+  const at = Math.min(i, slides.length - 1);
+  const slide = slides[at];
+
+  return (
+    <div className="flex flex-col gap-3">
+      <div
+        className="flex flex-col justify-center gap-4 rounded-xl border border-zinc-200 bg-white p-8 shadow-sm"
+        style={{ aspectRatio: "16 / 9", containerType: "inline-size", overflow: "auto" }}
+      >
+        {slide.title && (
+          <h3 className="whitespace-pre-wrap text-[3.6cqw] font-semibold leading-snug text-zinc-900">
+            {slide.title}
+          </h3>
+        )}
+        {slide.lines.length > 0 && (
+          <ul className="flex flex-col gap-2">
+            {slide.lines.map((line, li) => (
+              <li
+                key={li}
+                className="flex gap-2 whitespace-pre-wrap text-[2.1cqw] leading-relaxed text-zinc-700"
+              >
+                <span className="mt-[0.7cqw] h-[0.6cqw] w-[0.6cqw] shrink-0 rounded-full bg-zinc-300" />
+                <span>{line}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+        {!slide.title && slide.lines.length === 0 && (
+          <p className="text-center text-xs text-zinc-400">{tt("这一页只有图，没有文字。")}</p>
+        )}
+      </div>
+
+      <div className="flex flex-wrap items-center justify-center gap-3 text-sm">
+        <button
+          type="button"
+          onClick={() => setI(Math.max(0, at - 1))}
+          disabled={at === 0}
+          className="rounded-full border border-zinc-200 px-3 py-1 text-zinc-600 disabled:opacity-40"
+        >
+          {tt("上一页")}
+        </button>
+        <span className="text-xs text-zinc-500">
+          {at + 1} / {slides.length}
+        </span>
+        <button
+          type="button"
+          onClick={() => setI(Math.min(slides.length - 1, at + 1))}
+          disabled={at === slides.length - 1}
+          className="rounded-full border border-zinc-200 px-3 py-1 text-zinc-600 disabled:opacity-40"
+        >
+          {tt("下一页")}
+        </button>
+        {slide.notes.length > 0 && (
+          <button
+            type="button"
+            onClick={() => setShowNotes((v) => !v)}
+            className="rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600"
+          >
+            {showNotes ? tt("收起演讲备注") : tt("演讲备注")}
+          </button>
+        )}
+      </div>
+
+      {showNotes && slide.notes.length > 0 && (
+        <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3 text-xs leading-relaxed text-zinc-600">
+          {slide.notes.map((n, ni) => (
+            <p key={ni} className="whitespace-pre-wrap">
+              {n}
+            </p>
+          ))}
+        </div>
+      )}
+
+      <div className="flex flex-wrap justify-center gap-1.5">
+        {slides.map((s, si) => (
+          <button
+            key={s.index}
+            type="button"
+            onClick={() => setI(si)}
+            title={s.title}
+            className={`h-7 min-w-7 rounded border px-1.5 text-[11px] ${
+              si === at ? "border-sky-500 bg-sky-50 text-sky-700" : "border-zinc-200 text-zinc-500"
+            }`}
+          >
+            {s.index}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function DocViewer({ blocks }: { blocks: DocBlock[] }) {
+  const headingClass = (level: number) =>
+    level <= 1
+      ? "text-xl font-semibold text-zinc-900"
+      : level === 2
+        ? "text-base font-semibold text-zinc-800"
+        : "text-sm font-semibold text-zinc-700";
+
+  return (
+    <div
+      className="mx-auto w-full max-w-3xl overflow-auto rounded-xl border border-zinc-200 bg-white px-8 py-10 shadow-sm"
+      style={{ maxHeight: "78vh" }}
+    >
+      <article className="flex flex-col gap-3">
+        {blocks.map((b, i) =>
+          b.kind === "table" ? (
+            <div key={i} className="overflow-auto">
+              <table className="w-full border-collapse text-sm">
+                <tbody>
+                  {b.rows.map((row, ri) => (
+                    <tr key={ri} className={ri === 0 ? "bg-zinc-50" : ""}>
+                      {row.map((cell, ci) => (
+                        <td key={ci} className="border border-zinc-200 px-2.5 py-1.5 text-zinc-700">
+                          {cell}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : b.kind === "heading" ? (
+            <h3 key={i} className={`mt-3 whitespace-pre-wrap ${headingClass(b.level)}`}>
+              {b.text}
+            </h3>
+          ) : (
+            <p
+              key={i}
+              className={`whitespace-pre-wrap text-sm leading-7 text-zinc-700 ${
+                b.kind === "list" ? "pl-5 before:-ml-3.5 before:text-zinc-400 before:content-['·_']" : ""
+              }`}
+            >
+              {b.text}
+            </p>
+          ),
+        )}
+      </article>
+    </div>
+  );
+}
+
+function PdfTextViewer({ pages }: { pages: PdfPage[] }) {
+  const tt = useUI();
+  const [i, setI] = useState(0);
+  const at = Math.min(i, pages.length - 1);
+  return (
+    <div className="flex flex-col gap-3">
+      <div
+        className="mx-auto w-full max-w-3xl overflow-auto rounded-xl border border-zinc-200 bg-white px-8 py-10 shadow-sm"
+        style={{ minHeight: "40vh", maxHeight: "72vh" }}
+      >
+        {pages[at].lines.map((line, li) => (
+          <p key={li} className="whitespace-pre-wrap text-sm leading-7 text-zinc-700">
+            {line}
+          </p>
+        ))}
+      </div>
+      <div className="flex items-center justify-center gap-3 text-sm">
+        <button
+          type="button"
+          onClick={() => setI(Math.max(0, at - 1))}
+          disabled={at === 0}
+          className="rounded-full border border-zinc-200 px-3 py-1 text-zinc-600 disabled:opacity-40"
+        >
+          {tt("上一页")}
+        </button>
+        <span className="text-xs text-zinc-500">
+          {pages[at].index} / {pages.length}
+        </span>
+        <button
+          type="button"
+          onClick={() => setI(Math.min(pages.length - 1, at + 1))}
+          disabled={at === pages.length - 1}
+          className="rounded-full border border-zinc-200 px-3 py-1 text-zinc-600 disabled:opacity-40"
+        >
+          {tt("下一页")}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/** 既有分页预览图又有文字版时，让用户自己挑；两者都是「真的打开了」。 */
+function PagesOrText({
+  pages,
+  title,
+  text,
+}: {
+  pages: string[];
+  title: string;
+  text: React.ReactNode;
+}) {
+  const tt = useUI();
+  const [mode, setMode] = useState<"image" | "text">("image");
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex justify-end gap-1.5">
+        {(["image", "text"] as const).map((m) => (
+          <button
+            key={m}
+            type="button"
+            onClick={() => setMode(m)}
+            className={`rounded-full px-2.5 py-1 text-xs ${
+              mode === m ? "bg-zinc-900 text-white" : "text-zinc-600 hover:bg-zinc-100"
+            }`}
+          >
+            {m === "image" ? tt("原版式") : tt("文字版")}
+          </button>
+        ))}
+      </div>
+      {mode === "image" ? <Pager pages={pages} title={title} /> : text}
+    </div>
+  );
+}
+
+function SheetsViewer({ sheets }: { sheets: (WorkSheet | ExtractedSheet)[] }) {
   const [active, setActive] = useState(0);
   const sheet = sheets[Math.min(active, sheets.length - 1)];
   return (
@@ -456,6 +750,15 @@ function SheetsViewer({ sheets }: { sheets: WorkSheet[] }) {
           ))}
         </div>
       )}
+      {"caption" in sheet && sheet.caption?.length ? (
+        <div className="text-sm font-medium text-zinc-800">
+          {sheet.caption.map((c, i) => (
+            <p key={i} className={i === 0 ? "" : "text-xs font-normal text-zinc-500"}>
+              {c}
+            </p>
+          ))}
+        </div>
+      ) : null}
       <div className="overflow-auto rounded-xl border border-zinc-200 bg-white" style={{ maxHeight: "70vh" }}>
         <table className="w-full border-collapse text-sm">
           {sheet.header && (
@@ -488,9 +791,43 @@ function SheetsViewer({ sheets }: { sheets: WorkSheet[] }) {
 
 /* ---------------- 主入口 ---------------- */
 
-export function WorksViewer({ work, payload }: { work: WorkEntry; payload: WorkPayload }) {
+export function WorksViewer({
+  work,
+  payload,
+  extracted,
+}: {
+  work: WorkEntry;
+  payload: WorkPayload;
+  /** 构建期从 .pptx / .docx / .xlsx / .pdf 真字节解出来的正文，解不出为 null。 */
+  extracted?: ExtractedContent | null;
+}) {
   const tt = useUI();
   const v = work.view;
+
+  // 抽出来的正文按形状挑查看器。这一段是 deck / document / pdf / grid
+  // 「点开只是放大的封面」那条缺陷的正解：不等产线位补预览图，直接开原件。
+  const textView =
+    extracted?.form === "slides" ? (
+      <div className="flex flex-col gap-2">
+        <SlidesViewer slides={extracted.slides} />
+        <ExtractNote from={extracted.from} />
+      </div>
+    ) : extracted?.form === "doc" ? (
+      <div className="flex flex-col gap-2">
+        <DocViewer blocks={extracted.blocks} />
+        <ExtractNote from={extracted.from} />
+      </div>
+    ) : extracted?.form === "pages" ? (
+      <div className="flex flex-col gap-2">
+        <PdfTextViewer pages={extracted.pages} />
+        <ExtractNote from={extracted.from} />
+      </div>
+    ) : extracted?.form === "sheets" ? (
+      <div className="flex flex-col gap-2">
+        <SheetsViewer sheets={extracted.sheets} />
+        <ExtractNote from={extracted.from} />
+      </div>
+    ) : null;
 
   switch (v.kind) {
     case "design-document":
@@ -531,7 +868,11 @@ export function WorksViewer({ work, payload }: { work: WorkEntry; payload: WorkP
     case "game":
       // 游戏要跑脚本，所以给 allow-scripts —— **绝不与 allow-same-origin 同给**。
       if (!/\.html?$/i.test(v.src)) {
-        return <Fallback work={work} reason="这一件只有打包字节，站内不解包运行；请下载后本地打开。" />;
+        // `.game.json` 信封（正文是整份 HTML）不在这里跑：把源码塞进 srcdoc 会让
+        // iframe 继承本站 origin，域隔离当场作废（GameRoute.tsx:101-102 明令禁止，
+        // 也是安全内核 security.untrusted-content-domain 的直接要求）。
+        // 所以站内给的是这一件**看得懂的说明**，跑要到沙箱域或下载后本地打开。
+        return <GameBriefViewer work={work} payload={payload} />;
       }
       return (
         <Frame aspect={v.aspect}>
@@ -547,15 +888,28 @@ export function WorksViewer({ work, payload }: { work: WorkEntry; payload: WorkP
       );
 
     case "grid":
+      // 片段自带 sheets[] 最准（产线位知道哪几张表要给人看）；
+      // 没给就用构建期从 .xlsx 解出来的表；再没有才是预览图 / 封面。
       if (v.sheets?.length) return <SheetsViewer sheets={v.sheets} />;
+      if (textView) return textView;
       if (v.pages?.length) return <Pager pages={v.pages} title={work.title} />;
-      return <Fallback work={work} reason="这份表格还没有站内可读版本，先看封面。" />;
+      return <Fallback work={work} reason="这份表格打不开：既不是能解开的 .xlsx，也没有分页预览图。请下载后本地打开。" />;
 
     case "deck":
     case "document":
     case "pdf":
+      // 两样都有就让用户挑：原版式（预览图）保真，文字版可选可搜。
+      if (v.pages?.length && textView) {
+        return <PagesOrText pages={v.pages} title={work.title} text={textView} />;
+      }
       if (v.pages?.length) return <Pager pages={v.pages} title={work.title} />;
-      return <Fallback work={work} reason="这一件还没有分页预览图，先看封面。" />;
+      if (textView) return textView;
+      return (
+        <Fallback
+          work={work}
+          reason="这一件的原件解不出可读正文（可能是扫描件或加密文档），也没有分页预览图。请下载后本地打开。"
+        />
+      );
 
     case "image":
       return (

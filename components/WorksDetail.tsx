@@ -6,6 +6,7 @@ import {
   ARTIFACT_TYPE_LABELS,
   VIEW_KINDS,
   downloadHref,
+  type ExtractedContent,
   type WorkEntry,
 } from "@/components/WorksKinds";
 import { WorksViewer, type WorkPayload } from "@/components/WorksViewer";
@@ -20,7 +21,15 @@ function readingRows(readings: Record<string, unknown> | undefined): [string, st
     .map(([k, v]) => [k, String(v)] as [string, string]);
 }
 
-export function WorksDetail({ work, payload }: { work: WorkEntry; payload: WorkPayload }) {
+export function WorksDetail({
+  work,
+  payload,
+  extracted,
+}: {
+  work: WorkEntry;
+  payload: WorkPayload;
+  extracted?: ExtractedContent | null;
+}) {
   const tt = useUI();
   const href = downloadHref(work);
   const rows = readingRows(work.readings);
@@ -40,7 +49,7 @@ export function WorksDetail({ work, payload }: { work: WorkEntry; payload: WorkP
 
       <div className="flex flex-col gap-6 lg:flex-row">
         <div className="min-w-0 flex-1">
-          <WorksViewer work={work} payload={payload} />
+          <WorksViewer work={work} payload={payload} extracted={extracted} />
         </div>
 
         <aside className="w-full shrink-0 lg:w-80">

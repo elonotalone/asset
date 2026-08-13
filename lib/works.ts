@@ -305,10 +305,25 @@ export function readWorkPayload(work: WorkEntry): unknown | null {
       console.warn(`[works] ${work.id} 的 view.src 超过 ${MAX_PAYLOAD_BYTES} 字节，不在站内渲染`);
       return null;
     }
-    return JSON.parse(readFileSync(abs, "utf8"));
+    return stripRunnableSource(JSON.parse(readFileSync(abs, "utf8")));
   } catch (err) {
     console.warn(`[works] ${work.id} 的 view.src 读不出来：${String(err)}`);
     return null;
   }
+}
+
+/**
+ * 可运行源码（`oceanleo.game-bundle.v1` 的 `source`）在服务端就摘掉，不进页面。
+ *
+ * 站内**永远不运行未解包的游戏字节**：那要么走 `srcdoc`（继承本站 origin，
+ * 域隔离作废，`GameRoute.tsx:101-102` 明令禁止），要么把源码写进 DOM。
+ * 两条都不走，那这段字节就没有任何理由出现在客户端负载里。
+ */
+function stripRunnableSource(payload: unknown): unknown {
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) return payload;
+  const o = payload as Record<string, unknown>;
+  if (typeof o.source !== "string") return payload;
+  const { source, ...rest } = o;
+  return { ...rest, sourceOmitted: true, sourceChars: source.length };
 }
 
