@@ -1,91 +1,169 @@
 {
   "schema": "oceanleo.workflow-view/v1",
-  "note": "站内查看用的投影。节点与边逐条来自工程文件 versions[0].graph，未增删；工程本体见 project 字段。",
+  "note": "站内查看数据逐条投影自 project；params 与 theme 均保留，查看器不得用默认色覆盖调用方合法输入。",
   "project": "oceanleo.video-canvas.v1",
+  "theme": {
+    "surface": "#E8F7FA",
+    "node": "#F8FEFF",
+    "nodeBorder": "#087E8B",
+    "text": "#123D45",
+    "muted": "#4A6970",
+    "edge": "#087E8B",
+    "accent": "#F2B134",
+    "warning": "#C74632"
+  },
   "nodes": [
     {
       "id": "n-src-ticket",
       "label": "入口一 · 工单系统导出",
       "kind": "source",
-      "x": 40,
-      "y": 20
+      "x": 56,
+      "y": 172,
+      "params": {
+        "strategy": "passthrough",
+        "timeoutMs": 23400000,
+        "policy": "fail-open"
+      }
     },
     {
       "id": "n-src-trade",
       "label": "入口二 · 交易后台导出",
       "kind": "source",
-      "x": 300,
-      "y": 20
+      "x": 56,
+      "y": 288,
+      "params": {
+        "strategy": "passthrough",
+        "timeoutMs": 23400000,
+        "policy": "fail-open"
+      }
     },
     {
       "id": "n-src-voice",
       "label": "入口三 · 舆情监控导出",
       "kind": "source",
-      "x": 560,
-      "y": 20
+      "x": 56,
+      "y": 404,
+      "params": {
+        "strategy": "passthrough",
+        "timeoutMs": 23400000,
+        "policy": "fail-open"
+      }
     },
     {
       "id": "n-norm-ticket",
       "label": "工单归一 · 按创建时间切自然日",
       "kind": "filter",
-      "x": 40,
-      "y": 112
+      "x": 306,
+      "y": 172,
+      "params": {
+        "strategy": "normalize",
+        "timeoutMs": 300000,
+        "policy": "fail-closed",
+        "templateRef": "workflow/ticket-day-window-v1"
+      }
     },
     {
       "id": "n-norm-trade",
       "label": "交易归一 · 分转元、退款并账",
       "kind": "filter",
-      "x": 300,
-      "y": 112
+      "x": 306,
+      "y": 288,
+      "params": {
+        "strategy": "normalize",
+        "timeoutMs": 300000,
+        "policy": "fail-closed",
+        "templateRef": "workflow/trade-currency-v1"
+      }
     },
     {
       "id": "n-norm-voice",
       "label": "舆情归一 · 情感标签收敛到三档",
       "kind": "filter",
-      "x": 560,
-      "y": 112
+      "x": 306,
+      "y": 404,
+      "params": {
+        "strategy": "normalize",
+        "timeoutMs": 300000,
+        "policy": "fail-open",
+        "templateRef": "workflow/sentiment-three-level-v1"
+      }
     },
     {
       "id": "n-dedupe-trade",
       "label": "交易去重 · 同一笔重复上报只留一条",
       "kind": "filter",
-      "x": 40,
-      "y": 204
+      "x": 556,
+      "y": 172,
+      "params": {
+        "strategy": "deduplicate",
+        "timeoutMs": 300000,
+        "policy": "fail-closed",
+        "field": "transactionId"
+      }
     },
     {
       "id": "n-align",
       "label": "合并点 · 时间窗对齐（唯一一个）",
       "kind": "concat",
-      "x": 40,
-      "y": 296
+      "x": 806,
+      "y": 172,
+      "params": {
+        "strategy": "merge-available",
+        "minInputs": 2,
+        "timeoutMs": 23400000,
+        "policy": "wait-until-timeout"
+      }
     },
     {
       "id": "n-absence",
       "label": "缺席标注 · 谁没到齐写在成品上",
       "kind": "filter",
-      "x": 40,
-      "y": 388
+      "x": 1056,
+      "y": 172,
+      "params": {
+        "strategy": "template",
+        "timeoutMs": 5000,
+        "policy": "continue-with-warning",
+        "templateRef": "workflow/source-absence-note-v1"
+      }
     },
     {
       "id": "n-compose",
       "label": "拼装日报 · 同口径记录成一份",
       "kind": "overlay",
-      "x": 40,
-      "y": 480
+      "x": 1306,
+      "y": 172,
+      "params": {
+        "strategy": "render",
+        "timeoutMs": 60000,
+        "policy": "fail-closed",
+        "templateRef": "workflow/operations-daily-v1"
+      }
     },
     {
       "id": "n-manifest",
       "label": "来源清单 · 哪一路、取数区间、齐否",
       "kind": "text",
-      "x": 40,
-      "y": 572
+      "x": 1556,
+      "y": 172,
+      "params": {
+        "strategy": "template",
+        "timeoutMs": 5000,
+        "policy": "record-only",
+        "templateRef": "workflow/source-manifest-v1"
+      }
     },
     {
       "id": "n-out",
       "label": "出片 · 日报 + 来源清单",
       "kind": "output",
-      "x": 40,
-      "y": 664
+      "x": 1806,
+      "y": 172,
+      "params": {
+        "strategy": "archive",
+        "timeoutMs": 5000,
+        "policy": "record-only"
+      }
     }
   ],
   "edges": [

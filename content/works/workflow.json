@@ -137,17 +137,53 @@
       "longestPath": 8,
       "branchCount": 1,
       "backEdgeCount": 0,
-      "fingerprint": "12/14/8/1/0",
+      "fingerprint": "12/14/8/1/1/0",
       "entryNodeCount": 1,
+      "orphanNodeCount": 0,
+      "sinkReachableFromAllEntries": true,
+      "portTypeMismatches": 0,
       "nodeKindCount": 6,
       "outputNodeCount": 1,
       "clipCount": 12,
       "layerCount": 5,
       "durationMs": 30000,
-      "canonicalByteSize": 5427,
-      "flowScenariosRun": 4,
-      "flowScenariosReachedOutput": 4,
-      "portTypeMismatches": 0
+      "sourceBytes": 14281,
+      "canonicalByteSize": 6598,
+      "paramsNodeCount": 8,
+      "paramKeys": [
+        "approvalRequired",
+        "defaultPort",
+        "field",
+        "operator",
+        "policy",
+        "strategy",
+        "templateRef",
+        "threshold",
+        "timeoutMs"
+      ],
+      "flowScenariosRun": 5,
+      "flowScenariosReachedOutput": 5,
+      "theme": {
+        "surface": "#F3EBDD",
+        "node": "#FFF9EE",
+        "nodeBorder": "#2F6B57",
+        "text": "#173B32",
+        "muted": "#6B5D4D",
+        "edge": "#2F6B57",
+        "accent": "#D66A2C",
+        "warning": "#B3261E"
+      },
+      "nonNeutralPalette": [
+        "#F3EBDD",
+        "#FFF9EE",
+        "#2F6B57",
+        "#173B32",
+        "#6B5D4D",
+        "#D66A2C",
+        "#B3261E"
+      ],
+      "coverColorCount": 1113,
+      "coverBytes": 88653
     }
   },
   {
@@ -177,17 +213,53 @@
       "longestPath": 9,
       "branchCount": 4,
       "backEdgeCount": 2,
-      "fingerprint": "10/14/9/4/2",
+      "fingerprint": "10/14/9/4/1/2",
       "entryNodeCount": 1,
+      "orphanNodeCount": 0,
+      "sinkReachableFromAllEntries": true,
+      "portTypeMismatches": 0,
       "nodeKindCount": 4,
       "outputNodeCount": 1,
       "clipCount": 12,
       "layerCount": 2,
       "durationMs": 36000,
-      "canonicalByteSize": 5311,
+      "sourceBytes": 13552,
+      "canonicalByteSize": 6334,
+      "paramsNodeCount": 6,
+      "paramKeys": [
+        "approvalRequired",
+        "defaultPort",
+        "field",
+        "maxIterations",
+        "operator",
+        "policy",
+        "retryDelayMs",
+        "strategy",
+        "templateRef",
+        "timeoutMs"
+      ],
       "flowScenariosRun": 5,
       "flowScenariosReachedOutput": 5,
-      "portTypeMismatches": 0
+      "theme": {
+        "surface": "#17152B",
+        "node": "#2A2548",
+        "nodeBorder": "#8C7CF0",
+        "text": "#F4F0FF",
+        "muted": "#B9AEDB",
+        "edge": "#8C7CF0",
+        "accent": "#E85AAD",
+        "warning": "#FF8A65"
+      },
+      "nonNeutralPalette": [
+        "#17152B",
+        "#2A2548",
+        "#8C7CF0",
+        "#B9AEDB",
+        "#E85AAD",
+        "#FF8A65"
+      ],
+      "coverColorCount": 1005,
+      "coverBytes": 69053
     }
   },
   {
@@ -217,17 +289,49 @@
       "longestPath": 8,
       "branchCount": 0,
       "backEdgeCount": 0,
-      "fingerprint": "12/11/8/0/0",
+      "fingerprint": "12/11/8/0/3/0",
       "entryNodeCount": 3,
+      "orphanNodeCount": 0,
+      "sinkReachableFromAllEntries": true,
+      "portTypeMismatches": 0,
       "nodeKindCount": 6,
       "outputNodeCount": 1,
       "clipCount": 12,
       "layerCount": 4,
       "durationMs": 27000,
-      "canonicalByteSize": 5073,
+      "sourceBytes": 13630,
+      "canonicalByteSize": 6477,
+      "paramsNodeCount": 12,
+      "paramKeys": [
+        "field",
+        "minInputs",
+        "policy",
+        "strategy",
+        "templateRef",
+        "timeoutMs"
+      ],
       "flowScenariosRun": 3,
       "flowScenariosReachedOutput": 3,
-      "portTypeMismatches": 0
+      "theme": {
+        "surface": "#E8F7FA",
+        "node": "#F8FEFF",
+        "nodeBorder": "#087E8B",
+        "text": "#123D45",
+        "muted": "#4A6970",
+        "edge": "#087E8B",
+        "accent": "#F2B134",
+        "warning": "#C74632"
+      },
+      "nonNeutralPalette": [
+        "#E8F7FA",
+        "#087E8B",
+        "#123D45",
+        "#4A6970",
+        "#F2B134",
+        "#C74632"
+      ],
+      "coverColorCount": 992,
+      "coverBytes": 77433
     }
   }
 ]

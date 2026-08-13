@@ -52,6 +52,11 @@
                   "dataType": "text"
                 }
               ]
+            },
+            "params": {
+              "strategy": "queue",
+              "timeoutMs": 86400000,
+              "policy": "continue-with-warning"
             }
           },
           {
@@ -81,6 +86,15 @@
                   "dataType": "text"
                 }
               ]
+            },
+            "params": {
+              "strategy": "route-by-value",
+              "field": "reviewDecision",
+              "operator": "eq",
+              "defaultPort": "revise",
+              "timeoutMs": 28800000,
+              "policy": "require-human",
+              "templateRef": "workflow/editorial-review-v1"
             }
           },
           {
@@ -110,6 +124,13 @@
                   "dataType": "number"
                 }
               ]
+            },
+            "params": {
+              "strategy": "retry",
+              "maxIterations": 3,
+              "retryDelayMs": 0,
+              "timeoutMs": 86400000,
+              "policy": "escalate"
             }
           },
           {
@@ -177,6 +198,15 @@
                   "dataType": "text"
                 }
               ]
+            },
+            "params": {
+              "strategy": "route-by-value",
+              "field": "factCheckDecision",
+              "operator": "eq",
+              "defaultPort": "red",
+              "timeoutMs": 14400000,
+              "policy": "fail-closed",
+              "templateRef": "workflow/fact-check-v1"
             }
           },
           {
@@ -202,6 +232,16 @@
                   "dataType": "text"
                 }
               ]
+            },
+            "params": {
+              "strategy": "route-by-value",
+              "field": "chiefDecision",
+              "operator": "eq",
+              "defaultPort": "drop",
+              "approvalRequired": true,
+              "timeoutMs": 86400000,
+              "policy": "require-human",
+              "templateRef": "workflow/chief-editor-decision-v1"
             }
           },
           {
@@ -247,6 +287,11 @@
                 }
               ],
               "outputs": []
+            },
+            "params": {
+              "strategy": "archive",
+              "timeoutMs": 5000,
+              "policy": "record-only"
             }
           }
         ],
@@ -451,5 +496,15 @@
         "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
       }
     ]
+  },
+  "theme": {
+    "surface": "#17152B",
+    "node": "#2A2548",
+    "nodeBorder": "#8C7CF0",
+    "text": "#F4F0FF",
+    "muted": "#B9AEDB",
+    "edge": "#8C7CF0",
+    "accent": "#E85AAD",
+    "warning": "#FF8A65"
   }
 }

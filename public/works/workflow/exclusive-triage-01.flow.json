@@ -1,91 +1,154 @@
 {
   "schema": "oceanleo.workflow-view/v1",
-  "note": "站内查看用的投影。节点与边逐条来自工程文件 versions[0].graph，未增删；工程本体见 project 字段。",
+  "note": "站内查看数据逐条投影自 project；params 与 theme 均保留，查看器不得用默认色覆盖调用方合法输入。",
   "project": "oceanleo.video-canvas.v1",
+  "theme": {
+    "surface": "#F3EBDD",
+    "node": "#FFF9EE",
+    "nodeBorder": "#2F6B57",
+    "text": "#173B32",
+    "muted": "#6B5D4D",
+    "edge": "#2F6B57",
+    "accent": "#D66A2C",
+    "warning": "#B3261E"
+  },
   "nodes": [
     {
       "id": "n-intake",
       "label": "受理 · 工单入口",
       "kind": "source",
-      "x": 40,
-      "y": 20
+      "x": 56,
+      "y": 172
     },
     {
       "id": "n-enrich",
       "label": "补齐信息 · 订单/物流/历史工单",
       "kind": "filter",
-      "x": 40,
-      "y": 112
+      "x": 306,
+      "y": 172,
+      "params": {
+        "strategy": "normalize",
+        "timeoutMs": 2500,
+        "policy": "fail-closed",
+        "templateRef": "workflow/customer-context-v1"
+      }
     },
     {
       "id": "n-classify",
       "label": "分诊判定 · 出结论并写明依据",
       "kind": "filter",
-      "x": 40,
-      "y": 204
+      "x": 556,
+      "y": 172,
+      "params": {
+        "strategy": "template",
+        "timeoutMs": 1500,
+        "policy": "require-human",
+        "templateRef": "workflow/ticket-classifier-v1"
+      }
     },
     {
       "id": "n-triage",
       "label": "互斥分诊口 · 三条路 + 兜底",
       "kind": "branch",
-      "x": 40,
-      "y": 296
+      "x": 806,
+      "y": 172,
+      "params": {
+        "strategy": "route-by-value",
+        "field": "category",
+        "operator": "eq",
+        "defaultPort": "other",
+        "timeoutMs": 500,
+        "policy": "fail-closed",
+        "templateRef": "workflow/exclusive-triage-v1"
+      }
     },
     {
       "id": "n-auto-reply",
       "label": "自助路 · 套话术库回复",
       "kind": "text",
-      "x": 40,
-      "y": 388
+      "x": 1056,
+      "y": 172,
+      "params": {
+        "strategy": "template",
+        "timeoutMs": 2000,
+        "policy": "fail-open",
+        "templateRef": "workflow/self-service-reply-v2"
+      }
     },
     {
       "id": "n-queue",
       "label": "人工路 · 按技能组排队",
       "kind": "filter",
-      "x": 300,
-      "y": 388
+      "x": 1056,
+      "y": 288,
+      "params": {
+        "strategy": "queue",
+        "timeoutMs": 900000,
+        "policy": "continue-with-warning"
+      }
     },
     {
       "id": "n-verify",
       "label": "退款路 · 核对金额与凭证",
       "kind": "filter",
-      "x": 560,
-      "y": 388
+      "x": 1056,
+      "y": 404
     },
     {
       "id": "n-fallback",
       "label": "兜底 · 三条都不命中转总台",
       "kind": "filter",
-      "x": 820,
-      "y": 388
+      "x": 1056,
+      "y": 520
     },
     {
       "id": "n-agent",
       "label": "人工路 · 坐席处理并回访",
       "kind": "filter",
-      "x": 40,
-      "y": 480
+      "x": 1306,
+      "y": 172
     },
     {
       "id": "n-approve",
       "label": "退款路 · 审批（超额转人工复核）",
       "kind": "filter",
-      "x": 300,
-      "y": 480
+      "x": 1306,
+      "y": 288,
+      "params": {
+        "strategy": "threshold",
+        "field": "refundAmount",
+        "operator": "lte",
+        "threshold": 200,
+        "approvalRequired": true,
+        "timeoutMs": 14400000,
+        "policy": "require-human",
+        "templateRef": "workflow/refund-approval-v1"
+      }
     },
     {
       "id": "n-refund",
       "label": "退款路 · 发起退款并留痕",
       "kind": "overlay",
-      "x": 40,
-      "y": 572
+      "x": 1556,
+      "y": 172,
+      "params": {
+        "strategy": "render",
+        "timeoutMs": 30000,
+        "policy": "record-only",
+        "templateRef": "workflow/refund-ledger-v1"
+      }
     },
     {
       "id": "n-close",
       "label": "结案登记 · 记走了哪条路",
       "kind": "output",
-      "x": 40,
-      "y": 664
+      "x": 1806,
+      "y": 172,
+      "params": {
+        "strategy": "archive",
+        "timeoutMs": 5000,
+        "policy": "record-only"
+      }
     }
   ],
   "edges": [

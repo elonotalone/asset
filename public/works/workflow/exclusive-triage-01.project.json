@@ -43,6 +43,12 @@
                   "dataType": "text"
                 }
               ]
+            },
+            "params": {
+              "strategy": "normalize",
+              "timeoutMs": 2500,
+              "policy": "fail-closed",
+              "templateRef": "workflow/customer-context-v1"
             }
           },
           {
@@ -64,6 +70,12 @@
                   "dataType": "text"
                 }
               ]
+            },
+            "params": {
+              "strategy": "template",
+              "timeoutMs": 1500,
+              "policy": "require-human",
+              "templateRef": "workflow/ticket-classifier-v1"
             }
           },
           {
@@ -97,6 +109,15 @@
                   "dataType": "text"
                 }
               ]
+            },
+            "params": {
+              "strategy": "route-by-value",
+              "field": "category",
+              "operator": "eq",
+              "defaultPort": "other",
+              "timeoutMs": 500,
+              "policy": "fail-closed",
+              "templateRef": "workflow/exclusive-triage-v1"
             }
           },
           {
@@ -118,6 +139,12 @@
                   "dataType": "text"
                 }
               ]
+            },
+            "params": {
+              "strategy": "template",
+              "timeoutMs": 2000,
+              "policy": "fail-open",
+              "templateRef": "workflow/self-service-reply-v2"
             }
           },
           {
@@ -139,6 +166,11 @@
                   "dataType": "text"
                 }
               ]
+            },
+            "params": {
+              "strategy": "queue",
+              "timeoutMs": 900000,
+              "policy": "continue-with-warning"
             }
           },
           {
@@ -202,6 +234,16 @@
                   "dataType": "text"
                 }
               ]
+            },
+            "params": {
+              "strategy": "threshold",
+              "field": "refundAmount",
+              "operator": "lte",
+              "threshold": 200,
+              "approvalRequired": true,
+              "timeoutMs": 14400000,
+              "policy": "require-human",
+              "templateRef": "workflow/refund-approval-v1"
             }
           },
           {
@@ -223,6 +265,12 @@
                   "dataType": "text"
                 }
               ]
+            },
+            "params": {
+              "strategy": "render",
+              "timeoutMs": 30000,
+              "policy": "record-only",
+              "templateRef": "workflow/refund-ledger-v1"
             }
           },
           {
@@ -272,6 +320,11 @@
                 }
               ],
               "outputs": []
+            },
+            "params": {
+              "strategy": "archive",
+              "timeoutMs": 5000,
+              "policy": "record-only"
             }
           }
         ],
@@ -476,5 +529,15 @@
         "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
       }
     ]
+  },
+  "theme": {
+    "surface": "#F3EBDD",
+    "node": "#FFF9EE",
+    "nodeBorder": "#2F6B57",
+    "text": "#173B32",
+    "muted": "#6B5D4D",
+    "edge": "#2F6B57",
+    "accent": "#D66A2C",
+    "warning": "#B3261E"
   }
 }

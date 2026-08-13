@@ -1,77 +1,132 @@
 {
   "schema": "oceanleo.workflow-view/v1",
-  "note": "站内查看用的投影。节点与边逐条来自工程文件 versions[0].graph，未增删；工程本体见 project 字段。",
+  "note": "站内查看数据逐条投影自 project；params 与 theme 均保留，查看器不得用默认色覆盖调用方合法输入。",
   "project": "oceanleo.video-canvas.v1",
+  "theme": {
+    "surface": "#17152B",
+    "node": "#2A2548",
+    "nodeBorder": "#8C7CF0",
+    "text": "#F4F0FF",
+    "muted": "#B9AEDB",
+    "edge": "#8C7CF0",
+    "accent": "#E85AAD",
+    "warning": "#FF8A65"
+  },
   "nodes": [
     {
       "id": "n-draft",
       "label": "草稿 · 作者手上",
       "kind": "source",
-      "x": 40,
-      "y": 20
+      "x": 56,
+      "y": 172
     },
     {
       "id": "n-submitted",
       "label": "已送审 · 编辑手上",
       "kind": "filter",
-      "x": 40,
-      "y": 112
+      "x": 306,
+      "y": 172,
+      "params": {
+        "strategy": "queue",
+        "timeoutMs": 86400000,
+        "policy": "continue-with-warning"
+      }
     },
     {
       "id": "n-review",
       "label": "审读判定 · 通过/退改/准撤回",
       "kind": "branch",
-      "x": 40,
-      "y": 204
+      "x": 556,
+      "y": 172,
+      "params": {
+        "strategy": "route-by-value",
+        "field": "reviewDecision",
+        "operator": "eq",
+        "defaultPort": "revise",
+        "timeoutMs": 28800000,
+        "policy": "require-human",
+        "templateRef": "workflow/editorial-review-v1"
+      }
     },
     {
       "id": "n-withdrawn",
       "label": "已撤回 · 作者取回",
       "kind": "filter",
-      "x": 40,
-      "y": 296
+      "x": 806,
+      "y": 172
     },
     {
       "id": "n-factcheck",
       "label": "校对核红 · 校对手上",
       "kind": "filter",
-      "x": 300,
-      "y": 296
+      "x": 806,
+      "y": 288
     },
     {
       "id": "n-check",
       "label": "核红判定 · 清白/带红回退改",
       "kind": "branch",
-      "x": 40,
-      "y": 388
+      "x": 1056,
+      "y": 172,
+      "params": {
+        "strategy": "route-by-value",
+        "field": "factCheckDecision",
+        "operator": "eq",
+        "defaultPort": "red",
+        "timeoutMs": 14400000,
+        "policy": "fail-closed",
+        "templateRef": "workflow/fact-check-v1"
+      }
     },
     {
       "id": "n-revising",
       "label": "退改中 · 作者手上（记第几次）",
       "kind": "filter",
-      "x": 40,
-      "y": 480
+      "x": 1306,
+      "y": 172,
+      "params": {
+        "strategy": "retry",
+        "maxIterations": 3,
+        "retryDelayMs": 0,
+        "timeoutMs": 86400000,
+        "policy": "escalate"
+      }
     },
     {
       "id": "n-escalate",
       "label": "主编裁定 · 打回次数已用尽",
       "kind": "filter",
-      "x": 40,
-      "y": 572
+      "x": 1556,
+      "y": 172,
+      "params": {
+        "strategy": "route-by-value",
+        "field": "chiefDecision",
+        "operator": "eq",
+        "defaultPort": "drop",
+        "approvalRequired": true,
+        "timeoutMs": 86400000,
+        "policy": "require-human",
+        "templateRef": "workflow/chief-editor-decision-v1"
+      }
     },
     {
       "id": "n-approved",
       "label": "定稿待发 · 等排期",
       "kind": "filter",
-      "x": 40,
-      "y": 664
+      "x": 1806,
+      "y": 172
     },
     {
       "id": "n-archive",
       "label": "归档 · 唯一终态（发布/废弃）",
       "kind": "output",
-      "x": 40,
-      "y": 756
+      "x": 2056,
+      "y": 172,
+      "params": {
+        "strategy": "archive",
+        "timeoutMs": 5000,
+        "policy": "record-only"
+      }
     }
   ],
   "edges": [

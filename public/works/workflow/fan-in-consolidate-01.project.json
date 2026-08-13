@@ -22,6 +22,11 @@
                   "dataType": "text"
                 }
               ]
+            },
+            "params": {
+              "strategy": "passthrough",
+              "timeoutMs": 23400000,
+              "policy": "fail-open"
             }
           },
           {
@@ -38,6 +43,11 @@
                   "dataType": "number"
                 }
               ]
+            },
+            "params": {
+              "strategy": "passthrough",
+              "timeoutMs": 23400000,
+              "policy": "fail-open"
             }
           },
           {
@@ -54,6 +64,11 @@
                   "dataType": "text"
                 }
               ]
+            },
+            "params": {
+              "strategy": "passthrough",
+              "timeoutMs": 23400000,
+              "policy": "fail-open"
             }
           },
           {
@@ -75,6 +90,12 @@
                   "dataType": "text"
                 }
               ]
+            },
+            "params": {
+              "strategy": "normalize",
+              "timeoutMs": 300000,
+              "policy": "fail-closed",
+              "templateRef": "workflow/ticket-day-window-v1"
             }
           },
           {
@@ -96,6 +117,12 @@
                   "dataType": "text"
                 }
               ]
+            },
+            "params": {
+              "strategy": "normalize",
+              "timeoutMs": 300000,
+              "policy": "fail-closed",
+              "templateRef": "workflow/trade-currency-v1"
             }
           },
           {
@@ -117,6 +144,12 @@
                   "dataType": "text"
                 }
               ]
+            },
+            "params": {
+              "strategy": "deduplicate",
+              "timeoutMs": 300000,
+              "policy": "fail-closed",
+              "field": "transactionId"
             }
           },
           {
@@ -138,6 +171,12 @@
                   "dataType": "text"
                 }
               ]
+            },
+            "params": {
+              "strategy": "normalize",
+              "timeoutMs": 300000,
+              "policy": "fail-open",
+              "templateRef": "workflow/sentiment-three-level-v1"
             }
           },
           {
@@ -167,6 +206,12 @@
                   "dataType": "text"
                 }
               ]
+            },
+            "params": {
+              "strategy": "merge-available",
+              "minInputs": 2,
+              "timeoutMs": 23400000,
+              "policy": "wait-until-timeout"
             }
           },
           {
@@ -188,6 +233,12 @@
                   "dataType": "text"
                 }
               ]
+            },
+            "params": {
+              "strategy": "template",
+              "timeoutMs": 5000,
+              "policy": "continue-with-warning",
+              "templateRef": "workflow/source-absence-note-v1"
             }
           },
           {
@@ -209,6 +260,12 @@
                   "dataType": "text"
                 }
               ]
+            },
+            "params": {
+              "strategy": "render",
+              "timeoutMs": 60000,
+              "policy": "fail-closed",
+              "templateRef": "workflow/operations-daily-v1"
             }
           },
           {
@@ -230,6 +287,12 @@
                   "dataType": "text"
                 }
               ]
+            },
+            "params": {
+              "strategy": "template",
+              "timeoutMs": 5000,
+              "policy": "record-only",
+              "templateRef": "workflow/source-manifest-v1"
             }
           },
           {
@@ -246,6 +309,11 @@
                 }
               ],
               "outputs": []
+            },
+            "params": {
+              "strategy": "archive",
+              "timeoutMs": 5000,
+              "policy": "record-only"
             }
           }
         ],
@@ -429,5 +497,15 @@
         "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
       }
     ]
+  },
+  "theme": {
+    "surface": "#E8F7FA",
+    "node": "#F8FEFF",
+    "nodeBorder": "#087E8B",
+    "text": "#123D45",
+    "muted": "#4A6970",
+    "edge": "#087E8B",
+    "accent": "#F2B134",
+    "warning": "#C74632"
   }
 }
