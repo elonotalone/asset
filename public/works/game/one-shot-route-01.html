@@ -129,6 +129,24 @@ var bundle = (function () {
     };
   }
 
+  function actionBoxes() {
+    var L = layout();
+    var h = Math.max(30, L.foot * 0.62);
+    var gap = Math.max(8, L.pad * 0.55);
+    var launchW = Math.max(82, Math.min(118, W * 0.14));
+    var undoW = Math.max(70, Math.min(98, W * 0.11));
+    var y = L.footTop + (L.foot - h) / 2;
+    var launch = { x: W - L.pad - launchW, y: y, w: launchW, h: h };
+    return {
+      launch: launch,
+      undo: { x: launch.x - gap - undoW, y: y, w: undoW, h: h }
+    };
+  }
+
+  function inside(x, y, box) {
+    return x >= box.x && x <= box.x + box.w && y >= box.y && y <= box.y + box.h;
+  }
+
   function tileAt(x, y) {
     var L = layout();
     var c = Math.floor((x - L.ox) / L.tile), r = Math.floor((y - L.oy) / L.tile);
@@ -208,7 +226,11 @@ var bundle = (function () {
       if (phase !== "down") return;
       if (S.over) { if (S.overAge > 420) fresh(FUEL, 1); return; }
       if (S.phase !== "plan") return;             // 执行段不收任何输入
-      extend(tileAt(finite(x, -1), finite(y, -1)));
+      x = finite(x, -1); y = finite(y, -1);
+      var buttons = actionBoxes();
+      if (inside(x, y, buttons.launch)) { launch(); return; }
+      if (inside(x, y, buttons.undo)) { undo(); return; }
+      extend(tileAt(x, y));
     },
 
     key: function (code, phase) {
@@ -404,9 +426,32 @@ var bundle = (function () {
       g.textAlign = "left";
       g.fillStyle = rgba(ROUTE, 1);
       g.globalAlpha = 0.85;
-      g.fillText("点相邻格画路线　Z 撤一步　回车出发（出发之后一个键都不收）",
+      g.fillText("点相邻格画路线　方向键也能走",
         L.pad, L.footTop + L.foot / 2);
       g.globalAlpha = 1;
+
+      // 触屏完整路径：画完路线后不用借键盘，直接点“出发”；撤销也有同等入口。
+      if (S.phase === "plan" && !S.over) {
+        var buttons = actionBoxes();
+        var paintButton = function (box, label, enabled, strong) {
+          g.globalAlpha = enabled ? (strong ? 0.92 : 0.65) : 0.22;
+          g.fillStyle = rgba(strong ? ROUTE : WALL, 1);
+          g.fillRect(box.x, box.y, box.w, box.h);
+          g.globalAlpha = enabled ? 0.95 : 0.42;
+          g.strokeStyle = rgba(strong ? ROUTE : PICK, 1);
+          g.lineWidth = 1.5;
+          g.strokeRect(box.x + 0.75, box.y + 0.75, box.w - 1.5, box.h - 1.5);
+          pixel(g, Math.min(box.h * 0.46, Math.min(W, H) * 0.026), "700");
+          g.textAlign = "center";
+          g.textBaseline = "middle";
+          g.fillStyle = rgba(strong ? NIGHT : ROUTE, 1);
+          g.fillText(label, box.x + box.w / 2, box.y + box.h / 2);
+          g.textBaseline = "alphabetic";
+          g.globalAlpha = 1;
+        };
+        paintButton(buttons.undo, "撤一步", S.route.length > 1, false);
+        paintButton(buttons.launch, "出发", S.route.length > 1, true);
+      }
 
       if (S.over) {
         g.textAlign = "right";
@@ -419,6 +464,7 @@ var bundle = (function () {
 
     __probe: function () {
       var L = layout();
+      var buttons = actionBoxes();
       return {
         over: S.over, phase: S.phase, fuel: S.fuel, best: BEST, trip: S.trip,
         routeLen: S.route.length - 1, head: S.route[S.route.length - 1],
@@ -426,7 +472,7 @@ var bundle = (function () {
         got: [S.got[0], S.got[1], S.got[2]],
         cols: COLS, rows: ROWS,
         grid: GRID.slice(), start: START, exit: EXIT, picks: PICKS.slice(),
-        geom: { ox: L.ox, oy: L.oy, tile: L.tile }
+        geom: { ox: L.ox, oy: L.oy, tile: L.tile, launch: buttons.launch, undo: buttons.undo }
       };
     }
   };

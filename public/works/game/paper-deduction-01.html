@@ -88,7 +88,7 @@ var bundle = (function () {
     for (i = 0; i < ROWS * COLS; i++) cells.push(0);
     S = {
       cells: cells, mode: "ink", mistakes: 0, found: 0, need: total(),
-      last: -1, lastKind: "", over: null, overAge: 0, acts: 0
+      last: -1, lastKind: "", cursor: 0, over: null, overAge: 0, acts: 0
     };
     return S;
   }
@@ -187,7 +187,8 @@ var bundle = (function () {
         S.mode = S.mode === "ink" ? "mark" : "ink";
         return;
       }
-      place(gridAt(x, y));
+      var i = gridAt(x, y);
+      if (i >= 0) { S.cursor = i; place(i); }
     },
 
     key: function (code, phase) {
@@ -196,6 +197,12 @@ var bundle = (function () {
         if (code === "Space" || code === "Enter" || code === " ") fresh();
         return;
       }
+      var r = Math.floor(S.cursor / COLS), c = S.cursor % COLS;
+      if (code === "ArrowLeft") { S.cursor = r * COLS + Math.max(0, c - 1); return; }
+      if (code === "ArrowRight") { S.cursor = r * COLS + Math.min(COLS - 1, c + 1); return; }
+      if (code === "ArrowUp") { S.cursor = Math.max(0, r - 1) * COLS + c; return; }
+      if (code === "ArrowDown") { S.cursor = Math.min(ROWS - 1, r + 1) * COLS + c; return; }
+      if (code === "Enter" || code === "KeyX") { place(S.cursor); return; }
       if (code === "Space" || code === "KeyM" || code === " ") S.mode = S.mode === "ink" ? "mark" : "ink";
     },
 
@@ -294,6 +301,17 @@ var bundle = (function () {
         }
       }
 
+      // 键盘光标：不用 hover，也能看见方向键下一次会落在哪一格。
+      if (!S.over) {
+        x = L.ox + L.gutter + (S.cursor % COLS) * L.cell;
+        y = L.oy + L.gutter + Math.floor(S.cursor / COLS) * L.cell;
+        g.globalAlpha = 0.78;
+        g.strokeStyle = rgba(RED, 1);
+        g.lineWidth = Math.max(2, L.cell * 0.07);
+        g.strokeRect(x + 2.5, y + 2.5, L.cell - 5, L.cell - 5);
+        g.globalAlpha = 1;
+      }
+
       // 输了才揭答案：没找到的实心格用铅笔轮廓补出来，让人看见自己差在哪
       if (S.over === "lose") {
         g.globalAlpha = 0.5;
@@ -375,6 +393,8 @@ var bundle = (function () {
         "打叉：确定是空的格（草稿，",
         "随便改，不算错）。",
         "",
+        "方向键移格，回车落下；",
+        "也可以直接点任意格。",
         "落错三次这一局到此为止。",
         "没有计时器，想多久都行。"
       ];
@@ -402,6 +422,7 @@ var bundle = (function () {
       return {
         over: S.over, mode: S.mode, mistakes: S.mistakes, mistakesMax: MISTAKES_MAX,
         found: S.found, need: S.need, left: S.need - S.found, acts: S.acts,
+        cursor: S.cursor,
         rows: ROWS, cols: COLS,
         cells: S.cells.slice(),          // 屏上看得见的东西：哪些格已定、哪些打了叉
         rowClues: ROWC, colClues: COLC,  // 屏上印着的线索
