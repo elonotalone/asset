@@ -1,0 +1,327 @@
+{
+  "ok": true,
+  "tool": "doc-pdf",
+  "toolVersion": 1,
+  "out": "/tmp/r1-out/pdf-figure-led-01",
+  "outputs": [
+    {
+      "path": "/tmp/r1-out/pdf-figure-led-01/ATTRIBUTION.txt",
+      "byteSize": 790,
+      "sha256": "3b0fa972afe6188cb985a5d36463ae51475e084a83c5af7e33629e9a52f3f52a"
+    },
+    {
+      "path": "/tmp/r1-out/pdf-figure-led-01/pdf-figure-led-01.pdf",
+      "byteSize": 307973,
+      "sha256": "58f1684fefab854c1cdc1d3ac83ccb44bbbcf474eaaf582dc214c8064a352e3b"
+    },
+    {
+      "path": "/tmp/r1-out/pdf-figure-led-01/preview.png",
+      "byteSize": 130673,
+      "sha256": "b04a15d655165a7028d2735dafa39ba21fa11daef8bd0d9b1cf58efe0565c448"
+    }
+  ],
+  "readings": {
+    "entrypoint": "pdf-figure-led-01.pdf",
+    "route": "cjk-embed",
+    "fileCount": 3,
+    "sourceBytes": 307973,
+    "closureBytes": 439436,
+    "pageCount": 4,
+    "imageCount": 3,
+    "embeddedFonts": [
+      "BAAAAA+NotoSansCJKjp-Bold-VKana",
+      "CAAAAA+DejaVuSans-Bold",
+      "DAAAAA+NotoSansCJKjp-Regular-VKana",
+      "EAAAAA+DejaVuSans",
+      "FAAAAA+NotoSansCJKjp-Regular-VKana"
+    ],
+    "embeddedFontDetails": [
+      {
+        "name": "BAAAAA+NotoSansCJKjp-Bold-VKana",
+        "type": "Type 1",
+        "encoding": "Builtin",
+        "embedded": true,
+        "subset": true,
+        "unicode": true
+      },
+      {
+        "name": "CAAAAA+DejaVuSans-Bold",
+        "type": "TrueType",
+        "encoding": "WinAnsi",
+        "embedded": true,
+        "subset": true,
+        "unicode": true
+      },
+      {
+        "name": "DAAAAA+NotoSansCJKjp-Regular-VKana",
+        "type": "Type 1",
+        "encoding": "Builtin",
+        "embedded": true,
+        "subset": true,
+        "unicode": true
+      },
+      {
+        "name": "EAAAAA+DejaVuSans",
+        "type": "TrueType",
+        "encoding": "WinAnsi",
+        "embedded": true,
+        "subset": true,
+        "unicode": true
+      },
+      {
+        "name": "FAAAAA+NotoSansCJKjp-Regular-VKana",
+        "type": "Type 1",
+        "encoding": "Builtin",
+        "embedded": true,
+        "subset": true,
+        "unicode": true
+      }
+    ],
+    "embeddedFontCount": 5,
+    "extractedChars": 1162,
+    "declaredChars": 1137,
+    "textFidelity": {
+      "verdict": "green",
+      "reasons": [],
+      "metrics": {
+        "extractedChars": 1068,
+        "residueChars": 0,
+        "residueRatio": 0,
+        "extractedCjk": 1009,
+        "declaredCjk": 1009,
+        "declaredCoverage": 1,
+        "recoveredEncoding": null,
+        "recoveredCjk": 0,
+        "embeddedFonts": 5,
+        "cidFonts": 0
+      }
+    },
+    "readbackAvailable": true,
+    "blockCount": 19,
+    "figureCount": 3,
+    "layout": {
+      "source": "input",
+      "axesFromInput": [
+        "body.palette",
+        "layout.columns",
+        "layout.figure",
+        "layout.lineSpacing",
+        "layout.margins",
+        "layout.page",
+        "theme.bodySize",
+        "theme.fonts",
+        "theme.headingScale"
+      ],
+      "derivedFrom": "writer-layout-model",
+      "derivedNote": "几何是写出器版面模型按字号/字宽常量算出来的声明值,不是渲染实测(工具不许起浏览器)。独立复核以 V2 的量法为准。",
+      "page": {
+        "id": "a4",
+        "orientation": "portrait",
+        "widthTwip": 11906,
+        "heightTwip": 16838
+      },
+      "marginsTwip": {
+        "top": 1247,
+        "bottom": 1247,
+        "right": 1021,
+        "left": 1021,
+        "header": 624,
+        "footer": 624
+      },
+      "contentWidthTwip": 9864,
+      "contentHeightTwip": 14344,
+      "columns": 1,
+      "columnSpacingTwip": 425,
+      "columnWidthTwip": 9864,
+      "lineSpacing": "loose",
+      "lineTwip": 360,
+      "paragraphAfterTwip": 200,
+      "headingScale": "normal",
+      "bodySize": "normal",
+      "fontSizesHalfPoint": {
+        "h1": 36,
+        "h2": 28,
+        "h3": 24,
+        "body": 21
+      },
+      "fonts": {
+        "latin": "DejaVu Sans",
+        "eastAsia": "Noto Sans CJK SC",
+        "heading": "DejaVu Sans",
+        "headingEastAsia": "Noto Sans CJK SC"
+      },
+      "figure": {
+        "widthRatio": 1,
+        "align": "center"
+      },
+      "palette": [
+        "000000",
+        "FFFFFF"
+      ],
+      "paletteBySlot": {
+        "accent": "000000",
+        "heading2": "000000",
+        "heading3": "000000",
+        "body": "000000",
+        "tableHeaderFill": "FFFFFF",
+        "rule": "000000"
+      },
+      "pageCount": 4,
+      "mainBlockCount": 8,
+      "mainBlocks": [
+        {
+          "kind": "section",
+          "pageIndex": 0,
+          "column": 0,
+          "x": 0.0858,
+          "y": 0.0741,
+          "w": 0.8285,
+          "h": 0.1063,
+          "areaRatio": 0.0881
+        },
+        {
+          "kind": "image",
+          "pageIndex": 0,
+          "column": 0,
+          "x": 0.0858,
+          "y": 0.1804,
+          "w": 0.8285,
+          "h": 0.5981,
+          "areaRatio": 0.4955
+        },
+        {
+          "kind": "section",
+          "pageIndex": 0,
+          "column": 0,
+          "x": 0.0858,
+          "y": 0.7784,
+          "w": 0.8285,
+          "h": 0.1475,
+          "areaRatio": 0.1222
+        },
+        {
+          "kind": "image",
+          "pageIndex": 1,
+          "column": 0,
+          "x": 0.0858,
+          "y": 0.1237,
+          "w": 0.8285,
+          "h": 0.5981,
+          "areaRatio": 0.4955
+        },
+        {
+          "kind": "section",
+          "pageIndex": 1,
+          "column": 0,
+          "x": 0.0858,
+          "y": 0.7218,
+          "w": 0.8285,
+          "h": 0.2042,
+          "areaRatio": 0.1692
+        },
+        {
+          "kind": "image",
+          "pageIndex": 2,
+          "column": 0,
+          "x": 0.0858,
+          "y": 0.0976,
+          "w": 0.8285,
+          "h": 0.5981,
+          "areaRatio": 0.4955
+        },
+        {
+          "kind": "section",
+          "pageIndex": 2,
+          "column": 0,
+          "x": 0.0858,
+          "y": 0.6957,
+          "w": 0.8285,
+          "h": 0.1785,
+          "areaRatio": 0.1479
+        },
+        {
+          "kind": "section",
+          "pageIndex": 3,
+          "column": 0,
+          "x": 0.0858,
+          "y": 0.0741,
+          "w": 0.8285,
+          "h": 0.173,
+          "areaRatio": 0.1433
+        }
+      ],
+      "fingerprint": "b3cd43d0dbc28d7e",
+      "fingerprintByThreshold": {
+        "6": "b3cd43d0dbc28d7e",
+        "7": "b3cd43d0dbc28d7e",
+        "8": "b3cd43d0dbc28d7e",
+        "9": "8487e4fd5ca4cb79",
+        "10": "8487e4fd5ca4cb79"
+      }
+    },
+    "measured": {
+      "mediaBoxPt": {
+        "width": 595.303937007874,
+        "height": 841.889763779528
+      },
+      "colors": [
+        "#000000"
+      ],
+      "colorCount": 1,
+      "derivedFrom": "produced-pdf-bytes",
+      "page": {
+        "swatches": [
+          {
+            "hex": "#FFFFFF",
+            "share": 0.4672
+          },
+          {
+            "hex": "#FBFBF9",
+            "share": 0.4228
+          },
+          {
+            "hex": "#CAD4D2",
+            "share": 0.0308
+          },
+          {
+            "hex": "#87938F",
+            "share": 0.0289
+          },
+          {
+            "hex": "#F2F3F2",
+            "share": 0.0165
+          },
+          {
+            "hex": "#FFFFFE",
+            "share": 0.0122
+          },
+          {
+            "hex": "#FAFBF9",
+            "share": 0.0078
+          },
+          {
+            "hex": "#FCFBF9",
+            "share": 0.0069
+          },
+          {
+            "hex": "#FDFDFC",
+            "share": 0.0061
+          }
+        ],
+        "derivedFrom": "rendered-first-page"
+      }
+    },
+    "previewBytes": 130673,
+    "attributionEntryCount": 3,
+    "license": {
+      "usage_scope": "first-party",
+      "license_family": "CC0",
+      "supply_tier": "original"
+    }
+  },
+  "writer": "assemblers/pdf/emit.mjs（三条渲染路：cjk-embed / ascii-skeleton / inline-figures）",
+  "writerVersion": null,
+  "notes": [
+    "成品里嵌着 5 枚字体:BAAAAA+NotoSansCJKjp-Bold-VKana、CAAAAA+DejaVuSans-Bold、DAAAAA+NotoSansCJKjp-Regular-VKana、EAAAAA+DejaVuSans、FAAAAA+NotoSansCJKjp-Regular-VKana。每一枚都是随字节发给用户的字体程序 —— 账上要有对应的料,否则就是把别人的东西当自己的发出去。"
+  ]
+}

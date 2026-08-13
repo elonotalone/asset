@@ -1,0 +1,275 @@
+{
+  "ok": true,
+  "tool": "doc-pdf",
+  "toolVersion": 1,
+  "out": "/tmp/r1-out/pdf-bulletin-numeric-01",
+  "outputs": [
+    {
+      "path": "/tmp/r1-out/pdf-bulletin-numeric-01/ATTRIBUTION.txt",
+      "byteSize": 804,
+      "sha256": "85d2041cc70a94569e7ad2783e6bb37b6bcfa4a471048eded64bf7a0cc0308c1"
+    },
+    {
+      "path": "/tmp/r1-out/pdf-bulletin-numeric-01/pdf-bulletin-numeric-01.pdf",
+      "byteSize": 123706,
+      "sha256": "7fb7dd0c8efaa90c00b5cb39fe1d686f3757543d749890d79ce2da9702298d5d"
+    },
+    {
+      "path": "/tmp/r1-out/pdf-bulletin-numeric-01/preview.png",
+      "byteSize": 244103,
+      "sha256": "8a0a69e75da2f2c86e0f67f1bda3c253d9ef648dac350dcebfed12376c81d1db"
+    }
+  ],
+  "readings": {
+    "entrypoint": "pdf-bulletin-numeric-01.pdf",
+    "route": "cjk-embed",
+    "fileCount": 3,
+    "sourceBytes": 123706,
+    "closureBytes": 368613,
+    "pageCount": 2,
+    "imageCount": 1,
+    "embeddedFonts": [
+      "BAAAAA+NotoSansCJKjp-Bold-VKana",
+      "CAAAAA+NotoSansCJKjp-Regular-VKana",
+      "DAAAAA+NotoSansCJKjp-Regular-VKana"
+    ],
+    "embeddedFontDetails": [
+      {
+        "name": "BAAAAA+NotoSansCJKjp-Bold-VKana",
+        "type": "Type 1",
+        "encoding": "Builtin",
+        "embedded": true,
+        "subset": true,
+        "unicode": true
+      },
+      {
+        "name": "CAAAAA+NotoSansCJKjp-Regular-VKana",
+        "type": "Type 1",
+        "encoding": "Builtin",
+        "embedded": true,
+        "subset": true,
+        "unicode": true
+      },
+      {
+        "name": "DAAAAA+NotoSansCJKjp-Regular-VKana",
+        "type": "Type 1",
+        "encoding": "Builtin",
+        "embedded": true,
+        "subset": true,
+        "unicode": true
+      }
+    ],
+    "embeddedFontCount": 3,
+    "extractedChars": 1241,
+    "declaredChars": 1318,
+    "textFidelity": {
+      "verdict": "green",
+      "reasons": [],
+      "metrics": {
+        "extractedChars": 992,
+        "residueChars": 1,
+        "residueRatio": 0.001008,
+        "extractedCjk": 660,
+        "declaredCjk": 660,
+        "declaredCoverage": 1,
+        "recoveredEncoding": null,
+        "recoveredCjk": 0,
+        "embeddedFonts": 3,
+        "cidFonts": 0
+      }
+    },
+    "readbackAvailable": true,
+    "blockCount": 38,
+    "figureCount": 1,
+    "layout": {
+      "source": "input",
+      "axesFromInput": [
+        "body.palette",
+        "layout.columns",
+        "layout.figure",
+        "layout.lineSpacing",
+        "layout.margins",
+        "layout.page",
+        "theme.bodySize",
+        "theme.fonts",
+        "theme.headingScale"
+      ],
+      "derivedFrom": "writer-layout-model",
+      "derivedNote": "几何是写出器版面模型按字号/字宽常量算出来的声明值,不是渲染实测(工具不许起浏览器)。独立复核以 V2 的量法为准。",
+      "page": {
+        "id": "a4",
+        "orientation": "portrait",
+        "widthTwip": 11906,
+        "heightTwip": 16838
+      },
+      "marginsTwip": {
+        "top": 851,
+        "bottom": 851,
+        "right": 851,
+        "left": 851,
+        "header": 426,
+        "footer": 426
+      },
+      "contentWidthTwip": 10204,
+      "contentHeightTwip": 15136,
+      "columns": 1,
+      "columnSpacingTwip": 425,
+      "columnWidthTwip": 10204,
+      "lineSpacing": "tight",
+      "lineTwip": 252,
+      "paragraphAfterTwip": 80,
+      "headingScale": "flat",
+      "bodySize": "compact",
+      "fontSizesHalfPoint": {
+        "h1": 26,
+        "h2": 24,
+        "h3": 22,
+        "body": 19
+      },
+      "fonts": {
+        "latin": "Noto Sans",
+        "eastAsia": "Noto Sans CJK SC",
+        "heading": "Noto Sans",
+        "headingEastAsia": "Noto Sans CJK SC"
+      },
+      "figure": {
+        "widthRatio": 0.5,
+        "align": "left"
+      },
+      "palette": [
+        "000000",
+        "4A4A4A",
+        "FFFFFF"
+      ],
+      "paletteBySlot": {
+        "accent": "000000",
+        "heading2": "4A4A4A",
+        "heading3": "4A4A4A",
+        "body": "000000",
+        "tableHeaderFill": "FFFFFF",
+        "rule": "4A4A4A"
+      },
+      "pageCount": 2,
+      "mainBlockCount": 4,
+      "mainBlocks": [
+        {
+          "kind": "section",
+          "pageIndex": 0,
+          "column": 0,
+          "x": 0.0715,
+          "y": 0.0505,
+          "w": 0.857,
+          "h": 0.1861,
+          "areaRatio": 0.1595
+        },
+        {
+          "kind": "image",
+          "pageIndex": 0,
+          "column": 0,
+          "x": 0.0715,
+          "y": 0.2366,
+          "w": 0.857,
+          "h": 0.3076,
+          "areaRatio": 0.2637
+        },
+        {
+          "kind": "section",
+          "pageIndex": 0,
+          "column": 0,
+          "x": 0.0715,
+          "y": 0.5442,
+          "w": 0.857,
+          "h": 0.4052,
+          "areaRatio": 0.3473
+        },
+        {
+          "kind": "section",
+          "pageIndex": 1,
+          "column": 0,
+          "x": 0.0715,
+          "y": 0.0505,
+          "w": 0.857,
+          "h": 0.0937,
+          "areaRatio": 0.0803
+        }
+      ],
+      "fingerprint": "5a40444465b9d488",
+      "fingerprintByThreshold": {
+        "6": "5a40444465b9d488",
+        "7": "5a40444465b9d488",
+        "8": "5a40444465b9d488",
+        "9": "1d60a319839d7e0f",
+        "10": "1d60a319839d7e0f"
+      }
+    },
+    "measured": {
+      "mediaBoxPt": {
+        "width": 595.303937007874,
+        "height": 841.889763779528
+      },
+      "colors": [
+        "#000000",
+        "#4A4A4A"
+      ],
+      "colorCount": 2,
+      "derivedFrom": "produced-pdf-bytes",
+      "page": {
+        "swatches": [
+          {
+            "hex": "#FFFFFF",
+            "share": 0.8835
+          },
+          {
+            "hex": "#9E9E9E",
+            "share": 0.0171
+          },
+          {
+            "hex": "#D6D5D4",
+            "share": 0.0149
+          },
+          {
+            "hex": "#C4C4C3",
+            "share": 0.0145
+          },
+          {
+            "hex": "#B0B0B0",
+            "share": 0.0143
+          },
+          {
+            "hex": "#E5E5E4",
+            "share": 0.014
+          },
+          {
+            "hex": "#F2F2F2",
+            "share": 0.0134
+          },
+          {
+            "hex": "#797979",
+            "share": 0.0109
+          },
+          {
+            "hex": "#FAFAFA",
+            "share": 0.0081
+          },
+          {
+            "hex": "#FDFDFD",
+            "share": 0.0064
+          }
+        ],
+        "derivedFrom": "rendered-first-page"
+      }
+    },
+    "previewBytes": 244103,
+    "attributionEntryCount": 3,
+    "license": {
+      "usage_scope": "first-party",
+      "license_family": "CC0",
+      "supply_tier": "original"
+    }
+  },
+  "writer": "assemblers/pdf/emit.mjs（三条渲染路：cjk-embed / ascii-skeleton / inline-figures）",
+  "writerVersion": null,
+  "notes": [
+    "成品里嵌着 3 枚字体:BAAAAA+NotoSansCJKjp-Bold-VKana、CAAAAA+NotoSansCJKjp-Regular-VKana、DAAAAA+NotoSansCJKjp-Regular-VKana。每一枚都是随字节发给用户的字体程序 —— 账上要有对应的料,否则就是把别人的东西当自己的发出去。"
+  ]
+}
