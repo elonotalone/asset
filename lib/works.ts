@@ -311,13 +311,23 @@ export interface WorksCatalog {
 const WORKS_DIR = path.join(process.cwd(), "content", "works");
 const PUBLIC_DIR = path.join(process.cwd(), "public");
 
-/** 站内绝对路径 → public 下的真实文件。查询字符串与 `..` 一律判失败。 */
-function publicFileExists(p: unknown): p is string {
+/** 站内绝对路径 → public 下的真实文件绝对路径。`..`、越界、查询串一律判失败。 */
+function resolvePublic(p: unknown): string | null {
   if (typeof p !== "string" || !p.startsWith("/") || p.includes("..") || p.includes("\0")) {
-    return false;
+    return null;
   }
-  const abs = path.join(PUBLIC_DIR, decodeURIComponent(p.split(/[?#]/)[0]));
-  if (!abs.startsWith(PUBLIC_DIR + path.sep)) return false;
+  let abs: string;
+  try {
+    abs = path.join(PUBLIC_DIR, decodeURIComponent(p.split(/[?#]/)[0]));
+  } catch {
+    return null;
+  }
+  return abs.startsWith(PUBLIC_DIR + path.sep) ? abs : null;
+}
+
+function publicFileExists(p: unknown): p is string {
+  const abs = resolvePublic(p);
+  if (!abs) return false;
   try {
     return statSync(abs).isFile();
   } catch {
@@ -547,6 +557,25 @@ export function loadWorks(): WorksCatalog {
 
 export function findWork(id: string): WorkEntry | undefined {
   return loadWorks().works.find((w) => w.id === id);
+}
+
+/** JSON 载体（design-document / chart / workflow）的正文，构建期读盘一次。 */
+const MAX_PAYLOAD_BYTES = 8 * 1024 * 1024;
+
+export function readWorkPayload(work: WorkEntry): unknown | null {
+  if (!work.view.src.toLowerCase().endsWith(".json")) return null;
+  const abs = resolvePublic(work.view.src);
+  if (!abs) return null;
+  try {
+    if (statSync(abs).size > MAX_PAYLOAD_BYTES) {
+      console.warn(`[works] ${work.id} 的 view.src 超过 ${MAX_PAYLOAD_BYTES} 字节，不在站内渲染`);
+      return null;
+    }
+    return JSON.parse(readFileSync(abs, "utf8"));
+  } catch (err) {
+    console.warn(`[works] ${work.id} 的 view.src 读不出来：${String(err)}`);
+    return null;
+  }
 }
 
 /** 下载入口只对 `downloadable: true` 开；关着的时候一律返回 null。 */

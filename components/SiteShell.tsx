@@ -91,6 +91,23 @@ function IconWebsite() {
   );
 }
 
+function IconWorks() {
+  return (
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 7l8-4 8 4v10l-8 4-8-4z" />
+      <path d="M9 12l2 2 4-4" />
+    </svg>
+  );
+}
+
+function IconPlugin() {
+  return (
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M10 4V2.8M14 4V2.8M6 8h12v6a5 5 0 01-5 5h-2a5 5 0 01-5-5zM10 19v2M14 19v2" />
+    </svg>
+  );
+}
+
 function IconWebMotion() {
   return (
     <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
@@ -187,6 +204,26 @@ function SiteShellInner({ children }: { children: ReactNode }) {
     {
       heading: tt("素材类型"),
       items: [...libraryTypes, ...designTypes, ...codeTypes],
+    },
+    // 这一组也不是类型轴：「成品」是按新工作流做出来的整件作品（14 类都落在这里，
+    // 上面那 22 格没有一格装得下），「插件」是能打开素材的工具（可看不可下）。
+    // 两者都**不是素材类型**，所以单独成组，不混进「素材类型」那一栏。
+    {
+      heading: tt("成品与工具"),
+      items: [
+        {
+          label: tt("成品"),
+          icon: <IconWorks />,
+          href: "/works",
+          match: (p) => p.startsWith("/works"),
+        },
+        {
+          label: tt("插件"),
+          icon: <IconPlugin />,
+          href: "/plugin-gallery",
+          match: (p) => p.startsWith("/plugin-gallery"),
+        },
+      ],
     },
     // 这一组不是类型轴，也不是「专区」：一个是用户自己的收藏，一个是说明页。
     {
