@@ -1,0 +1,208 @@
+{
+  "siteName": "南岸纪录",
+  "themeColor": "#4e8a86",
+  "backgroundColor": "#1a1d1d",
+  "typography": {
+    "bodyFont": "serif",
+    "headingFont": "sans",
+    "baseSize": 16,
+    "lineHeight": 1.75,
+    "headingWeight": 800
+  },
+  "navigation": [
+    { "label": "怎么读这份片单", "href": "#how-to-read" },
+    { "label": "潮汐工", "href": "#film-tidework" },
+    { "label": "最后一年", "href": "#film-library" },
+    { "label": "三十七度", "href": "#film-brand" },
+    { "label": "其余可查作品", "href": "#more" },
+    { "label": "团队与格式", "href": "#capacity" },
+    { "label": "常问", "href": "#terms" },
+    { "label": "索取片单", "href": "#next" }
+  ],
+  "layoutFamily": "portfolio",
+  "theme": { "radius": "sharp", "density": "airy", "headingFont": "sans", "bodyFont": "serif" },
+  "pages": [
+    {
+      "id": "home",
+      "name": "片单",
+      "path": "/",
+      "title": "南岸纪录 · 片单（含时长、周期、团队规模与预算档）",
+      "description": "独立纪录片与品牌片制作。每一件作品旁边都有四个数：成片时长、拍摄周期、团队规模、预算档。没有这四个数的条目，我们不当作品放上来。看完可索取完整片单或约一次初剪会。",
+      "sections": [
+        {
+          "id": "how-to-read",
+          "type": "hero",
+          "style": { "paddingTop": 56, "paddingBottom": 40, "contentWidth": "normal", "alignment": "left", "layout": "default", "cornerRadius": 0, "borderWidth": 0 },
+          "content": {
+            "eyebrow": "南岸纪录 · 成立于 2019 年，六个人，长期在江浙沿海与西南山地两条线上拍",
+            "title": "每一件旁边都有四个数，你三分钟就能判断我们拍不拍得了你这条片子",
+            "subtitle": "成片时长、拍摄周期、团队规模、预算档。四个数齐了你才有依据，缺一个这条作品就不该占你的时间。播出数据能查的写平台与口径，不能查的写「无公开数据」——我们不写「广受好评」。下面三件是完整案例，往下还有四件简目。",
+            "primaryCtaLabel": "索取完整片单（PDF，含未上线项目）",
+            "primaryCtaHref": "#next",
+            "secondaryCtaLabel": "直接约一次初剪会",
+            "secondaryCtaHref": "mailto:reel@nanan-doc.example.cn",
+            "image": { "keyword": "documentary film reel", "alt": "片单" }
+          }
+        },
+        {
+          "id": "film-tidework",
+          "type": "about",
+          "style": { "paddingTop": 40, "paddingBottom": 40, "contentWidth": "normal", "alignment": "left", "layout": "default", "cornerRadius": 0, "borderWidth": 0 },
+          "content": {
+            "eyebrow": "作品一 · 《潮汐工》 · 2024",
+            "title": "赶海人一天两次的上班时间，由月亮决定",
+            "body": [
+              "给谁拍的：江苏盐城一家海洋保护基金会，用于其十周年的公众传播与年度募款晚宴。",
+              "客户当时的难题：他们手里有十年的滩涂监测数据，但每次讲给公众听都变成一堂课。他们要的不是科普片，是让人愿意坐着看完二十分钟的东西。",
+              "我们怎么解的：放弃数据线索，改跟三个赶海人一整个潮汐周期。监测数据只在两处出现，都是人物自己提起的——一次是老王说他年轻时能挖到的贝比现在多一倍，一次是收购站的秤。全片没有旁白，字幕只用来标潮位与时间。",
+              "交付了什么：22 分 40 秒正片一条；90 秒晚宴放映版一条；30 秒竖版三条（微信视频号、抖音、小红书各一版）；可二次剪辑的原始素材 4.2 TB 与场记表；全部出镜者的肖像授权书。",
+              "播出后发生了什么：晚宴现场放映后当晚募款额为上一年度的 2.4 倍（数据由基金会提供，未经第三方审计）。正片在其视频号发布，播放 11.6 万（平台后台口径，2026 年 1 月查）。未进入院线或电视台，无票房与收视数据。"
+            ],
+            "bullets": [
+              "成片时长　22 分 40 秒（另有 90 秒与 30 秒版本）",
+              "拍摄周期　实拍 34 天，跨两个大潮周期；前期调研 3 周，后期 7 周",
+              "团队规模　现场 4 人（导演、摄影、录音、制片），后期 3 人",
+              "预算档　　40 万 – 60 万元"
+            ],
+            "image": { "keyword": "tidal flat workers dawn", "alt": "《潮汐工》剧照：天亮前的滩涂上，两名赶海人推着泥橇往海的方向走" }
+          }
+        },
+        {
+          "id": "film-library",
+          "type": "about",
+          "style": { "paddingTop": 40, "paddingBottom": 40, "contentWidth": "normal", "alignment": "left", "layout": "default", "cornerRadius": 0, "borderWidth": 0 },
+          "content": {
+            "eyebrow": "作品二 · 《一间图书馆的最后一年》 · 2025",
+            "title": "拆迁公告贴出来那天，馆长开始给每一本书找下家",
+            "body": [
+              "给谁拍的：无锡一家区级文化馆，用于其城市记忆项目的档案存档与巡回放映。",
+              "客户当时的难题：他们最初要的是一条五分钟的宣传片，讲图书馆的历史。我们看完场地后建议改方向——历史没人看，正在消失的过程有人看。这个建议差点让我们丢掉这个项目。",
+              "我们怎么解的：驻场十一个月，每月去四天，只拍一件事：书往哪里去。最后成片的结构就是书的去向——高校、旧书店、居民家、废品站。馆长本人全片出现不到四分钟。",
+              "交付了什么：48 分钟正片一条；六条 3–5 分钟的独立短片（可单独用于放映与教学）；按人物与去向双索引的素材库（8.7 TB）；一份 62 页的场记与访谈文字稿。",
+              "播出后发生了什么：在本地三家社区中心巡回放映 9 场，累计到场约 1,100 人（主办方点验人数）。入围一个国内纪录片单元的初选，未获奖。无线上发行，无公开播放数据。"
+            ],
+            "bullets": [
+              "成片时长　48 分钟（另有 6 条 3–5 分钟独立短片）",
+              "拍摄周期　驻场 11 个月、实拍 44 天；后期 4 个月",
+              "团队规模　现场 2 人（导演兼摄影、录音兼制片），后期 3 人",
+              "预算档　　25 万 – 40 万元"
+            ],
+            "image": { "keyword": "empty library shelves", "alt": "《一间图书馆的最后一年》剧照" }
+          }
+        },
+        {
+          "id": "film-brand",
+          "type": "about",
+          "style": { "paddingTop": 40, "paddingBottom": 40, "contentWidth": "normal", "alignment": "left", "layout": "default", "cornerRadius": 0, "borderWidth": 0 },
+          "content": {
+            "eyebrow": "作品三 · 《三十七度》 · 2025 · 品牌片",
+            "title": "一家做恒温箱的公司，想讲清楚为什么差半度就不行",
+            "body": [
+              "给谁拍的：一家医疗器械制造商，用于其展会展位循环播放与经销商大会。",
+              "客户当时的难题：产品是运输疫苗的恒温箱，卖点是温度波动控制在正负 0.3 摄氏度以内。这句话在展会上说一百遍也没人记得住。",
+              "我们怎么解的：不拍工厂，不拍产品。跟一支疫苗从冷链仓库到县级卫生院的 41 小时全程，全片只有一个数字反复出现：箱内实时温度。片尾把 41 小时压成 40 秒的温度曲线。这是一条品牌片，我们在提案时就明说它不适合投放社交媒体，只适合在展位和大会现场用。",
+              "交付了什么：6 分 20 秒正片一条；2 分钟展位循环版一条（无声可读，全字幕）；一条 40 秒的温度曲线动画（可单独使用）；中英双语字幕与配音。",
+              "播出后发生了什么：在两场行业展会的展位循环播放。客户反馈经销商大会现场提问明显集中到温控指标上（客户口头反馈，无量化数据）。无公开播放渠道，无公开数据。"
+            ],
+            "bullets": [
+              "成片时长　6 分 20 秒（另有 2 分钟展位版与 40 秒动画）",
+              "拍摄周期　实拍 6 天（含 41 小时连续跟车）；后期 5 周",
+              "团队规模　现场 3 人，后期 4 人（含一名动效）",
+              "预算档　　18 万 – 25 万元"
+            ],
+            "image": { "keyword": "cold chain logistics", "alt": "《三十七度》剧照" }
+          }
+        },
+        {
+          "id": "more",
+          "type": "cases",
+          "style": { "paddingTop": 40, "paddingBottom": 40, "contentWidth": "normal", "alignment": "left", "layout": "default", "cornerRadius": 0, "borderWidth": 0 },
+          "content": {
+            "title": "其余可查作品：四条简目",
+            "subtitle": "同样给四个数。要看完整版本请索取片单，里面还有三条因保密协议不在公开页面上的项目。",
+            "items": [
+              { "tag": "纪录片", "title": "《山上有信号》 2023", "description": "38 分钟｜实拍 21 天｜现场 3 人｜15–25 万元。云南山区一所小学的网课两年。无公开播放数据。", "linkLabel": "", "href": "" },
+              { "tag": "品牌片", "title": "《第九次改模》 2024", "description": "4 分 10 秒｜实拍 4 天｜现场 3 人｜10–18 万元。一家注塑厂为一个卡扣改了九次模具。展会与招聘用。", "linkLabel": "", "href": "" },
+              { "tag": "系列短片", "title": "《城中村的十家店》 2024", "description": "10 × 3 分钟｜实拍 26 天｜现场 2 人｜25–40 万元。区级融媒体中心委托，在其客户端连载。累计播放 43 万（平台后台口径）。", "linkLabel": "", "href": "" },
+              { "tag": "纪录片（未完成）", "title": "《渡口最后一班》 2026 拍摄中", "description": "预计 60 分钟｜已实拍 18 天｜现场 3 人｜预算档待定。正在寻找联合出品方。粗剪 12 分钟可应约放映。", "linkLabel": "", "href": "" }
+            ],
+            "image": { "keyword": "film archive", "alt": "作品简目" }
+          }
+        },
+        {
+          "id": "capacity",
+          "type": "stats",
+          "style": { "paddingTop": 40, "paddingBottom": 40, "contentWidth": "normal", "alignment": "left", "layout": "default", "cornerRadius": 0, "borderWidth": 0 },
+          "content": {
+            "title": "我们这边的四个数，和作品用的是同一套口径",
+            "subtitle": "你在比六七个团队，这四个数决定了我们进不进得了你的候选。",
+            "items": [
+              { "label": "常驻人数", "value": "6 人", "description": "导演 2、摄影 2、录音 1、制片 1。后期剪辑与调色为长期合作的外部三人，不算在内。" },
+              { "label": "同时在手项目上限", "value": "2 个", "description": "超过两个我们会推掉或排到下一档期。这是我们不接急单的原因。" },
+              { "label": "从签约到交片的最短周期", "value": "7 周", "description": "指 5 分钟以内的品牌片。纪录长片没有短周期版本，最短的一次也用了 5 个月。" },
+              { "label": "可交付格式", "value": "9 种", "description": "16:9 / 9:16 / 1:1 三种画幅，各含正片、社媒版、无声全字幕版。另可交付带时间码的素材库与场记表。" }
+            ],
+            "image": { "keyword": "film crew", "alt": "团队" }
+          }
+        },
+        {
+          "id": "terms",
+          "type": "faq",
+          "style": { "paddingTop": 40, "paddingBottom": 40, "contentWidth": "normal", "alignment": "left", "layout": "default", "cornerRadius": 0, "borderWidth": 0 },
+          "content": {
+            "title": "甲方在第一次会上一定会问的五件事",
+            "subtitle": "先写在这里，会上就不用花二十分钟谈这些。",
+            "items": [
+              { "question": "预算档是怎么定的？能压吗？", "answer": "预算档主要由拍摄天数与现场人数决定，后期占比通常在三成到四成。能压的部分是拍摄天数——砍掉的天数会直接反映在片子里，我们会告诉你砍掉之后会失去什么，然后由你决定。我们不做同样内容但更便宜的版本。" },
+              { "question": "原始素材归谁？", "answer": "默认归客户所有，我们保留用于自身作品集展示的权利。你也可以买断这一条，报价里会单列。涉及出镜者肖像的，肖像授权书随素材一并交付，授权范围写在合同附件里。" },
+              { "question": "能不能出竖版？", "answer": "能，但不是把横版裁一刀。竖版需要在现场就按竖构图另拍或双机位，这会影响拍摄天数与预算。开机之后再提竖版，我们只能给你裁切版，并会明说它是裁的。" },
+              { "question": "多久能看到东西？", "answer": "实拍结束后两周给粗剪，粗剪之后有两轮修改包含在合同内，第三轮起按天计费。纪录长片的粗剪周期更长，会在合同里单独约定。" },
+              { "question": "你们会不会接完就转包给别人拍？", "answer": "不会。现场四个位置里至少三个是本团队常驻成员，剩下一个可能是长期合作的外部录音或灯光。谁在现场会写进合同附件。" }
+            ],
+            "footnote": "以上为默认条款，具体以双方签署的制作合同为准。",
+            "contactLabel": "还有别的问题",
+            "contactHref": "mailto:reel@nanan-doc.example.cn",
+            "image": { "keyword": "contract", "alt": "条款" }
+          }
+        },
+        {
+          "id": "next",
+          "type": "cta",
+          "style": { "paddingTop": 40, "paddingBottom": 40, "contentWidth": "normal", "alignment": "left", "layout": "default", "cornerRadius": 0, "borderWidth": 0 },
+          "content": {
+            "eyebrow": "看到这里，你手上应该已经有判断了",
+            "title": "带走片单，或者约一次初剪会",
+            "subtitle": "片单是一份 18 页的 PDF，含本页三件的完整拆解、四条简目、三条保密项目的脱敏版本，以及一张按预算档与周期排的对照表。初剪会指的是拿你手上已有的素材或脚本，我们花一小时给出结构上的意见——这一小时不收费，也不以此为条件要求签约。",
+            "primaryLabel": "写信索取片单 PDF",
+            "primaryHref": "mailto:reel@nanan-doc.example.cn",
+            "secondaryLabel": "约初剪会（说明你手上有什么）",
+            "secondaryHref": "mailto:reel@nanan-doc.example.cn",
+            "note": "工作日回信，通常一天之内。若你在比稿阶段，请直接说明，我们会告诉你要不要参与——同一个项目我们不与超过三家同场比稿。",
+            "image": { "keyword": "email", "alt": "联系" }
+          }
+        },
+        {
+          "id": "site-foot",
+          "type": "footer",
+          "style": { "paddingTop": 32, "paddingBottom": 32, "contentWidth": "normal", "alignment": "left", "layout": "default", "cornerRadius": 0, "borderWidth": 0 },
+          "content": {
+            "title": "南岸纪录",
+            "description": "独立纪录片与品牌片制作。江苏南通 · 云南大理两处工作点。本页所列作品的播出数据均标注了口径与查询时间，无公开数据的一律写明无公开数据。",
+            "ctaLabel": "reel@nanan-doc.example.cn",
+            "ctaHref": "mailto:reel@nanan-doc.example.cn",
+            "links": [
+              { "label": "怎么读这份片单", "href": "#how-to-read" },
+              { "label": "《潮汐工》", "href": "#film-tidework" },
+              { "label": "《一间图书馆的最后一年》", "href": "#film-library" },
+              { "label": "《三十七度》", "href": "#film-brand" },
+              { "label": "其余可查作品", "href": "#more" },
+              { "label": "团队与可交付格式", "href": "#capacity" },
+              { "label": "常问五件事", "href": "#terms" }
+            ],
+            "image": { "keyword": "footer", "alt": "页脚" }
+          }
+        }
+      ]
+    }
+  ]
+}

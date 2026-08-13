@@ -1,0 +1,71 @@
+/* 由 asm-web 按内容定义的区块种类生成。区块种类来自 body.units[].kind,不是写死的清单。 */
+:root {
+  --ink: #121b2d;
+  --ink-soft: #6c727d;
+  --paper: #ffffff;
+  --paper-alt: #f1f3f6;
+  --rule: #d4d6d9;
+  --accent: #1c3d6e;
+  --measure: 72ch;
+  --gap: 1.5rem;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  color: var(--ink);
+  background: var(--paper);
+  font: 16px/1.7 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+.site-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 22rem);
+  gap: var(--gap);
+  align-items: start;
+  padding: 3rem 1.5rem 2rem;
+  background: var(--paper-alt);
+  border-bottom: 1px solid var(--rule);
+}
+.site-title { margin: 0 0 .5rem; font-size: clamp(1.6rem, 3.4vw, 2.2rem); line-height: 1.25; }
+.site-summary { margin: 0; max-width: var(--measure); color: var(--ink-soft); }
+.site-form { padding: 1.25rem; background: var(--paper); border: 1px solid var(--rule); border-radius: .5rem; }
+.site-form h2 { margin: 0 0 .75rem; font-size: 1.1rem; }
+.site-form .field { display: block; margin: 0 0 .75rem; }
+.site-form .field > span { display: block; margin-bottom: .25rem; font-size: .85rem; color: var(--ink-soft); }
+.site-form input, .site-form textarea, .site-form select {
+  width: 100%; padding: .5rem .625rem; border: 1px solid var(--rule); border-radius: .25rem;
+  background: var(--paper); color: var(--ink); font: inherit;
+}
+.site-form button { padding: .55rem 1.1rem; border: 0; border-radius: .25rem; background: var(--accent); color: var(--paper); font: inherit; cursor: pointer; }
+.site-main { padding: 0 1.5rem; }
+.page { max-width: var(--measure); margin: 0 auto; }
+.page-heading { margin: 2.5rem 0 .5rem; font-size: 1.5rem; }
+.page-intro { margin: 0 0 1.5rem; color: var(--ink-soft); }
+.block { padding: 1.75rem 0; border-top: 1px solid var(--rule); scroll-margin-top: 4rem; }
+.block:first-of-type { border-top: 0; }
+.block-heading { margin: 0 0 .75rem; font-size: 1.2rem; }
+.block-copy { margin: 0 0 1rem; }
+.block-copy:last-child { margin-bottom: 0; }
+.block-alt { margin: .5rem 0 0; font-size: .875rem; color: var(--ink-soft); }
+.site-foot { margin-top: 3rem; padding: 1.5rem; border-top: 1px solid var(--rule); color: var(--ink-soft); font-size: .875rem; }
+.site-toc { margin: 0 0 1rem; padding: .75rem 1rem; background: var(--paper-alt); border-left: 3px solid var(--accent); }
+.site-toc ol { margin: .25rem 0 0; padding-left: 1.25rem; }
+.site-title, .page-heading, .block-heading { font-family: 'Noto Serif SC', 'Songti SC', Georgia, serif; }
+
+/* 每种区块一条基调,种类由内容定义决定 */
+.block-faq .block-heading::before { content: ""; display: inline-block; width: .5rem; height: .5rem; margin-right: .5rem; vertical-align: middle; border-radius: 50%; background: hsl(0 62% 52%); }
+.block-timeline .block-heading::before { content: ""; display: inline-block; width: .5rem; height: .5rem; margin-right: .5rem; vertical-align: middle; border-radius: 50%; background: hsl(47 62% 52%); }
+.block-cases .block-heading::before { content: ""; display: inline-block; width: .5rem; height: .5rem; margin-right: .5rem; vertical-align: middle; border-radius: 50%; background: hsl(94 62% 52%); }
+.block-pricing .block-heading::before { content: ""; display: inline-block; width: .5rem; height: .5rem; margin-right: .5rem; vertical-align: middle; border-radius: 50%; background: hsl(141 62% 52%); }
+.block-about .block-heading::before { content: ""; display: inline-block; width: .5rem; height: .5rem; margin-right: .5rem; vertical-align: middle; border-radius: 50%; background: hsl(188 62% 52%); }
+.block-cta .block-heading::before { content: ""; display: inline-block; width: .5rem; height: .5rem; margin-right: .5rem; vertical-align: middle; border-radius: 50%; background: hsl(235 62% 52%); }
+.block-footer .block-heading::before { content: ""; display: inline-block; width: .5rem; height: .5rem; margin-right: .5rem; vertical-align: middle; border-radius: 50%; background: hsl(282 62% 52%); }
+
+@media (max-width: 640px) {
+  .site-head { padding: 2rem 1rem 1.5rem; }
+  .site-main { padding: 0 1rem; }
+}
+@media print {
+  .site-toc { display: none; }
+  .block { break-inside: avoid; }
+}

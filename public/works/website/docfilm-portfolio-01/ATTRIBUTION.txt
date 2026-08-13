@@ -1,4 +1,4 @@
 本文件随 bundled 原料一同交付。料单标 role='bundled' 的原料在闭包里单独成文件,
 按 _contracts.md 对象 2 必须随附许可全文。
 
-OceanLeo 第一方原创示意图  — CC0-1.0
+OceanLeo 第一方生成（AI 生图），CC0-1.0  — CC0-1.0

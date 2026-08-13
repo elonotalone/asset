@@ -1,11 +1,11 @@
 /* 由 asm-web 按内容定义的区块种类生成。区块种类来自 body.units[].kind,不是写死的清单。 */
 :root {
-  --ink: #1b1e20;
-  --ink-soft: #6e767a;
-  --paper: #f6f6f4;
-  --paper-alt: #eeeeea;
-  --rule: #e6e6e1;
-  --accent: #2f6f5e;
+  --ink: #221e26;
+  --ink-soft: #747174;
+  --paper: #fbf8f4;
+  --paper-alt: #f9efe7;
+  --rule: #d4d1cf;
+  --accent: #d2601a;
   --measure: 96ch;
   --gap: 1.5rem;
 }
@@ -15,15 +15,13 @@ body {
   margin: 0;
   color: var(--ink);
   background: var(--paper);
-  font: 16px/1.7 'IBM Plex Mono', Consolas, 'Noto Sans SC', 'Source Han Sans SC', sans-serif;
+  font: 16px/1.7 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
 }
-.site-head {
-  padding: 3rem 1.5rem 2rem;
-  background: linear-gradient(180deg, var(--paper-alt), var(--paper));
-  border-bottom: 1px solid var(--rule);
-}
-.site-title { margin: 0 0 .5rem; font-size: clamp(1.6rem, 4vw, 2.4rem); line-height: 1.25; }
-.site-summary { margin: 0; max-width: var(--measure); color: var(--ink-soft); }
+.site-head { padding: 0 0 2rem; background: var(--paper); border-bottom: 1px solid var(--rule); }
+.site-figure { display: block; width: 100%; height: 52vh; min-height: 16rem; object-fit: cover; }
+.site-figure-caption { margin: .5rem 1.5rem 0; color: var(--ink-soft); font-size: .875rem; }
+.site-title { margin: 1.5rem 1.5rem .5rem; font-size: clamp(2rem, 6vw, 3.4rem); line-height: 1.1; }
+.site-summary { margin: 0 1.5rem; max-width: var(--measure); color: var(--ink-soft); }
 .site-nav { position: sticky; top: 0; z-index: 2; background: var(--paper); border-bottom: 1px solid var(--rule); }
 .site-nav ul { display: flex; flex-wrap: wrap; gap: .25rem var(--gap); margin: 0; padding: .75rem 1.5rem; list-style: none; }
 .nav-link { color: var(--ink-soft); text-decoration: none; font-size: .9rem; padding: .15rem 0; border-bottom: 2px solid transparent; }
@@ -43,14 +41,15 @@ body {
 .site-toc { margin: 0 0 1rem; padding: .75rem 1rem; background: var(--paper-alt); border-left: 3px solid var(--accent); }
 .site-toc ol { margin: .25rem 0 0; padding-left: 1.25rem; }
 .page-blocks { display: grid; gap: var(--gap); grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; }
-.site-title, .page-heading, .block-heading { font-family: 'Noto Sans SC', 'Source Han Sans SC', Helvetica, Arial, sans-serif; }
+.site-title, .page-heading, .block-heading { font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif; }
 
 /* 每种区块一条基调,种类由内容定义决定 */
-.block-batch .block-heading::before { content: ""; display: inline-block; width: .5rem; height: .5rem; margin-right: .5rem; vertical-align: middle; border-radius: 50%; background: hsl(0 62% 52%); }
-.block-dimension .block-heading::before { content: ""; display: inline-block; width: .5rem; height: .5rem; margin-right: .5rem; vertical-align: middle; border-radius: 50%; background: hsl(47 62% 52%); }
-.block-entry-list .block-heading::before { content: ""; display: inline-block; width: .5rem; height: .5rem; margin-right: .5rem; vertical-align: middle; border-radius: 50%; background: hsl(94 62% 52%); }
-.block-usage .block-heading::before { content: ""; display: inline-block; width: .5rem; height: .5rem; margin-right: .5rem; vertical-align: middle; border-radius: 50%; background: hsl(141 62% 52%); }
-.block-contribute .block-heading::before { content: ""; display: inline-block; width: .5rem; height: .5rem; margin-right: .5rem; vertical-align: middle; border-radius: 50%; background: hsl(188 62% 52%); }
+.block-menu .block-heading::before { content: ""; display: inline-block; width: .5rem; height: .5rem; margin-right: .5rem; vertical-align: middle; border-radius: 50%; background: hsl(0 62% 52%); }
+.block-pricing .block-heading::before { content: ""; display: inline-block; width: .5rem; height: .5rem; margin-right: .5rem; vertical-align: middle; border-radius: 50%; background: hsl(47 62% 52%); }
+.block-team .block-heading::before { content: ""; display: inline-block; width: .5rem; height: .5rem; margin-right: .5rem; vertical-align: middle; border-radius: 50%; background: hsl(94 62% 52%); }
+.block-faq .block-heading::before { content: ""; display: inline-block; width: .5rem; height: .5rem; margin-right: .5rem; vertical-align: middle; border-radius: 50%; background: hsl(141 62% 52%); }
+.block-contact .block-heading::before { content: ""; display: inline-block; width: .5rem; height: .5rem; margin-right: .5rem; vertical-align: middle; border-radius: 50%; background: hsl(188 62% 52%); }
+.block-footer .block-heading::before { content: ""; display: inline-block; width: .5rem; height: .5rem; margin-right: .5rem; vertical-align: middle; border-radius: 50%; background: hsl(235 62% 52%); }
 
 @media (max-width: 640px) {
   .site-head { padding: 2rem 1rem 1.5rem; }

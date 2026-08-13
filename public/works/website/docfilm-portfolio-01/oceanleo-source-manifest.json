@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "entrypoint": "index.html",
+  "files": [
+    {
+      "path": "index.html",
+      "blob_sha256": "f0b1f054bf126ddd5376dbe00981ee96b0b0627dc8904234dfe402895b2b1d51",
+      "byteSize": 15012,
+      "mediaType": "text/html"
+    },
+    {
+      "path": "styles.css",
+      "blob_sha256": "3b00d851b02b28e4743da0b4bef3babc89308b4f53a554dedd44a234456abc8f",
+      "byteSize": 4701,
+      "mediaType": "text/css"
+    },
+    {
+      "path": "app.js",
+      "blob_sha256": "2de000f16e068d8d5f740e623154cda98d8bfe5e90d7c1f2444589020465855b",
+      "byteSize": 2290,
+      "mediaType": "text/javascript"
+    },
+    {
+      "path": "content.json",
+      "blob_sha256": "324764c304a836591e5ba534c88ced0346b0364a31a0b2200e4586a195a96fad",
+      "byteSize": 12308,
+      "mediaType": "application/json"
+    },
+    {
+      "path": "assets/still-tidework.webp",
+      "blob_sha256": "f671938850e8b6020615ef5696fb5e3910ab299f9fe13578f31014f57df42425",
+      "byteSize": 79670,
+      "mediaType": "image/webp"
+    },
+    {
+      "path": "ATTRIBUTION.txt",
+      "blob_sha256": "f8e3f2cf667706723bdf2ff2049dad5298b0ae2411b0ae9e89a26eaf1d1c285b",
+      "byteSize": 224,
+      "mediaType": "text/plain"
+    }
+  ]
+}

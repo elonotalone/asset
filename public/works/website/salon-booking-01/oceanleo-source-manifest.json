@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "entrypoint": "index.html",
+  "files": [
+    {
+      "path": "index.html",
+      "blob_sha256": "67f9097922ae09e764f4bef7ce7a4582fc325d587655b1ae5aebe53cddddea59",
+      "byteSize": 9358,
+      "mediaType": "text/html"
+    },
+    {
+      "path": "styles.css",
+      "blob_sha256": "ad66d5b65d1210836dbde9f2b941757d2e07ecdc7e47bb9a1b7d5c539c291eaa",
+      "byteSize": 4236,
+      "mediaType": "text/css"
+    },
+    {
+      "path": "app.js",
+      "blob_sha256": "2de000f16e068d8d5f740e623154cda98d8bfe5e90d7c1f2444589020465855b",
+      "byteSize": 2290,
+      "mediaType": "text/javascript"
+    },
+    {
+      "path": "content.json",
+      "blob_sha256": "b488bc005e8e0f2ced6dd91182cfe053bedf26b80033aa265b8154657628b990",
+      "byteSize": 6821,
+      "mediaType": "application/json"
+    },
+    {
+      "path": "assets/shopfront.webp",
+      "blob_sha256": "6d193c0c4d98bb5d27370436ce0215022898e8fe49e310fad06ce5963a7599f5",
+      "byteSize": 137160,
+      "mediaType": "image/webp"
+    },
+    {
+      "path": "ATTRIBUTION.txt",
+      "blob_sha256": "f8e3f2cf667706723bdf2ff2049dad5298b0ae2411b0ae9e89a26eaf1d1c285b",
+      "byteSize": 224,
+      "mediaType": "text/plain"
+    }
+  ]
+}

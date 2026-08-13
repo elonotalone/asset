@@ -1,15 +1,15 @@
 [
   {
-    "id": "notice-board-01",
+    "id": "law-intake-01",
     "artifactType": "website",
-    "title": "湖景社区卫生服务中心 · 2026 年秋季流感疫苗接种通告",
-    "styleId": "notice-board",
-    "summary": "一张贴在墙上的告示：几号打、在哪打、谁免费、带什么、什么情况不能打、出问题找谁。单列长滚，不设导览，零动效。",
-    "cover": "/works/website/notice-board-01.cover.webp",
+    "title": "劳动仲裁受理台 · 衡明劳动法律师事务所获客落地页",
+    "styleId": "intake-desk",
+    "summary": "给刚收到仲裁通知书的中小企业 HR 用的一页站：首屏直接是案情自述表单，往下是你今晚真正想知道的五件事、五个错过就不可逆的日期、四条脱敏处置记录（含办砸的两件）、写在页面上的三档收费，以及「以下六种情况我们不接」。单页长滚，没有导航——因为没有第二个去处。",
+    "cover": "/works/website/law-intake-01.cover.webp",
     "view": {
       "kind": "website",
-      "src": "/works/website/notice-board-01/index.html",
-      "download": "/works/website/notice-board-01-source.zip",
+      "src": "/works/website/law-intake-01/index.html",
+      "download": "/works/website/law-intake-01-source.zip",
       "aspect": 1.6
     },
     "downloadable": true,
@@ -21,46 +21,77 @@
       }
     ],
     "readings": {
+      "purpose": {
+        "who": "30–200 人的制造业、连锁餐饮、物业公司的 HR 主管与老板，第一次收到劳动仲裁通知书",
+        "problem": "不知道自己有没有理、要赔多少、答辩期还剩几天，而这三件事在同行的站上都要「详询」才给",
+        "wantVisitorToDo": "把案情四要素填进首屏表单，换一次 20 分钟免费评估电话",
+        "successMetric": "首屏表单提交数（浏览量与咨询量都不算数）"
+      },
+      "axes": {
+        "purpose": "lead-capture",
+        "industry": "law",
+        "structure": "single-scroll",
+        "layoutFamily": "legal-pro",
+        "style": "intake-desk"
+      },
+      "authoringSource": {
+        "schema": "VirtualSiteConfig（website/front/types/virtual-site.ts）",
+        "file": "/works/website/law-intake-01/site.json",
+        "starter": "/works/website/law-intake-01/oceanleo.starter.json",
+        "compiler": "scripts/material-infra/assemblers/web/site-config.mjs",
+        "deterministic": "从 site.json 重编译得到的 zip 与本条的 zip 逐字节相同（sha256 916ebf164d64…）",
+        "sectionCount": 8,
+        "sectionTypes": ["contact", "faq", "timeline", "cases", "pricing", "about", "cta", "footer"]
+      },
       "entryCount": 4,
       "htmlCount": 1,
       "assetCount": 0,
-      "totalUncompressedBytes": 15767,
+      "totalUncompressedBytes": 30939,
       "hasIndexHtml": true,
       "innerEntrypoint": "index.html",
       "closureShape": "source-zip",
-      "zipByteSize": 8082,
-      "zipSha256": "27390e8d2404277fe7a32339e922ee8a011edf0760ef1149f33feee69cb33375",
+      "zipByteSize": 14284,
+      "zipSha256": "916ebf164d643666a87d54bae83ca31b9d58e2f27db77b54d94c5b05db499b64",
       "sectionCount": 7,
-      "bodyCharCount": 949,
+      "bodyCharCount": 3124,
       "imageCount": 0,
-      "paragraphsReadableWithoutJs": 23,
+      "paragraphsReadableWithoutJs": 70,
       "paragraphsMissingWithoutJs": 0,
       "layout": {
         "source": "input",
         "navPosition": "none",
-        "firstScreen": "statement",
+        "firstScreen": "form",
         "bodyFlow": "long-scroll",
         "gridColumns": null,
-        "measureCh": 50,
-        "mainBlockCount": 3,
-        "fingerprint": "478188622b64347a",
-        "documentHeight": 2573,
+        "measureCh": 72,
+        "mainBlockCount": 2,
+        "fingerprint": "c1167d0f8280bd84",
+        "documentHeight": 5397,
         "derivedFrom": "writer-layout-model",
-        "firstScreenFingerprintSelfMeasured": "cc79ea7469bb5003"
+        "stylesCssSha12": "ed7329651b7b",
+        "palette": {
+          "ink": "#121b2d",
+          "ink-soft": "#6c727d",
+          "paper": "#ffffff",
+          "paper-alt": "#f1f3f6",
+          "rule": "#d4d6d9",
+          "accent": "#1c3d6e"
+        },
+        "paletteDerivedFrom": "site.json 的 themeColor=#1c3d6e 与 backgroundColor=#ffffff，六槽由编译器整数派生"
       }
     }
   },
   {
-    "id": "field-guide-01",
+    "id": "salon-booking-01",
     "artifactType": "website",
-    "title": "拾光共享厨房 · 商用烤箱与排烟系统现场手册",
-    "styleId": "field-guide",
-    "summary": "站在设备旁边查第几步用的手册：首屏先选要做哪件事再登记开工，步骤清单常驻左侧栏，正文一步一通栏；深色底、危险色只服务会伤人的那一步，另附一张三号灶位平面图标出燃气总阀与灭火器。",
-    "cover": "/works/website/field-guide-01.cover.webp",
+    "title": "近点理发 · 望京南湖东园店｜全部价目与今晚余位",
+    "styleId": "price-first",
+    "summary": "社区美发店的预约到店站：门头实拍打头，往下把同一批项目按类别、按价位段、按发型师各铺一遍——每一格都同时有项目名、价格、耗时和谁能做。不办卡、不推销、写明唯一一种加价情形，以及剪坏了七天内免费修。三列卡片索引。",
+    "cover": "/works/website/salon-booking-01.cover.webp",
     "view": {
       "kind": "website",
-      "src": "/works/website/field-guide-01/index.html",
-      "download": "/works/website/field-guide-01-source.zip",
+      "src": "/works/website/salon-booking-01/index.html",
+      "download": "/works/website/salon-booking-01-source.zip",
       "aspect": 1.6
     },
     "downloadable": true,
@@ -69,86 +100,158 @@
         "text": "OceanLeo (OCEANLEO-AIGEN)",
         "licenseCode": "OCEANLEO-AIGEN",
         "licenseUrl": "https://oceanleo.com/licenses/oceanleo-aigen"
+      },
+      {
+        "text": "门头图：OceanLeo 第一方生成（AI 生图）",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
       }
     ],
     "readings": {
+      "purpose": {
+        "who": "门店周边两公里、下班时间不固定的上班族，已经决定要剪头发，正在手机上比较两三家店",
+        "problem": "他只问多少钱、今晚还有没有位、谁给我剪，而同行把价格藏在「详询」后面还要先加微信",
+        "wantVisitorToDo": "选定项目与时段后打电话约位",
+        "successMetric": "拨号次数，以及到店后「和网上写的一样」带来的复购"
+      },
+      "axes": {
+        "purpose": "booking",
+        "industry": "hairsalon",
+        "structure": "card-index",
+        "layoutFamily": "restaurant",
+        "style": "price-first"
+      },
+      "authoringSource": {
+        "schema": "VirtualSiteConfig（website/front/types/virtual-site.ts）",
+        "file": "/works/website/salon-booking-01/site.json",
+        "starter": "/works/website/salon-booking-01/oceanleo.starter.json",
+        "compiler": "scripts/material-infra/assemblers/web/site-config.mjs",
+        "deterministic": "从 site.json 重编译得到的 zip 与本条的 zip 逐字节相同（sha256 c99e7474ea07…）",
+        "sectionCount": 7,
+        "sectionTypes": ["hero", "menu", "pricing", "team", "faq", "contact", "footer"]
+      },
       "entryCount": 6,
       "htmlCount": 1,
       "assetCount": 1,
-      "totalUncompressedBytes": 152680,
+      "totalUncompressedBytes": 160089,
       "hasIndexHtml": true,
       "innerEntrypoint": "index.html",
       "closureShape": "source-zip",
-      "zipByteSize": 132106,
-      "zipSha256": "d7e003aadf5893ff3d1af6997f32cec6bd00e78c3976fb54282047d03c349867",
-      "sectionCount": 9,
-      "bodyCharCount": 2113,
+      "zipByteSize": 147626,
+      "zipSha256": "c99e7474ea0707e626d8687fc74b8657f32370d3e225ac2132789f39e5ac6adb",
+      "sectionCount": 6,
+      "bodyCharCount": 1986,
       "imageCount": 1,
-      "paragraphsReadableWithoutJs": 50,
-      "paragraphsMissingWithoutJs": 0,
-      "layout": {
-        "source": "input",
-        "navPosition": "side",
-        "firstScreen": "form",
-        "bodyFlow": "sectioned",
-        "gridColumns": null,
-        "measureCh": 84,
-        "mainBlockCount": 2,
-        "fingerprint": "d97c6df6bcf83ec1",
-        "documentHeight": 5075,
-        "derivedFrom": "writer-layout-model",
-        "firstScreenFingerprintSelfMeasured": "ceb82f94398d3849"
-      }
-    }
-  },
-  {
-    "id": "open-index-01",
-    "artifactType": "website",
-    "title": "云溪镇老照片开放档案 · 1958–1999 全目",
-    "styleId": "open-index",
-    "summary": "412 张老照片的全目索引：顶栏切维度，正文三列网格一屏铺满条目，按年代、地点、门类三个轴各铺一遍，逐条给编号、年份、来源与使用条件，暂缓公开的 23 张也列在目内。",
-    "cover": "/works/website/open-index-01.cover.webp",
-    "view": {
-      "kind": "website",
-      "src": "/works/website/open-index-01/index.html",
-      "download": "/works/website/open-index-01-source.zip",
-      "aspect": 1.6
-    },
-    "downloadable": true,
-    "attribution": [
-      {
-        "text": "OceanLeo (OCEANLEO-AIGEN)",
-        "licenseCode": "OCEANLEO-AIGEN",
-        "licenseUrl": "https://oceanleo.com/licenses/oceanleo-aigen"
-      }
-    ],
-    "readings": {
-      "entryCount": 4,
-      "htmlCount": 1,
-      "assetCount": 0,
-      "totalUncompressedBytes": 21935,
-      "hasIndexHtml": true,
-      "innerEntrypoint": "index.html",
-      "closureShape": "source-zip",
-      "zipByteSize": 10358,
-      "zipSha256": "82ff6eae2d04bae434ca25bb6fa1b1bc80e2996dfc9b22e0c79d424197f642f8",
-      "sectionCount": 7,
-      "bodyCharCount": 2202,
-      "imageCount": 0,
-      "paragraphsReadableWithoutJs": 53,
+      "paragraphsReadableWithoutJs": 73,
       "paragraphsMissingWithoutJs": 0,
       "layout": {
         "source": "input",
         "navPosition": "top",
-        "firstScreen": "statement",
+        "firstScreen": "figure",
         "bodyFlow": "grid",
         "gridColumns": 3,
         "measureCh": 96,
-        "mainBlockCount": 4,
-        "fingerprint": "1b7aa23e0adad591",
-        "documentHeight": 3054,
+        "mainBlockCount": 1,
+        "fingerprint": "85643ebc125454e5",
+        "documentHeight": 3192,
         "derivedFrom": "writer-layout-model",
-        "firstScreenFingerprintSelfMeasured": "a71f38c4b15a03b6"
+        "stylesCssSha12": "ad66d5b65d12",
+        "palette": {
+          "ink": "#221e26",
+          "ink-soft": "#747174",
+          "paper": "#fbf8f4",
+          "paper-alt": "#f9efe7",
+          "rule": "#d4d1cf",
+          "accent": "#d2601a"
+        },
+        "paletteDerivedFrom": "site.json 的 themeColor=#d2601a 与 backgroundColor=#fbf8f4，六槽由编译器整数派生"
+      }
+    }
+  },
+  {
+    "id": "docfilm-portfolio-01",
+    "artifactType": "website",
+    "title": "南岸纪录 · 片单（含时长、周期、团队规模与预算档）",
+    "styleId": "reel-sheet",
+    "summary": "纪录片团队的作品集：每一件旁边都挂着四个数——成片时长、拍摄周期、团队规模、预算档，三件完整案例各按「给谁拍的 / 客户的难题 / 怎么解的 / 交付了什么 / 播出后发生了什么」五问写满，能查的播出数据写平台与口径，不能查的直接写「无公开数据」。侧栏常驻片单目录。",
+    "cover": "/works/website/docfilm-portfolio-01.cover.webp",
+    "view": {
+      "kind": "website",
+      "src": "/works/website/docfilm-portfolio-01/index.html",
+      "download": "/works/website/docfilm-portfolio-01-source.zip",
+      "aspect": 1.6
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "OceanLeo (OCEANLEO-AIGEN)",
+        "licenseCode": "OCEANLEO-AIGEN",
+        "licenseUrl": "https://oceanleo.com/licenses/oceanleo-aigen"
+      },
+      {
+        "text": "《潮汐工》剧照：OceanLeo 第一方生成（AI 生图）",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "purpose": {
+        "who": "品牌方市场负责人与电视台／流媒体的选片编辑，同时在看六七个团队，每家给三分钟",
+        "problem": "别家的作品集只有画面和形容词，看完仍然判断不出这个团队拍不拍得了自己这条片子",
+        "wantVisitorToDo": "索取片单 PDF，或写信约一次一小时的初剪会",
+        "successMetric": "片单索取数与初剪会预约数（作品播放量不算数）"
+      },
+      "axes": {
+        "purpose": "portfolio",
+        "industry": "culture-media",
+        "structure": "doc-sidebar",
+        "layoutFamily": "portfolio",
+        "style": "reel-sheet"
+      },
+      "authoringSource": {
+        "schema": "VirtualSiteConfig（website/front/types/virtual-site.ts）",
+        "file": "/works/website/docfilm-portfolio-01/site.json",
+        "starter": "/works/website/docfilm-portfolio-01/oceanleo.starter.json",
+        "compiler": "scripts/material-infra/assemblers/web/site-config.mjs",
+        "deterministic": "从 site.json 重编译得到的 zip 与本条的 zip 逐字节相同（sha256 9b49900b5955…）",
+        "sectionCount": 9,
+        "sectionTypes": ["hero", "about", "about", "about", "cases", "stats", "faq", "cta", "footer"]
+      },
+      "entryCount": 6,
+      "htmlCount": 1,
+      "assetCount": 1,
+      "totalUncompressedBytes": 114205,
+      "hasIndexHtml": true,
+      "innerEntrypoint": "index.html",
+      "closureShape": "source-zip",
+      "zipByteSize": 95440,
+      "zipSha256": "9b49900b5955dcb95ec50fd70ff2f338643ff9108124773f306fd51e13b86816",
+      "sectionCount": 9,
+      "bodyCharCount": 3693,
+      "imageCount": 1,
+      "paragraphsReadableWithoutJs": 75,
+      "paragraphsMissingWithoutJs": 0,
+      "layout": {
+        "source": "input",
+        "navPosition": "side",
+        "firstScreen": "statement",
+        "bodyFlow": "sectioned",
+        "gridColumns": null,
+        "measureCh": 84,
+        "mainBlockCount": 4,
+        "fingerprint": "9f6966862d3d5a24",
+        "documentHeight": 6328,
+        "derivedFrom": "writer-layout-model",
+        "stylesCssSha12": "3b00d851b02b",
+        "palette": {
+          "ink": "#e9f0f1",
+          "ink-soft": "#9aa0a0",
+          "paper": "#1a1d1d",
+          "paper-alt": "#1d2423",
+          "rule": "#3f4343",
+          "accent": "#4e8a86"
+        },
+        "paletteDerivedFrom": "site.json 的 themeColor=#4e8a86 与 backgroundColor=#1a1d1d，六槽由编译器整数派生"
       }
     }
   }
