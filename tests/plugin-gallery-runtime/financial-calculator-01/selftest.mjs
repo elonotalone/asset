@@ -1,7 +1,7 @@
 /*
  * 金融计算器 · 自测
  *
- *   node public/works/plugin/financial-calculator-01/selftest.mjs
+ *   node tests/plugin-gallery-runtime/financial-calculator-01/selftest.mjs
  *
  * 两层：
  *   第一层 —— 内核自带的用例表（页面「自测」按钮跑同一张）。
@@ -14,8 +14,12 @@ import path from "node:path";
 import assert from "node:assert/strict";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
+const runtimeDir = path.resolve(
+  here,
+  "../../../content/active-runtime/plugin/financial-calculator-01",
+);
 const require = createRequire(import.meta.url);
-const E = require(path.join(here, "engine.js"));
+const E = require(path.join(runtimeDir, "engine.js"));
 
 let failed = 0;
 function check(name, fn) {

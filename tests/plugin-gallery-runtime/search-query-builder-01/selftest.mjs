@@ -1,7 +1,7 @@
 /*
  * 检索式构造 · 自测
  *
- *   node public/works/plugin/search-query-builder-01/selftest.mjs
+ *   node tests/plugin-gallery-runtime/search-query-builder-01/selftest.mjs
  *
  * 第一层跑内核自带用例表（逐字比对查询串）；
  * 第二层把规格「已查证的知识」那四条**当性质来验**，而不是再抄一遍期望串 ——
@@ -14,8 +14,12 @@ import path from "node:path";
 import assert from "node:assert/strict";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
+const runtimeDir = path.resolve(
+  here,
+  "../../../content/active-runtime/plugin/search-query-builder-01",
+);
 const require = createRequire(import.meta.url);
-const E = require(path.join(here, "engine.js"));
+const E = require(path.join(runtimeDir, "engine.js"));
 
 let failed = 0;
 function check(name, fn) {
@@ -132,7 +136,7 @@ check("同一份概念结构能编出三种方言，三串互不相同", () => {
 });
 
 function readEngine() {
-  return require("node:fs").readFileSync(path.join(here, "engine.js"), "utf8");
+  return require("node:fs").readFileSync(path.join(runtimeDir, "engine.js"), "utf8");
 }
 
 console.log("\n检索式构造自测：" + (failed === 0 ? "全部通过" : failed + " 项未通过"));

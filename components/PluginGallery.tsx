@@ -22,15 +22,15 @@ import {
   type PluginStatus,
 } from "@/lib/plugin-gallery";
 
-// 工具能力列表。可搜、可按类别与使用方式筛，也可以只看**现在就能试用**的那几件。
+// 工具能力列表。可搜、可按类别与使用方式筛，也可以只看**现在就能安全打开**的那几件。
 //
 // 卡片说的是「你能用它干什么」，不是技术名词；状态角标如实标注，
 // 未实装的条目**不给任何可点的使用入口**，避免把用户送去一个不存在的地方。
 // 全页没有下载或安装入口，这是硬要求（见 lib/plugin-gallery.ts 顶部）。
 //
-// `runtimeIds` 是读盘结论（`app/plugin-gallery/runtime-registry.ts`），由页面传进来：
-// 哪几件在货架上真有可运行实例。它与 `status` 是两条独立的事实 —— 前者说
-// 「素材站上能不能试」，后者说「平台 app 里有没有入口」，混成一个会说谎。
+// `runtimeIds` 是 manifest 与 F9 plan 侧车对账后的结论，由页面传进来：哪几件有严格
+// namespace-C 外链。它与 `status` 是两条独立事实——前者说展厅能不能安全打开，
+// 后者说平台 app 里有没有入口，混成一个会说谎。
 
 const KIND_TABS: { key: PluginKind | "all"; label: string }[] = [
   { key: "all", label: "全部" },
@@ -68,7 +68,7 @@ function PluginCard({ item, runnable }: { item: PluginEntry; runnable: boolean }
         </h3>
         {runnable ? (
           <span className="shrink-0 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700 ring-1 ring-emerald-200">
-            {tt("可以试用")}
+            {tt("可以使用")}
           </span>
         ) : (
           <StatusBadge status={item.status} />
@@ -203,7 +203,7 @@ export function PluginGallery({ runtimeIds = [] }: { runtimeIds?: string[] }) {
 
         {runnable.size > 0 && (
           <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-zinc-100 pt-3">
-            <span className="shrink-0 text-sm font-semibold text-zinc-800">{tt("能不能试")}</span>
+            <span className="shrink-0 text-sm font-semibold text-zinc-800">{tt("能不能用")}</span>
             <button
               type="button"
               onClick={() => setOnlyRunnable((v) => !v)}
@@ -212,7 +212,7 @@ export function PluginGallery({ runtimeIds = [] }: { runtimeIds?: string[] }) {
                 onlyRunnable ? "bg-emerald-600 text-white" : "text-zinc-500 hover:bg-zinc-100"
               }`}
             >
-              {tt("只看现在就能试用的")}
+              {tt("只看现在可用的")}
               <span className={`ml-1 ${onlyRunnable ? "text-white/75" : "text-zinc-400"}`}>
                 {runnable.size}
               </span>
@@ -230,7 +230,7 @@ export function PluginGallery({ runtimeIds = [] }: { runtimeIds?: string[] }) {
             },
           )}
           {runnable.size > 0
-            ? tt("其中 {n} 件在这个站上就有可运行的实物，点进去直接输数据试。", {
+            ? tt("其中 {n} 件已有隔离的安全运行入口，点进去可以打开使用。", {
                 n: runnable.size,
               })
             : ""}

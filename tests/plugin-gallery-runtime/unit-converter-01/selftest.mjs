@@ -1,7 +1,7 @@
 /*
  * 换算器 · 自测
  *
- *   node public/works/plugin/unit-converter-01/selftest.mjs
+ *   node tests/plugin-gallery-runtime/unit-converter-01/selftest.mjs
  *
  * 两层，缺一层这份自测就没有意义：
  *
@@ -10,7 +10,8 @@
  *              第一层可以靠改期望值刷绿，第二层不能：它的期望值不在被测物里。
  *              规格：docs/specs/oceanleo-plugins-v1/plugins/unit-converter.md §已查证的知识
  *
- * 加载的是货架上那份 engine.js 本体（asset 仓无 package.json "type"，.js 即 CommonJS），
+ * 加载的是 active-runtime 闭包里的 engine.js 本体（asset 仓无 package.json
+ * "type"，.js 即 CommonJS），
  * 不是副本，所以「自测过了」等于「用户点开的那个东西算对了」。
  */
 import { createRequire } from "node:module";
@@ -19,8 +20,12 @@ import path from "node:path";
 import assert from "node:assert/strict";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
+const runtimeDir = path.resolve(
+  here,
+  "../../../content/active-runtime/plugin/unit-converter-01",
+);
 const require = createRequire(import.meta.url);
-const engine = require(path.join(here, "engine.js"));
+const engine = require(path.join(runtimeDir, "engine.js"));
 
 let failed = 0;
 function check(name, fn) {

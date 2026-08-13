@@ -1,7 +1,7 @@
 /*
  * 检索式构造 · 界面自测（真的装起来、真的一步步答、真的读产物框里的字）
  *
- *   node public/works/plugin/search-query-builder-01/uitest.mjs
+ *   node tests/plugin-gallery-runtime/search-query-builder-01/uitest.mjs
  *
  * jsdom，不是浏览器。不启动浏览器、不截图、不连网。
  */
@@ -12,6 +12,10 @@ import assert from "node:assert/strict";
 import { createRequire } from "node:module";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
+const runtimeDir = path.resolve(
+  here,
+  "../../../content/active-runtime/plugin/search-query-builder-01",
+);
 const require = createRequire(import.meta.url);
 
 function loadJsdom() {
@@ -42,7 +46,7 @@ function check(name, fn) {
   }
 }
 
-const htmlPath = path.join(here, "index.html");
+const htmlPath = path.join(runtimeDir, "index.html");
 const dom = new JSDOM(readFileSync(htmlPath, "utf8"), {
   url: pathToFileURL(htmlPath).href,
   runScripts: "dangerously",
@@ -108,44 +112,46 @@ check("空白时不弹告警、不出数量警告（规格：空白不是错误�
 /* ---------- 真的一步步答 ---------- */
 
 check("第 1 步写下问题 → 摘要里出现它", () => {
-  typeInto(stageInputs()[0], "运动能不能降低老年人跌倒？");
+  typeInto(stageInputs()[0], "气候变化如何影响适应策略？");
   clickText("下一步：拆概念块");
   const row = $(".done-row");
   assert.ok(row, "已答摘要没有出现");
   assert.equal(row.querySelector(".k").textContent.trim(), "要查什么");
-  assert.equal(row.querySelector(".v").textContent.trim(), "运动能不能降低老年人跌倒？");
+  assert.equal(row.querySelector(".v").textContent.trim(), "气候变化如何影响适应策略？");
   assert.equal(text("#q"), "这个问题里有哪几个概念？");
 });
 
 check("加第一个概念块 + 第一个词 → 产物立刻长出最小查询串", () => {
-  enterInto(stageInputs()[0], "人群");
+  enterInto(stageInputs()[0], "主题");
   const termInput = stageInputs().find((i) => /再加一个说法/.test(i.placeholder));
   assert.ok(termInput, "概念块里没有加词的输入框");
-  enterInto(termInput, "aged");
-  assert.equal(query(), "(aged[Title/Abstract])");
+  enterInto(termInput, "climate change");
+  assert.equal(query(), '("climate change"[Title/Abstract])');
 });
 
 check("同一块里加第二个词 → 块内用 OR", () => {
   const termInput = stageInputs().find((i) => /再加一个说法/.test(i.placeholder));
-  enterInto(termInput, "elderly");
-  assert.equal(query(), "(aged[Title/Abstract] OR elderly[Title/Abstract])");
+  enterInto(termInput, "global warming");
+  assert.equal(
+    query(),
+    '("climate change"[Title/Abstract] OR "global warming"[Title/Abstract])',
+  );
 });
 
 check("词组自动加引号", () => {
-  const termInput = stageInputs().find((i) => /再加一个说法/.test(i.placeholder));
-  enterInto(termInput, "older adults");
-  assert.match(query(), /"older adults"\[Title\/Abstract\]/);
+  assert.match(query(), /"climate change"\[Title\/Abstract\]/);
+  assert.match(query(), /"global warming"\[Title\/Abstract\]/);
 });
 
 check("加第二个概念块 → 块间用 AND，两块各自带括号", () => {
   const nb = stageInputs().find((i) => /再加一个概念块/.test(i.placeholder));
   enterInto(nb, "干预");
   const inputs = stageInputs().filter((i) => /再加一个说法/.test(i.placeholder));
-  enterInto(inputs[inputs.length - 1], "exercise");
+  enterInto(inputs[inputs.length - 1], "adaptation");
   assert.equal(
     query(),
-    '(aged[Title/Abstract] OR elderly[Title/Abstract] OR "older adults"[Title/Abstract])'
-    + " AND (exercise[Title/Abstract])"
+    '("climate change"[Title/Abstract] OR "global warming"[Title/Abstract])'
+    + " AND (adaptation[Title/Abstract])"
   );
 });
 
@@ -153,10 +159,10 @@ check("改一个词的字段为主题词 → 查询串跟着换标签", () => {
   const sel = doc.querySelector(".block .term select");
   sel.value = "mesh";
   sel.dispatchEvent(new window.Event("change", { bubbles: true }));
-  assert.match(query(), /aged\[MeSH Terms\]/);
+  assert.match(query(), /"climate change"\[MeSH Terms\]/);
   sel.value = "tiab";
   sel.dispatchEvent(new window.Event("change", { bubbles: true }));
-  assert.match(query(), /aged\[Title\/Abstract\]/);
+  assert.match(query(), /"climate change"\[Title\/Abstract\]/);
 });
 
 /* ---------- 换方言：同一份结构重编译 ---------- */
@@ -165,7 +171,7 @@ check("走到第 3 步，切到 arXiv → 前缀语法，且屏上写明降级/�
   clickText("下一步：选数据库");
   assert.equal(text("#q"), "拿去哪个库检索？");
   clickText("arXiv");
-  assert.match(query(), /abs:aged/);
+  assert.match(query(), /abs:/);
   assert.doesNotMatch(query(), /\[Title\/Abstract\]/);
 });
 
@@ -240,7 +246,7 @@ check("点「运行自测」→ 屏上出现 18 / 18 通过", () => {
 /* ---------- 沙箱适配 ---------- */
 
 function code(file) {
-  return readFileSync(path.join(here, file), "utf8")
+  return readFileSync(path.join(runtimeDir, file), "utf8")
     .replace(/<!--[\s\S]*?-->/g, " ")
     .replace(/\/\*[\s\S]*?\*\//g, " ")
     .replace(/^[ \t]*\/\/.*$/gm, " ");

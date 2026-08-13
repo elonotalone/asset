@@ -1,7 +1,7 @@
 /*
  * 金融计算器 · 界面自测（真的装起来、真的改假设、真的读屏上的数）
  *
- *   node public/works/plugin/financial-calculator-01/uitest.mjs
+ *   node tests/plugin-gallery-runtime/financial-calculator-01/uitest.mjs
  *
  * jsdom，不是浏览器：JS 实现的 DOM，属静态/程序化检查。不启动浏览器、不截图、不连网。
  */
@@ -12,6 +12,10 @@ import assert from "node:assert/strict";
 import { createRequire } from "node:module";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
+const runtimeDir = path.resolve(
+  here,
+  "../../../content/active-runtime/plugin/financial-calculator-01",
+);
 const require = createRequire(import.meta.url);
 
 function loadJsdom() {
@@ -42,7 +46,7 @@ function check(name, fn) {
   }
 }
 
-const htmlPath = path.join(here, "index.html");
+const htmlPath = path.join(runtimeDir, "index.html");
 const dom = new JSDOM(readFileSync(htmlPath, "utf8"), {
   url: pathToFileURL(htmlPath).href,
   runScripts: "dangerously",
@@ -157,6 +161,18 @@ check("改还款方式为等额本金：首期与末期还款不同，且每期�
   set("periods", "360");
 });
 
+check("500000 / 6% / 12 期 → 月供 43 033.21、12 行、末期余额 0", () => {
+  set("principal", "500000");
+  set("rate", "6");
+  set("periods", "12");
+  assert.equal(headline("每期还款"), "43 033.21");
+  assert.equal(doc.querySelectorAll("#tbody tr").length, 12);
+  assert.equal(rowCells(11)[4], "0.00");
+  set("principal", "1000000");
+  set("rate", "4.2");
+  set("periods", "360");
+});
+
 check("利率填 0：退化成 P/n，不出 NaN", () => {
   set("rate", "0");
   set("principal", "1200");
@@ -210,7 +226,7 @@ check("点「运行自测」→ 屏上出现 15 / 15 通过", () => {
 /* ---------- 沙箱适配 ---------- */
 
 function code(file) {
-  return readFileSync(path.join(here, file), "utf8")
+  return readFileSync(path.join(runtimeDir, file), "utf8")
     .replace(/<!--[\s\S]*?-->/g, " ")
     .replace(/\/\*[\s\S]*?\*\//g, " ")
     .replace(/^[ \t]*\/\/.*$/gm, " ");

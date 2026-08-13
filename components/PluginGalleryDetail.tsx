@@ -10,12 +10,13 @@ import {
   STATUS_HINTS,
   STATUS_LABELS,
   categoryLabel,
+  isPluginRuntimeUrl,
   type PluginEntry,
 } from "@/lib/plugin-gallery";
 import { PluginGalleryRunner } from "@/components/PluginGalleryRunner";
 
-// 一件工具的说明页。货架上有实物的，**页面第一屏就是那件工具本人**（受限沙箱里真跑）；
-// 没有实物的照旧只有说明：能力、场景、输入输出、在哪儿能用，以及「凭什么这么标」的依据。
+// 一件工具的说明页。有实物的先显示真实 cover；F9 plan 侧车给出严格 `.app` 地址后，
+// 再显示新窗口“打开使用”。没有合法地址就明确暂不可用，不在 asset 页面内运行代码。
 //
 // 这一页同样没有下载或安装入口：工具是打开就用的东西，不是能存到硬盘的素材。
 // 没有实物的条目连「打开」都不给，给了就是把用户送去一个不存在的地方。
@@ -52,15 +53,19 @@ function Bullets({ lines }: { lines: string[] }) {
 
 export function PluginGalleryDetail({
   item,
-  runtimeEntryPath = null,
+  previewPath = null,
+  runtimeUrl = null,
 }: {
   item: PluginEntry;
-  /** 可运行实例的入口地址（读盘结论，由页面传进来）；没有实物就是 null。 */
-  runtimeEntryPath?: string | null;
+  /** manifest 中有对应实例时给真实 cover；它本身不可执行，可以安全留在 public。 */
+  previewPath?: string | null;
+  /** 只来自 F9 plan 侧车；缺失或歪地址时必须保持 null。 */
+  runtimeUrl?: string | null;
 }) {
   const tt = useUI();
   const shipped = item.status === "shipped";
-  const runnable = runtimeEntryPath !== null;
+  const runnable = isPluginRuntimeUrl(runtimeUrl);
+  const hasPreview = previewPath !== null;
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6">
@@ -81,7 +86,7 @@ export function PluginGalleryDetail({
               runnable || shipped ? "bg-white/25" : "bg-black/25"
             }`}
           >
-            {runnable ? tt("现在就能试用") : tt(STATUS_LABELS[item.status])}
+            {runnable ? tt("现在可以使用") : tt(STATUS_LABELS[item.status])}
           </span>
         </div>
         <p className="mt-3 max-w-2xl text-sm leading-7 text-white/90">
@@ -98,7 +103,13 @@ export function PluginGalleryDetail({
       </header>
 
       <div className="mt-4 grid gap-4">
-        {runnable ? <PluginGalleryRunner item={item} entryPath={runtimeEntryPath} /> : null}
+        {hasPreview ? (
+          <PluginGalleryRunner
+            item={item}
+            previewPath={previewPath}
+            runtimeUrl={runtimeUrl}
+          />
+        ) : null}
 
         <Section title="你能用它干什么">
           <Bullets lines={item.does} />
@@ -144,13 +155,21 @@ export function PluginGalleryDetail({
                 : "bg-amber-50 text-amber-700 ring-1 ring-amber-200"
             }`}
           >
-            {runnable ? tt("能用：这一页上面那一格就是它本人") : tt(STATUS_LABELS[item.status])}
+            {runnable
+              ? tt("能用：点击上方的「打开使用」进入")
+              : hasPreview
+                ? tt("暂不可用：安全运行地址尚未生成")
+                : tt(STATUS_LABELS[item.status])}
           </p>
-          {/* 试用位与平台入口是两件事：能在这里试，不等于 app 里已经有它的入口。
+          {/* 安全运行入口与平台入口是两件事：能从展厅打开，不等于 app 里已经有它的入口。
               两句都说，才不会把「能试」说成「已上线」。 */}
           {runnable ? (
             <p className="mt-2">
-              {tt("直接在上面那一格里输数据即可，不用登录，也不用先准备素材。")}
+              {tt("它会在隔离的安全站点中打开，不用登录，也不会读取本站登录状态。")}
+            </p>
+          ) : hasPreview ? (
+            <p className="mt-2">
+              {tt("可以先看实际界面；安全地址准备好之前，不会回退到本站运行。")}
             </p>
           ) : null}
           <p className="mt-2">{tt(STATUS_HINTS[item.status])}</p>

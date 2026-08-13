@@ -1,7 +1,7 @@
 /*
  * 换算器 · 界面自测（真的把 index.html 装起来、真的往输入框里打字、真的读屏上的字）
  *
- *   node public/works/plugin/unit-converter-01/uitest.mjs
+ *   node tests/plugin-gallery-runtime/unit-converter-01/uitest.mjs
  *
  * 为什么还要这一份：engine 的自测只证明「算得对」，证明不了「打开它能用」。
  * 判「做完了」的标准是**打开它，输入东西，它给出正确结果**，所以这份测的是
@@ -17,6 +17,10 @@ import assert from "node:assert/strict";
 import { createRequire } from "node:module";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
+const runtimeDir = path.resolve(
+  here,
+  "../../../content/active-runtime/plugin/unit-converter-01",
+);
 const require = createRequire(import.meta.url);
 
 /* jsdom 在 asset 仓是 pnpm 的间接依赖，没有提升到 node_modules/ 顶层，所以逐个探。 */
@@ -49,7 +53,7 @@ function check(name, fn) {
   }
 }
 
-const htmlPath = path.join(here, "index.html");
+const htmlPath = path.join(runtimeDir, "index.html");
 const dom = new JSDOM(readFileSync(htmlPath, "utf8"), {
   url: pathToFileURL(htmlPath).href,
   runScripts: "dangerously",
@@ -126,10 +130,10 @@ check("每行都把因子、基准单位、精确/近似摆在结果旁边", () 
 
 /* ---------- 真的输入东西 ---------- */
 
-check("输入 2.5 → 米制整列跟着变（250 cm / 2 500 mm）", () => {
-  type("2.5");
-  assert.equal(rowValue("cm"), "250");
-  assert.equal(rowValue("mm"), "2 500");
+check("输入 3.25 → 米制整列跟着变（325 cm / 3 250 mm）", () => {
+  type("3.25");
+  assert.equal(rowValue("cm"), "325");
+  assert.equal(rowValue("mm"), "3 250");
 });
 
 check("输入负数与科学计数法都收（-1.5e3 m = -1.5 km）", () => {
@@ -199,7 +203,7 @@ check("点「运行自测」→ 屏上出现 20 / 20 通过", () => {
  * 免不了要写出它的名字（「不碰 localStorage」），不先剥注释就会自己命中自己。
  */
 function code(file) {
-  let src = readFileSync(path.join(here, file), "utf8");
+  let src = readFileSync(path.join(runtimeDir, file), "utf8");
   src = src.replace(/<!--[\s\S]*?-->/g, " ");     // HTML 注释
   src = src.replace(/\/\*[\s\S]*?\*\//g, " ");    // JS 块注释
   src = src.replace(/^[ \t]*\/\/.*$/gm, " ");     // 行首行注释（不碰字符串里的 https://）
