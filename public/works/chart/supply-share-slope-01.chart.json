@@ -1,0 +1,490 @@
+{
+  "schema": "oceanleo.chart.v1",
+  "version": 1,
+  "title": "七个素材族在三个口径下的份额翻转",
+  "dataset": {
+    "dimensions": [
+      {
+        "name": "口径",
+        "type": "ordinal"
+      },
+      {
+        "name": "位图照片",
+        "type": "number"
+      },
+      {
+        "name": "矢量图形",
+        "type": "number"
+      },
+      {
+        "name": "视频",
+        "type": "number"
+      },
+      {
+        "name": "音频",
+        "type": "number"
+      },
+      {
+        "name": "三维资产",
+        "type": "number"
+      },
+      {
+        "name": "字体",
+        "type": "number"
+      },
+      {
+        "name": "其他",
+        "type": "number"
+      }
+    ],
+    "source": [
+      [
+        "按件数占比",
+        50.4,
+        41.96,
+        1.02,
+        1.03,
+        0.18,
+        0.06,
+        5.34
+      ],
+      [
+        "按字节占比",
+        14.58,
+        2.92,
+        51.59,
+        12.47,
+        10.34,
+        5.48,
+        2.62
+      ],
+      [
+        "按无条件可商用件数占比",
+        55.97,
+        37.6,
+        1.13,
+        0.91,
+        0.2,
+        0,
+        4.18
+      ]
+    ]
+  },
+  "option": {
+    "color": [
+      "#7E22CE",
+      "#047857",
+      "#C2410C",
+      "#BE123C",
+      "#075985",
+      "#0891B2",
+      "#4D7C0F",
+      "#9D174D"
+    ],
+    "title": {
+      "text": "七个素材族在三个口径下的份额翻转",
+      "subtext": "口径：三列各自折成占该口径总量的百分比，横向可比；线段不表示时间。数据为 2026-08-13 本机只读查询实测。",
+      "left": "center",
+      "textStyle": {
+        "color": "#1B1226",
+        "fontSize": 26,
+        "fontWeight": "bold"
+      },
+      "subtextStyle": {
+        "color": "#5B4A6B",
+        "fontSize": 15
+      }
+    },
+    "grid": {
+      "left": 68,
+      "right": 188,
+      "top": 136,
+      "bottom": 72,
+      "containLabel": true
+    },
+    "xAxis": {
+      "type": "category",
+      "name": "口径",
+      "axisLabel": {
+        "color": "#5B4A6B",
+        "fontSize": 13
+      },
+      "axisLine": {
+        "lineStyle": {
+          "color": "#C6B8D2"
+        }
+      },
+      "splitLine": {
+        "lineStyle": {
+          "color": "#EDE7F3",
+          "type": "dashed"
+        }
+      }
+    },
+    "yAxis": {
+      "type": "value",
+      "name": "占全库的份额（%）",
+      "min": 0,
+      "max": 60,
+      "interval": 20,
+      "axisLabel": {
+        "color": "#5B4A6B",
+        "fontSize": 13
+      },
+      "axisLine": {
+        "lineStyle": {
+          "color": "#C6B8D2"
+        }
+      }
+    },
+    "series": [
+      {
+        "type": "line",
+        "name": "位图照片",
+        "encode": {
+          "x": "口径",
+          "y": "位图照片"
+        },
+        "symbol": "circle",
+        "itemStyle": {
+          "color": "#7E22CE"
+        },
+        "decal": {
+          "symbol": "rect",
+          "dashArrayX": [
+            1,
+            0
+          ],
+          "dashArrayY": [
+            2,
+            5
+          ],
+          "rotation": 0.5236
+        }
+      },
+      {
+        "type": "line",
+        "name": "矢量图形",
+        "encode": {
+          "x": "口径",
+          "y": "矢量图形"
+        },
+        "symbol": "rect",
+        "itemStyle": {
+          "color": "#047857"
+        },
+        "decal": {
+          "symbol": "circle",
+          "dashArrayX": [
+            [
+              8,
+              8
+            ],
+            [
+              0,
+              8,
+              8,
+              0
+            ]
+          ],
+          "dashArrayY": [
+            6,
+            0
+          ],
+          "rotation": 0
+        }
+      },
+      {
+        "type": "line",
+        "name": "视频",
+        "encode": {
+          "x": "口径",
+          "y": "视频"
+        },
+        "symbol": "triangle",
+        "itemStyle": {
+          "color": "#C2410C"
+        },
+        "decal": {
+          "symbol": "line",
+          "dashArrayX": [
+            1,
+            0
+          ],
+          "dashArrayY": [
+            4,
+            3
+          ],
+          "rotation": -0.7854
+        }
+      },
+      {
+        "type": "line",
+        "name": "音频",
+        "encode": {
+          "x": "口径",
+          "y": "音频"
+        },
+        "symbol": "diamond",
+        "itemStyle": {
+          "color": "#BE123C"
+        },
+        "decal": {
+          "symbol": "rect",
+          "dashArrayX": [
+            [
+              6,
+              6
+            ],
+            [
+              0,
+              6,
+              6,
+              0
+            ]
+          ],
+          "dashArrayY": [
+            6,
+            0
+          ],
+          "rotation": 0.7854
+        }
+      },
+      {
+        "type": "line",
+        "name": "三维资产",
+        "encode": {
+          "x": "口径",
+          "y": "三维资产"
+        },
+        "symbol": "pin",
+        "itemStyle": {
+          "color": "#075985"
+        },
+        "decal": {
+          "symbol": "triangle",
+          "dashArrayX": [
+            1,
+            0
+          ],
+          "dashArrayY": [
+            3,
+            4
+          ],
+          "rotation": 0
+        }
+      },
+      {
+        "type": "line",
+        "name": "字体",
+        "encode": {
+          "x": "口径",
+          "y": "字体"
+        },
+        "symbol": "arrow",
+        "itemStyle": {
+          "color": "#0891B2"
+        },
+        "decal": {
+          "symbol": "line",
+          "dashArrayX": [
+            1,
+            0
+          ],
+          "dashArrayY": [
+            5,
+            2
+          ],
+          "rotation": 1.5708
+        }
+      },
+      {
+        "type": "line",
+        "name": "其他",
+        "encode": {
+          "x": "口径",
+          "y": "其他"
+        },
+        "symbol": "circle",
+        "itemStyle": {
+          "color": "#4D7C0F"
+        },
+        "decal": {
+          "symbol": "rect",
+          "dashArrayX": [
+            1,
+            0
+          ],
+          "dashArrayY": [
+            2,
+            5
+          ],
+          "rotation": 0.5236
+        }
+      }
+    ],
+    "legend": {
+      "data": [
+        "位图照片",
+        "矢量图形",
+        "视频",
+        "音频",
+        "三维资产",
+        "字体",
+        "其他"
+      ],
+      "right": 12,
+      "orient": "vertical",
+      "textStyle": {
+        "color": "#5B4A6B",
+        "fontSize": 13
+      }
+    },
+    "tooltip": {
+      "trigger": "axis",
+      "axisPointer": {
+        "type": "shadow"
+      }
+    },
+    "aria": {
+      "enabled": true,
+      "decal": {
+        "show": true,
+        "decals": [
+          {
+            "symbol": "rect",
+            "dashArrayX": [
+              1,
+              0
+            ],
+            "dashArrayY": [
+              2,
+              5
+            ],
+            "rotation": 0.5236
+          },
+          {
+            "symbol": "circle",
+            "dashArrayX": [
+              [
+                8,
+                8
+              ],
+              [
+                0,
+                8,
+                8,
+                0
+              ]
+            ],
+            "dashArrayY": [
+              6,
+              0
+            ],
+            "rotation": 0
+          },
+          {
+            "symbol": "line",
+            "dashArrayX": [
+              1,
+              0
+            ],
+            "dashArrayY": [
+              4,
+              3
+            ],
+            "rotation": -0.7854
+          },
+          {
+            "symbol": "rect",
+            "dashArrayX": [
+              [
+                6,
+                6
+              ],
+              [
+                0,
+                6,
+                6,
+                0
+              ]
+            ],
+            "dashArrayY": [
+              6,
+              0
+            ],
+            "rotation": 0.7854
+          },
+          {
+            "symbol": "triangle",
+            "dashArrayX": [
+              1,
+              0
+            ],
+            "dashArrayY": [
+              3,
+              4
+            ],
+            "rotation": 0
+          },
+          {
+            "symbol": "line",
+            "dashArrayX": [
+              1,
+              0
+            ],
+            "dashArrayY": [
+              5,
+              2
+            ],
+            "rotation": 1.5708
+          }
+        ]
+      }
+    }
+  },
+  "indicators": [
+    {
+      "key": "image",
+      "label": "位图照片"
+    },
+    {
+      "key": "vector",
+      "label": "矢量图形"
+    },
+    {
+      "key": "video",
+      "label": "视频"
+    },
+    {
+      "key": "audio",
+      "label": "音频"
+    },
+    {
+      "key": "3d",
+      "label": "三维资产"
+    },
+    {
+      "key": "font",
+      "label": "字体"
+    },
+    {
+      "key": "other",
+      "label": "其他"
+    }
+  ],
+  "narrative": {
+    "takeaway": "换一个口径去数，谁大谁小就翻过来了：视频占件数 1.02% 却占字节 51.59%，矢量图形占件数 41.96% 却只占字节 2.92%。按件数做存储与打包规划会错一个数量级；字体族在「无条件可商用」这一档掉到 0%，也就是整族都带条件，不能默认可用。",
+    "method": "口径：三列都折成占各自总量的百分比，所以横向可比。件数总量 119,838 件；字节总量 7.68 GiB（`file_size` 之和）；「无条件可商用」= `commercial_ok` 为真且 `attribution_required` 为假，共 107,904 件。七族之外没有第八族——`type` 里剩下的全部并进「其他」，它是一条真的线，不是省略号。",
+    "caveat": "缺失值处置：`file_size` 为空的那批在字节口径下按 0 计入分母之外（它们仍算件数），所以字节列读的是「已知体积那部分的构成」，不是全库体积。三个口径之间没有时间关系——线段只表示同一族在两个口径下的两个值，中间不曾发生过什么。"
+  },
+  "attribution": {
+    "entries": [
+      {
+        "text": "OceanLeo 第一方原创。图上每一个数都来自本机 oceanleo 库的只读查询，SQL 原文与查询快照随件存放在 signals/E2-workshop/data/，可原样重跑对账。",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ]
+  }
+}

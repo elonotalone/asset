@@ -1,0 +1,257 @@
+{
+  "schema": "oceanleo.chart.v1",
+  "version": 1,
+  "title": "素材库 238 个类目的规模分布（按本类目件数分箱）",
+  "dataset": {
+    "dimensions": [
+      {
+        "name": "类目规模区间（件数，不等宽分箱）",
+        "type": "ordinal"
+      },
+      {
+        "name": "类目数",
+        "type": "number"
+      }
+    ],
+    "source": [
+      [
+        "1-9 件",
+        70
+      ],
+      [
+        "10-49 件",
+        104
+      ],
+      [
+        "50-99 件",
+        29
+      ],
+      [
+        "100-499 件",
+        21
+      ],
+      [
+        "500-999 件",
+        5
+      ],
+      [
+        "1000-4999 件",
+        6
+      ],
+      [
+        ">=5000 件",
+        3
+      ]
+    ]
+  },
+  "option": {
+    "color": [
+      "#7C2D12",
+      "#A16207",
+      "#0F766E",
+      "#65A30D",
+      "#3F3F46",
+      "#9A3412",
+      "#155E75",
+      "#78350F"
+    ],
+    "title": {
+      "text": "素材库 238 个类目的规模分布（按本类目件数分箱）",
+      "textStyle": {
+        "color": "#231A14",
+        "fontSize": 15,
+        "fontWeight": "600"
+      }
+    },
+    "grid": {
+      "left": 64,
+      "right": 32,
+      "top": 56,
+      "bottom": 84,
+      "containLabel": true
+    },
+    "xAxis": {
+      "type": "category",
+      "name": "类目规模区间（件数，不等宽分箱）",
+      "axisLabel": {
+        "color": "#6B5A4E",
+        "fontSize": 10
+      },
+      "axisLine": {
+        "lineStyle": {
+          "color": "#C9BBAE"
+        }
+      }
+    },
+    "yAxis": {
+      "type": "value",
+      "name": "类目数",
+      "min": 0,
+      "max": 125,
+      "interval": 25,
+      "axisLabel": {
+        "color": "#6B5A4E",
+        "fontSize": 10
+      },
+      "axisLine": {
+        "lineStyle": {
+          "color": "#C9BBAE"
+        }
+      },
+      "splitLine": {
+        "lineStyle": {
+          "color": "#EFE7DF",
+          "type": "dashed"
+        }
+      }
+    },
+    "series": [
+      {
+        "type": "bar",
+        "name": "类目数",
+        "encode": {
+          "x": "类目规模区间（件数，不等宽分箱）",
+          "y": "类目数"
+        },
+        "symbol": "circle",
+        "itemStyle": {
+          "color": "#7C2D12"
+        },
+        "decal": {
+          "symbol": "rect",
+          "dashArrayX": [
+            1,
+            0
+          ],
+          "dashArrayY": [
+            2,
+            5
+          ],
+          "rotation": 0.5236
+        }
+      }
+    ],
+    "tooltip": {
+      "trigger": "axis",
+      "axisPointer": {
+        "type": "shadow"
+      }
+    },
+    "aria": {
+      "enabled": true,
+      "decal": {
+        "show": true,
+        "decals": [
+          {
+            "symbol": "rect",
+            "dashArrayX": [
+              1,
+              0
+            ],
+            "dashArrayY": [
+              2,
+              5
+            ],
+            "rotation": 0.5236
+          },
+          {
+            "symbol": "circle",
+            "dashArrayX": [
+              [
+                8,
+                8
+              ],
+              [
+                0,
+                8,
+                8,
+                0
+              ]
+            ],
+            "dashArrayY": [
+              6,
+              0
+            ],
+            "rotation": 0
+          },
+          {
+            "symbol": "line",
+            "dashArrayX": [
+              1,
+              0
+            ],
+            "dashArrayY": [
+              4,
+              3
+            ],
+            "rotation": -0.7854
+          },
+          {
+            "symbol": "rect",
+            "dashArrayX": [
+              [
+                6,
+                6
+              ],
+              [
+                0,
+                6,
+                6,
+                0
+              ]
+            ],
+            "dashArrayY": [
+              6,
+              0
+            ],
+            "rotation": 0.7854
+          },
+          {
+            "symbol": "triangle",
+            "dashArrayX": [
+              1,
+              0
+            ],
+            "dashArrayY": [
+              3,
+              4
+            ],
+            "rotation": 0
+          },
+          {
+            "symbol": "line",
+            "dashArrayX": [
+              1,
+              0
+            ],
+            "dashArrayY": [
+              5,
+              2
+            ],
+            "rotation": 1.5708
+          }
+        ]
+      }
+    }
+  },
+  "indicators": [
+    {
+      "key": "cats",
+      "label": "类目数"
+    }
+  ],
+  "narrative": {
+    "takeaway": "238 个素材类目里有 174 个不足 50 件（占 73.11%），而规模最大的那 3 个类目一口吃掉 90,431 件（占全库 78.19%）。供给看起来有 238 种，真正撑得起「换一种风格」的只有右边那一小截。",
+    "method": "口径：一个类目 = `platform_assets.category` 的一个非空取值，先按类目数出件数，再把类目按件数装箱。分箱**不等宽**（近似按量级递增），所以柱高读的是「有多少个类目落在这一档」，不能按柱面积读比例。全库 115,656 件、238 个类目。",
+    "caveat": "缺失值处置：`category` 为空的那批不进图，它们不构成一个类目；同一个 `category` 名下如果跨了多个素材族（例如 kenney-2d 既有位图也有矢量），本图按类目名合并计一个类目，不拆。分箱边界一律左闭右开，边界值归右侧那一箱。"
+  },
+  "attribution": {
+    "entries": [
+      {
+        "text": "OceanLeo 第一方原创。图上每一个数都来自本机 oceanleo 库的只读查询，SQL 原文与查询快照随件存放在 signals/E2-workshop/data/，可原样重跑对账。",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ]
+  }
+}
