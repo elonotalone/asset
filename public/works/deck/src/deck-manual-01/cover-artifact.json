@@ -1,0 +1,13 @@
+{
+  "tool": "cover-frame",
+  "version": 1,
+  "meta": {
+    "title": "社区共享书屋落地手册：从选点到开放日",
+    "usage_scope": "commercial-ok",
+    "license_family": "CC0-1.0",
+    "supply_tier": "first-party"
+  },
+  "body": { "sourceFormat": "pptx" },
+  "media": [{ "path": "../../deck-manual-01.pptx" }],
+  "options": { "maxEdge": 1280, "format": "webp", "dpi": 150 }
+}

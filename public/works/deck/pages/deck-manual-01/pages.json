@@ -1,0 +1,91 @@
+{
+  "source": "/root/projects/asset/public/works/deck/deck-manual-01.pptx",
+  "sourceSha256": "ad3ee802cef796c8a83de0cdbdeb6089c5718508d9ca33a15f201f2452844ec8",
+  "via": "soffice --headless --convert-to pdf → pdftoppm -r 150（不限页）+ @napi-rs/canvas 重采样与 webp 编码",
+  "container": "oceanleo-convert",
+  "maxEdge": 1280,
+  "pageCount": 9,
+  "pages": [
+    {
+      "page": 1,
+      "file": "01.webp",
+      "width": 1280,
+      "height": 720,
+      "byteSize": 18162,
+      "sha256": "b36141a59929a720eb90a8a0cb59db90b3a1e156374cd6971c338455ab47783d",
+      "nonBlankRatio": 0.041074
+    },
+    {
+      "page": 2,
+      "file": "02.webp",
+      "width": 1280,
+      "height": 720,
+      "byteSize": 36806,
+      "sha256": "bd9727e254788c9305d5948128af55afd972202e246ca02743ba03c03671a727",
+      "nonBlankRatio": 0.101108
+    },
+    {
+      "page": 3,
+      "file": "03.webp",
+      "width": 1280,
+      "height": 720,
+      "byteSize": 36706,
+      "sha256": "d40f13e0ba23f1e657db0c73d78981bf2d579a6a6927da3ae4988b9fac76ca05",
+      "nonBlankRatio": 0.073574
+    },
+    {
+      "page": 4,
+      "file": "04.webp",
+      "width": 1280,
+      "height": 720,
+      "byteSize": 30414,
+      "sha256": "c62a402a552022ae7e20b24c31f6b5b72a38879934544d55f28db43deea06c3a",
+      "nonBlankRatio": 0.041334
+    },
+    {
+      "page": 5,
+      "file": "05.webp",
+      "width": 1280,
+      "height": 720,
+      "byteSize": 39926,
+      "sha256": "b0e4947f09447bd20b0eca6dc06d69a462f288b9ada5c4a3f686045053679444",
+      "nonBlankRatio": 0.06068
+    },
+    {
+      "page": 6,
+      "file": "06.webp",
+      "width": 1280,
+      "height": 720,
+      "byteSize": 24712,
+      "sha256": "bf496f2c2eda18a126e6ab1c814bf0851d47075e10a3292ed4de0c9178ba64b5",
+      "nonBlankRatio": 0.103075
+    },
+    {
+      "page": 7,
+      "file": "07.webp",
+      "width": 1280,
+      "height": 720,
+      "byteSize": 48124,
+      "sha256": "97415c70a6d218388566c8ab1ade28572d8f1f20cc87df0b59afa4c1f30b98b1",
+      "nonBlankRatio": 0.092222
+    },
+    {
+      "page": 8,
+      "file": "08.webp",
+      "width": 1280,
+      "height": 720,
+      "byteSize": 36416,
+      "sha256": "0ebfe7d8646f45c69851ca8b6c19fa4823f2b01170a7cc324bb4acc968c45b03",
+      "nonBlankRatio": 0.062593
+    },
+    {
+      "page": 9,
+      "file": "09.webp",
+      "width": 1280,
+      "height": 720,
+      "byteSize": 57682,
+      "sha256": "89229aa7b5b286d22e84d6f484dd30572e0e318e480203ba6245dfa251d1e22c",
+      "nonBlankRatio": 0.062969
+    }
+  ]
+}
