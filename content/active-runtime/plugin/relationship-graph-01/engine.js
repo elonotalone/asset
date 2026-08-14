@@ -277,7 +277,7 @@
       levels[level].sort();
       maxCount = Math.max(maxCount, levels[level].length);
     });
-    var height = Math.max(360, maxCount * 88 + 72);
+    var height = Math.max(360, (maxCount + 1) * 88);
     var marginX = 78;
     var positions = Object.create(null);
     known.forEach(function (level) {
