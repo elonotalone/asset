@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>间隔排程</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="app">
+  <header class="head">
+    <h1>间隔排程</h1>
+    <span>按 SM-2 把每次回忆评分换成可追溯的间隔与下次日期</span>
+  </header>
+
+  <div class="workspace">
+    <aside class="editor" aria-labelledby="editor-title">
+      <h2 id="editor-title">录入卡片</h2>
+      <div class="stack">
+        <label for="front">正面</label>
+        <textarea id="front" rows="3" spellcheck="false" placeholder="写下要回忆的问题"></textarea>
+      </div>
+      <div class="stack">
+        <label for="back">背面</label>
+        <textarea id="back" rows="4" spellcheck="false" placeholder="写下核对用的答案"></textarea>
+      </div>
+      <label class="check-line" for="start-now">
+        <input id="start-now" type="checkbox" checked>
+        当场先学一轮
+      </label>
+      <button id="add-card" type="button">加第一张卡</button>
+      <p id="editor-error" class="error" role="alert"></p>
+
+      <section class="rules" aria-labelledby="rules-title">
+        <h2 id="rules-title">算法摘要</h2>
+        <dl>
+          <div><dt>EF 起点 / 下限</dt><dd>2.5 / 1.3</dd></div>
+          <div><dt>第 1 次 / 第 2 次</dt><dd>1 天 / 6 天</dd></div>
+          <div><dt>此后间隔</dt><dd>ceil(上一已取整间隔 × 原 EF)</dd></div>
+          <div><dt>评分</dt><dd>q = 0–5；3 分及格</dd></div>
+        </dl>
+        <p><strong>EF 更新：</strong>EF + 0.1 − (5−q) × (0.08 + (5−q) × 0.02)，最低 1.3。</p>
+        <p><strong>低于及格：</strong>复习次数与间隔归零，当天重新到期；原 EF 完全保留。</p>
+      </section>
+    </aside>
+
+    <section class="results" aria-labelledby="queue-title">
+      <div class="headline">
+        <div><span>卡片</span><strong id="card-count">0 张</strong></div>
+        <div><span>今日到期</span><strong id="due-count">0 张</strong></div>
+        <div><span>下次复习</span><strong id="next-due">—</strong></div>
+      </div>
+      <p class="basis" id="basis-line">零张卡是正常起点；算法摘要与未来日期轴已展开。</p>
+
+      <div class="result-scroll">
+        <section class="queue" aria-labelledby="queue-title">
+          <h2 id="queue-title">今日队列</h2>
+          <div id="queue-empty">
+            <strong>今天没有要复习的卡片</strong>
+            <p>从左侧加第一张卡；不会预塞示例卡。</p>
+          </div>
+          <div id="queue-list"></div>
+          <p id="action-note" class="action-note" aria-live="polite"></p>
+        </section>
+
+        <section class="registry" aria-labelledby="registry-title">
+          <h2 id="registry-title">卡片登记</h2>
+          <table>
+            <thead><tr><th>正面</th><th>复习次数</th><th>间隔</th><th>EF</th><th>下次复习</th></tr></thead>
+            <tbody id="card-rows"></tbody>
+          </table>
+          <p id="registry-empty">尚无卡片记录。</p>
+        </section>
+
+        <section class="timeline" aria-labelledby="timeline-title">
+          <h2 id="timeline-title">未来日期轴 · 7 天</h2>
+          <table>
+            <thead><tr><th>日期</th><th>相对今日</th><th>到期负载</th></tr></thead>
+            <tbody id="timeline-rows"></tbody>
+          </table>
+        </section>
+      </div>
+    </section>
+  </div>
+
+  <footer class="foot">
+    <button id="run-test" type="button">运行自测</button>
+    <span id="test-out">未运行</span>
+    <ul id="test-detail"></ul>
+  </footer>
+</main>
+<script src="engine.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>
