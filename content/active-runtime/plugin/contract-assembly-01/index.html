@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>合同装配</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="app">
+  <header class="head">
+    <h1>合同装配</h1>
+    <p>离线组织与检查条款，不替代律师意见</p>
+  </header>
+
+  <section class="workspace">
+    <aside class="assembly" aria-label="交易问题与条款库">
+      <section class="transaction-question">
+        <p class="eyebrow">当前问题</p>
+        <h2>这是一笔什么交易</h2>
+        <fieldset id="transaction-options">
+          <legend class="sr-only">选择交易类型</legend>
+        </fieldset>
+      </section>
+
+      <section class="library" aria-labelledby="library-title">
+        <h2 id="library-title">按类目折叠的条款库</h2>
+        <p class="fine">首次打开不预勾任何条款。展开类目后选择，依赖与互斥原因会写在条款旁。</p>
+        <div id="category-list"></div>
+        <div id="relationship-note" class="relationship-note" aria-live="polite"></div>
+      </section>
+    </aside>
+
+    <section class="work" aria-label="状态、合同预览与导出前检查">
+      <div class="metrics" id="metrics"></div>
+      <p id="risk-basis" class="risk-basis">风险分尚未计算；选择首条条款后显示权重、缺失类目与冲突扣分。</p>
+
+      <section class="preview-section">
+        <div class="section-head">
+          <h2>合同预览</h2>
+          <span id="preview-label">空白预览页</span>
+        </div>
+        <textarea id="contract-preview" readonly aria-label="可手动选择的合同正文" placeholder="空白预览页"></textarea>
+      </section>
+
+      <section class="issues-section" aria-labelledby="issues-title">
+        <div class="section-head">
+          <h2 id="issues-title">导出前检查</h2>
+        </div>
+        <p id="issue-intro" class="fine">选择条款后，这里会列出未填占位符、冲突与缺失关键类目；空白不是失败。</p>
+        <ul id="issues"></ul>
+      </section>
+    </section>
+  </section>
+
+  <footer class="foot">
+    <button id="run-test" type="button">运行自测</button>
+    <span id="test-out">未运行</span>
+    <ul id="test-detail"></ul>
+  </footer>
+</main>
+<script src="engine.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>
