@@ -7,100 +7,209 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="app">
-  <header class="head">
-    <div>
-      <h1>三表模型</h1>
-      <p>改变驱动假设，利润表、现金流量表、资产负债表与检查结果同一帧联动</p>
-    </div>
-    <div class="legend" aria-label="建模角色图例">
-      <span class="input-role">■ 输入（蓝）</span>
-      <span class="formula-role">= 本表公式（黑）</span>
-      <span class="cross-role">↗ 跨表引用（绿）</span>
-    </div>
-  </header>
+<main class="rig">
+  <p id="verdict" class="verdict" aria-live="polite"></p>
+  <p id="trace" class="trace"></p>
 
-  <div class="workspace">
-    <aside class="controls">
-      <section>
-        <h2>驱动假设</h2>
-        <p class="fine">通用三年预测，不对应任何真实公司；金额单位为元。</p>
-        <label class="field" for="revenue-growth"><span><b>输入</b> 收入增速</span><input id="revenue-growth" type="number" value="12.00" step="0.25"></label>
-        <label class="field" for="base-revenue"><span><b>输入</b> 基期收入</span><input id="base-revenue" type="number" value="1000000.00" step="1000" min="0"></label>
-        <label class="field" for="gross-margin"><span><b>输入</b> 毛利率</span><input id="gross-margin" type="number" value="55.00" step="0.25" min="0" max="100"></label>
-        <label class="field" for="operating-expense-pct"><span><b>输入</b> 运营费用率</span><input id="operating-expense-pct" type="number" value="28.00" step="0.25" min="0" max="100"></label>
-        <label class="field" for="tax-rate"><span><b>输入</b> 税率</span><input id="tax-rate" type="number" value="25.00" step="0.25" min="0" max="100"></label>
-        <label class="field" for="dso"><span><b>输入</b> 应收周转天数</span><input id="dso" type="number" value="45" step="1" min="0" max="365"></label>
-        <label class="field" for="inventory-days"><span><b>输入</b> 存货天数</span><input id="inventory-days" type="number" value="30" step="1" min="0" max="365"></label>
-        <label class="field" for="payable-days"><span><b>输入</b> 应付天数</span><input id="payable-days" type="number" value="35" step="1" min="0" max="365"></label>
-        <label class="field" for="capex-pct"><span><b>输入</b> 资本开支率</span><input id="capex-pct" type="number" value="6.00" step="0.25" min="0" max="100"></label>
-        <label class="field" for="depreciation-years"><span><b>输入</b> 折旧年限</span><input id="depreciation-years" type="number" value="5" step="1" min="1" max="50"></label>
-        <label class="field" for="interest-rate"><span><b>输入</b> 循环贷利率</span><input id="interest-rate" type="number" value="8.00" step="0.25" min="0" max="100"></label>
-        <label class="field" for="minimum-cash"><span><b>输入</b> 最低现金</span><input id="minimum-cash" type="number" value="100000.00" step="1000" min="0"></label>
-      </section>
+  <div id="stack" class="stack">
+    <svg id="drive" class="drive" aria-hidden="true"></svg>
 
-      <section>
-        <h2>循环口径</h2>
-        <label class="field" for="loop-mode">
-          <span>利息—现金—循环贷</span>
-          <select id="loop-mode">
-            <option value="opening">期初余额直接断环</option>
-            <option value="average">平均余额迭代</option>
-          </select>
-        </label>
-        <p id="mode-explanation" class="fine"></p>
-      </section>
+    <section class="deck" data-deck="income" aria-label="利润表">
+      <span class="plate">利润表</span>
+      <table>
+        <thead>
+          <tr><td class="rowname"></td><th scope="col">2027E</th><th scope="col">2028E</th><th scope="col">2029E</th></tr>
+        </thead>
+        <tbody>
+          <tr data-row="revenue">
+            <th scope="row" class="rowname">
+              <span class="term">收入</span>
+              <span class="knob"><label for="k-baseRevenue">基期收入</label><input id="k-baseRevenue" data-knob="baseRevenue" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" size="9"><b>元</b></span>
+              <span class="knob"><label for="k-revenueGrowth">收入增速</label><input id="k-revenueGrowth" data-knob="revenueGrowth" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" size="5"><b>%</b></span>
+            </th>
+            <td data-year="0"></td><td data-year="1"></td><td data-year="2"></td>
+          </tr>
+          <tr data-row="depreciation">
+            <th scope="row" class="rowname">
+              <span class="term">折旧</span>
+              <span class="knob"><label for="k-capexPct">资本开支率</label><input id="k-capexPct" data-knob="capexPct" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" size="5"><b>%</b></span>
+              <span class="knob"><label for="k-depreciationYears">折旧年限</label><input id="k-depreciationYears" data-knob="depreciationYears" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" size="3"><b>年</b></span>
+            </th>
+            <td data-year="0"></td><td data-year="1"></td><td data-year="2"></td>
+          </tr>
+          <tr data-row="ebit">
+            <th scope="row" class="rowname">
+              <button class="term open" type="button" data-open="ebit" aria-expanded="false">EBIT</button>
+              <span class="knob"><label for="k-grossMargin">毛利率</label><input id="k-grossMargin" data-knob="grossMargin" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" size="5"><b>%</b></span>
+              <span class="knob"><label for="k-operatingExpensePct">运营费用率</label><input id="k-operatingExpensePct" data-knob="operatingExpensePct" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" size="5"><b>%</b></span>
+            </th>
+            <td data-year="0"></td><td data-year="1"></td><td data-year="2"></td>
+          </tr>
+          <tr class="inner" data-row="cogs" data-under="ebit" hidden>
+            <th scope="row" class="rowname"><span class="term">销售成本</span></th>
+            <td data-year="0"></td><td data-year="1"></td><td data-year="2"></td>
+          </tr>
+          <tr class="inner" data-row="grossProfit" data-under="ebit" hidden>
+            <th scope="row" class="rowname"><span class="term">毛利</span></th>
+            <td data-year="0"></td><td data-year="1"></td><td data-year="2"></td>
+          </tr>
+          <tr class="inner" data-row="operatingExpense" data-under="ebit" hidden>
+            <th scope="row" class="rowname"><span class="term">运营费用</span></th>
+            <td data-year="0"></td><td data-year="1"></td><td data-year="2"></td>
+          </tr>
+          <tr data-row="netIncome">
+            <th scope="row" class="rowname">
+              <button class="term open" type="button" data-open="netIncome" aria-expanded="false">净利润</button>
+              <span class="knob"><label for="k-taxRate">税率</label><input id="k-taxRate" data-knob="taxRate" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" size="5"><b>%</b></span>
+            </th>
+            <td data-year="0"></td><td data-year="1"></td><td data-year="2"></td>
+          </tr>
+          <tr class="inner" data-row="interest" data-under="netIncome" hidden>
+            <th scope="row" class="rowname"><span class="term">利息</span></th>
+            <td data-year="0"></td><td data-year="1"></td><td data-year="2"></td>
+          </tr>
+          <tr class="inner" data-row="pretaxIncome" data-under="netIncome" hidden>
+            <th scope="row" class="rowname"><span class="term">税前利润</span></th>
+            <td data-year="0"></td><td data-year="1"></td><td data-year="2"></td>
+          </tr>
+          <tr class="inner" data-row="tax" data-under="netIncome" hidden>
+            <th scope="row" class="rowname"><span class="term">所得税</span></th>
+            <td data-year="0"></td><td data-year="1"></td><td data-year="2"></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
 
-      <section>
-        <h2>模型边界</h2>
-        <p class="fine">不含真实公司数据、股权融资、分红、商誉、递延税或估值建议。循环只覆盖利息、现金与循环贷。</p>
-      </section>
-    </aside>
+    <section class="deck" data-deck="cashflow" aria-label="现金流量表">
+      <span class="plate">现金流量表</span>
+      <table>
+        <thead>
+          <tr><td class="rowname"></td><th scope="col">2027E</th><th scope="col">2028E</th><th scope="col">2029E</th></tr>
+        </thead>
+        <tbody>
+          <tr data-row="cfNetIncome">
+            <th scope="row" class="rowname"><span class="term">净利润</span></th>
+            <td data-year="0"></td><td data-year="1"></td><td data-year="2"></td>
+          </tr>
+          <tr data-row="cfDepreciation">
+            <th scope="row" class="rowname"><span class="term">折旧加回</span></th>
+            <td data-year="0"></td><td data-year="1"></td><td data-year="2"></td>
+          </tr>
+          <tr data-row="cfReceivables">
+            <th scope="row" class="rowname"><span class="term">应收占用</span></th>
+            <td data-year="0"></td><td data-year="1"></td><td data-year="2"></td>
+          </tr>
+          <tr data-row="operatingCashFlow">
+            <th scope="row" class="rowname">
+              <button class="term open" type="button" data-open="operatingCashFlow" aria-expanded="false">经营现金流</button>
+            </th>
+            <td data-year="0"></td><td data-year="1"></td><td data-year="2"></td>
+          </tr>
+          <tr class="inner" data-row="cfInventory" data-under="operatingCashFlow" hidden>
+            <th scope="row" class="rowname"><span class="term">存货占用</span></th>
+            <td data-year="0"></td><td data-year="1"></td><td data-year="2"></td>
+          </tr>
+          <tr class="inner" data-row="cfPayables" data-under="operatingCashFlow" hidden>
+            <th scope="row" class="rowname"><span class="term">应付释放</span></th>
+            <td data-year="0"></td><td data-year="1"></td><td data-year="2"></td>
+          </tr>
+          <tr data-row="endingCash">
+            <th scope="row" class="rowname">
+              <button class="term open" type="button" data-open="endingCash" aria-expanded="false">期末现金</button>
+              <span class="knob"><label for="k-minimumCash">最低现金</label><input id="k-minimumCash" data-knob="minimumCash" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" size="8"><b>元</b></span>
+            </th>
+            <td data-year="0"></td><td data-year="1"></td><td data-year="2"></td>
+          </tr>
+          <tr class="inner" data-row="openingCash" data-under="endingCash" hidden>
+            <th scope="row" class="rowname"><span class="term">期初现金</span></th>
+            <td data-year="0"></td><td data-year="1"></td><td data-year="2"></td>
+          </tr>
+          <tr class="inner" data-row="capex" data-under="endingCash" hidden>
+            <th scope="row" class="rowname"><span class="term">资本开支</span></th>
+            <td data-year="0"></td><td data-year="1"></td><td data-year="2"></td>
+          </tr>
+          <tr class="inner" data-row="preFinanceCash" data-under="endingCash" hidden>
+            <th scope="row" class="rowname"><span class="term">融资前现金</span></th>
+            <td data-year="0"></td><td data-year="1"></td><td data-year="2"></td>
+          </tr>
+          <tr class="inner" data-row="revolverChange" data-under="endingCash" hidden>
+            <th scope="row" class="rowname"><span class="term">循环贷变动</span></th>
+            <td data-year="0"></td><td data-year="1"></td><td data-year="2"></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
 
-    <main class="results">
-      <section id="headline" class="headline" aria-label="末年结论"></section>
-      <section class="basis">
-        <p id="basis-line"></p>
-        <p id="status-line" role="status"></p>
-      </section>
-
-      <section class="checks" aria-label="资产负债平衡检查">
-        <h2>平衡检查 · 资产 −（负债 + 权益）</h2>
-        <div id="check-line"></div>
-      </section>
-
-      <section class="statement">
-        <h2>利润表</h2>
-        <table id="income-table" aria-label="三年利润表"></table>
-      </section>
-      <section class="statement">
-        <h2>现金流量表</h2>
-        <table id="cashflow-table" aria-label="三年现金流量表"></table>
-      </section>
-      <section class="statement">
-        <h2>资产负债表</h2>
-        <table id="balance-table" aria-label="三年资产负债表"></table>
-      </section>
-
-      <section class="comparison">
-        <h2>循环贷断环比较</h2>
-        <p id="comparison-note" class="fine"></p>
-        <table id="comparison-table" aria-label="两种循环贷断环比较"></table>
-      </section>
-
-      <section class="sensitivity">
-        <h2>收入增速敏感性</h2>
-        <table id="sensitivity-table" aria-label="收入增速敏感性"></table>
-      </section>
-    </main>
+    <section class="deck" data-deck="balance" aria-label="资产负债表">
+      <span class="plate">资产负债表</span>
+      <table>
+        <thead>
+          <tr><td class="rowname"></td><th scope="col">2027E</th><th scope="col">2028E</th><th scope="col">2029E</th></tr>
+        </thead>
+        <tbody>
+          <tr data-row="cash">
+            <th scope="row" class="rowname"><span class="term">现金</span></th>
+            <td data-year="0"></td><td data-year="1"></td><td data-year="2"></td>
+          </tr>
+          <tr data-row="receivables">
+            <th scope="row" class="rowname">
+              <span class="term">应收</span>
+              <span class="knob"><label for="k-dso">应收周转天数</label><input id="k-dso" data-knob="dso" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" size="4"><b>天</b></span>
+            </th>
+            <td data-year="0"></td><td data-year="1"></td><td data-year="2"></td>
+          </tr>
+          <tr data-row="inventory">
+            <th scope="row" class="rowname">
+              <span class="term">存货</span>
+              <span class="knob"><label for="k-inventoryDays">存货天数</label><input id="k-inventoryDays" data-knob="inventoryDays" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" size="4"><b>天</b></span>
+            </th>
+            <td data-year="0"></td><td data-year="1"></td><td data-year="2"></td>
+          </tr>
+          <tr data-row="ppe">
+            <th scope="row" class="rowname"><span class="term">固定资产净额</span></th>
+            <td data-year="0"></td><td data-year="1"></td><td data-year="2"></td>
+          </tr>
+          <tr class="jaw" data-row="assets">
+            <th scope="row" class="rowname"><span class="term">资产合计</span></th>
+            <td data-year="0"></td><td data-year="1"></td><td data-year="2"></td>
+          </tr>
+          <tr class="gap" data-row="difference" hidden>
+            <th scope="row" class="rowname"><span class="term">差额</span></th>
+            <td data-year="0"></td><td data-year="1"></td><td data-year="2"></td>
+          </tr>
+          <tr class="jaw" data-row="liabilitiesAndEquity">
+            <th scope="row" class="rowname">
+              <button class="term open" type="button" data-open="liabilitiesAndEquity" aria-expanded="false">负债权益合计</button>
+            </th>
+            <td data-year="0"></td><td data-year="1"></td><td data-year="2"></td>
+          </tr>
+          <tr data-row="payables">
+            <th scope="row" class="rowname">
+              <span class="term">应付</span>
+              <span class="knob"><label for="k-payableDays">应付天数</label><input id="k-payableDays" data-knob="payableDays" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" size="4"><b>天</b></span>
+            </th>
+            <td data-year="0"></td><td data-year="1"></td><td data-year="2"></td>
+          </tr>
+          <tr data-row="revolver">
+            <th scope="row" class="rowname">
+              <span class="term">循环贷</span>
+              <span class="knob"><label for="k-interestRate">循环贷利率</label><input id="k-interestRate" data-knob="interestRate" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" size="5"><b>%</b></span>
+            </th>
+            <td data-year="0"></td><td data-year="1"></td><td data-year="2"></td>
+          </tr>
+          <tr data-row="retainedEarnings">
+            <th scope="row" class="rowname"><span class="term">未分配利润</span></th>
+            <td data-year="0"></td><td data-year="1"></td><td data-year="2"></td>
+          </tr>
+          <tr class="inner" data-row="shareCapital" data-under="liabilitiesAndEquity" hidden>
+            <th scope="row" class="rowname"><span class="term">股本</span></th>
+            <td data-year="0"></td><td data-year="1"></td><td data-year="2"></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
   </div>
-
-  <footer class="foot">
-    <button id="run-test" type="button">运行自测</button>
-    <span id="test-out">未运行</span>
-    <ul id="test-detail"></ul>
-  </footer>
-</div>
+</main>
 <script src="engine.js"></script>
 <script src="ui.js"></script>
 </body>

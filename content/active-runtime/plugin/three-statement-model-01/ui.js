@@ -1,254 +1,410 @@
-/* 三表模型 · DOM 装配层。所有数字由 ThreeStatementEngine 计算。 */
+/* 三表模型 · 装配。改一个旋钮，光顺着通路往下推一遍，最后落在咬合上。 */
 (function () {
   "use strict";
 
   var E = window.ThreeStatementEngine;
-  var els = {};
-  var FIELDS = [
-    ["revenue-growth", "revenueGrowth", 100],
-    ["base-revenue", "baseRevenue", 1],
-    ["gross-margin", "grossMargin", 100],
-    ["operating-expense-pct", "operatingExpensePct", 100],
-    ["tax-rate", "taxRate", 100],
-    ["dso", "dso", 1],
-    ["inventory-days", "inventoryDays", 1],
-    ["payable-days", "payableDays", 1],
-    ["capex-pct", "capexPct", 100],
-    ["depreciation-years", "depreciationYears", 1],
-    ["interest-rate", "interestRate", 100],
-    ["minimum-cash", "minimumCash", 1]
+  var doc = document;
+
+  /* 旋钮：屏幕上的值 → 引擎口径。rate 的屏幕单位是 %，引擎要的是小数。 */
+  var KNOBS = {
+    baseRevenue: { name: "基期收入", unit: "元", kind: "money", min: 0, open: true },
+    revenueGrowth: { name: "收入增速", unit: "%", kind: "rate", min: -100, max: 200, open: true },
+    grossMargin: { name: "毛利率", unit: "%", kind: "rate", min: 0, max: 100 },
+    operatingExpensePct: { name: "运营费用率", unit: "%", kind: "rate", min: 0, max: 100 },
+    taxRate: { name: "税率", unit: "%", kind: "rate", min: 0, max: 100 },
+    capexPct: { name: "资本开支率", unit: "%", kind: "rate", min: 0, max: 100 },
+    depreciationYears: { name: "折旧年限", unit: "年", kind: "whole", min: 1, max: 50 },
+    dso: { name: "应收周转天数", unit: "天", kind: "days", min: 0, max: 365 },
+    inventoryDays: { name: "存货天数", unit: "天", kind: "days", min: 0, max: 365 },
+    payableDays: { name: "应付天数", unit: "天", kind: "days", min: 0, max: 365 },
+    interestRate: { name: "循环贷利率", unit: "%", kind: "rate", min: 0, max: 100 },
+    minimumCash: { name: "最低现金", unit: "元", kind: "money", min: 0 }
+  };
+
+  /* 每一行读引擎的哪个数。第二个字段是它属于哪一波传动。 */
+  var ROWS = {
+    revenue: [function (y) { return y.income.revenue; }, 0],
+    depreciation: [function (y) { return y.income.depreciation; }, 0],
+    ebit: [function (y) { return y.income.ebit; }, 0],
+    cogs: [function (y) { return y.income.cogs; }, 0],
+    grossProfit: [function (y) { return y.income.grossProfit; }, 0],
+    operatingExpense: [function (y) { return y.income.operatingExpense; }, 0],
+    netIncome: [function (y) { return y.income.netIncome; }, 0],
+    interest: [function (y) { return y.income.interest; }, 0],
+    pretaxIncome: [function (y) { return y.income.pretaxIncome; }, 0],
+    tax: [function (y) { return y.income.tax; }, 0],
+    receivables: [function (y) { return y.balance.receivables; }, 0],
+    inventory: [function (y) { return y.balance.inventory; }, 0],
+    payables: [function (y) { return y.balance.payables; }, 0],
+
+    cfNetIncome: [function (y) { return y.cashFlow.netIncome; }, 1],
+    cfDepreciation: [function (y) { return y.cashFlow.depreciationAddBack; }, 1],
+    cfReceivables: [function (y) { return -y.cashFlow.receivablesChange; }, 1],
+    cfInventory: [function (y) { return -y.cashFlow.inventoryChange; }, 1],
+    cfPayables: [function (y) { return y.cashFlow.payablesChange; }, 1],
+    operatingCashFlow: [function (y) { return y.cashFlow.operatingCashFlow; }, 1],
+    openingCash: [function (y) { return y.cashFlow.openingCash; }, 1],
+    capex: [function (y) { return -y.cashFlow.capex; }, 1],
+    preFinanceCash: [function (y) { return y.preFinanceCash; }, 1],
+    revolverChange: [function (y) { return y.cashFlow.revolverChange; }, 1],
+    endingCash: [function (y) { return y.cashFlow.endingCash; }, 1],
+
+    cash: [function (y) { return y.balance.cash; }, 2],
+    ppe: [function (y) { return y.balance.ppe; }, 2],
+    revolver: [function (y) { return y.balance.revolver; }, 2],
+    retainedEarnings: [function (y) { return y.balance.retainedEarnings; }, 2],
+    shareCapital: [function (y) { return y.balance.shareCapital; }, 2],
+
+    assets: [function (y) { return y.balance.assets; }, 3],
+    liabilitiesAndEquity: [function (y) { return y.balance.liabilitiesAndEquity; }, 3],
+    difference: [function (y) { return y.balance.difference; }, 3]
+  };
+
+  /* 通路：连的是行与行，不是三个方框。lane 决定它走左侧哪一条道。 */
+  var LINKS = [
+    { from: "netIncome", to: "cfNetIncome", wave: 1, lane: 0 },
+    { from: "depreciation", to: "cfDepreciation", wave: 1, lane: 1 },
+    { from: "receivables", to: "cfReceivables", wave: 1, lane: 2 },
+    { from: "endingCash", to: "cash", wave: 2, lane: 3 },
+    { from: "depreciation", to: "ppe", wave: 2, lane: 4 },
+    { from: "netIncome", to: "retainedEarnings", wave: 2, lane: 5 },
+    { from: "revolver", to: "endingCash", wave: 2, lane: 6 }
   ];
 
-  var INCOME_ROWS = [
-    ["revenue", "营业收入", "formula", function (year) { return year.income.revenue; }],
-    ["cogs", "销售成本", "formula", function (year) { return -year.income.cogs; }],
-    ["grossProfit", "毛利", "formula total", function (year) { return year.income.grossProfit; }],
-    ["operatingExpense", "运营费用", "formula", function (year) { return -year.income.operatingExpense; }],
-    ["depreciation", "折旧", "formula", function (year) { return -year.income.depreciation; }],
-    ["ebit", "EBIT", "formula total", function (year) { return year.income.ebit; }],
-    ["interest", "利息费用", "cross", function (year) { return -year.income.interest; }],
-    ["pretaxIncome", "税前利润", "formula", function (year) { return year.income.pretaxIncome; }],
-    ["tax", "所得税", "formula", function (year) { return -year.income.tax; }],
-    ["netIncome", "净利润", "formula total", function (year) { return year.income.netIncome; }]
-  ];
+  var stack = doc.getElementById("stack");
+  var drive = doc.getElementById("drive");
+  var verdictLine = doc.getElementById("verdict");
+  var traceLine = doc.getElementById("trace");
+  var inputs = {};
+  var cells = {};
+  var rowNodes = {};
+  var paths = [];
+  var timers = [];
 
-  var CASH_ROWS = [
-    ["netIncome", "净利润", "cross", function (year) { return year.cashFlow.netIncome; }],
-    ["depreciationAddBack", "折旧加回", "cross", function (year) { return year.cashFlow.depreciationAddBack; }],
-    ["receivablesChange", "应收增加（占用）", "cross", function (year) { return -year.cashFlow.receivablesChange; }],
-    ["inventoryChange", "存货增加（占用）", "cross", function (year) { return -year.cashFlow.inventoryChange; }],
-    ["payablesChange", "应付增加（释放）", "cross", function (year) { return year.cashFlow.payablesChange; }],
-    ["operatingCashFlow", "经营现金流", "formula total", function (year) { return year.cashFlow.operatingCashFlow; }],
-    ["capex", "资本开支", "cross", function (year) { return -year.cashFlow.capex; }],
-    ["investingCashFlow", "投资现金流", "formula total", function (year) { return year.cashFlow.investingCashFlow; }],
-    ["revolverChange", "循环贷变动", "cross", function (year) { return year.cashFlow.revolverChange; }],
-    ["financingCashFlow", "筹资现金流", "formula total", function (year) { return year.cashFlow.financingCashFlow; }],
-    ["endingCash", "期末现金", "formula total", function (year) { return year.cashFlow.endingCash; }]
-  ];
+  function ns(name) { return doc.createElementNS("http://www.w3.org/2000/svg", name); }
 
-  var BALANCE_ROWS = [
-    ["cash", "现金", "cross", function (year) { return year.balance.cash; }],
-    ["receivables", "应收", "formula", function (year) { return year.balance.receivables; }],
-    ["inventory", "存货", "formula", function (year) { return year.balance.inventory; }],
-    ["ppe", "固定资产净额", "formula", function (year) { return year.balance.ppe; }],
-    ["assets", "资产合计", "formula total", function (year) { return year.balance.assets; }],
-    ["payables", "应付", "formula", function (year) { return year.balance.payables; }],
-    ["revolver", "循环贷", "cross", function (year) { return year.balance.revolver; }],
-    ["shareCapital", "股本", "formula", function (year) { return year.balance.shareCapital; }],
-    ["retainedEarnings", "未分配利润", "cross", function (year) { return year.balance.retainedEarnings; }],
-    ["liabilitiesAndEquity", "负债 + 权益合计", "formula total", function (year) { return year.balance.liabilitiesAndEquity; }],
-    ["difference", "差额", "formula total", function (year) { return year.balance.difference; }]
-  ];
+  Object.keys(KNOBS).forEach(function (key) {
+    inputs[key] = doc.querySelector('[data-knob="' + key + '"]');
+  });
 
-  function el(tag, cls, text) {
-    var node = document.createElement(tag);
-    if (cls) node.className = cls;
-    if (text !== undefined && text !== null) node.textContent = String(text);
-    return node;
+  Array.prototype.forEach.call(doc.querySelectorAll("tr[data-row]"), function (row) {
+    var key = row.getAttribute("data-row");
+    rowNodes[key] = row;
+    cells[key] = Array.prototype.slice.call(row.querySelectorAll("td[data-year]"));
+  });
+
+  function show(key, value) {
+    var spec = KNOBS[key];
+    var shown = spec.kind === "rate" ? value * 100 : value;
+    var text = String(Math.round(shown * 1e6) / 1e6);
+    return text;
   }
 
-  function clear(node) { while (node.firstChild) node.removeChild(node.firstChild); }
-
-  function readAssumptions() {
-    var values = {};
-    for (var key in E.DEFAULT) values[key] = E.DEFAULT[key];
-    for (var i = 0; i < FIELDS.length; i++) {
-      var field = FIELDS[i];
-      var raw = document.getElementById(field[0]).value.trim();
-      values[field[1]] = raw === "" ? NaN : Number(raw) / field[2];
+  function readKnob(key) {
+    var raw = String(inputs[key].value || "").replace(/[\s,]/g, "").replace(/[−–—]/g, "-");
+    var spec = KNOBS[key];
+    if (raw === "" || !/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(raw)) {
+      return { bad: spec.name + "要填一个数字" };
     }
-    return values;
+    var shown = Number(raw);
+    if (spec.kind === "whole" && !Number.isInteger(shown)) {
+      return { bad: spec.name + "要填 " + spec.min + " 到 " + spec.max + " 的整数" };
+    }
+    var lowOk = spec.open && spec.kind === "rate" ? shown > spec.min : shown >= spec.min;
+    var highOk = spec.max === undefined ? true : shown <= spec.max;
+    if (!lowOk || !highOk) {
+      if (spec.max === undefined) return { bad: spec.name + "不能小于 " + spec.min + " " + spec.unit };
+      return { bad: spec.name + "要在 " + spec.min + " 到 " + spec.max + " " + spec.unit + "之间" };
+    }
+    if (spec.kind === "money" && spec.open && !(shown > 0)) {
+      return { bad: spec.name + "必须大于 0 元" };
+    }
+    return { value: spec.kind === "rate" ? shown / 100 : shown, shown: shown };
   }
 
-  function metric(label, value) {
-    var box = el("div", "metric");
-    box.appendChild(el("div", "label", label));
-    box.appendChild(el("div", "value", value));
-    els.headline.appendChild(box);
+  function clearWhy() {
+    Array.prototype.forEach.call(doc.querySelectorAll(".why"), function (node) { node.remove(); });
+    Object.keys(inputs).forEach(function (key) { inputs[key].classList.remove("bad"); });
   }
 
-  function moneyCell(value) {
-    var td = el("td", value < 0 ? "negative" : null, E.money(value));
-    return td;
+  function markBad(key, reason) {
+    inputs[key].classList.add("bad");
+    var note = doc.createElement("span");
+    note.className = "why";
+    note.textContent = reason;
+    inputs[key].closest(".rowname").appendChild(note);
   }
 
-  function renderStatement(table, rows, years) {
-    clear(table);
-    var thead = document.createElement("thead");
-    var headRow = document.createElement("tr");
-    headRow.appendChild(el("th", null, "项目 / 金额单位 元"));
-    years.forEach(function (year) { headRow.appendChild(el("th", null, year.label)); });
-    thead.appendChild(headRow);
-    table.appendChild(thead);
+  function amount(value) {
+    return E.money(value);
+  }
 
-    var tbody = document.createElement("tbody");
-    rows.forEach(function (row) {
-      var tr = document.createElement("tr");
-      var roles = row[2].split(" ");
-      tr.className = roles.join(" ");
-      tr.setAttribute("data-key", row[0]);
-      var th = document.createElement("th");
-      th.appendChild(el("span", "role-mark", roles.indexOf("cross") >= 0 ? "↗" : "="));
-      th.appendChild(document.createTextNode(row[1]));
-      tr.appendChild(th);
-      years.forEach(function (year) { tr.appendChild(moneyCell(row[3](year))); });
-      tbody.appendChild(tr);
+  function blank() {
+    Object.keys(cells).forEach(function (key) {
+      cells[key].forEach(function (cell) {
+        cell.textContent = "";
+        cell.removeAttribute("data-value");
+        cell.classList.remove("moved");
+      });
     });
-    table.appendChild(tbody);
+    rowNodes.difference.hidden = true;
+    stack.classList.remove("open");
+    verdictLine.textContent = "";
+    verdictLine.classList.remove("short");
+    stack.classList.add("stalled");
   }
 
-  function renderChecks(years) {
-    clear(els.checkLine);
-    years.forEach(function (year) {
-      var item = el("span", "check-item", year.label + "  " + E.money(year.balance.difference) + "  ");
-      item.setAttribute("data-year", year.label);
-      item.appendChild(el("b", null, year.balance.difference === 0 ? "平衡" : "不平"));
-      els.checkLine.appendChild(item);
+  function stopTimers() {
+    timers.forEach(clearTimeout);
+    timers = [];
+  }
+
+  function writeRow(key, years, moved) {
+    var pairs = cells[key];
+    if (!pairs) return;
+    for (var i = 0; i < pairs.length; i++) {
+      var value = ROWS[key][0](years[i]);
+      var text = amount(value);
+      var cell = pairs[i];
+      var current = cell.getAttribute("data-value");
+      if (current === text) continue;
+      cell.setAttribute("data-value", text);
+      cell.textContent = "";
+      var number = doc.createElement("span");
+      number.className = "v";
+      number.textContent = text;
+      var mark = doc.createElement("b");
+      mark.textContent = "元";
+      cell.appendChild(number);
+      cell.appendChild(mark);
+      if (moved) cell.classList.add("moved");
+    }
+  }
+
+  function lightWave(wave) {
+    paths.forEach(function (entry) {
+      if (entry.wave === wave) entry.node.classList.add("live");
     });
   }
 
-  function tableHead(table, labels) {
-    var thead = document.createElement("thead");
-    var tr = document.createElement("tr");
-    labels.forEach(function (label) { tr.appendChild(el("th", null, label)); });
-    thead.appendChild(tr);
-    table.appendChild(thead);
-  }
-
-  function renderComparison(result) {
-    clear(els.comparisonTable);
-    tableHead(els.comparisonTable, ["口径", "累计利息", "末年现金", "末年循环贷", "收敛"]);
-    var tbody = document.createElement("tbody");
-    [
-      ["期初余额直接断环", result.comparison.opening],
-      ["平均余额迭代", result.comparison.average]
-    ].forEach(function (pair) {
-      var tr = document.createElement("tr");
-      tr.appendChild(el("th", null, pair[0]));
-      tr.appendChild(moneyCell(pair[1].totalInterest));
-      tr.appendChild(moneyCell(pair[1].final.balance.cash));
-      tr.appendChild(moneyCell(pair[1].final.balance.revolver));
-      tr.appendChild(el("td", null, pair[1].converged ? "是 · 最多 " + pair[1].maxIterations + " 次" : "否"));
-      tbody.appendChild(tr);
+  function darken() {
+    paths.forEach(function (entry) { entry.node.classList.remove("live"); });
+    Object.keys(cells).forEach(function (key) {
+      cells[key].forEach(function (cell) { cell.classList.remove("moved"); });
     });
-    els.comparisonTable.appendChild(tbody);
-    els.comparisonNote.textContent = "期初余额口径一步完成、易解释但忽略期内还款；平均余额迭代精度更高。平均口径减期初口径：累计利息 " +
-      E.money(result.comparison.interestDifference) + "，末年现金 " + E.money(result.comparison.cashDifference) +
-      "，末年循环贷 " + E.money(result.comparison.revolverDifference) + "；两者均" +
-      (result.comparison.bothConverged ? "已收敛。" : "未全部收敛。 ");
   }
 
-  function renderSensitivity(result) {
-    clear(els.sensitivityTable);
-    tableHead(els.sensitivityTable, ["收入增速", "末年收入", "末年净利润", "末年现金", "末年循环贷"]);
-    var tbody = document.createElement("tbody");
-    result.sensitivity.forEach(function (row) {
-      var tr = document.createElement("tr");
-      tr.setAttribute("data-growth", String(row.growth));
-      tr.appendChild(el("th", null, E.percent(row.growth)));
-      tr.appendChild(moneyCell(row.revenue));
-      tr.appendChild(moneyCell(row.netIncome));
-      tr.appendChild(moneyCell(row.cash));
-      tr.appendChild(moneyCell(row.revolver));
-      tbody.appendChild(tr);
+  /* 咬合：合上时差额那一行连数字都不写，屏幕上只剩一条连续的接缝。 */
+  function seam(years) {
+    var open = years.some(function (year) { return year.balance.difference !== 0; });
+    rowNodes.difference.hidden = !open;
+    stack.classList.toggle("open", open);
+    if (open) return true;
+    cells.difference.forEach(function (cell) {
+      cell.textContent = "";
+      cell.removeAttribute("data-value");
     });
-    els.sensitivityTable.appendChild(tbody);
+    return false;
   }
 
-  function clearOutputs() {
-    [els.headline, els.checkLine, els.incomeTable, els.cashflowTable, els.balanceTable, els.comparisonTable, els.sensitivityTable].forEach(clear);
-    els.comparisonNote.textContent = "";
+  function verdictOf(model, a) {
+    var years = model.years;
+    var floor = E.round2(a.minimumCash);
+    var openingDebt = E.round2(a.openingRevolver);
+    for (var i = 0; i < years.length; i++) {
+      var year = years[i];
+      var before = i === 0 ? openingDebt : years[i - 1].balance.revolver;
+      if (year.cashFlow.revolverChange > 0) {
+        return {
+          short: true,
+          text: "现金第一次不够是在 " + year.label + "：融资前现金 " + amount(year.preFinanceCash) +
+            " 元，离最低现金 " + amount(floor) + " 元差 " + amount(E.round2(floor - year.preFinanceCash)) +
+            " 元，循环贷要从 " + amount(before) + " 元加到 " + amount(year.balance.revolver) +
+            " 元，多借 " + amount(year.cashFlow.revolverChange) + " 元。"
+        };
+      }
+    }
+    for (var j = 0; j < years.length; j++) {
+      var pinned = years[j];
+      if (pinned.balance.revolver > 0) {
+        var repaid = E.round2(-pinned.cashFlow.revolverChange);
+        var how = repaid > 0
+          ? "循环贷这一年只还掉 " + amount(repaid) + " 元，还欠 " + amount(pinned.balance.revolver) + " 元。"
+          : "循环贷一分没还，还欠 " + amount(pinned.balance.revolver) + " 元。";
+        return {
+          short: false,
+          text: "现金撑得住，但 " + pinned.label + " 只是刚够：期末现金 " + amount(pinned.cashFlow.endingCash) +
+            " 元压在最低现金 " + amount(floor) + " 元上，" + how
+        };
+      }
+    }
+    var last = years[years.length - 1];
+    return {
+      short: false,
+      text: "三年现金都够：" + last.label + " 期末现金 " + amount(last.cashFlow.endingCash) +
+        " 元，比最低现金 " + amount(floor) + " 元多 " + amount(E.round2(last.cashFlow.endingCash - floor)) +
+        " 元，循环贷三年都不用再借。"
+    };
   }
 
-  function render() {
-    var raw = readAssumptions();
+  function trace(shownNow) {
+    traceLine.textContent = "";
+    var stock = doc.createElement("span");
+    stock.textContent = "出厂假设";
+    traceLine.appendChild(stock);
+    var changed = Object.keys(KNOBS).filter(function (key) {
+      return String(shownNow[key]) !== String(show(key, E.DEFAULT[key]));
+    });
+    changed.forEach(function (key) {
+      var spec = KNOBS[key];
+      var chunk = doc.createElement("span");
+      var was = doc.createElement("span");
+      was.className = "was";
+      was.textContent = show(key, E.DEFAULT[key]) + " " + spec.unit + " →";
+      var now = doc.createElement("span");
+      now.className = "now";
+      now.textContent = " " + shownNow[key] + " " + spec.unit;
+      chunk.appendChild(doc.createTextNode(" · " + spec.name + " "));
+      chunk.appendChild(was);
+      chunk.appendChild(now);
+      traceLine.appendChild(chunk);
+    });
+  }
+
+  function anchor(row) {
+    var deck = row.closest(".deck");
+    var box = stack.getBoundingClientRect();
+    var rowBox = row.getBoundingClientRect();
+    var deckBox = deck.getBoundingClientRect();
+    return {
+      x: deckBox.left - box.left,
+      y: rowBox.top - box.top + rowBox.height / 2
+    };
+  }
+
+  function drawDrive() {
+    var box = stack.getBoundingClientRect();
+    drive.setAttribute("viewBox", "0 0 " + Math.max(box.width, 1) + " " + Math.max(box.height, 1));
+    while (drive.firstChild) drive.removeChild(drive.firstChild);
+    paths = [];
+    LINKS.forEach(function (link) {
+      var from = rowNodes[link.from];
+      var to = rowNodes[link.to];
+      if (!from || !to || from.hidden || to.hidden) return;
+      var a = anchor(from);
+      var b = anchor(to);
+      var lane = a.x - 12 - link.lane * 8;
+      var node = ns("path");
+      node.setAttribute("data-from", link.from);
+      node.setAttribute("data-to", link.to);
+      node.setAttribute("d",
+        "M " + a.x + " " + a.y +
+        " H " + lane +
+        " V " + b.y +
+        " H " + b.x +
+        " m -6 -4 l 6 4 l -6 4");
+      drive.appendChild(node);
+      paths.push({ node: node, wave: link.wave });
+    });
+  }
+
+  function recompute(animate) {
+    stopTimers();
+    clearWhy();
+
+    var raw = {};
+    var shownNow = {};
+    var firstBad = null;
+    Object.keys(KNOBS).forEach(function (key) {
+      var read = readKnob(key);
+      shownNow[key] = String(inputs[key].value || "").trim();
+      if (read.bad) {
+        if (!firstBad) firstBad = key;
+        markBad(key, read.bad);
+        return;
+      }
+      raw[key] = read.value;
+    });
+
+    trace(shownNow);
+
+    if (firstBad) {
+      blank();
+      return;
+    }
+
+    var opening = {
+      openingCash: E.DEFAULT.openingCash,
+      openingReceivables: E.DEFAULT.openingReceivables,
+      openingInventory: E.DEFAULT.openingInventory,
+      openingPpe: E.DEFAULT.openingPpe,
+      openingPayables: E.DEFAULT.openingPayables,
+      openingRevolver: E.DEFAULT.openingRevolver,
+      openingRetainedEarnings: E.DEFAULT.openingRetainedEarnings,
+      shareCapital: E.DEFAULT.shareCapital
+    };
+    Object.keys(opening).forEach(function (key) { raw[key] = opening[key]; });
+
     var checked = E.assumptionsOf(raw);
-    var mode = document.getElementById("loop-mode").value;
-    els.modeExplanation.textContent = mode === "opening" ?
-      "按期初循环贷直接断环：一步完成，易解释；利息不反映期内还款。" :
-      "按期初与期末循环贷平均余额迭代不动点：精度更高；迭代次数与差异会显式列出。";
-    if (!checked.ok) {
-      clearOutputs();
-      els.statusLine.textContent = "输入有误，模型未计算：" + checked.error;
-      els.statusLine.className = "error";
-      els.basisLine.textContent = "金额单位 元 · 费用与现金占用以负号显示 · 输入无效时不保留旧结果";
-      return;
-    }
-    var result = E.model(checked.assumptions, mode);
-    if (!result) {
-      clearOutputs();
-      els.statusLine.textContent = "模型无法完成勾稽，请检查输入。";
-      els.statusLine.className = "error";
+    var model = checked.ok ? E.project(raw, "opening") : null;
+    if (!model) {
+      blank();
+      markBad(firstBad || "baseRevenue", "这一组假设算不出三张表");
       return;
     }
 
-    clear(els.headline);
-    metric("2029E 营业收入", E.money(result.final.income.revenue));
-    metric("2029E 净利润", E.money(result.final.income.netIncome));
-    metric("2029E 期末现金", E.money(result.final.balance.cash));
-    metric("2029E 循环贷", E.money(result.final.balance.revolver));
-    els.basisLine.textContent = "金额单位 元 · 费用与现金占用以负号显示 · 期末现金 = 期初现金 + 经营 + 投资 + 筹资 · 当前口径：" +
-      (mode === "opening" ? "期初余额直接断环" : "平均余额迭代");
-    els.statusLine.textContent = "已按当前假设同一帧重算三张表、平衡检查、断环比较与敏感性。";
-    els.statusLine.className = "";
+    stack.classList.remove("stalled");
+    var years = model.years;
+    var said = verdictOf(model, checked.assumptions);
 
-    renderChecks(result.years);
-    renderStatement(els.incomeTable, INCOME_ROWS, result.years);
-    renderStatement(els.cashflowTable, CASH_ROWS, result.years);
-    renderStatement(els.balanceTable, BALANCE_ROWS, result.years);
-    renderComparison(result);
-    renderSensitivity(result);
+    var waves = [[], [], [], []];
+    Object.keys(ROWS).forEach(function (key) { waves[ROWS[key][1]].push(key); });
+
+    function play(wave) {
+      waves[wave].forEach(function (key) {
+        if (key === "difference") return;
+        writeRow(key, years, animate);
+      });
+      if (wave === 3 && seam(years)) writeRow("difference", years, animate);
+      if (animate && wave > 0) lightWave(wave);
+    }
+
+    play(0);
+    if (!animate) {
+      play(1); play(2); play(3);
+      verdictLine.textContent = said.text;
+      verdictLine.classList.toggle("short", said.short);
+      return;
+    }
+    timers.push(setTimeout(function () { play(1); }, 120));
+    timers.push(setTimeout(function () { play(2); }, 220));
+    timers.push(setTimeout(function () {
+      play(3);
+      verdictLine.textContent = said.text;
+      verdictLine.classList.toggle("short", said.short);
+    }, 320));
+    timers.push(setTimeout(darken, 820));
   }
 
-  function runTest() {
-    var result = E.runSelfTest();
-    els.testOut.textContent = result.passed + " / " + result.total + " 通过";
-    clear(els.testDetail);
-    if (!result.failures.length) els.testDetail.appendChild(el("li", null, "三表勾稽、现金递推与两种断环口径均通过。"));
-    result.failures.forEach(function (failure) { els.testDetail.appendChild(el("li", null, failure.name + " —— " + failure.why)); });
-  }
+  Object.keys(KNOBS).forEach(function (key) {
+    inputs[key].value = show(key, E.DEFAULT[key]);
+    inputs[key].addEventListener("input", function () { recompute(true); });
+  });
 
-  function mount() {
-    els.headline = document.getElementById("headline");
-    els.basisLine = document.getElementById("basis-line");
-    els.statusLine = document.getElementById("status-line");
-    els.checkLine = document.getElementById("check-line");
-    els.incomeTable = document.getElementById("income-table");
-    els.cashflowTable = document.getElementById("cashflow-table");
-    els.balanceTable = document.getElementById("balance-table");
-    els.comparisonNote = document.getElementById("comparison-note");
-    els.comparisonTable = document.getElementById("comparison-table");
-    els.sensitivityTable = document.getElementById("sensitivity-table");
-    els.modeExplanation = document.getElementById("mode-explanation");
-    els.testOut = document.getElementById("test-out");
-    els.testDetail = document.getElementById("test-detail");
+  Array.prototype.forEach.call(doc.querySelectorAll("button.open"), function (button) {
+    button.addEventListener("click", function () {
+      var key = button.getAttribute("data-open");
+      var opened = button.getAttribute("aria-expanded") === "true";
+      button.setAttribute("aria-expanded", opened ? "false" : "true");
+      Array.prototype.forEach.call(doc.querySelectorAll('tr[data-under="' + key + '"]'), function (row) {
+        row.hidden = opened;
+      });
+      drawDrive();
+    });
+  });
 
-    FIELDS.forEach(function (field) { document.getElementById(field[0]).addEventListener("input", render); });
-    document.getElementById("loop-mode").addEventListener("change", render);
-    document.getElementById("run-test").addEventListener("click", runTest);
-    render();
-  }
-
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mount);
-  else mount();
+  recompute(false);
+  drawDrive();
+  window.addEventListener("resize", drawDrive);
+  window.ThreeStatementRig = { recompute: recompute, verdictOf: verdictOf };
 })();

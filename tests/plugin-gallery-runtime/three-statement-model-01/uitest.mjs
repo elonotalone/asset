@@ -1,4 +1,4 @@
-/* 三表模型 · 界面自测：用 jsdom 真装载页面、改假设并读取三张表。 */
+/* 三表模型 · 界面自测：jsdom 真装载页面，改一个旋钮，读三层装置。 */
 import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import path from "node:path";
@@ -55,118 +55,211 @@ const { window } = dom;
 const doc = window.document;
 const $ = (selector) => doc.querySelector(selector);
 const screen = () => doc.body.textContent.replace(/\s+/g, " ").trim();
+const row = (key) => {
+  const node = doc.querySelector(`tr[data-row="${key}"]`);
+  assert.ok(node, `找不到行 ${key}`);
+  return node;
+};
+const values = (key) => [...row(key).querySelectorAll("td .v")].map((node) => node.textContent.trim());
+const rowName = (key) => row(key).querySelector(".rowname").textContent.replace(/\s+/g, " ").trim();
 
-function setValue(selector, value) {
-  const control = $(selector);
-  assert.ok(control, `找不到控件 ${selector}`);
-  control.value = value;
-  control.dispatchEvent(new window.Event("input", { bubbles: true }));
-}
-
-function pickMode(mode) {
-  const control = $("#loop-mode");
-  control.value = mode;
-  assert.equal(control.value, mode, `断环口径 ${mode} 不存在`);
-  control.dispatchEvent(new window.Event("change", { bubbles: true }));
-}
-
-function rowValues(tableId, key) {
-  const row = doc.querySelector(`#${tableId} tr[data-key="${key}"]`);
-  assert.ok(row, `${tableId} 找不到 ${key}`);
-  return [...row.querySelectorAll("td")].map((node) => node.textContent.trim());
+function turn(key, value) {
+  const knob = $(`[data-knob="${key}"]`);
+  assert.ok(knob, `找不到旋钮 ${key}`);
+  knob.value = value;
+  knob.dispatchEvent(new window.Event("input", { bubbles: true }));
+  window.ThreeStatementRig.recompute(false);
 }
 
 console.log("三表模型界面自测（jsdom，非浏览器）");
 
-check("引擎与装配脚本都已运行", () => {
-  assert.ok(window.ThreeStatementEngine, "window.ThreeStatementEngine 不存在");
-  assert.equal(doc.querySelectorAll("#headline .metric").length, 4);
+check("首屏就是算完的：三层装置各自带名字，出厂假设已填好", () => {
+  assert.ok(window.ThreeStatementEngine, "引擎没装载");
+  const plates = [...doc.querySelectorAll(".plate")].map((node) => node.textContent.trim());
+  assert.deepEqual(plates, ["利润表", "现金流量表", "资产负债表"]);
+  assert.equal($('[data-knob="dso"]').value, "45");
+  assert.equal($('[data-knob="revenueGrowth"]').value, "12");
+  assert.match($("#trace").textContent, /出厂假设/);
 });
 
-check("首屏带通用假设，不装真实公司数据", () => {
-  assert.equal($("#revenue-growth").value, "12.00");
-  assert.equal($("#base-revenue").value, "1000000.00");
-  assert.equal($("#loop-mode").value, "opening");
-  assert.match(screen(), /通用三年预测，不对应任何真实公司/);
+check("首屏三层都已有 2027E–2029E 的数，单位贴着数字", () => {
+  for (const key of ["revenue", "netIncome", "operatingCashFlow", "endingCash", "receivables", "revolver", "assets"]) {
+    const cells = [...row(key).querySelectorAll("td")];
+    assert.equal(cells.length, 3, `${key} 不是三年`);
+    for (const cell of cells) {
+      assert.match(cell.querySelector(".v").textContent, /\d/, `${key} 有空数字`);
+      assert.equal(cell.querySelector("b").textContent, "元", `${key} 缺单位`);
+    }
+  }
+  const heads = [...doc.querySelectorAll('.deck[data-deck="income"] thead th')].map((n) => n.textContent.trim());
+  assert.deepEqual(heads, ["2027E", "2028E", "2029E"]);
 });
 
-check("首屏三张完整报表都已有 2027E–2029E 数字", () => {
-  for (const tableId of ["income-table", "cashflow-table", "balance-table"]) {
-    const table = doc.getElementById(tableId);
-    assert.deepEqual([...table.querySelectorAll("thead th")].slice(1).map((node) => node.textContent.trim()), ["2027E", "2028E", "2029E"]);
-    assert.ok(table.querySelectorAll("tbody tr").length >= 10, `${tableId} 行数不足`);
-    assert.ok([...table.querySelectorAll("tbody td")].every((node) => /\d/.test(node.textContent)), `${tableId} 有空数字格`);
+check("出厂那一档结论说清 2027E 现金只是刚够，并给出年份与金额", () => {
+  const said = $("#verdict").textContent;
+  assert.match(said, /2027E/);
+  assert.match(said, /100 000\.00 元/);
+  assert.match(said, /152 774\.79 元/);
+  assert.match(said, /刚够/);
+});
+
+check("每个旋钮都带自己的名字、当前值和单位，不是编号", () => {
+  const named = ["基期收入", "收入增速", "毛利率", "运营费用率", "税率", "资本开支率",
+    "折旧年限", "应收周转天数", "存货天数", "应付天数", "循环贷利率", "最低现金"];
+  for (const name of named) assert.match(screen(), new RegExp(name), `旋钮 ${name} 的名字不在屏幕上`);
+  for (const [key, name, unit, value] of [
+    ["dso", "应收周转天数", "天", "45"],
+    ["revenueGrowth", "收入增速", "%", "12"],
+    ["depreciationYears", "折旧年限", "年", "5"],
+    ["minimumCash", "最低现金", "元", "100000"],
+  ]) {
+    const knob = $(`[data-knob="${key}"]`).closest(".knob");
+    assert.equal(knob.querySelector("label").textContent.trim(), name);
+    assert.equal(knob.querySelector("input").value, value);
+    assert.equal(knob.querySelector("b").textContent.trim(), unit);
+    assert.equal(knob.querySelector("label").getAttribute("for"), `k-${key}`);
+  }
+  assert.match(rowName("receivables"), /^应收 /);
+});
+
+check("旋钮长在它驱动的那一行上，不是一列表单墙", () => {
+  const attached = {
+    dso: "receivables", inventoryDays: "inventory", payableDays: "payables",
+    interestRate: "revolver", minimumCash: "endingCash", revenueGrowth: "revenue",
+    taxRate: "netIncome", depreciationYears: "depreciation",
+  };
+  for (const [knob, key] of Object.entries(attached)) {
+    assert.equal($(`[data-knob="${knob}"]`).closest("tr").getAttribute("data-row"), key,
+      `${knob} 没长在 ${key} 上`);
   }
 });
 
-check("首屏逐年显式显示资产减负债权益差额 0.00 与平衡", () => {
-  const checks = [...doc.querySelectorAll("#check-line .check-item")];
-  assert.equal(checks.length, 3);
-  assert.ok(checks.every((node) => /0\.00\s+平衡/.test(node.textContent.replace(/\s+/g, " "))));
-  assert.deepEqual(rowValues("balance-table", "difference"), ["0.00", "0.00", "0.00"]);
-});
-
-check("修改第一个假设 12% → 15%，三张表至少各一处同步变化且仍平衡", () => {
+check("把应收周转天数从 45 改成 75：三层各自跟着动，结论换成一句新的", () => {
   const before = {
-    income: rowValues("income-table", "revenue")[2],
-    cash: rowValues("cashflow-table", "endingCash")[2],
-    balance: rowValues("balance-table", "receivables")[2],
+    receivables: values("receivables")[0],
+    operating: values("operatingCashFlow")[0],
+    revolver: values("revolver")[0],
+    said: $("#verdict").textContent,
   };
-  setValue("#revenue-growth", "15.00");
-  const after = {
-    income: rowValues("income-table", "revenue")[2],
-    cash: rowValues("cashflow-table", "endingCash")[2],
-    balance: rowValues("balance-table", "receivables")[2],
-  };
-  assert.notEqual(after.income, before.income, "利润表未联动");
-  assert.notEqual(after.cash, before.cash, "现金流量表未联动");
-  assert.notEqual(after.balance, before.balance, "资产负债表未联动");
-  assert.ok([...doc.querySelectorAll("#check-line .check-item")].every((node) => /0\.00\s+平衡/.test(node.textContent.replace(/\s+/g, " "))));
+  turn("dso", "75");
+  assert.equal(values("receivables")[0], "230 136.99");
+  assert.notEqual(values("operatingCashFlow")[0], before.operating);
+  assert.notEqual(values("revolver")[0], before.revolver);
+  assert.notEqual(values("receivables")[0], before.receivables);
+  assert.notEqual($("#verdict").textContent, before.said);
 });
 
-check("两种断环口径都可选，并同时解释精度与可解释性差异", () => {
-  const directFirstYearInterest = rowValues("income-table", "interest")[0];
-  pickMode("average");
-  const averageFirstYearInterest = rowValues("income-table", "interest")[0];
-  assert.notEqual(averageFirstYearInterest, directFirstYearInterest);
-  assert.match($("#mode-explanation").textContent, /精度更高/);
-  assert.match($("#comparison-note").textContent, /易解释/);
-  assert.match($("#comparison-note").textContent, /精度更高/);
-  assert.match($("#comparison-note").textContent, /两者均已收敛/);
-  assert.match(screen(), /期初余额直接断环/);
-  assert.match(screen(), /平均余额迭代/);
+check("改过的假设读得到名字、原值、新值和单位", () => {
+  assert.match($("#trace").textContent.replace(/\s+/g, " "), /应收周转天数 45 天 → 75 天/);
 });
 
-check("敏感性三档由当前假设重算，结果各不相同", () => {
-  const rows = [...doc.querySelectorAll("#sensitivity-table tbody tr")];
-  assert.equal(rows.length, 3);
-  assert.deepEqual(rows.map((row) => row.firstChild.textContent.trim()), ["13.00%", "15.00%", "17.00%"]);
-  const revenues = rows.map((row) => row.querySelectorAll("td")[0].textContent.trim());
-  assert.equal(new Set(revenues).size, 3);
+check("通路连的是行与行，不是三个方框之间画三根箭头", () => {
+  const paths = [...doc.querySelectorAll("#drive path")];
+  const linked = paths.map((node) => `${node.getAttribute("data-from")}→${node.getAttribute("data-to")}`);
+  assert.deepEqual(linked.sort(), [
+    "depreciation→cfDepreciation",
+    "depreciation→ppe",
+    "endingCash→cash",
+    "netIncome→cfNetIncome",
+    "netIncome→retainedEarnings",
+    "receivables→cfReceivables",
+    "revolver→endingCash",
+  ]);
+  for (const node of paths) assert.match(node.getAttribute("d"), /^M .* H .* V .* H /);
+  for (const node of paths) {
+    for (const end of [node.getAttribute("data-from"), node.getAttribute("data-to")]) {
+      assert.ok(row(end).querySelector(".term").textContent.trim().length > 0, `${end} 的行名读不到`);
+    }
+  }
 });
 
-check("输入、公式、跨表引用均同时有文字或形状，不只靠颜色", () => {
-  assert.match(screen(), /■ 输入（蓝）/);
-  assert.match(screen(), /= 本表公式（黑）/);
-  assert.match(screen(), /↗ 跨表引用（绿）/);
-  assert.ok(doc.querySelectorAll(".field b").length >= 12);
-  const marks = [...doc.querySelectorAll(".role-mark")].map((node) => node.textContent);
-  assert.ok(marks.includes("="));
-  assert.ok(marks.includes("↗"));
+check("咬合合上时不写一个字，差额行不出现", () => {
+  assert.deepEqual(values("difference"), []);
+  assert.equal(row("difference").hidden, true);
+  assert.equal(row("difference").textContent.replace(/\s+/g, ""), "差额");
+  assert.equal([...doc.querySelectorAll("tr.jaw")].length, 2);
+  assert.deepEqual(values("assets"), values("liabilitiesAndEquity"));
+  assert.doesNotMatch(screen(), /平衡|不平|检查/);
 });
 
-check("点运行自测后，屏幕显示内置 8 / 8 通过", () => {
-  $("#run-test").dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
-  assert.equal($("#test-out").textContent.trim(), "8 / 8 通过");
-  assert.match(screen(), /三表勾稽、现金递推与两种断环口径均通过/);
+check("逐行明细在那一行原地摊开，没有标题也没有关闭按钮", () => {
+  const opener = doc.querySelector('button[data-open="netIncome"]');
+  assert.equal(opener.textContent.trim(), "净利润");
+  assert.equal(row("tax").hidden, true);
+  opener.dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
+  assert.equal(row("tax").hidden, false);
+  assert.equal(row("interest").closest(".deck").getAttribute("data-deck"), "income");
+  assert.match(values("tax")[0], /\d/);
+  opener.dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
+  assert.equal(row("tax").hidden, true);
 });
 
-check("坏输入明确拒绝并清空旧数字，不用零表冒充成功", () => {
-  setValue("#revenue-growth", "-100");
-  assert.match($("#status-line").textContent, /输入有误，模型未计算/);
-  assert.equal(doc.querySelectorAll("#income-table tbody tr").length, 0);
-  assert.equal(doc.querySelectorAll("#headline .metric").length, 0);
+check("越界的假设就地说明原因，并且不留旧数字冒充答案", () => {
+  turn("dso", "400");
+  const why = $(".why");
+  assert.ok(why, "没有就地给出原因");
+  assert.match(why.textContent, /应收周转天数要在 0 到 365 天之间/);
+  assert.equal(why.closest("tr").getAttribute("data-row"), "receivables");
+  assert.equal($('[data-knob="dso"]').classList.contains("bad"), true);
+  assert.deepEqual(values("revenue"), []);
+  assert.deepEqual(values("assets"), []);
+  assert.equal($("#verdict").textContent, "");
+  turn("dso", "45");
+  assert.equal(doc.querySelector(".why"), null);
+  assert.equal(values("receivables")[0], "138 082.19");
 });
+
+check("现金真的不够时，结论说出年份、缺口与要多借多少", () => {
+  turn("revenueGrowth", "40");
+  turn("dso", "120");
+  const said = $("#verdict").textContent;
+  assert.match(said, /2027E/);
+  assert.match(said, /182 920\.54 元/);
+  assert.match(said, /多借/);
+  assert.match(said, /离最低现金 100 000\.00 元差/);
+  turn("dso", "45");
+  turn("revenueGrowth", "12");
+});
+
+check("屏幕上没有图例、口径栏、模型边界、敏感性、断环选择器与运行自测", () => {
+  const text = screen();
+  for (const banned of ["输入（蓝）", "跨表引用", "计算口径", "金额单位", "模型边界",
+    "敏感性", "断环", "循环口径", "运行自测", "未运行", "本工具", "离线"]) {
+    assert.doesNotMatch(text, new RegExp(banned), `屏幕上还有「${banned}」`);
+  }
+  assert.equal(doc.querySelector("#run-test"), null);
+  assert.equal(doc.querySelector("select"), null);
+  assert.equal(doc.querySelectorAll("h1, h2, h3").length, 0, "还有区块标题");
+});
+
+check("引擎里的敏感性与两种断环口径仍算得出，只是不上屏", () => {
+  const model = window.ThreeStatementEngine.model(window.ThreeStatementEngine.DEFAULT, "average");
+  assert.equal(model.sensitivity.length, 3);
+  assert.equal(model.comparison.bothConverged, true);
+  assert.notEqual(model.comparison.interestDifference, 0);
+});
+
+/* 传动是分波推的，不是同一帧全屏刷新：这里等真实计时器走完再读。 */
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+{
+  const knob = $('[data-knob="dso"]');
+  knob.value = "75";
+  knob.dispatchEvent(new window.Event("input", { bubbles: true }));
+  const early = values("cash")[0];
+  await sleep(90);
+  const midway = { receivables: values("receivables")[0], cash: values("cash")[0] };
+  await sleep(900);
+  check("传动分波推进：改动处先动，最底下那一层最后落定", () => {
+    assert.equal(midway.receivables, "230 136.99", "被改的那一层没有先动");
+    assert.equal(midway.cash, early, "最底下那一层抢在前面动了");
+    assert.equal(values("cash")[0], "100 000.00");
+    assert.deepEqual(values("assets"), values("liabilitiesAndEquity"));
+    assert.equal(doc.querySelectorAll("td.moved").length, 0, "传动的亮光没有熄");
+  });
+  knob.value = "45";
+  knob.dispatchEvent(new window.Event("input", { bubbles: true }));
+  await sleep(500);
+}
 
 function code(file) {
   let source = readFileSync(path.join(runtimeDir, file), "utf8");
@@ -197,6 +290,12 @@ check("所有 src/href 都是同目录相对路径且目标存在", () => {
 check("不用 ES module，页面里也没有 iframe", () => {
   assert.doesNotMatch(code("index.html"), /type\s*=\s*["']module["']/i);
   assert.equal(doc.querySelectorAll("iframe").length, 0);
+});
+
+check("没有写死的小字号，也没有反过来写字号下限", () => {
+  const css = code("style.css");
+  assert.doesNotMatch(css, /font-size\s*:\s*(?:[0-9]|1[01])px/i, "写死了小字号");
+  assert.doesNotMatch(screen(), /字号/);
 });
 
 check("源码不碰网络、存储、父窗口或不透明源禁区", () => {
