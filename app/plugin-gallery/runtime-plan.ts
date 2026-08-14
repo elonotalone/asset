@@ -14,6 +14,14 @@ const PLAN_SIDECAR_PATH = "active-runtime-plan.json";
 const MAX_JSON_BYTES = 1024 * 1024;
 const RUNTIME_ID = /^[a-z0-9](?:[a-z0-9._-]{0,126}[a-z0-9])?$/;
 const HOST = /^s-[0-9a-f]{32}\.oceanleo\.app$/;
+
+/**
+ * UC-3: docs/architecture/oceanleo-untrusted-content-isolation.md §8.3
+ * 命名空间 D 是第一方插件运行时，主机名固定、不带内容哈希（地图 key 要按域名
+ * 白名单锁死）。这里只认这一个字面主机名；能不能打开仍由 isPluginRuntimeUrl 的
+ * 插件 id 白名单决定，信任绝不从主机名后缀推断。
+ */
+const FIRST_PARTY_PLUGIN_HOST = "plugins.oceanleo.app";
 const SHA256 = /^[0-9a-f]{64}$/;
 
 interface RuntimeManifestItem {
@@ -145,9 +153,12 @@ function normalizePlanItem(value: unknown): RuntimePlanItem | null {
   if (
     !item ||
     typeof value.host !== "string" ||
-    !HOST.test(value.host) ||
+    !(HOST.test(value.host) || value.host === FIRST_PARTY_PLUGIN_HOST) ||
     !isPluginRuntimeUrl(value.entryUrl) ||
-    value.entryUrl !== `https://${value.host}/embed` ||
+    value.entryUrl !==
+      (value.host === FIRST_PARTY_PLUGIN_HOST
+        ? `https://${value.host}/${item.id}/`
+        : `https://${value.host}/embed`) ||
     typeof value.closureSha256 !== "string" ||
     !SHA256.test(value.closureSha256) ||
     !Number.isSafeInteger(value.fileCount) ||
@@ -220,7 +231,8 @@ function pluginForRuntime(runtimeId: string): PluginEntry | null {
  * UC-1: docs/architecture/oceanleo-untrusted-content-isolation.md §8.1
  *
  * Manifest 决定“哪三件有实物”，F9 plan 侧车决定“能不能打开”。侧车缺失、schema
- * 不符、item 对不上或 URL 不是精确 namespace-C `/embed` 时，只保留 cover，URL 为 null。
+ * 不符、item 对不上，或 URL 不是精确的 namespace-C `/embed`／namespace-D `/<id>/` 时，
+ * 只保留 cover，URL 为 null。
  */
 export function pluginRuntimeDescriptorsFrom(
   manifestValue: unknown,
