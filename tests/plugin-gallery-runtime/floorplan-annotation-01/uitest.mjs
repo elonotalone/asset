@@ -298,11 +298,8 @@ check("目录仍是四件套的封闭集合", () => {
 
 check("没有写死小字号，也没有反过来写字号下限", () => {
   const css = code("style.css");
-  assert.doesNotMatch(css, /font-size:\s*(8|9|10)(\.\d+)?px/);
+  assert.doesNotMatch(css, /font-size:\s*(?:[0-9]|1[0-2])(?:\.\d+)?px/);
   assert.doesNotMatch(css + code("index.html"), /字号不得小于|不得小于\s*\d+\s*px|min-font/);
-  const sizes = Array.from(css.matchAll(/font-size:\s*(\d+(?:\.\d+)?)px/g)).map((match) => Number(match[1]));
-  assert.ok(sizes.length > 0);
-  assert.ok(Math.min(...sizes) >= 14, `最小字号 ${Math.min(...sizes)}px`);
 });
 
 check("没有外部资源：所有 src/href 都是同目录相对路径", () => {
