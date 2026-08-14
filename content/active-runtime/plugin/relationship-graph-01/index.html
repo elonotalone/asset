@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>关系图</title>
+<!-- 离线可运行：经典脚本、同目录资源、无网络与存储；承载方使用 sandbox="allow-scripts"。 -->
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="col">
+  <header class="head">
+    <h1>关系图</h1>
+    <span>把人、组织与事件之间的具体关系摊开，并用文本复核路径与中介</span>
+  </header>
+
+  <nav class="done" aria-label="已答摘要">
+    <button id="scope-summary" class="done-row" type="button">
+      <span class="key">范围</span>
+      <span>阿波罗 11 号公开史实样例</span>
+    </button>
+    <button id="path-summary" class="done-row" type="button">
+      <span class="key">路径问题</span>
+      <span>迈克尔·柯林斯到理查德·尼克松隔着谁</span>
+    </button>
+  </nav>
+
+  <section class="question" aria-labelledby="question-title">
+    <h2 id="question-title">再补充哪一条具体关系？</h2>
+    <p class="hint">一行写成“谁｜关系｜谁｜日期”。新节点须注明（人物）、（组织）或（事件）。</p>
+    <label class="sr-only" for="relation-line">具体关系</label>
+    <input id="relation-line" type="text" value="美国国家航空航天局（组织）｜设立｜载人航天中心（组织）｜1961-11-01" autocomplete="off" autofocus>
+    <div class="actions">
+      <button id="add-relation" class="plain primary" type="button">加入关系</button>
+      <button id="clear-graph" class="plain" type="button">清空，从第一条关系开始</button>
+      <button id="load-demo" class="plain" type="button">恢复阿波罗 11 号样例</button>
+    </div>
+    <p id="input-message" class="message" role="status"></p>
+    <p class="limit">最多 120 个节点；数据只在当前页面内计算，不上传、不保存。</p>
+  </section>
+
+  <section class="product" aria-label="关系产物预览">
+    <div class="product-cap">
+      <span>关系产物预览</span>
+      <span id="product-meta">阿波罗 11 号公开史实样例</span>
+    </div>
+
+    <div class="stats" aria-label="关系图统计">
+      <div><span>节点</span><strong id="stat-nodes">0</strong></div>
+      <div><span>关系</span><strong id="stat-edges">0</strong></div>
+      <div><span>最大度数</span><strong id="stat-degree">0</strong></div>
+      <div><span>连通分量</span><strong id="stat-components">0</strong></div>
+      <div><span>独立环</span><strong id="stat-cycles">0</strong></div>
+      <div><span>有向密度</span><strong id="stat-density">0.0000</strong></div>
+    </div>
+
+    <div class="graph-wrap">
+      <svg id="graph" role="img" aria-label="人物、组织、事件关系图"></svg>
+      <p id="graph-empty">先写下第一条具体关系</p>
+    </div>
+    <p class="legend"><span class="person-mark">人物</span><span class="organization-mark">组织</span><span class="event-mark">事件</span> · 箭头表示叙述方向，点两个节点可改路径端点</p>
+
+    <div class="path-copy">
+      <span>最短路径</span>
+      <p id="path-result" tabindex="0"></p>
+      <p id="path-prompt">下一次点击选择路径起点。</p>
+    </div>
+
+    <div class="relation-copy">
+      <span>逐条关系（可选中文本）</span>
+      <pre id="relationship-text" tabindex="0"></pre>
+    </div>
+
+    <div class="basis">
+      <p>有向密度 = E ÷ [N × (N−1)]；无向密度按去重节点对 ÷ [N × (N−1) ÷ 2]。</p>
+      <p>“独立环”采用底层无向图圈秩 max(0, U−N+C)，不是所有简单环的枚举数；最短路径忽略方向，长度按关系条数。</p>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <button id="run-test" class="plain" type="button">运行自测</button>
+    <span id="test-out">未运行</span>
+    <ul id="test-detail"></ul>
+  </footer>
+</main>
+<script src="engine.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>
