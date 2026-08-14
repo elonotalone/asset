@@ -88,6 +88,44 @@
     return found;
   }
 
+  var SUPERSCRIPT = { "0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴", "5": "⁵", "6": "⁶", "7": "⁷", "8": "⁸", "9": "⁹" };
+
+  function exponentLabel(power) {
+    if (Math.abs(power - Math.round(power)) > 1e-12) return "^" + power;
+    return String(Math.round(power)).split("").map(function (digit) {
+      return SUPERSCRIPT[digit] || digit;
+    }).join("");
+  }
+
+  /* 这个量纲有没有一个基准因子为 1 的单位名。没有就返回空串。 */
+  function unitNameFor(dimension) {
+    var target = cleanDimension(dimension);
+    var names = ["1", "m", "s", "kg", "m/s", "m/s²", "m²"];
+    for (var i = 0; i < names.length; i++) {
+      if (UNITS[names[i]].factor === 1 && sameDimension(UNITS[names[i]].dimension, target)) return names[i];
+    }
+    return "";
+  }
+
+  /* 屏幕上写在数字后面的单位名：有现成名字用名字，没有就按基准单位拼出来。 */
+  function unitLabel(dimension) {
+    var target = cleanDimension(dimension);
+    if (!Object.keys(target).length) return "";
+    var named = unitNameFor(target);
+    if (named && named !== "1") return UNITS[named].label;
+    var base = { M: "kg", L: "m", T: "s" };
+    var over = [], under = [];
+    ["M", "L", "T"].forEach(function (axis) {
+      var power = target[axis];
+      if (!power) return;
+      var size = Math.abs(power);
+      var piece = base[axis] + (Math.abs(size - 1) <= 1e-12 ? "" : exponentLabel(size));
+      (power > 0 ? over : under).push(piece);
+    });
+    var top = over.length ? over.join("·") : "1";
+    return under.length ? top + "/" + under.join("·") : top;
+  }
+
   function checked(value, dimension) {
     if (!isFinite(value) || Math.abs(value) > OVERFLOW_LIMIT) {
       throw new FormulaError("OVERFLOW");
@@ -446,6 +484,16 @@
       if (Math.abs(result.value - 28.243152) > 1e-12) throw new Error("自由落体结果不符");
       if (!sameDimension(result.dimension, { L: 1 })) throw new Error("自由落体量纲不符");
     });
+    expect("自由落体逐步独立复算", function () {
+      if (Math.abs(evaluate("t^2", variables).value - 5.76) > 1e-12) throw new Error("t² 应为 5.76");
+      if (Math.abs(evaluate("g*t^2", variables).value - 56.486304) > 1e-12) throw new Error("g×t² 应为 56.486304");
+    });
+    expect("量纲显示名", function () {
+      if (unitLabel({ T: 2 }) !== "s²") throw new Error("t² 的单位名不对");
+      if (unitLabel({ L: 1, T: -2 }) !== "m/s²") throw new Error("加速度的单位名不对");
+      if (unitLabel({}) !== "") throw new Error("无量纲不该带单位名");
+      if (unitNameFor({ T: 2 }) !== "") throw new Error("s² 不该被当成受支持的单位");
+    });
     expect("单位换算", function () {
       var result = convertUnit(1, "m", "cm");
       if (result.value !== 100 || !result.unitChanged) throw new Error("1 m 应为 100 cm");
@@ -472,7 +520,7 @@
         throw new Error("错误分类不符：" + codes.join("|"));
       }
     });
-    return { total: 4, passed: 4 - failures.length, failures: failures };
+    return { total: 6, passed: 6 - failures.length, failures: failures };
   }
 
   var api = {
@@ -488,6 +536,9 @@
     cleanDimension: cleanDimension,
     convertUnit: convertUnit,
     valueInUnit: valueInUnit,
+    unitNameFor: unitNameFor,
+    unitLabel: unitLabel,
+    exponentLabel: exponentLabel,
     createStep: createStep,
     formatNumber: formatNumber,
     runSelfTest: runSelfTest

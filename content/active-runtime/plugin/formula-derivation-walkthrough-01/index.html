@@ -1,154 +1,22 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>公式展开</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>公式展开</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="masthead">
-    <div>
-      <p class="eyebrow">FORMULA LEDGER · 公式展开</p>
-      <h1>让每一个数都有来路</h1>
-      <p class="lead">列出量，写下表达式，再把依据、单位与误差逐步摊开。</p>
-    </div>
-    <p class="policy">内部保留 IEEE-754 双精度中间值<br>屏幕展示 6 位有效数字</p>
-  </header>
-
-  <main class="workbench">
-    <aside class="symbol-pane" aria-labelledby="symbol-title">
-      <div class="section-heading">
-        <div>
-          <p class="section-kicker">01 · INPUTS</p>
-          <h2 id="symbol-title">符号表</h2>
-        </div>
-        <span id="symbol-count" class="count">0 个量</span>
-      </div>
-
-      <div id="symbol-empty" class="empty-state">
-        <strong>先把这个公式里出现的量列出来</strong>
-        <span>符号只接受英文字母、数字与下划线，且不能以数字开头。</span>
-      </div>
-      <div id="symbol-list" class="symbol-list" aria-live="polite"></div>
-
-      <form id="symbol-form" class="entry-form">
-        <label>
-          <span>符号</span>
-          <input id="symbol-name" name="symbol-name" autocomplete="off" placeholder="例如 g" required>
-        </label>
-        <div class="field-pair">
-          <label>
-            <span>数值</span>
-            <input id="symbol-value" name="symbol-value" inputmode="decimal" autocomplete="off" placeholder="例如 9.80665" required>
-          </label>
-          <label>
-            <span>单位</span>
-            <select id="symbol-unit" name="symbol-unit">
-              <option value="1">无量纲</option>
-              <option value="m">m</option>
-              <option value="cm">cm</option>
-              <option value="km">km</option>
-              <option value="s">s</option>
-              <option value="min">min</option>
-              <option value="h">h</option>
-              <option value="kg">kg</option>
-              <option value="g">g</option>
-              <option value="m/s">m/s</option>
-              <option value="m/s²">m/s²</option>
-              <option value="m²">m²</option>
-            </select>
-          </label>
-        </div>
-        <button id="add-symbol" type="submit">加入符号</button>
-        <p id="symbol-message" class="message" role="status"></p>
-      </form>
-
-      <div class="self-test">
-        <div>
-          <strong>运行自测</strong>
-          <span>复核公式、单位与错误分类</span>
-        </div>
-        <button id="run-test" class="quiet-button" type="button">运行自测</button>
-        <output id="test-out" aria-live="polite">尚未运行</output>
-      </div>
-    </aside>
-
-    <section class="derivation-pane" aria-labelledby="step-title">
-      <div class="section-heading">
-        <div>
-          <p class="section-kicker">02 · TRACE</p>
-          <h2 id="step-title">推导步骤</h2>
-        </div>
-        <span id="step-count" class="count">0 步</span>
-      </div>
-
-      <div id="current-result" class="current-result" hidden>
-        <span>当前结果</span>
-        <strong id="current-value">—</strong>
-        <small id="current-basis">—</small>
-      </div>
-
-      <div id="step-empty" class="empty-state derivation-empty">
-        <strong>还没有推导步骤</strong>
-        <span>加入第一个量后，就可以从定义或代入开始。</span>
-      </div>
-
-      <form id="step-form" class="step-form" hidden>
-        <div class="step-grid">
-          <label>
-            <span>推导依据</span>
-            <select id="step-basis" name="step-basis">
-              <option>定义</option>
-              <option>代入</option>
-              <option>代数变形</option>
-              <option>恒等式</option>
-              <option>取极限</option>
-              <option>单位换算</option>
-              <option>近似</option>
-            </select>
-          </label>
-          <label>
-            <span>结果单位</span>
-            <select id="step-unit" name="step-unit">
-              <option value="1">无量纲</option>
-              <option value="m">m</option>
-              <option value="cm">cm</option>
-              <option value="km">km</option>
-              <option value="s">s</option>
-              <option value="min">min</option>
-              <option value="h">h</option>
-              <option value="kg">kg</option>
-              <option value="g">g</option>
-              <option value="m/s">m/s</option>
-              <option value="m/s²">m/s²</option>
-              <option value="m²">m²</option>
-            </select>
-          </label>
-          <label id="precision-field" hidden>
-            <span>近似小数位</span>
-            <input id="step-precision" name="step-precision" type="number" min="0" max="12" value="2">
-          </label>
-        </div>
-        <label>
-          <span>表达式</span>
-          <input id="step-expression" name="step-expression" autocomplete="off" placeholder="例如 0.5*g*t^2" required>
-        </label>
-        <p class="syntax-note">支持四则、幂、括号、一元负号及 sqrt / abs / sin / cos / tan / ln / log / exp / min / max / pow / round。</p>
-        <button id="add-step" type="submit">写入这一步</button>
-        <p id="step-message" class="message" role="status"></p>
-      </form>
-
-      <ol id="step-list" class="step-list" aria-live="polite"></ol>
-    </section>
-  </main>
-
-  <footer>
-    <span>封闭数学表达式 · 不执行自由代码</span>
-    <span>单位换算会改变显示单位；其他依据保持量纲一致</span>
-  </footer>
-
-  <script src="engine.js"></script>
-  <script src="ui.js"></script>
+<main class="slate">
+  <div class="chain-wrap" id="chain-wrap">
+    <svg class="guide" id="guide" aria-hidden="true" focusable="false">
+      <path id="guide-path" d="" fill="none"></path>
+    </svg>
+    <section class="chain" id="chain" aria-label="从原式到当前结果的推导"></section>
+  </div>
+  <p class="affected" id="affected" hidden aria-live="polite"></p>
+</main>
+<script src="engine.js"></script>
+<script src="ui.js"></script>
 </body>
 </html>
