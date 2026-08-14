@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>户型标注</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <header class="head">
+    <h1>户型标注</h1>
+    <p>按局部米制坐标画墙，长度、面积与尺寸链同屏可复核</p>
+  </header>
+
+  <div class="workspace">
+    <aside class="controls">
+      <section aria-labelledby="first-title">
+        <h2 id="first-title">第一步</h2>
+        <p id="draw-instruction" class="instruction">沿网格拖一条线，画出第一面墙</p>
+        <p id="draw-status" class="note">松手后会显示墙长；回到首点闭合后显示房间面积。</p>
+        <div class="button-row">
+          <button id="undo-wall" type="button">撤销上一面墙</button>
+          <button id="clear-walls" type="button">清空墙线</button>
+        </div>
+      </section>
+
+      <section aria-labelledby="setting-title">
+        <h2 id="setting-title">绘制参数</h2>
+        <label for="wall-thickness">墙厚</label>
+        <select id="wall-thickness">
+          <option value="100">100 mm</option>
+          <option value="200" selected>200 mm</option>
+          <option value="240">240 mm</option>
+          <option value="300">300 mm</option>
+        </select>
+        <label for="allocation-factor">分摊系数</label>
+        <input id="allocation-factor" value="1.00" inputmode="decimal" autocomplete="off">
+        <p class="note">建筑面积 = 套内面积 × 分摊系数。</p>
+        <p class="note">常见门宽 700–1000 mm；本版先完成墙线与面积复核。</p>
+      </section>
+
+      <section aria-labelledby="basis-title">
+        <h2 id="basis-title">口径与规范</h2>
+        <p class="note">局部米制坐标，不是经纬度；存储精度 0.001 m，吸附步长 0.01 m。</p>
+        <p class="note">套内面积按内墙中线围合多边形计算，共享墙只计一次。</p>
+        <p class="note standards">标注惯例：ISO 129-1:2018<br>字高：ISO 3098-1</p>
+      </section>
+    </aside>
+
+    <main class="drawing-area">
+      <section class="paper-block" aria-labelledby="paper-title">
+        <div class="section-heading">
+          <div>
+            <h2 id="paper-title">米制底纸</h2>
+            <p>浅灰网格用于阅读；所有墙端点均按 0.01 m 吸附。</p>
+          </div>
+          <output id="pointer-coordinate">坐标待指向</output>
+        </div>
+
+        <svg id="floorplan-paper" viewBox="0 0 900 520" role="img" aria-label="局部米制户型底纸">
+          <defs>
+            <pattern id="minor-grid" width="25" height="25" patternUnits="userSpaceOnUse">
+              <path d="M 25 0 L 0 0 0 25" class="grid-minor"></path>
+            </pattern>
+            <pattern id="major-grid" width="100" height="100" patternUnits="userSpaceOnUse">
+              <rect width="100" height="100" fill="url(#minor-grid)"></rect>
+              <path d="M 100 0 L 0 0 0 100" class="grid-major"></path>
+            </pattern>
+          </defs>
+          <g id="grid-layer" aria-label="米制网格">
+            <rect width="900" height="520" fill="url(#major-grid)"></rect>
+          </g>
+          <g id="origin-marker" aria-label="原点">
+            <line x1="68" y1="440" x2="92" y2="440"></line>
+            <line x1="80" y1="428" x2="80" y2="452"></line>
+            <circle cx="80" cy="440" r="3"></circle>
+            <text x="96" y="462">(0, 0) m</text>
+          </g>
+          <g id="scale-bar" aria-label="1 米比例尺">
+            <line x1="710" y1="474" x2="760" y2="474"></line>
+            <line x1="710" y1="466" x2="710" y2="482"></line>
+            <line x1="760" y1="466" x2="760" y2="482"></line>
+            <text x="735" y="456" text-anchor="middle">1 m</text>
+          </g>
+          <g id="north-arrow" aria-label="北针">
+            <text x="830" y="54" text-anchor="middle">N</text>
+            <path d="M 830 66 L 816 101 L 830 92 L 844 101 Z"></path>
+            <line x1="830" y1="92" x2="830" y2="124"></line>
+          </g>
+          <g id="wall-layer" aria-label="用户绘制的墙"></g>
+          <g id="wall-label-layer" aria-label="墙长标注"></g>
+          <line id="preview-wall" x1="0" y1="0" x2="0" y2="0" aria-hidden="true"></line>
+        </svg>
+      </section>
+
+      <section class="results" aria-labelledby="result-title">
+        <div class="summary">
+          <h2 id="result-title">测量结果</h2>
+          <div><span>最近墙长</span><output id="last-wall-length">待绘制</output></div>
+          <div><span>套内面积</span><output id="suite-area">待闭合</output></div>
+          <div><span>建筑面积</span><output id="building-area">待闭合</output></div>
+        </div>
+
+        <div class="detail-grid">
+          <div class="wall-detail">
+            <h2>逐墙明细</h2>
+            <div class="table-scroll">
+              <table>
+                <thead><tr><th>墙</th><th>起点 m</th><th>终点 m</th><th>长度 m</th></tr></thead>
+                <tbody id="wall-rows"></tbody>
+              </table>
+            </div>
+            <p id="wall-empty" class="empty">待绘制；首屏没有任何代画墙。</p>
+          </div>
+          <div class="dimension-chain">
+            <h2>尺寸链</h2>
+            <dl>
+              <div><dt>总尺寸</dt><dd id="dimension-total">待绘制</dd></div>
+              <div><dt>轴线</dt><dd id="dimension-axis">待绘制</dd></div>
+              <div><dt>细部</dt><dd id="dimension-detail">待绘制</dd></div>
+            </dl>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer class="foot">
+    <button id="run-test" type="button">运行自测</button>
+    <span id="test-out">未运行</span>
+    <ul id="test-detail"></ul>
+  </footer>
+</div>
+<script src="engine.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

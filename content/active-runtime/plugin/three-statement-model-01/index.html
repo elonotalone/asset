@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>三表模型</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <header class="head">
+    <div>
+      <h1>三表模型</h1>
+      <p>改变驱动假设，利润表、现金流量表、资产负债表与检查结果同一帧联动</p>
+    </div>
+    <div class="legend" aria-label="建模角色图例">
+      <span class="input-role">■ 输入（蓝）</span>
+      <span class="formula-role">= 本表公式（黑）</span>
+      <span class="cross-role">↗ 跨表引用（绿）</span>
+    </div>
+  </header>
+
+  <div class="workspace">
+    <aside class="controls">
+      <section>
+        <h2>驱动假设</h2>
+        <p class="fine">通用三年预测，不对应任何真实公司；金额单位为元。</p>
+        <label class="field" for="revenue-growth"><span><b>输入</b> 收入增速</span><input id="revenue-growth" type="number" value="12.00" step="0.25"></label>
+        <label class="field" for="base-revenue"><span><b>输入</b> 基期收入</span><input id="base-revenue" type="number" value="1000000.00" step="1000" min="0"></label>
+        <label class="field" for="gross-margin"><span><b>输入</b> 毛利率</span><input id="gross-margin" type="number" value="55.00" step="0.25" min="0" max="100"></label>
+        <label class="field" for="operating-expense-pct"><span><b>输入</b> 运营费用率</span><input id="operating-expense-pct" type="number" value="28.00" step="0.25" min="0" max="100"></label>
+        <label class="field" for="tax-rate"><span><b>输入</b> 税率</span><input id="tax-rate" type="number" value="25.00" step="0.25" min="0" max="100"></label>
+        <label class="field" for="dso"><span><b>输入</b> 应收周转天数</span><input id="dso" type="number" value="45" step="1" min="0" max="365"></label>
+        <label class="field" for="inventory-days"><span><b>输入</b> 存货天数</span><input id="inventory-days" type="number" value="30" step="1" min="0" max="365"></label>
+        <label class="field" for="payable-days"><span><b>输入</b> 应付天数</span><input id="payable-days" type="number" value="35" step="1" min="0" max="365"></label>
+        <label class="field" for="capex-pct"><span><b>输入</b> 资本开支率</span><input id="capex-pct" type="number" value="6.00" step="0.25" min="0" max="100"></label>
+        <label class="field" for="depreciation-years"><span><b>输入</b> 折旧年限</span><input id="depreciation-years" type="number" value="5" step="1" min="1" max="50"></label>
+        <label class="field" for="interest-rate"><span><b>输入</b> 循环贷利率</span><input id="interest-rate" type="number" value="8.00" step="0.25" min="0" max="100"></label>
+        <label class="field" for="minimum-cash"><span><b>输入</b> 最低现金</span><input id="minimum-cash" type="number" value="100000.00" step="1000" min="0"></label>
+      </section>
+
+      <section>
+        <h2>循环口径</h2>
+        <label class="field" for="loop-mode">
+          <span>利息—现金—循环贷</span>
+          <select id="loop-mode">
+            <option value="opening">期初余额直接断环</option>
+            <option value="average">平均余额迭代</option>
+          </select>
+        </label>
+        <p id="mode-explanation" class="fine"></p>
+      </section>
+
+      <section>
+        <h2>模型边界</h2>
+        <p class="fine">不含真实公司数据、股权融资、分红、商誉、递延税或估值建议。循环只覆盖利息、现金与循环贷。</p>
+      </section>
+    </aside>
+
+    <main class="results">
+      <section id="headline" class="headline" aria-label="末年结论"></section>
+      <section class="basis">
+        <p id="basis-line"></p>
+        <p id="status-line" role="status"></p>
+      </section>
+
+      <section class="checks" aria-label="资产负债平衡检查">
+        <h2>平衡检查 · 资产 −（负债 + 权益）</h2>
+        <div id="check-line"></div>
+      </section>
+
+      <section class="statement">
+        <h2>利润表</h2>
+        <table id="income-table" aria-label="三年利润表"></table>
+      </section>
+      <section class="statement">
+        <h2>现金流量表</h2>
+        <table id="cashflow-table" aria-label="三年现金流量表"></table>
+      </section>
+      <section class="statement">
+        <h2>资产负债表</h2>
+        <table id="balance-table" aria-label="三年资产负债表"></table>
+      </section>
+
+      <section class="comparison">
+        <h2>循环贷断环比较</h2>
+        <p id="comparison-note" class="fine"></p>
+        <table id="comparison-table" aria-label="两种循环贷断环比较"></table>
+      </section>
+
+      <section class="sensitivity">
+        <h2>收入增速敏感性</h2>
+        <table id="sensitivity-table" aria-label="收入增速敏感性"></table>
+      </section>
+    </main>
+  </div>
+
+  <footer class="foot">
+    <button id="run-test" type="button">运行自测</button>
+    <span id="test-out">未运行</span>
+    <ul id="test-detail"></ul>
+  </footer>
+</div>
+<script src="engine.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>
