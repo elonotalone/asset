@@ -96,13 +96,19 @@ test("十个平面设计类型各自出格，且走 /design/<类型> 而不是�
   }
 });
 
-test("第二组是两个工具入口，与类型轴分开成组", () => {
+test("成品与工具单独成组，我的素材库那组不挂 heading", () => {
   const labels = navLabels(SHELL);
   assert.ok(labels.includes("我的素材库"), "我的素材库不在左栏");
   assert.ok(labels.includes("授权说明"), "授权说明不在左栏");
-  // 只有一个分组带 heading，就是类型轴那组；工具组不挂 heading，靠分隔线隔开。
+  // 「成品」与「插件」都不是素材类型（成品是按新工作流做出来的整件作品，插件是能打开
+  // 素材的工具、可看不可下），所以它们自己一组并带 heading，不混进类型轴那 22 格里。
+  // 原判据钉的是「只有类型轴带 heading」，那是这一组存在之前的样子。
+  assert.ok(labels.includes("成品"), "成品不在左栏");
+  assert.ok(labels.includes("插件"), "插件不在左栏");
   const headings = [...SHELL.matchAll(/heading:\s*tt\("([^"]+)"\)/g)].map((m) => m[1]);
-  assert.deepEqual(headings, ["素材类型"]);
+  assert.deepEqual(headings, ["素材类型", "成品与工具"]);
+  // 收藏与说明那一组仍然不挂 heading，靠分隔线隔开——三个 heading 就说明它也挂上了。
+  assert.equal(headings.length, 2, "我的素材库那组不该有 heading");
 });
 
 // —— 类型页右侧的三分区（W8）————————————————————————————————
