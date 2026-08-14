@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>概念图谱</title>
+<!-- 离线可运行：经典脚本、同目录资源、无存储；承载方应使用 sandbox="allow-scripts"。 -->
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="app">
+  <header class="head">
+    <h1>概念图谱</h1>
+    <p>把先修关系摊成学习顺序；必修边决定层级，相关边不冒充前提</p>
+  </header>
+
+  <div class="workspace">
+    <aside class="inputs" aria-label="图谱输入">
+      <section>
+        <h2>学习口径</h2>
+        <label class="field" for="threshold">
+          <span>掌握阈值</span>
+          <input id="threshold" type="number" min="0.50" max="0.95" step="0.01" value="0.80">
+        </label>
+        <p class="fine">范围 0.50–0.95；掌握度按 21 天半衰。相关关系只提示，不锁住课程。</p>
+      </section>
+
+      <section>
+        <h2>新增概念</h2>
+        <label class="field" for="concept-name"><span>概念名</span><input id="concept-name" type="text" placeholder="例如：感应电场" autocomplete="off"></label>
+        <label class="field" for="concept-minutes"><span>预计分钟</span><input id="concept-minutes" type="number" min="1" value="35"></label>
+        <label class="field" for="concept-mastery"><span>掌握度</span><input id="concept-mastery" type="number" min="0" max="1" step="0.01" value="0.30"></label>
+        <label class="field" for="concept-days"><span>距复习 / 天</span><input id="concept-days" type="number" min="0" step="1" value="0"></label>
+        <button id="add-node" type="button">加入概念</button>
+      </section>
+
+      <section>
+        <h2>新增语义关系</h2>
+        <label class="field" for="edge-from"><span>前驱</span><select id="edge-from"></select></label>
+        <label class="field" for="edge-kind"><span>关系</span><select id="edge-kind"><option value="required">必修先修</option><option value="related">相关</option></select></label>
+        <label class="field" for="edge-to"><span>后继</span><select id="edge-to"></select></label>
+        <button id="add-edge" type="button">加入关系</button>
+      </section>
+
+      <section>
+        <h2>路径追溯</h2>
+        <label class="field" for="path-from"><span>从</span><select id="path-from"></select></label>
+        <label class="field" for="path-to"><span>到</span><select id="path-to"></select></label>
+        <button id="run-path" type="button">计算最短路径</button>
+      </section>
+
+      <p id="input-message" class="message" role="status"></p>
+      <div class="secondary-actions">
+        <button id="load-demo" type="button">恢复电磁感应样例</button>
+        <button id="clear-graph" type="button">清空，从第一个概念开始</button>
+      </div>
+      <p class="fine">最多 120 个概念。数据只留在当前页面，不上传、不保存。</p>
+    </aside>
+
+    <section class="results" aria-label="分析结果">
+      <div class="headline" aria-label="结论">
+        <div><span>概念</span><strong id="stat-nodes">0</strong></div>
+        <div><span>学习层</span><strong id="stat-layers">0</strong></div>
+        <div><span>关键路径</span><strong id="stat-critical">—</strong></div>
+        <div><span>当前可学</span><strong id="stat-learnable">0</strong></div>
+      </div>
+      <div class="basis">
+        <p>有效掌握度 = 记录掌握度 × 0.5<sup>(距复习天数 ÷ 21)</sup>；阈值默认 0.80。</p>
+        <p id="order-status">Kahn 分层只计算必修先修；检测到循环时不伪造学习顺序。</p>
+      </div>
+
+      <div class="graph-wrap">
+        <svg id="graph" role="img" aria-label="概念与先修关系图"></svg>
+        <p id="graph-empty">先写下你要弄懂的第一个概念</p>
+      </div>
+
+      <div class="path-panel">
+        <h2>路径结论</h2>
+        <p id="path-result" tabindex="0"></p>
+        <p id="selection-detail">点一个节点，可查看它的必修前驱与后继。</p>
+      </div>
+
+      <div class="detail-table">
+        <table>
+          <thead><tr><th>层</th><th>概念</th><th>预计</th><th>记录掌握</th><th>有效掌握</th><th>必修前驱</th><th>状态</th></tr></thead>
+          <tbody id="detail-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <footer class="foot">
+    <button id="run-test" type="button">运行自测</button>
+    <span id="test-out">未运行</span>
+    <ul id="test-detail"></ul>
+  </footer>
+</main>
+<script src="engine.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>
