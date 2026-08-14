@@ -50,90 +50,158 @@ await new Promise((resolve) => {
 const { window } = dom;
 const doc = window.document;
 const $ = (selector) => doc.querySelector(selector);
+const all = (selector) => [...doc.querySelectorAll(selector)];
 const text = (selector) => ($(selector) ? $(selector).textContent.replace(/\s+/g, " ").trim() : "");
-const screen = () => doc.body.textContent.replace(/\s+/g, " ").trim();
-function set(id, value, eventName = "input") {
-  const target = doc.getElementById(id);
+const shown = () => {
+  const parts = [];
+  for (const node of all("main *")) {
+    if (node.closest("[hidden]")) continue;
+    if (node.children.length === 0 && node.textContent.trim()) parts.push(node.textContent.trim());
+    if (node.placeholder) parts.push(node.placeholder);
+  }
+  return parts.join(" ⟂ ").replace(/\s+/g, " ");
+};
+function fill(target, value) {
   target.value = value;
-  target.dispatchEvent(new window.Event(eventName, { bubbles: true }));
+  target.dispatchEvent(new window.Event("input", { bubbles: true }));
 }
 function click(target) { target.dispatchEvent(new window.MouseEvent("click", { bubbles: true })); }
+function kind(name) { return all("#kinds .kind").find((button) => button.textContent.trim() === name); }
+function pressButton(label) {
+  const found = all("button").find((button) => !button.closest("[hidden]") && button.textContent.includes(label));
+  assert.ok(found, "屏上找不到按钮：" + label);
+  click(found);
+  return found;
+}
 
 console.log("自测卷界面自测（jsdom，非浏览器）");
 
-check("引擎与界面脚本成功装载", () => {
+check("首屏只有一张空题页：光标在题干，没有示例题也没有零分", () => {
   assert.ok(window.SelfTestQuizEngine);
-  assert.equal(text("#question-count"), "0 道题");
+  assert.equal($("#prompt").value, "");
+  assert.equal($("#prompt").placeholder, "你想检验自己是否真的会了什么");
+  assert.equal(doc.activeElement.id, "prompt");
+  assert.equal($("#how").hidden, true, "还没写题干就已经摊开题型");
+  assert.equal($("#build").hidden, true);
+  assert.equal($("#live").hidden, true);
+  assert.equal($("#wrapup").hidden, true);
+  assert.equal($("#edge").hidden, true);
+  assert.doesNotMatch(shown(), /0 分|0 \/ 0|道题/);
 });
 
-check("首屏严格零题，不塞示例题", () => {
-  assert.equal(doc.querySelectorAll(".question").length, 0);
-  assert.match(screen(), /还没有题目/);
-  assert.match(screen(), /不会预塞示例题/);
-  assert.equal(text("#add-question"), "出第一道题");
-  assert.equal($("#submit-answers").disabled, true);
+check("首屏没有开发者按钮、口径栏、图例与自述", () => {
+  assert.equal($("#run-test"), null);
+  const screen = shown();
+  for (const banned of ["运行自测", "判分设置", "出题区", "答题区", "逐题得分理由", "口径", "离线", "题量", "卷面", "总分"]) {
+    assert.doesNotMatch(screen, new RegExp(banned), "首屏仍有：" + banned);
+  }
 });
 
-check("首屏判分设置可见且口径齐全", () => {
-  const rules = text(".rules");
-  assert.match(rules, /完全匹配/);
-  assert.match(rules, /命中正确数/);
-  assert.match(rules, /各空命中比例/);
-  assert.match(rules, /相对答案的百分比容差/);
-  assert.match(rules, /正确相邻对比例/);
-  assert.match(rules, /正确配对比例/);
-  assert.match(rules, /不倒扣/);
+check("写下题干，题页才顺着题型长出答案位置", () => {
+  fill($("#prompt"), "体重 68 kg 的患者按 0.5 mg/kg 给药，单次该给多少毫克？");
+  assert.equal($("#how").hidden, false);
+  assert.equal($("#build").hidden, false);
+  assert.equal(all("#kinds .kind").map((button) => button.textContent.trim()).join(""), "单选判断多选填空数值排序匹配");
+  assert.equal(kind("单选").getAttribute("aria-pressed"), "true");
 });
 
-check("真的出第一道单选题：一道题即可开始作答", () => {
-  set("prompt", "地球的天然卫星是？");
-  set("options", "月球\n火星\n金星");
-  set("correct-answer", "月球");
-  set("points", "10");
-  set("topic", "天文学");
-  set("explanation", "月球是地球唯一的天然卫星。");
-  click($("#add-question"));
-  assert.equal(text("#editor-error"), "");
-  assert.equal(text("#question-count"), "1 道题");
-  assert.equal(text("#paper-points"), "10 分");
-  assert.equal(doc.querySelectorAll(".question").length, 1);
-  assert.match(text(".question"), /地球的天然卫星是/);
-  assert.equal($("#submit-answers").disabled, false);
-  assert.equal(text("#add-question"), "再出一道题");
+check("选数值题，标准数、单位与允许误差都长在这张题页上", () => {
+  click(kind("数值"));
+  assert.equal(kind("数值").getAttribute("aria-pressed"), "true");
+  const inputs = all("#build input");
+  assert.equal(inputs.length, 3);
+  fill(inputs[0], "34");
+  fill(inputs[1], "mg");
+  fill(inputs[2], "2");
+  assert.match(shown(), /允许差/);
 });
 
-check("真的选择月球并提交：屏上出现 10 / 10 与逐题得分理由", () => {
-  const option = [...doc.querySelectorAll('input[name="answer-1"]')].find((input) => input.value === "月球");
-  assert.ok(option, "找不到月球选项");
-  click(option);
-  $("#quiz-form").dispatchEvent(new window.Event("submit", { bubbles: true, cancelable: true }));
-  assert.equal(text("#score-value"), "10 / 10");
-  assert.equal(doc.querySelectorAll("#score-rows tr").length, 1);
-  assert.match(text("#score-rows"), /完全匹配/);
-  assert.match(text("#score-rows"), /10 \/ 10/);
-  assert.match(text("#score-rows"), /月球是地球唯一的天然卫星/);
+check("保存后立刻变成正式题面：标准答案、单位与容差全部退场", () => {
+  fill($("#explanation"), "0.5 mg/kg × 68 kg = 34 mg，先算总量再看单位。");
+  pressButton("开始答这道题");
+  assert.equal(text("#compose-warn"), "");
+  assert.equal($("#compose").hidden, true);
+  assert.equal($("#live").hidden, false);
+  assert.match(text(".prompt-read"), /单次该给多少毫克/);
+  const screen = shown();
+  assert.doesNotMatch(screen, /34/, "作答前就泄露了标准答案");
+  assert.doesNotMatch(screen, /允许差|容差/, "作答前就看见容差");
+  assert.doesNotMatch(screen, /0\.5 mg\/kg × 68 kg/, "作答前就看见解析");
 });
 
-check("切换数值题时，相对容差与单位字段可见", () => {
-  set("question-type", "numeric", "change");
-  assert.equal(doc.querySelector(".numeric-only").hidden, false);
-  assert.match(text("#answer-help"), /容差按答案绝对值的百分比/);
-  assert.match(screen(), /答案单位/);
+check("单位写错但数对：得 0 分，理由直接说单位不匹配", () => {
+  fill($("#answer-value"), "34");
+  fill($("#answer-unit"), "g");
+  pressButton("看看我这题会不会");
+  assert.equal(text(".verdict-score"), "0 / 10 分");
+  assert.match(text(".verdict-reason"), /单位不匹配/);
+  assert.match(shown(), /标准答案 34 mg/);
+  assert.match(shown(), /允许差 2%/);
+  assert.match(text(".verdict-note"), /先算总量再看单位/);
+  assert.match(shown(), /34 g/, "没有把用户自己填的答案贴回来");
 });
 
-check("缺单位的数值题会给出明确错误，不伪装成已添加", () => {
-  set("prompt", "声音在空气中的速度约为？");
-  set("correct-answer", "343");
-  set("unit", "");
-  click($("#add-question"));
-  assert.match(text("#editor-error"), /必须填写答案单位/);
-  assert.equal(text("#question-count"), "1 道题");
+check("整卷答完，总分与最该回头看的知识点作为卷首评语出现", () => {
+  assert.equal($("#wrapup").hidden, false);
+  assert.equal(text(".wrap-score"), "这一卷 0 / 10 分");
+  assert.match(text(".wrap-note"), /最该回头看的是/);
 });
 
-check("点运行自测，屏上出现全部通过", () => {
-  click($("#run-test"));
-  assert.match(text("#test-out"), /^(\d+) \/ \1 通过$/);
-  assert.match(text("#test-detail"), /六种题型均含全对/);
+check("再出一道题：回到空题页，卷首评语与总分不常驻", () => {
+  pressButton("再出一道题");
+  assert.equal($("#wrapup").hidden, true);
+  assert.equal($("#compose").hidden, false);
+  assert.equal($("#prompt").value, "");
+  assert.equal($("#edge").hidden, false, "前一题应当在边缘留下去向");
+  assert.match(text("#prev-name"), /体重 68 kg/);
+});
+
+check("单选题：选项真实文字可读，标准答案由题页上勾选决定", () => {
+  fill($("#prompt"), "华法林的抗凝作用被下面哪一种维生素直接拮抗？");
+  click(kind("单选"));
+  fill($("#build textarea"), "维生素 K\n维生素 C\n维生素 D");
+  const marks = all(".mark");
+  assert.equal(marks.length, 3);
+  assert.equal(marks.map((row) => row.querySelector(".mark-text").textContent).join("／"), "维生素 K／维生素 C／维生素 D");
+  const box = marks[0].querySelector("input");
+  box.checked = true;
+  box.dispatchEvent(new window.Event("change", { bubbles: true }));
+  fill($("#topic"), "心血管药理");
+  pressButton("开始答这道题");
+  assert.equal(text("#compose-warn"), "");
+  assert.match(text(".topic-read"), /心血管药理/);
+  assert.equal(all(".choice-text").map((node) => node.textContent).join("／"), "维生素 K／维生素 C／维生素 D");
+  assert.doesNotMatch(shown(), /标准答案/, "作答前泄题");
+});
+
+check("答对：批改落在原答案旁，满分与理由贴着刚才的选择", () => {
+  const option = all('.choice input').find((input) => input.value === "维生素 K");
+  option.checked = true;
+  pressButton("看看我这题会不会");
+  assert.equal(text(".verdict-score"), "10 / 10 分");
+  assert.match(text(".verdict-reason"), /完全匹配/);
+  const row = all(".choice").find((item) => item.textContent.includes("维生素 K"));
+  assert.match(row.textContent, /你选的/);
+  assert.match(row.textContent, /标准答案/);
+  assert.ok(row.classList.contains("chosen") && row.classList.contains("keyed"));
+  assert.equal(all(".choice.wrong").length, 0);
+});
+
+check("两题都答完：卷首评语点名真实知识点，不是编号", () => {
+  assert.equal(text(".wrap-score"), "这一卷 10 / 20 分");
+  assert.match(text(".wrap-note"), /体重 68 kg/);
+});
+
+check("边缘只留去向，不摊开另一题的题面", () => {
+  assert.equal($("#edge").hidden, false);
+  assert.match(text("#prev-name"), /体重 68 kg/);
+  assert.equal(all(".prompt-read").length, 1);
+});
+
+check("屏上从头到尾没有统计排、明细表与题型规则清单", () => {
+  const screen = shown();
+  assert.doesNotMatch(screen, /题量|卷面|判分|口径|运行自测/);
+  assert.equal(doc.querySelectorAll("table").length, 0);
 });
 
 function source(file) { return readFileSync(path.join(runtimeDir, file), "utf8"); }
@@ -179,6 +247,11 @@ check("界面装配不使用高风险 HTML 注入", () => {
     assert.doesNotMatch(value, /document\s*\.\s*write/);
     assert.doesNotMatch(value, /new\s+Function\s*\(/);
   }
+});
+
+check("样式里没有写死的小字号", () => {
+  const css = source("style.css");
+  assert.doesNotMatch(css, /font-size:\s*(?:[0-9]|1[0-2])px/);
 });
 
 console.log("\n自测卷界面自测：" + (failed === 0 ? "全部通过" : failed + " 项未通过"));

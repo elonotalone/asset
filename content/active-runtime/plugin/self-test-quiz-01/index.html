@@ -7,112 +7,46 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<main class="app">
-  <header class="head">
-    <h1>自测卷</h1>
-    <span>自己出题，立即判分；总分、逐题答案、解析与得分理由同屏可复核</span>
-  </header>
+<main class="sheet">
+  <div class="wrapup" id="wrapup" hidden></div>
 
-  <div class="workspace">
-    <section class="editor" aria-labelledby="editor-title">
-      <h2 id="editor-title">出题区</h2>
-      <div class="field">
-        <label for="question-type">题型</label>
-        <select id="question-type">
-          <option value="single">单选</option>
-          <option value="truefalse">判断</option>
-          <option value="multi">多选</option>
-          <option value="blanks">填空</option>
-          <option value="numeric">数值</option>
-          <option value="ordering">排序</option>
-          <option value="matching">匹配</option>
-        </select>
-      </div>
-      <div class="stack">
-        <label for="prompt">题干</label>
-        <textarea id="prompt" rows="2" spellcheck="false" placeholder="写下要检验的问题"></textarea>
-      </div>
-      <div class="stack" id="options-field">
-        <label for="options">选项（每行一个）</label>
-        <textarea id="options" rows="4" spellcheck="false" placeholder="每行一个选项"></textarea>
-      </div>
-      <div class="stack">
-        <label for="correct-answer" id="answer-label">标准答案</label>
-        <textarea id="correct-answer" rows="3" spellcheck="false"></textarea>
-        <small id="answer-help"></small>
-      </div>
-      <div class="field optional numeric-only" hidden>
-        <label for="unit">答案单位</label>
-        <input id="unit" type="text" spellcheck="false" placeholder="例如 km/h">
-      </div>
-      <div class="field optional numeric-only" hidden>
-        <label for="tolerance">相对容差 / %</label>
-        <input id="tolerance" type="number" min="0" step="0.1" value="2">
-      </div>
-      <div class="field">
-        <label for="points">分值</label>
-        <input id="points" type="number" min="0.1" step="0.1" value="10">
-      </div>
-      <div class="field">
-        <label for="topic">主题</label>
-        <input id="topic" type="text" spellcheck="false" placeholder="例如 天文学">
-      </div>
-      <div class="stack">
-        <label for="explanation">解析</label>
-        <textarea id="explanation" rows="2" spellcheck="false" placeholder="答完后与得分理由一起显示"></textarea>
-      </div>
-      <button id="add-question" type="button">出第一道题</button>
-      <p id="editor-error" class="error" role="alert"></p>
+  <nav class="edge" id="edge" hidden>
+    <button class="edge-go" id="go-prev" type="button" hidden>
+      <span class="edge-dir">上一题</span>
+      <span class="edge-name" id="prev-name"></span>
+    </button>
+    <button class="edge-go edge-right" id="go-next" type="button" hidden>
+      <span class="edge-dir">下一题</span>
+      <span class="edge-name" id="next-name"></span>
+    </button>
+  </nav>
 
-      <section class="rules" aria-labelledby="rules-title">
-        <h2 id="rules-title">判分设置</h2>
-        <ul>
-          <li>单选、判断：完全匹配</li>
-          <li>多选：max(0, (命中正确数 − 错选数) ÷ 正确答案数)</li>
-          <li>填空：各空命中比例</li>
-          <li>数值：相对答案的百分比容差；单位必须相同</li>
-          <li>排序：正确相邻对比例；匹配：正确配对比例</li>
-          <li>每题得分始终夹在 0 与该题分值之间，不倒扣</li>
-        </ul>
-      </section>
-    </section>
+  <section class="page" id="compose" aria-label="写下要检验自己的问题">
+    <label class="sr" for="prompt">要检验的问题</label>
+    <textarea id="prompt" class="prompt-write" rows="2" spellcheck="false" autofocus
+      placeholder="你想检验自己是否真的会了什么"></textarea>
 
-    <section class="results" aria-labelledby="answer-title">
-      <div class="headline">
-        <div><span>题量</span><strong id="question-count">0 道题</strong></div>
-        <div><span>卷面</span><strong id="paper-points">0 分</strong></div>
-        <div><span>总分</span><strong id="score-value">0 / 0</strong></div>
-      </div>
-      <p class="basis" id="basis-line">当前零道题；判分口径已列在左侧。一道题也能开始作答。</p>
+    <div class="how" id="how" hidden>
+      <span class="how-lead">这道题怎么答</span>
+      <div class="how-kinds" id="kinds" role="group" aria-label="这道题怎么答"></div>
+    </div>
 
-      <div class="answer-scroll">
-        <h2 id="answer-title">答题区</h2>
-        <div id="empty-state">
-          <strong>还没有题目</strong>
-          <p>先在左边出第一道题；不会预塞示例题。</p>
-        </div>
-        <form id="quiz-form">
-          <div id="question-list"></div>
-          <button id="submit-answers" type="submit" disabled>提交作答</button>
-        </form>
+    <div class="build" id="build" hidden></div>
 
-        <section class="breakdown" aria-labelledby="breakdown-title">
-          <h2 id="breakdown-title">逐题得分理由</h2>
-          <table>
-            <thead><tr><th>题</th><th>题型</th><th>主题</th><th>得分</th><th>理由与解析</th></tr></thead>
-            <tbody id="score-rows"></tbody>
-          </table>
-          <p id="breakdown-empty">尚未提交作答。</p>
-        </section>
-      </div>
-    </section>
-  </div>
+    <div class="extra" id="extra" hidden>
+      <input id="topic" class="write-line" type="text" spellcheck="false"
+        placeholder="这题考的知识点" aria-label="这题考的知识点">
+      <textarea id="explanation" class="write-line" rows="2" spellcheck="false"
+        placeholder="答完之后想提醒自己什么" aria-label="答完之后想提醒自己什么"></textarea>
+    </div>
 
-  <footer class="foot">
-    <button id="run-test" type="button">运行自测</button>
-    <span id="test-out">未运行</span>
-    <ul id="test-detail"></ul>
-  </footer>
+    <div class="act" id="compose-act" hidden>
+      <button id="start-answer" class="go" type="button">开始答这道题</button>
+      <p id="compose-warn" class="warn" role="alert"></p>
+    </div>
+  </section>
+
+  <section class="page" id="live" hidden aria-label="当前这道题"></section>
 </main>
 <script src="engine.js"></script>
 <script src="ui.js"></script>
