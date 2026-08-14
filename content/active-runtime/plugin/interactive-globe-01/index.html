@@ -1,176 +1,136 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>地球仪</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>地球仪</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<main class="app">
-  <section class="space" aria-label="地球仪行程画布">
-    <div class="headline" aria-label="行程结论">
-      <div class="metric" id="total-distance"><strong class="v">0</strong><span class="u">m</span><span class="k">行程总长</span></div>
-      <div class="metric" id="destination-count"><strong class="v">0</strong><span class="u">个</span><span class="k">目的地</span></div>
-    </div>
-
+  <main class="space" aria-label="交互式地球仪">
     <p class="instruction" id="globe-instruction">拖动地球；点一个国家，把它加进这次行程</p>
 
-    <div class="globe-stage">
-      <svg id="world-globe" viewBox="0 0 620 560" role="img" aria-label="可拖动、可点击的离线地球仪">
-            <defs>
-              <clipPath id="globe-clip"><circle cx="310" cy="280" r="245"></circle></clipPath>
-              <radialGradient id="ocean-paint" cx="32%" cy="24%" r="78%">
-                <stop offset="0" stop-color="#166f9b"></stop>
-                <stop offset=".38" stop-color="#093b67"></stop>
-                <stop offset=".76" stop-color="#041a38"></stop>
-                <stop offset="1" stop-color="#010916"></stop>
-              </radialGradient>
-              <radialGradient id="land-paint" cx="28%" cy="21%" r="92%">
-                <stop offset="0" stop-color="#c9d2bd"></stop>
-                <stop offset=".42" stop-color="#809982"></stop>
-                <stop offset=".74" stop-color="#435f59"></stop>
-                <stop offset="1" stop-color="#1b2c31"></stop>
-              </radialGradient>
-              <radialGradient id="surface-shade" cx="31%" cy="24%" r="72%">
-                <stop offset="0" stop-color="#a7e2ff" stop-opacity=".13"></stop>
-                <stop offset=".57" stop-color="#07182d" stop-opacity="0"></stop>
-                <stop offset=".83" stop-color="#010611" stop-opacity=".28"></stop>
-                <stop offset="1" stop-color="#00040c" stop-opacity=".78"></stop>
-              </radialGradient>
-              <filter id="atmosphere-blur" x="-25%" y="-25%" width="150%" height="150%">
-                <feGaussianBlur stdDeviation="11"></feGaussianBlur>
-              </filter>
-              <filter id="land-relief" x="-8%" y="-8%" width="116%" height="116%">
-                <feTurbulence type="fractalNoise" baseFrequency=".018 .062" numOctaves="3" seed="27" result="terrain"></feTurbulence>
-                <feColorMatrix in="terrain" type="saturate" values="0" result="relief"></feColorMatrix>
-                <feComposite in="relief" in2="SourceGraphic" operator="in" result="texture"></feComposite>
-                <feBlend in="SourceGraphic" in2="texture" mode="soft-light"></feBlend>
-              </filter>
-              <filter id="night-soft" x="-6%" y="-6%" width="112%" height="112%">
-                <feGaussianBlur stdDeviation="4.8"></feGaussianBlur>
-              </filter>
-              <filter id="route-glow" x="-30%" y="-30%" width="160%" height="160%">
-                <feGaussianBlur in="SourceGraphic" stdDeviation="3.2" result="blur"></feGaussianBlur>
-                <feMerge><feMergeNode in="blur"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge>
-              </filter>
-            </defs>
-            <circle class="atmosphere-halo" cx="310" cy="280" r="251"></circle>
-            <circle class="atmosphere-rim" cx="310" cy="280" r="247"></circle>
-            <circle class="ocean" cx="310" cy="280" r="245"></circle>
-            <g id="graticule-layer" clip-path="url(#globe-clip)"></g>
-            <g id="land-layer" clip-path="url(#globe-clip)" filter="url(#land-relief)"></g>
-            <g id="border-layer" clip-path="url(#globe-clip)"></g>
-            <g id="night-layer" clip-path="url(#globe-clip)" filter="url(#night-soft)"></g>
-            <g id="terminator-layer" clip-path="url(#globe-clip)"></g>
-            <circle class="surface-shade" cx="310" cy="280" r="245" clip-path="url(#globe-clip)"></circle>
-            <g id="route-layer" clip-path="url(#globe-clip)" filter="url(#route-glow)"></g>
-            <g id="marker-layer" clip-path="url(#globe-clip)"></g>
-            <circle class="limb" cx="310" cy="280" r="245"></circle>
+    <section class="globe-stage" aria-label="行程地球">
+      <svg id="world-globe" viewBox="0 0 720 720" role="img"
+        aria-label="可拖动并点击添加目的地的离线地球" tabindex="0">
+        <defs>
+          <clipPath id="globe-clip">
+            <circle cx="360" cy="360" r="282"></circle>
+          </clipPath>
+
+          <radialGradient id="atmosphere-glow">
+            <stop offset="0" stop-color="#0a6ed6" stop-opacity="0"></stop>
+            <stop offset=".76" stop-color="#0a6ed6" stop-opacity="0"></stop>
+            <stop offset=".86" stop-color="#279bff" stop-opacity=".18"></stop>
+            <stop offset=".91" stop-color="#66c9ff" stop-opacity=".62"></stop>
+            <stop offset=".96" stop-color="#247dff" stop-opacity=".28"></stop>
+            <stop offset="1" stop-color="#0a54d5" stop-opacity="0"></stop>
+          </radialGradient>
+
+          <radialGradient id="ocean-paint" cx="30%" cy="23%" r="82%">
+            <stop offset="0" stop-color="#217da8"></stop>
+            <stop offset=".34" stop-color="#0c507d"></stop>
+            <stop offset=".7" stop-color="#05264b"></stop>
+            <stop offset="1" stop-color="#020b20"></stop>
+          </radialGradient>
+
+          <radialGradient id="land-paint" cx="29%" cy="22%" r="94%">
+            <stop offset="0" stop-color="#dce0c0"></stop>
+            <stop offset=".35" stop-color="#9dad83"></stop>
+            <stop offset=".68" stop-color="#536d58"></stop>
+            <stop offset="1" stop-color="#213d3d"></stop>
+          </radialGradient>
+
+          <radialGradient id="solar-wash" gradientUnits="userSpaceOnUse"
+            cx="250" cy="235" r="430">
+            <stop offset="0" stop-color="#dff4ff" stop-opacity=".28"></stop>
+            <stop offset=".38" stop-color="#8fd9ff" stop-opacity=".08"></stop>
+            <stop offset=".74" stop-color="#07162e" stop-opacity=".1"></stop>
+            <stop offset="1" stop-color="#01040d" stop-opacity=".62"></stop>
+          </radialGradient>
+
+          <radialGradient id="night-paint" cx="72%" cy="68%" r="86%">
+            <stop offset="0" stop-color="#00030a" stop-opacity=".94"></stop>
+            <stop offset=".62" stop-color="#010817" stop-opacity=".88"></stop>
+            <stop offset="1" stop-color="#061629" stop-opacity=".7"></stop>
+          </radialGradient>
+
+          <filter id="land-relief" x="-12%" y="-12%" width="124%" height="124%"
+            color-interpolation-filters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency=".012 .044" numOctaves="4"
+              seed="19" result="terrain"></feTurbulence>
+            <feDiffuseLighting in="terrain" surfaceScale="2.4" diffuseConstant=".84"
+              lighting-color="#e8f0d6" result="terrain-light">
+              <feDistantLight azimuth="224" elevation="48"></feDistantLight>
+            </feDiffuseLighting>
+            <feComposite in="terrain-light" in2="SourceGraphic" operator="in"
+              result="lit-terrain"></feComposite>
+            <feBlend in="SourceGraphic" in2="lit-terrain" mode="soft-light"></feBlend>
+          </filter>
+
+          <filter id="night-feather" x="-15%" y="-15%" width="130%" height="130%">
+            <feGaussianBlur stdDeviation="13"></feGaussianBlur>
+          </filter>
+
+          <filter id="route-glow" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="route-haze"></feGaussianBlur>
+            <feMerge>
+              <feMergeNode in="route-haze"></feMergeNode>
+              <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+          </filter>
+
+          <mask id="night-mask" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse"
+            x="0" y="0" width="720" height="720">
+            <rect width="720" height="720" fill="black"></rect>
+            <path id="night-mask-shape" fill="white" filter="url(#night-feather)"></path>
+          </mask>
+        </defs>
+
+        <circle class="atmosphere" cx="360" cy="360" r="332"></circle>
+        <circle class="ocean" cx="360" cy="360" r="282"></circle>
+        <g id="graticule-layer" clip-path="url(#globe-clip)"></g>
+        <g id="land-layer" clip-path="url(#globe-clip)" filter="url(#land-relief)"></g>
+        <g id="border-layer" clip-path="url(#globe-clip)"></g>
+        <circle class="solar-wash" cx="360" cy="360" r="282"
+          clip-path="url(#globe-clip)"></circle>
+        <circle class="night-surface" cx="360" cy="360" r="282"
+          clip-path="url(#globe-clip)" mask="url(#night-mask)"></circle>
+        <g id="route-layer" clip-path="url(#globe-clip)" filter="url(#route-glow)"></g>
+        <g id="marker-layer" clip-path="url(#globe-clip)"></g>
       </svg>
 
-      <nav class="globe-controls" aria-label="地球仪操作">
-        <button id="undo-destination" type="button">撤回末站</button>
-        <button id="clear-route" type="button">清空行程</button>
-        <button id="reset-view" type="button">复位视角</button>
-        <button class="details-toggle" id="details-toggle" type="button" aria-expanded="false" aria-controls="details-panel">口径与来源</button>
-      </nav>
-    </div>
-  </section>
-
-  <section class="details-panel" id="details-panel" aria-label="口径、来源与行程明细" hidden>
-    <header class="details-head">
-      <div>
-        <p class="details-kicker">行程细节</p>
-        <h1>口径与来源</h1>
-        <p class="sub">OGC:CRS84 · 大圆行程与昼夜分界同屏 · 太阳时 ≠ 行政时区</p>
+      <div class="globe-action" id="globe-action">
+        <span class="action-copy">拖动 · 点击添加目的地</span>
+        <button class="time-toggle" id="time-toggle" type="button"
+          aria-label="调整观察时刻（UTC）" aria-expanded="false" aria-controls="time-editor">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="8"></circle>
+            <path d="M12 7v5l3 2"></path>
+          </svg>
+        </button>
+        <label class="time-editor" id="time-editor" hidden>
+          <span>UTC</span>
+          <input id="observation-time" type="datetime-local" step="60"
+            aria-label="观察时刻，UTC">
+        </label>
       </div>
-      <button class="close-details" id="close-details" type="button" aria-label="关闭口径与来源">关闭</button>
-    </header>
+      <p class="sr-only" id="globe-status" aria-live="polite"></p>
+    </section>
 
-    <div class="details-scroll">
-      <div class="details-grid">
-        <section class="detail-block" aria-labelledby="observe-title">
-          <h2 id="observe-title">观察时刻</h2>
-          <div class="field">
-            <label for="observation-time">日期与时间（UTC）</label>
-            <input id="observation-time" type="datetime-local" value="2026-08-14T12:00">
-          </div>
-          <p class="input-note" id="date-note" aria-live="polite">昼夜分界按这一个 UTC 时刻实时推算。</p>
-          <dl class="readout">
-            <div><dt>中心视角</dt><dd id="center-readout">[20.0°, 15.0°]</dd></div>
-            <div><dt>太阳直射点</dt><dd id="subsolar-readout">—</dd></div>
-            <div><dt>昼夜分界</dt><dd id="terminator-readout">按日期推算中</dd></div>
-            <div><dt>太阳赤纬</dt><dd id="solar-declination"><span class="v">—</span></dd></div>
-          </dl>
-        </section>
+    <section class="metrics" aria-label="行程结论">
+      <p class="metric" id="total-distance">
+        <span class="metric-value">0</span><span class="metric-unit">m</span>
+        <span class="metric-label">行程总长</span>
+      </p>
+      <p class="metric" id="destination-count">
+        <span class="metric-value">0</span><span class="metric-unit">个</span>
+        <span class="metric-label">目的地</span>
+      </p>
+    </section>
+  </main>
 
-        <section class="detail-block" aria-labelledby="coordinate-title">
-          <h2 id="coordinate-title">按坐标添加</h2>
-          <div class="field">
-            <label for="destination-name">目的地名</label>
-            <input id="destination-name" type="text" value="目的地 1" autocomplete="off" spellcheck="false">
-          </div>
-          <div class="field pair">
-            <span><label for="longitude">经度</label><input id="longitude" type="text" value="116.4074" inputmode="decimal" autocomplete="off" spellcheck="false"></span>
-            <span><label for="latitude">纬度</label><input id="latitude" type="text" value="39.9042" inputmode="decimal" autocomplete="off" spellcheck="false"></span>
-          </div>
-          <button class="primary" id="add-coordinate" type="button">按坐标添加</button>
-          <p class="input-note" id="input-note" aria-live="polite">预填北京坐标，但不会替你先加入行程。</p>
-        </section>
-
-        <section class="detail-block" aria-labelledby="basis-title">
-          <h2 id="basis-title">计算口径</h2>
-          <dl class="basis-list">
-            <div><dt>平均地球半径</dt><dd>6 371 008.8 m</dd></div>
-            <div><dt>距离</dt><dd>haversine 大圆距离</dd></div>
-            <div><dt>太阳时差</dt><dd>经差 15° ≈ 1 小时</dd></div>
-            <div><dt>坐标顺序</dt><dd>[经度, 纬度]</dd></div>
-          </dl>
-          <p class="boundary">太阳时差只由经度估算，不等于行政时区；法定时间还受国界、政策与夏令时影响。</p>
-        </section>
-
-        <section class="detail-block legend" aria-labelledby="legend-title">
-          <h2 id="legend-title">图例与数据来源</h2>
-          <ul>
-            <li><i class="swatch ocean-swatch"></i>海洋 <code>#0B3D5C</code></li>
-            <li><i class="swatch land-swatch"></i>陆地 <code>#E8DCC8</code></li>
-            <li><i class="swatch border-swatch"></i>国界 <code>#4A5568</code></li>
-            <li><i class="swatch graticule-swatch"></i>经纬网 <code>#94A3B8</code></li>
-            <li><i class="swatch night-swatch"></i>半透明夜半球</li>
-          </ul>
-          <p class="source">来源：Natural Earth 4.1.0 地理数据（公共领域）</p>
-          <p class="source">world-atlas 2.0.2 TopoJSON 再分发（ISC）</p>
-        </section>
-      </div>
-
-      <section class="route-detail" aria-labelledby="route-title">
-        <div class="route-head">
-          <h2 id="route-title">站序路线</h2>
-          <p id="route-basis">零个用户目的地；离线陆地、国界、经纬网与当日昼夜分界已装载。</p>
-        </div>
-        <div class="table-scroll">
-          <table>
-            <thead><tr><th>站序</th><th>目的地</th><th>CRS84 坐标 [经度, 纬度]</th><th>昼夜</th><th>本段</th><th>累计</th><th>相对起点太阳时差</th></tr></thead>
-            <tbody id="route-rows"></tbody>
-          </table>
-          <p class="empty-row" id="empty-row">还没有用户目的地；地球上的昼夜与国界不是示例行程。</p>
-        </div>
-      </section>
-
-      <section class="selftest" aria-labelledby="selftest-title">
-        <div>
-          <h2 id="selftest-title">运行自测</h2>
-          <p>检查球面距离、太阳位置、投影与离线地理数据。</p>
-        </div>
-        <button id="run-test" type="button">运行自测</button>
-        <span id="test-out">未运行</span>
-        <ul id="test-detail"></ul>
-      </section>
-    </div>
-  </section>
-</main>
-<script src="engine.js"></script>
-<script src="ui.js"></script>
+  <script src="engine.js"></script>
+  <script src="ui.js"></script>
 </body>
 </html>

@@ -1,156 +1,101 @@
 <!doctype html>
 <html lang="zh-CN">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>概念图谱</title>
-<!-- 离线可运行：经典脚本、同目录资源、无存储；承载方应使用 sandbox="allow-scripts"。 -->
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<main class="app">
-  <button id="open-tools" class="tools-trigger" type="button" aria-controls="tool-drawer" aria-expanded="false">口径与设置</button>
-  <div class="workspace">
-    <section class="results" aria-label="分析结果">
-      <div class="headline" aria-label="结论">
-        <span>现在可以学</span>
-        <strong id="stat-learnable">0</strong>
-        <span>个概念</span>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./engine.js" defer></script>
+    <script src="./ui.js" defer></script>
+  </head>
+  <body>
+    <main class="graph-stage" aria-label="概念学习关系图">
+      <p id="learnable-summary" class="learnable-summary" aria-live="polite">
+        现在可以学 0 个概念
+      </p>
+
+      <div id="graph-viewport" class="graph-viewport">
+        <svg
+          id="graph-canvas"
+          class="graph-canvas"
+          role="img"
+          aria-label="概念与先修关系"
+        >
+          <defs>
+            <pattern id="draft-grid" width="32" height="32" patternUnits="userSpaceOnUse">
+              <path d="M 32 0 L 0 0 0 32" class="grid-line" />
+            </pattern>
+            <marker
+              id="required-arrow"
+              markerWidth="9"
+              markerHeight="9"
+              refX="8"
+              refY="4.5"
+              orient="auto"
+              markerUnits="strokeWidth"
+            >
+              <path d="M 0 0 L 9 4.5 L 0 9 Z" class="required-arrowhead" />
+            </marker>
+            <marker
+              id="related-arrow"
+              markerWidth="9"
+              markerHeight="9"
+              refX="8"
+              refY="4.5"
+              orient="auto"
+              markerUnits="strokeWidth"
+            >
+              <path d="M 0 0 L 9 4.5 L 0 9 Z" class="related-arrowhead" />
+            </marker>
+            <marker
+              id="path-arrow"
+              markerWidth="10"
+              markerHeight="10"
+              refX="9"
+              refY="5"
+              orient="auto"
+              markerUnits="strokeWidth"
+            >
+              <path d="M 0 0 L 10 5 L 0 10 Z" class="path-arrowhead" />
+            </marker>
+            <filter id="path-glow" x="-35%" y="-45%" width="170%" height="190%">
+              <feGaussianBlur stdDeviation="6" result="blur" />
+              <feFlood flood-color="#e87832" flood-opacity="0.42" result="color" />
+              <feComposite in="color" in2="blur" operator="in" result="glow" />
+              <feMerge>
+                <feMergeNode in="glow" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+          <rect class="grid-field" width="100%" height="100%" />
+          <g id="graph-edges"></g>
+          <g id="graph-nodes"></g>
+        </svg>
       </div>
 
-      <div class="graph-wrap">
-        <svg id="graph" role="img" aria-label="概念与先修关系图"></svg>
-        <p id="graph-empty" aria-hidden="true"></p>
-      </div>
-
-      <section id="first-step" class="first-step" aria-labelledby="first-step-title">
-        <form id="quick-concept-form">
-          <label id="first-step-title" for="quick-concept-name">先写下你要弄懂的第一个概念</label>
-          <div class="first-step-line">
-            <input id="quick-concept-name" type="text" placeholder="例如：电磁感应" autocomplete="off" required autofocus>
-            <button type="submit">画进图里</button>
-          </div>
-        </form>
-      </section>
-
-      <section id="prerequisite-step" class="prerequisite-step" aria-labelledby="prerequisite-question" hidden>
-        <span class="step-mark">下一笔</span>
-        <h2 id="prerequisite-question">它需要先会什么？</h2>
-        <form id="prerequisite-form">
-          <div class="first-step-line">
-            <input id="prerequisite-name" type="text" placeholder="写下一个必修前置概念" autocomplete="off" required>
-            <button type="submit">接到它前面</button>
-          </div>
-        </form>
-        <button id="no-prerequisite" class="quiet-action" type="button">它没有前置，先这样</button>
-      </section>
-
-      <section id="path-moment" class="path-moment" aria-live="polite" hidden>
-        <span>最短必修路径</span>
-        <strong id="path-moment-text"></strong>
-        <button id="clear-path" type="button">收起这道光</button>
-      </section>
-    </section>
-  </div>
-
-  <div id="drawer-scrim" class="drawer-scrim" hidden></div>
-  <aside id="tool-drawer" class="tool-drawer" aria-label="口径、设置与明细" hidden>
-    <header class="drawer-head">
-      <div>
-        <h1>概念图谱</h1>
-        <p>把先修关系摊成学习顺序；必修边决定层级，相关边不冒充前提</p>
-      </div>
-      <button id="close-tools" type="button" aria-label="关闭口径与设置">关闭</button>
-    </header>
-
-    <div class="drawer-scroll">
-      <section class="drawer-summary" aria-label="图谱统计">
-        <div><span>概念</span><strong id="stat-nodes">0</strong></div>
-        <div><span>学习层</span><strong id="stat-layers">0</strong></div>
-        <div><span>关键路径</span><strong id="stat-critical">—</strong></div>
-      </section>
-
-      <section>
-        <h2>学习口径</h2>
-        <label class="field" for="threshold">
-          <span>掌握阈值</span>
-          <input id="threshold" type="number" min="0.50" max="0.95" step="0.01" value="0.80">
+      <form id="concept-entry" class="concept-entry" novalidate>
+        <label id="entry-question" class="entry-question" for="concept-input">
+          先写下你要弄懂的第一个概念
         </label>
-        <p class="fine">范围 0.50–0.95；掌握度按 21 天半衰。相关关系只提示，不锁住课程。</p>
-        <div class="basis">
-          <p>有效掌握度 = 记录掌握度 × 0.5<sup>(距复习天数 ÷ 21)</sup>；阈值默认 0.80。</p>
-          <p id="order-status">Kahn 分层只计算必修先修；检测到循环时不伪造学习顺序。</p>
-          <p>关键路径按路径上各概念的预计学习分钟数累加。</p>
+        <div class="entry-line">
+          <input
+            id="concept-input"
+            name="concept"
+            type="text"
+            maxlength="80"
+            autocomplete="off"
+            spellcheck="false"
+            aria-describedby="entry-feedback"
+          />
+          <button id="entry-submit" class="entry-submit" type="submit">
+            写进图里
+          </button>
         </div>
-      </section>
-
-      <section>
-        <h2>图的读法</h2>
-        <div class="state-key" aria-label="颜色与状态图例">
-          <span class="key-learnable">发亮 · 现在可学</span>
-          <span class="key-locked">退淡 · 被前置锁住</span>
-          <span class="key-review">暖纸 · 待复习</span>
-        </div>
-        <p class="fine">清瘦实线是必修关系，会决定层级与可学状态；轻断续线是建议／相关关系，只影响推荐顺序，不构成前提。</p>
-      </section>
-
-      <section>
-        <h2>新增概念</h2>
-        <label class="field" for="concept-name"><span>概念名</span><input id="concept-name" type="text" placeholder="例如：感应电场" autocomplete="off"></label>
-        <label class="field" for="concept-minutes"><span>预计分钟</span><input id="concept-minutes" type="number" min="1" value="35"></label>
-        <label class="field" for="concept-mastery"><span>掌握度</span><input id="concept-mastery" type="number" min="0" max="1" step="0.01" value="0.30"></label>
-        <label class="field" for="concept-days"><span>距复习 / 天</span><input id="concept-days" type="number" min="0" step="1" value="0"></label>
-        <button id="add-node" type="button">加入概念</button>
-      </section>
-
-      <section>
-        <h2>新增语义关系</h2>
-        <label class="field" for="edge-from"><span>前驱</span><select id="edge-from"></select></label>
-        <label class="field" for="edge-kind"><span>关系</span><select id="edge-kind"><option value="required">必修先修</option><option value="related">相关</option></select></label>
-        <label class="field" for="edge-to"><span>后继</span><select id="edge-to"></select></label>
-        <button id="add-edge" type="button">加入关系</button>
-      </section>
-
-      <section>
-        <h2>路径追溯</h2>
-        <label class="field" for="path-from"><span>从</span><select id="path-from"></select></label>
-        <label class="field" for="path-to"><span>到</span><select id="path-to"></select></label>
-        <button id="run-path" type="button">计算最短路径</button>
-        <div class="path-panel">
-          <h3>路径结论</h3>
-          <p id="path-result" tabindex="0"></p>
-          <p id="selection-detail">点一个节点，可查看它的必修前驱与后继。</p>
-        </div>
-      </section>
-
-      <section class="detail-table">
-        <h2>概念明细</h2>
-        <div class="table-scroll">
-          <table>
-            <thead><tr><th>层</th><th>概念</th><th>预计</th><th>记录掌握</th><th>有效掌握</th><th>必修前驱</th><th>状态</th></tr></thead>
-            <tbody id="detail-body"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <section>
-        <p id="input-message" class="message" role="status"></p>
-        <div class="secondary-actions">
-          <button id="load-demo" type="button">载入示例 · 恢复电磁感应样例</button>
-          <button id="clear-graph" type="button">清空，从第一个概念开始</button>
-        </div>
-        <p class="fine">最多 120 个概念。数据只留在当前页面，不上传、不保存。</p>
-      </section>
-
-      <footer class="foot">
-        <button id="run-test" type="button">运行自测</button>
-        <span id="test-out">未运行</span>
-        <ul id="test-detail"></ul>
-      </footer>
-    </div>
-  </aside>
-</main>
-<script src="engine.js"></script>
-<script src="ui.js"></script>
-</body>
+        <button id="sample-trigger" class="sample-trigger" type="button">
+          看看电磁感应示例
+        </button>
+        <p id="entry-feedback" class="entry-feedback" role="status"></p>
+      </form>
+    </main>
+  </body>
 </html>
