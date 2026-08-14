@@ -1,11 +1,15 @@
 /*
- * 金融计算器 · 界面自测（真的装起来、真的改假设、真的读屏上的数）
+ * 金融计算器 · 界面自测（真的把 index.html 装起来、真的拖期限、真的读屏上那句结论）
  *
  *   node tests/plugin-gallery-runtime/financial-calculator-01/uitest.mjs
  *
- * jsdom，不是浏览器：JS 实现的 DOM，属静态/程序化检查。不启动浏览器、不截图、不连网。
+ * engine 的自测只证明「算得对」，证明不了「打开它能用」。这份测的是
+ * 装载 → 改一个假设 → 终点那句取舍结论 的那条路，以及屏幕上到底留了什么。
+ *
+ * 用 jsdom，不是浏览器：这是一个 JS 实现的 DOM，属静态/程序化检查。
+ * 全程不启动浏览器、不截图、不连网。
  */
-import { readFileSync, existsSync, readdirSync } from "node:fs";
+import { readFileSync, existsSync } from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import path from "node:path";
 import assert from "node:assert/strict";
@@ -18,13 +22,15 @@ const runtimeDir = path.resolve(
 );
 const require = createRequire(import.meta.url);
 
+/* jsdom 在 asset 仓是 pnpm 的间接依赖，没有提升到 node_modules/ 顶层，所以逐个探。 */
 function loadJsdom() {
+  const roots = ["/root/projects/asset", "/root/projects/oceanleo-ui", "/root/projects/oceanleo"];
   const direct = ["/root/projects/med/node_modules/jsdom", "/root/projects/notebook/node_modules/jsdom"];
   for (const d of direct) if (existsSync(d)) return require(d);
-  for (const root of ["/root/projects/asset", "/root/projects/oceanleo-ui", "/root/projects/oceanleo"]) {
+  for (const root of roots) {
     const store = path.join(root, "node_modules", ".pnpm");
     if (!existsSync(store)) continue;
-    for (const entry of readdirSync(store)) {
+    for (const entry of require("node:fs").readdirSync(store)) {
       if (!entry.startsWith("jsdom@")) continue;
       const p = path.join(store, entry, "node_modules", "jsdom");
       if (existsSync(p)) return require(p);
@@ -53,186 +59,214 @@ const dom = new JSDOM(readFileSync(htmlPath, "utf8"), {
   resources: "usable",
   pretendToBeVisual: true
 });
-await new Promise((r) => {
-  if (dom.window.document.readyState === "complete") r();
-  else dom.window.addEventListener("load", r);
+
+await new Promise((resolve) => {
+  if (dom.window.document.readyState === "complete") resolve();
+  else dom.window.addEventListener("load", resolve);
 });
 
 const { window } = dom;
 const doc = window.document;
-const $ = (s) => doc.querySelector(s);
-const text = (s) => ($(s) ? $(s).textContent.replace(/\s+/g, " ").trim() : "");
+const $ = (sel) => doc.querySelector(sel);
+const text = (sel) => ($(sel) ? $(sel).textContent.replace(/\s+/g, " ").trim() : "");
 const screen = () => doc.body.textContent.replace(/\s+/g, " ");
+const verdict = () => text("#verdict");
 
-function set(id, value) {
-  const node = doc.getElementById(id);
-  node.value = value;
-  node.dispatchEvent(new window.Event("input", { bubbles: true }));
-  node.dispatchEvent(new window.Event("change", { bubbles: true }));
+function type(id, value) {
+  const input = doc.getElementById(id);
+  input.value = value;
+  input.dispatchEvent(new window.Event("input", { bubbles: true }));
 }
-/** 结论区某一格显示的数。 */
-function headline(label) {
-  for (const cell of doc.querySelectorAll(".headline .cell")) {
-    if (cell.querySelector(".k").textContent.trim() === label) {
-      return cell.querySelector(".v").textContent.trim();
-    }
-  }
-  return null;
+function dragTerm(years) {
+  const range = $("#term");
+  range.value = String(years);
+  range.dispatchEvent(new window.Event("input", { bubbles: true }));
 }
-function rowCells(n) {
-  const tr = doc.querySelectorAll("#tbody tr")[n];
-  return tr ? [...tr.children].map((td) => td.textContent.trim()) : null;
+function click(id) {
+  doc.getElementById(id).dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
+}
+/** 曲线是不是由真实点位连成的：数一数路径里的采样点。 */
+function pointCount(sel) {
+  const d = $(sel).getAttribute("d") || "";
+  return (d.match(/[ML]/g) || []).length;
 }
 
 console.log("金融计算器界面自测（jsdom，非浏览器）");
 
+/* ---------- 首屏 ---------- */
+
 check("引擎脚本被页面装上了", () => {
-  assert.ok(window.FinancialEngine, "window.FinancialEngine 不存在");
+  assert.ok(window.FinancialEngine, "window.FinancialEngine 不存在，说明 <script src> 没跑起来");
 });
 
-/* ---------- 首屏：出厂档位，规格给的两个数必须原样出现在屏上 ---------- */
-
-check("首屏是可改的出厂档位，不是空表", () => {
-  assert.equal($("#principal").value, "1000000");
-  assert.equal($("#rate").value, "4.2");
-  assert.equal($("#periods").value, "360");
+check("首屏就是一档出厂房贷：100 万、4.20%、30 年 · 360 期、等额本息", () => {
+  assert.equal($("#principal").value, "1 000 000.00");
+  assert.equal($("#rate").value, "4.20");
+  assert.equal($("#term").value, "30");
+  assert.equal(text("#term-read"), "30 年 · 360 期");
+  assert.equal($("#method").value, "annuity");
 });
 
-check("首屏结论区就写着月供 4 890.17", () => {
-  assert.equal(headline("每期还款"), "4 890.17");
+check("曲线由每一期真实余额连成，不是起点终点拉直线", () => {
+  assert.equal(pointCount("#now"), 361, "应当是 360 期 + 起点本金");
+  assert.ok(($("#shade").getAttribute("d") || "").endsWith("Z"), "曲线下的薄染要用同一路径闭合");
 });
 
-check("首屏结论区就写着总利息 760 461.83（规格原文那个数）", () => {
-  assert.equal(headline("总利息"), "760 461.83");
+check("首屏结论说清当前方案的月供与总利息，都带元", () => {
+  assert.match(verdict(), /^30 年方案（等额本息）：每月还 4 890\.17 元，总利息 760 461\.83 元。$/);
 });
 
-check("口径与结论同屏，不在折叠块里", () => {
-  const basis = text("#basis-line");
-  assert.match(basis, /金额单位 元/);
-  assert.match(basis, /等额本息/);
-  assert.match(basis, /期利率/);
-  assert.match(basis, /复利/);
-  assert.match(basis, /四舍五入/);
-  assert.equal(doc.querySelectorAll("details, summary").length, 0, "出现了折叠块");
+check("对比轨迹一开始不存在", () => {
+  assert.equal($("#past").getAttribute("d"), "");
+  assert.equal($("#past-name").hidden, true);
 });
 
-/* ---------- 逐期明细：摊开，不折叠不分页 ---------- */
+/* ---------- 客厅里那一下：把期限终点从三十年拖到二十年 ---------- */
 
-check("360 期明细全部摊开在页面上（没有分页、没有折叠）", () => {
-  assert.equal(doc.querySelectorAll("#tbody tr").length, 360);
+check("拖到 20 年：结论当场写出每月多付多少、总利息少付多少", () => {
+  dragTerm(20);
+  assert.equal(text("#term-read"), "20 年 · 240 期");
+  assert.match(
+    verdict(),
+    /^20 年方案比 30 年方案每月多付 1 275\.54 元，总利息少付 280 692\.06 元。$/,
+  );
 });
 
-check("第 1 期明细自洽：还款 = 利息 + 本金", () => {
-  const [, pay, int, pri] = rowCells(0);
-  const n = (s) => Number(s.replace(/\s/g, ""));
-  assert.ok(Math.abs(n(pay) - (n(int) + n(pri))) < 0.02, `${pay} ≠ ${int} + ${pri}`);
+check("原方案留在纸上当对比轨迹，名字写出来，不叫 A／B", () => {
+  assert.ok(($("#past").getAttribute("d") || "").length > 0, "对比轨迹没画");
+  assert.equal($("#past-name").hidden, false);
+  assert.equal(text("#past-name"), "30 年方案");
+  assert.equal(screen().includes("方案 A"), false);
 });
 
-check("最后一期余额是 0.00（末期平衡真的落地了）", () => {
-  assert.equal(rowCells(359)[4], "0.00");
+check("两条轨迹共用同一套坐标尺度（对比方案更长，所以它的终点落在右边缘）", () => {
+  const last = (sel) => {
+    const points = ($(sel).getAttribute("d") || "").split(/[ML]/).filter(Boolean);
+    return points[points.length - 1].trim().split(/\s+/).map(Number);
+  };
+  const nowEnd = last("#now");
+  const pastEnd = last("#past");
+  assert.ok(pastEnd[0] > nowEnd[0], "对比方案的终点应当比当前方案更靠右");
+  assert.ok(Math.abs(pastEnd[1] - nowEnd[1]) < 1, "两条轨迹都走到清零，终点高度应当一致");
 });
 
-check("两个总利息口径都摆在屏上，并写明相差多少", () => {
-  const t = text("#tail");
-  assert.match(t, /公式口径/);
-  assert.match(t, /账面口径/);
-  assert.match(t, /相差/);
+check("拖回 30 年：差额归零，结论回到单个方案那一句", () => {
+  dragTerm(30);
+  assert.match(verdict(), /^30 年方案（等额本息）：每月还 4 890\.17 元，总利息 760 461\.83 元。$/);
+  assert.equal($("#past").getAttribute("d"), "");
 });
 
-/* ---------- 真的改假设 ---------- */
-
-check("把 360 改成 240：月供变高、总利息变低（规格里用户要比的那件事）", () => {
-  const pay30 = headline("每期还款"), int30 = headline("总利息");
-  set("periods", "240");
-  const pay20 = headline("每期还款"), int20 = headline("总利息");
-  const n = (s) => Number(s.replace(/\s/g, ""));
-  assert.ok(n(pay20) > n(pay30), `${pay20} 不高于 ${pay30}`);
-  assert.ok(n(int20) < n(int30), `${int20} 不低于 ${int30}`);
-  assert.equal(doc.querySelectorAll("#tbody tr").length, 240, "明细没跟着变成 240 行");
+check("换等额本金：结论改说首期还款，方式名写全", () => {
+  dragTerm(20);
+  const method = $("#method");
+  method.value = "equal-principal";
+  method.dispatchEvent(new window.Event("change", { bubbles: true }));
+  assert.match(verdict(), /^20 年方案比 30 年方案首期多付 /);
+  method.value = "annuity";
+  method.dispatchEvent(new window.Event("change", { bubbles: true }));
+  dragTerm(30);
 });
 
-check("改还款方式为等额本金：首期与末期还款不同，且每期本金相同", () => {
-  set("method", "equal-principal");
-  assert.ok(headline("首期还款"), "结论区没换成首期还款");
-  assert.ok(headline("末期还款"), "结论区缺末期还款");
-  assert.equal(rowCells(0)[3], rowCells(1)[3], "等额本金的每期本金应当相同");
-  assert.match(text("#basis-line"), /等额本金/);
-  set("method", "annuity");
-  set("periods", "360");
+check("改本金：曲线和结论跟着换，金额仍然带元", () => {
+  type("principal", "850 000");
+  assert.match(verdict(), /^30 年方案（等额本息）：每月还 4 156\.65 元，总利息 646 392\.55 元。$/);
+  type("principal", "1000000");
 });
 
-check("500000 / 6% / 12 期 → 月供 43 033.21、12 行、末期余额 0", () => {
-  set("principal", "500000");
-  set("rate", "6");
-  set("periods", "12");
-  assert.equal(headline("每期还款"), "43 033.21");
-  assert.equal(doc.querySelectorAll("#tbody tr").length, 12);
-  assert.equal(rowCells(11)[4], "0.00");
-  set("principal", "1000000");
-  set("rate", "4.2");
-  set("periods", "360");
+check("本金填成 0 时不硬凑一条轨迹，就地说要填什么", () => {
+  type("principal", "0");
+  assert.equal($("#now").getAttribute("d"), "");
+  assert.match(verdict(), /本金和年利率要填成大于 0 的数/);
+  type("principal", "1000000");
+  assert.match(verdict(), /每月还 4 890\.17 元/);
 });
 
-check("利率填 0：退化成 P/n，不出 NaN", () => {
-  set("rate", "0");
-  set("principal", "1200");
-  set("periods", "12");
-  assert.equal(headline("每期还款"), "100.00");
-  assert.doesNotMatch(screen(), /NaN|Infinity/);
-  set("principal", "1000000");
-  set("rate", "4.2");
-  set("periods", "360");
+/* ---------- 游标：只在当前点就地报数 ---------- */
+
+check("游标落在曲线上时，就地给出当期还款、利息、本金和余额", () => {
+  /* jsdom 没有版面，getBoundingClientRect 全是零；用它测不了鼠标位置，
+     所以这里只验证读数在没有版面时不会崩，也不会假装有数。 */
+  const plot = $("#plot");
+  plot.dispatchEvent(new window.MouseEvent("mousemove", { bubbles: true, clientX: 500 }));
+  assert.equal($("#readout").hidden, true);
+  plot.dispatchEvent(new window.MouseEvent("mouseleave", { bubbles: true }));
+  assert.equal($("#marker").getAttribute("visibility"), "hidden");
 });
 
-check("输入清空不崩，只是等着填", () => {
-  set("principal", "");
-  assert.match(screen(), /都填成正常的数/);
-  assert.equal(doc.querySelectorAll("#tbody tr").length, 0);
-  set("principal", "1000000");
-  assert.equal(doc.querySelectorAll("#tbody tr").length, 360);
+/* ---------- 换一个问题：整条曲线和操作带一起换 ---------- */
+
+check("切到现金流：贷款那套输入整块离场，不是被塞进抽屉", () => {
+  click("ask-cash");
+  assert.equal($("#knobs-loan").hidden, true);
+  assert.equal($("#knobs-cash").hidden, false);
+  assert.equal($("#flows").value, "-100000, 30000, 35000, 40000, 45000");
+  assert.match(verdict(), /按 10% 折现，这组现金流现在值 .* 元；内部收益率 \d+\.\d\d%。$/);
 });
 
-/* ---------- 第二组计算：现金流 ---------- */
-
-check("首屏现金流已经给出 NPV 与 IRR", () => {
-  const t = text("#cash-out");
-  assert.match(t, /NPV @ 10%/);
-  assert.match(t, /IRR/);
-  assert.doesNotMatch(t, /无常规解/);
+check("现金流全同号：结论原位直接说没有常规内部收益率，不弹面板也不硬给数", () => {
+  type("flows", "100, 200, 300");
+  assert.match(verdict(), /这组现金流没有常规内部收益率。$/);
+  assert.equal(screen().includes("NaN"), false);
 });
 
-check("把现金流改成全正：IRR 明说无常规解，不硬凑数字", () => {
-  set("flows", "100, 200, 300");
-  assert.match(text("#cash-out"), /无常规解/);
-  assert.match(screen(), /全部同号时 IRR 没有常规意义/);
-  set("flows", "-100000, 30000, 35000, 40000, 45000");
+check("现金流曲线按期把折现值累积成真实点位", () => {
+  type("flows", "-1000, 500, 500, 500");
+  assert.equal(pointCount("#now"), 4);
+  assert.match(verdict(), /现在值 243\.43 元/);
 });
 
-check("现金流按定义算：[-1000,500,500,500] @10% → NPV 243.43", () => {
-  set("flows", "-1000, 500, 500, 500");
-  set("discount", "10");
-  assert.match(text("#cash-out"), /243\.43/);
+check("切回贷款：现金流那套输入整块离场", () => {
+  click("ask-loan");
+  assert.equal($("#knobs-cash").hidden, true);
+  assert.equal($("#knobs-loan").hidden, false);
+  assert.match(verdict(), /^30 年方案（等额本息）：/);
 });
 
-/* ---------- 页面自测按钮 ---------- */
+/* ---------- 屏幕上不许再有的东西 ---------- */
 
-check("点「运行自测」→ 屏上出现 15 / 15 通过", () => {
-  $("#run-test").dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
-  const out = text("#test-out");
-  assert.match(out, /^(\d+) \/ \1 通过$/, `自测输出是「${out}」`);
-  assert.match(out, /^15 \/ 15 通过$/);
+check("没有自测按钮、没有逐期明细表、没有结果卡片", () => {
+  assert.equal(doc.getElementById("run-test"), null, "运行自测按钮还在");
+  assert.equal(doc.querySelectorAll("table").length, 0, "逐期明细表还在");
+  assert.equal(doc.querySelectorAll("thead, tbody, th, td").length, 0);
 });
 
-/* ---------- 沙箱适配 ---------- */
+check("屏上没有口径栏、公式、容量说明与产品标题副标题", () => {
+  const words = [
+    "口径", "期利率", "按期复利", "分位舍入", "运行自测", "全部摊开", "没有折叠",
+    "假设", "图例", "总还款"
+  ];
+  for (const word of words) {
+    assert.equal(screen().includes(word), false, `屏上还写着「${word}」`);
+  }
+  assert.equal(doc.querySelectorAll("h1, h2, h3").length, 0, "还有产品标题");
+});
 
+check("方案名、金额、单位都在屏上，没有裸数", () => {
+  assert.match(screen(), /年方案/);
+  assert.match(screen(), /元/);
+  assert.match(text("#term-read"), /年 · \d+ 期/);
+});
+
+check("没有写死的小字号", () => {
+  const css = readFileSync(path.join(runtimeDir, "style.css"), "utf8");
+  assert.doesNotMatch(css, /font-size:\s*(?:9|10|11)(?:\.\d+)?px/);
+});
+
+/* ---------- 沙箱适配：这些一旦破了，嵌进 iframe 就废 ---------- */
+
+/*
+ * 扫描的是**代码**，不是注释：注释里为了讲清楚为什么不用某个东西，
+ * 免不了要写出它的名字（「不碰 localStorage」），不先剥注释就会自己命中自己。
+ */
 function code(file) {
-  return readFileSync(path.join(runtimeDir, file), "utf8")
-    .replace(/<!--[\s\S]*?-->/g, " ")
-    .replace(/\/\*[\s\S]*?\*\//g, " ")
-    .replace(/^[ \t]*\/\/.*$/gm, " ");
+  let src = readFileSync(path.join(runtimeDir, file), "utf8");
+  src = src.replace(/<!--[\s\S]*?-->/g, " ");
+  src = src.replace(/\/\*[\s\S]*?\*\//g, " ");
+  src = src.replace(/^[ \t]*\/\/.*$/gm, " ");
+  return src;
 }
 
-check("没有 innerHTML / eval / new Function / document.write", () => {
+check("页面代码里没有 innerHTML / eval / new Function / document.write", () => {
   for (const f of ["ui.js", "engine.js", "index.html"]) {
     const src = code(f);
     assert.doesNotMatch(src, /\.(inner|outer)HTML\s*\+?=/, `${f} 出现 innerHTML 赋值`);
@@ -242,7 +276,7 @@ check("没有 innerHTML / eval / new Function / document.write", () => {
   }
 });
 
-check("不碰存储、不碰父窗口、不发请求", () => {
+check("不碰存储、不碰父窗口、不发请求（不透明源里碰了就抛）", () => {
   for (const f of ["ui.js", "engine.js"]) {
     const src = code(f);
     assert.doesNotMatch(src, /localStorage|sessionStorage|document\s*\.\s*cookie/, `${f} 碰了存储`);
@@ -251,13 +285,18 @@ check("不碰存储、不碰父窗口、不发请求", () => {
   }
 });
 
-check("没有外部资源、不用 ES module、页面里没有 iframe", () => {
-  const html = code("index.html");
-  for (const m of html.matchAll(/(?:src|href)\s*=\s*"([^"]*)"/g)) {
+check("没有外部资源：所有 src/href 都是同目录相对路径", () => {
+  for (const m of code("index.html").matchAll(/(?:src|href)\s*=\s*"([^"]*)"/g)) {
     assert.doesNotMatch(m[1], /^(https?:)?\/\//, `外部资源 ${m[1]}`);
     assert.doesNotMatch(m[1], /^data:|^javascript:/, `可疑 URL ${m[1]}`);
   }
-  assert.doesNotMatch(html, /type\s*=\s*"module"/);
+});
+
+check("不用 ES module（不透明源下模块脚本会因 CORS 取不回来）", () => {
+  assert.doesNotMatch(code("index.html"), /type\s*=\s*"module"/);
+});
+
+check("页面里没有 iframe（插件自己不再嵌套不可信内容）", () => {
   assert.equal(doc.querySelectorAll("iframe").length, 0);
 });
 

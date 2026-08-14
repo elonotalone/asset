@@ -131,6 +131,20 @@ check("20 年 vs 30 年：月供更高、总利息更低", () => {
   assert.ok(y20.totalInterest < y30.totalInterest);
 });
 
+/* 规格 §5 把 240 期那一档也写死了：月供 6 165.707 354 179 5，公式总利息 479 769.765 003 08。
+   界面上那句取舍结论就是这两档之差，所以差额本身也要能对上规格。 */
+check("规格 240 期读数：月供 6 165.7073541795，总利息 479 769.76500308", () => {
+  const y20 = E.amortize(1000000, 4.2, 240);
+  assert.ok(near(y20.payment, 6165.7073541795, 1e-6), `月供得到 ${y20.payment}`);
+  assert.ok(near(y20.totalInterest, 479769.76500308, 1e-6), `总利息得到 ${y20.totalInterest}`);
+});
+check("界面那句取舍：每月多付 1 275.54 元，总利息少付 280 692.06 元", () => {
+  const y20 = E.amortize(1000000, 4.2, 240);
+  const y30 = E.amortize(1000000, 4.2, 360);
+  assert.equal(E.round2(y20.payment - y30.payment), 1275.54);
+  assert.equal(E.round2(y30.totalInterest - y20.totalInterest), 280692.06);
+});
+
 check("坏输入返回 null，不返回空表冒充结果", () => {
   assert.equal(E.amortize(0, 4.2, 360), null);
   assert.equal(E.amortize(1000, 4.2, 0), null);
