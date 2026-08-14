@@ -4,8 +4,10 @@
   var E = globalThis.RelationshipGraphEngine;
   var demoLine = "美国国家航空航天局（组织）｜设立｜载人航天中心（组织）｜1961-11-01";
   var state = E.defaultGraph();
-  state.pathFrom = "collins";
-  state.pathTo = "nixon";
+  state.nodes = [];
+  state.edges = [];
+  state.pathFrom = "";
+  state.pathTo = "";
   state.pickNext = "from";
   var els = {};
   var SVG_NS = "http://www.w3.org/2000/svg";

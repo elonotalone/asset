@@ -86,7 +86,28 @@ check("经典脚本加载成功，页面取得同一份关系图内核", () => {
   assert.ok(window.RelationshipGraphEngine);
 });
 
-check("首屏带真实阿波罗 11 号样例与六项可复核统计", () => {
+check("首屏是空画布，中央直接问「谁 — 什么关系 — 和谁」", () => {
+  assert.equal(text("#stat-nodes"), "0");
+  assert.equal(text("#stat-edges"), "0");
+  assert.equal(doc.querySelectorAll("#graph .graph-node").length, 0);
+  assert.equal(doc.querySelectorAll("#graph .graph-edge").length, 0);
+  assert.equal($("#graph-empty").hidden, false);
+  assert.equal($("#relation-line").hasAttribute("autofocus"), true);
+  assert.match(text("#path-result"), /尚无路径/);
+  assert.match(screen(), /最多 120 个节点/);
+});
+
+check("空画布上一次输入就得到两个节点与第一条边", () => {
+  setValue("#relation-line", "张三（人物）｜代理｜李四（人物）｜2026-01-05");
+  click("#add-relation");
+  assert.equal(text("#stat-nodes"), "2");
+  assert.equal(text("#stat-edges"), "1");
+  assert.equal(doc.querySelectorAll("#graph .graph-node").length, 2);
+  assert.equal(doc.querySelectorAll("#graph .graph-edge").length, 1);
+});
+
+check("载入示例后才出现阿波罗 11 号样例与六项可复核统计", () => {
+  click("#load-demo");
   assert.equal(text("#stat-nodes"), "7");
   assert.equal(text("#stat-edges"), "8");
   assert.equal(text("#stat-degree"), "4");

@@ -3,10 +3,12 @@
 
   var E = globalThis.ConceptGraphEngine;
   var state = E.defaultGraph();
-  state.edgeFrom = "faraday-law";
-  state.edgeTo = "lenz-law";
-  state.pathFrom = "magnetic-field";
-  state.pathTo = "transformer";
+  state.nodes = [];
+  state.edges = [];
+  state.edgeFrom = "";
+  state.edgeTo = "";
+  state.pathFrom = "";
+  state.pathTo = "";
   var els = {};
   var SVG_NS = "http://www.w3.org/2000/svg";
 

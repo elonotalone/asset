@@ -91,18 +91,41 @@ check("经典脚本加载成功，页面取得同一份概念图谱内核", () =
   assert.ok(window.ConceptGraphEngine);
 });
 
-check("首屏带真实电磁感应样例与可复核结论", () => {
+check("首屏是零个概念的空画布，并给出规格规定的第一句提示", () => {
+  assert.equal(text("#stat-nodes"), "0");
+  assert.equal(doc.querySelectorAll("#graph .graph-node").length, 0);
+  assert.equal(doc.querySelectorAll("#graph .graph-edge").length, 0);
+  assert.equal($("#graph-empty").hidden, false);
+  assert.match(text("#graph-empty"), /先写下你要弄懂的第一个概念/);
+  assert.match(text("#path-result"), /尚未分层/);
+  assert.match(screen(), /有效掌握度 = 记录掌握度/);
+  assert.match(screen(), /最多 120 个概念/);
+});
+
+check("空画布上加入第一个概念：它没有前驱，因此立即处于可学位置", () => {
+  setValue("#concept-name", "磁场");
+  setValue("#concept-minutes", "40");
+  setValue("#concept-mastery", "0.00");
+  setValue("#concept-days", "0");
+  click("#add-node");
+  assert.equal(text("#stat-nodes"), "1");
+  assert.equal(doc.querySelectorAll("#graph .graph-node").length, 1);
+  assert.equal(text("#stat-learnable"), "1");
+  assert.match(text("#input-message"), /已加入“磁场”/);
+});
+
+check("载入示例后才出现电磁感应样例与可复核结论", () => {
+  click("#load-demo");
   assert.equal(text("#stat-nodes"), "7");
   assert.equal(text("#stat-layers"), "7");
   assert.equal(text("#stat-critical"), "350 分");
   assert.equal(doc.querySelectorAll("#detail-body tr").length, 7);
   assert.equal(doc.querySelectorAll("#graph .graph-node").length, 7);
   assert.equal(doc.querySelectorAll("#graph .graph-edge").length, 8);
-  assert.match(screen(), /有效掌握度 = 记录掌握度/);
-  assert.match(screen(), /最多 120 个概念/);
+  assert.match(text("#input-message"), /已恢复电磁感应样例/);
 });
 
-check("默认最短必修路径以文本显示为 6 条边", () => {
+check("样例的最短必修路径以文本显示为 6 条边", () => {
   assert.match(text("#path-result"), /磁场 → 磁通量 → 法拉第电磁感应定律/);
   assert.match(text("#path-result"), /变压器原理；6 条必修边/);
 });
