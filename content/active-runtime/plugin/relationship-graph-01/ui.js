@@ -1,277 +1,394 @@
 (function () {
   "use strict";
 
-  var E = globalThis.RelationshipGraphEngine;
-  var demoLine = "美国国家航空航天局（组织）｜设立｜载人航天中心（组织）｜1961-11-01";
-  var state = E.defaultGraph();
-  state.nodes = [];
-  state.edges = [];
-  state.pathFrom = "";
-  state.pathTo = "";
-  state.pickNext = "from";
+  var E = window.RelationshipGraphEngine;
+  var NS = "http://www.w3.org/2000/svg";
+  var NAME_SIZE = 18;
+  var PLATE_HEIGHT = 44;
+  var PLATE_PADDING = 17;
+
+  var state = {
+    nodes: [],
+    edges: [],
+    positions: null,
+    ends: [],
+    view: { w: 1200, h: 750 },
+    lastAdded: null
+  };
   var els = {};
-  var SVG_NS = "http://www.w3.org/2000/svg";
 
-  function clear(node) {
-    while (node.firstChild) node.removeChild(node.firstChild);
-  }
-
-  function svgElement(tag, attrs) {
-    var node = document.createElementNS(SVG_NS, tag);
-    Object.keys(attrs || {}).forEach(function (key) { node.setAttribute(key, attrs[key]); });
+  function svg(tag, attrs, text) {
+    var node = document.createElementNS(NS, tag);
+    Object.keys(attrs || {}).forEach(function (key) { node.setAttribute(key, String(attrs[key])); });
+    if (text !== undefined) node.textContent = String(text);
     return node;
   }
+  function clear(node) { while (node.firstChild) node.removeChild(node.firstChild); }
 
-  function nodeMap() {
-    var map = Object.create(null);
-    state.nodes.forEach(function (node) { map[node.id] = node; });
-    return map;
+  /* 牌面宽度按名字实际宽度算：名字是这张图上唯一不许被挤掉的东西。 */
+  function textWidth(text, size) {
+    var width = 0;
+    for (var i = 0; i < text.length; i++) {
+      var code = text.charCodeAt(i);
+      width += code > 0x2e80 ? size : size * 0.56;
+    }
+    return width;
   }
 
-  function typeLabel(type) {
-    return type === E.PERSON ? "人物" : type === E.ORGANIZATION ? "组织" : "事件";
+  function plateSizes() {
+    var sizes = Object.create(null);
+    state.nodes.forEach(function (node) {
+      sizes[node.id] = {
+        w: Math.round(textWidth(node.label, NAME_SIZE) + PLATE_PADDING * 2),
+        h: PLATE_HEIGHT
+      };
+    });
+    return sizes;
   }
 
-  function shortLabel(label) {
-    return label.length > 11 ? label.slice(0, 10) + "…" : label;
+  function measureViewport() {
+    var rect = els.table.getBoundingClientRect();
+    state.view.w = rect.width > 40 ? Math.round(rect.width) : 1200;
+    state.view.h = rect.height > 40 ? Math.round(rect.height) : 750;
+    els.web.setAttribute("viewBox", "0 0 " + state.view.w + " " + state.view.h);
   }
 
-  function edgePath(edge, positions) {
-    var from = positions[edge.from];
-    var to = positions[edge.to];
-    if (!from || !to) return null;
-    var dx = to.x - from.x;
-    var dy = to.y - from.y;
-    var distance = Math.sqrt(dx * dx + dy * dy) || 1;
-    var ux = dx / distance;
-    var uy = dy / distance;
-    var start = { x: from.x + ux * 62, y: from.y + uy * 30 };
-    var end = { x: to.x - ux * 62, y: to.y - uy * 30 };
-    var reverse = state.edges.some(function (item) { return item.from === edge.to && item.to === edge.from; });
-    var bend = reverse ? 34 : 0;
-    var control = {
-      x: (start.x + end.x) / 2 - uy * bend,
-      y: (start.y + end.y) / 2 + ux * bend
-    };
+  function relayout(keepPlaces) {
+    state.positions = E.layoutClusters(state.nodes, state.edges, {
+      width: state.view.w,
+      height: state.view.h - 120,
+      sizes: plateSizes(),
+      margin: 74,
+      seed: keepPlaces ? state.positions : null
+    }).positions;
+    Object.keys(state.positions).forEach(function (id) {
+      state.positions[id].y += 36;
+    });
+  }
+
+  function nodeById(id) {
+    return state.nodes.filter(function (node) { return node.id === id; })[0] || null;
+  }
+
+  function currentPath() {
+    if (state.ends.length !== 2) return null;
+    return E.shortestPath(state.nodes, state.edges, state.ends[0], state.ends[1]);
+  }
+
+  /* ---------- 画 ---------- */
+  /* 线要停在牌的边上，不许钻到牌底下 —— 否则方向箭头会被牌面压住，用户读不出方向。 */
+  function plateEdge(centre, size, towards) {
+    var dx = towards.x - centre.x;
+    var dy = towards.y - centre.y;
+    if (!dx && !dy) return { x: centre.x, y: centre.y };
+    var halfW = size.w / 2 + 5;
+    var halfH = size.h / 2 + 5;
+    var scale = Math.min(
+      dx === 0 ? Infinity : Math.abs(halfW / dx),
+      dy === 0 ? Infinity : Math.abs(halfH / dy)
+    );
+    if (!isFinite(scale)) scale = 1;
+    return { x: centre.x + dx * scale, y: centre.y + dy * scale };
+  }
+
+  function curveOf(edge, mark, sizes) {
+    var from = state.positions[edge.from];
+    var to = state.positions[edge.to];
+    var control = { x: (from.x + to.x) / 2, y: (from.y + to.y) / 2 };
+    if (mark.count >= 2) {
+      // 同一对对象之间的多条关系向两侧弯开，各自承载自己的关系名。
+      var dx = to.x - from.x;
+      var dy = to.y - from.y;
+      var length = Math.sqrt(dx * dx + dy * dy) || 1;
+      var offset = (mark.index - (mark.count - 1) / 2) * 60;
+      control = { x: control.x - dy / length * offset, y: control.y + dx / length * offset };
+    }
+    var a = plateEdge(from, sizes[edge.from], control);
+    var b = plateEdge(to, sizes[edge.to], control);
+    return { a: a, b: b, cx: control.x, cy: control.y };
+  }
+
+  function boxesOverlap(a, b) {
+    return a.x1 < b.x2 && b.x1 < a.x2 && a.y1 < b.y2 && b.y1 < a.y2;
+  }
+
+  /* 关系名不许被牌面压住，也不许两条关系名叠在一起（设计文档 §6）。
+   * 先试曲线正中，压住了就沿线前后挪、再往两侧让开；一路让不开时取最后一个位置。 */
+  function pointOnCurve(shape, t) {
+    var u = 1 - t;
     return {
-      d: "M " + start.x + " " + start.y + " Q " + control.x + " " + control.y + " " + end.x + " " + end.y,
-      labelX: (start.x + 2 * control.x + end.x) / 4,
-      labelY: (start.y + 2 * control.y + end.y) / 4 - 6
+      x: u * u * shape.a.x + 2 * u * t * shape.cx + t * t * shape.b.x,
+      y: u * u * shape.a.y + 2 * u * t * shape.cy + t * t * shape.b.y
     };
   }
 
-  function drawDefinitions(svg) {
-    var defs = svgElement("defs");
-    var marker = svgElement("marker", {
-      id: "arrow-head",
-      viewBox: "0 0 10 10",
-      refX: "9",
-      refY: "5",
-      markerWidth: "6",
-      markerHeight: "6",
-      orient: "auto-start-reverse"
-    });
-    marker.appendChild(svgElement("path", { d: "M 0 0 L 10 5 L 0 10 z", fill: "#707b85" }));
-    defs.appendChild(marker);
-    svg.appendChild(defs);
+  function overlapArea(a, b) {
+    var wide = Math.min(a.x2, b.x2) - Math.max(a.x1, b.x1);
+    var high = Math.min(a.y2, b.y2) - Math.max(a.y1, b.y1);
+    return wide > 0 && high > 0 ? wide * high : 0;
   }
 
-  function drawEdge(svg, edge, positions) {
-    var curve = edgePath(edge, positions);
-    if (!curve) return;
-    var path = svgElement("path", {
-      d: curve.d,
-      "class": "graph-edge",
-      "data-from": edge.from,
-      "data-to": edge.to,
-      "data-date": edge.date,
-      "marker-end": "url(#arrow-head)"
-    });
-    svg.appendChild(path);
-    var label = svgElement("text", { x: curve.labelX, y: curve.labelY, "class": "edge-label" });
-    label.textContent = edge.label;
-    svg.appendChild(label);
-  }
-
-  function selectPathNode(id) {
-    var map = nodeMap();
-    if (state.pickNext === "from") {
-      state.pathFrom = id;
-      state.pickNext = "to";
-      els.message.textContent = "已选路径起点“" + map[id].label + "”；再点一个节点作为终点。";
-    } else {
-      state.pathTo = id;
-      state.pickNext = "from";
-      els.message.textContent = "已选路径终点“" + map[id].label + "”；文本路径已重算。";
-    }
-    renderProduct();
-  }
-
-  function drawNode(svg, node, position) {
-    var group = svgElement("g", {
-      "class": "graph-node",
-      "data-id": node.id,
-      "data-type": node.type,
-      role: "button",
-      tabindex: "0",
-      transform: "translate(" + position.x + " " + position.y + ")"
-    });
-    if (node.type === E.PERSON) {
-      group.appendChild(svgElement("ellipse", { cx: 0, cy: 0, rx: 61, ry: 29, "class": "shape" }));
-    } else if (node.type === E.ORGANIZATION) {
-      group.appendChild(svgElement("rect", { x: -64, y: -29, width: 128, height: 58, rx: 2, "class": "shape" }));
-    } else {
-      group.appendChild(svgElement("polygon", { points: "0,-34 69,0 0,34 -69,0", "class": "shape" }));
-    }
-    var label = svgElement("text", { x: 0, y: -2 });
-    label.textContent = shortLabel(node.label);
-    group.appendChild(label);
-    var kind = svgElement("text", { x: 0, y: 15, "class": "type-label" });
-    kind.textContent = typeLabel(node.type);
-    group.appendChild(kind);
-    var title = svgElement("title");
-    title.textContent = node.label + "（" + typeLabel(node.type) + "）";
-    group.appendChild(title);
-    function activate() { selectPathNode(node.id); }
-    group.addEventListener("click", activate);
-    group.addEventListener("keydown", function (event) {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        activate();
+  function captionSpot(shape, caption, taken) {
+    var width = textWidth(caption, 15);
+    var slides = [0.5, 0.4, 0.6, 0.3, 0.7, 0.22, 0.78, 0.14, 0.86];
+    var lifts = [0, -24, 24, -44, 44, -66, 66];
+    var sides = [0, -1, 1];
+    var best = null;
+    for (var s = 0; s < slides.length; s++) {
+      for (var l = 0; l < lifts.length; l++) {
+        for (var h = 0; h < sides.length; h++) {
+          var at = pointOnCurve(shape, slides[s]);
+          var cx = at.x + sides[h] * (width / 2 + 16);
+          var cy = at.y + lifts[l];
+          var candidate = {
+            x: cx, y: cy, width: width,
+            box: { x1: cx - width / 2 - 7, x2: cx + width / 2 + 7, y1: cy - 14, y2: cy + 9 }
+          };
+          var damage = 0;
+          for (var t = 0; t < taken.length; t++) damage += overlapArea(taken[t], candidate.box);
+          if (damage === 0) return candidate;
+          if (!best || damage < best.damage) {
+            candidate.damage = damage;
+            best = candidate;
+          }
+        }
       }
-    });
-    svg.appendChild(group);
-  }
-
-  function renderGraph(analysis) {
-    clear(els.graph);
-    drawDefinitions(els.graph);
-    els.graph.setAttribute("viewBox", "0 0 " + analysis.layout.width + " " + analysis.layout.height);
-    els.graph.setAttribute("height", String(analysis.layout.height));
-    els.graphEmpty.hidden = state.nodes.length > 0;
-    state.edges.forEach(function (edge) { drawEdge(els.graph, edge, analysis.layout.positions); });
-    state.nodes.forEach(function (node) { drawNode(els.graph, node, analysis.layout.positions[node.id]); });
-  }
-
-  function renderPath() {
-    var map = nodeMap();
-    if (!state.pathFrom || !state.pathTo || !map[state.pathFrom] || !map[state.pathTo]) {
-      els.pathResult.textContent = "尚无路径：加入关系后，点两个节点选择起点与终点。";
-    } else {
-      var result = E.shortestPath(state.nodes, state.edges, state.pathFrom, state.pathTo);
-      els.pathResult.textContent = result
-        ? result.labels.join(" → ") + "；" + result.length + " 条关系，" + result.intermediaries + " 个中介。"
-        : map[state.pathFrom].label + "与" + map[state.pathTo].label + "分属不同连通分量，没有路径。";
     }
-    els.pathPrompt.textContent = state.pickNext === "from"
-      ? "下一次点击选择路径起点。"
-      : "下一次点击选择路径终点。";
+    return best;
   }
 
-  function renderRelationshipText() {
-    var map = nodeMap();
-    els.relationshipText.textContent = state.edges.length
-      ? state.edges.map(function (edge) {
-        return map[edge.from].label + " —" + edge.label + "→ " + map[edge.to].label + "｜" + edge.date;
-      }).join("\n")
-      : "加入第一条关系后，这里会逐行列出方向、关系名与日期。";
+  function renderEdges(path) {
+    clear(els.edges);
+    clear(els.relations);
+    var marks = E.parallelIndex(state.edges);
+    var sizes = plateSizes();
+    // 牌面先占位：关系名要绕开它们。
+    var taken = state.nodes.map(function (node) {
+      var at = state.positions[node.id];
+      var size = sizes[node.id];
+      return {
+        x1: at.x - size.w / 2 - 4, x2: at.x + size.w / 2 + 4,
+        y1: at.y - size.h / 2 - 4, y2: at.y + size.h / 2 + 4
+      };
+    });
+    var lit = Object.create(null);
+    if (path) {
+      path.steps.forEach(function (step) {
+        step.edges.forEach(function (edge) {
+          lit[[edge.from, edge.label, edge.to, edge.date || ""].join("\u0000")] = true;
+        });
+      });
+    }
+
+    state.edges.forEach(function (edge, index) {
+      var shape = curveOf(edge, marks[index], sizes);
+      var isLit = lit[[edge.from, edge.label, edge.to, edge.date || ""].join("\u0000")] === true;
+      var directed = !E.isSymmetric(edge.label);
+      var attrs = {
+        "class": isLit ? "relation-line relation-line-lit" : "relation-line",
+        d: "M " + shape.a.x.toFixed(1) + " " + shape.a.y.toFixed(1) +
+          " Q " + shape.cx.toFixed(1) + " " + shape.cy.toFixed(1) +
+          " " + shape.b.x.toFixed(1) + " " + shape.b.y.toFixed(1)
+      };
+      if (directed) attrs["marker-end"] = isLit ? "url(#arrow-lit)" : "url(#arrow)";
+      els.edges.appendChild(svg("path", attrs));
+
+      var caption = edge.label + (edge.date ? "　" + edge.date : "");
+      var spot = captionSpot(shape, caption, taken);
+      taken.push(spot.box);
+      els.relations.appendChild(svg("rect", {
+        "class": "relation-plate",
+        x: (spot.x - spot.width / 2 - 6).toFixed(1), y: (spot.y - 13).toFixed(1),
+        width: (spot.width + 12).toFixed(1), height: 21, rx: 3
+      }));
+      els.relations.appendChild(svg("text", {
+        "class": isLit ? "relation-name relation-name-lit" : "relation-name",
+        x: spot.x.toFixed(1), y: (spot.y + 2).toFixed(1)
+      }, caption));
+    });
   }
 
-  function renderProduct() {
-    var analysis = E.analyze(state.nodes, state.edges);
-    els.statNodes.textContent = String(analysis.nodeCount);
-    els.statEdges.textContent = String(analysis.edgeCount);
-    els.statDegree.textContent = String(analysis.maxDegree);
-    els.statComponents.textContent = String(analysis.componentCount);
-    els.statCycles.textContent = String(analysis.cycleRank);
-    els.statDensity.textContent = analysis.directedDensity.toFixed(4);
-    els.productMeta.textContent = analysis.nodeCount
-      ? analysis.nodeCount + " 节点 · " + analysis.edgeCount + " 关系 · 无向密度 " + analysis.undirectedDensity.toFixed(4)
-      : "等待第一条关系";
-    renderGraph(analysis);
-    renderPath();
-    renderRelationshipText();
+  function renderNodes(path) {
+    clear(els.nodes);
+    var sizes = plateSizes();
+    var role = Object.create(null);
+    if (path) {
+      path.ids.forEach(function (id, position) {
+        role[id] = position === 0 || position === path.ids.length - 1 ? "end" : "via";
+      });
+    }
+    state.ends.forEach(function (id) { if (!role[id]) role[id] = "end"; });
+
+    state.nodes.forEach(function (node) {
+      var at = state.positions[node.id];
+      if (!at) return;
+      var size = sizes[node.id];
+      var group = svg("g", {
+        "class": "object-group", "data-id": node.id, role: "button", tabindex: "0",
+        "aria-label": node.label
+      });
+      var plateClass = "plate";
+      if (node.type) plateClass += " plate-" + node.type;
+      if (role[node.id] === "end") plateClass += " plate-end";
+      else if (role[node.id] === "via") plateClass += " plate-via";
+      group.appendChild(svg("rect", {
+        "class": plateClass,
+        x: (at.x - size.w / 2).toFixed(1), y: (at.y - size.h / 2).toFixed(1),
+        width: size.w, height: size.h,
+        rx: node.type === E.PERSON ? 20 : 3
+      }));
+      group.appendChild(svg("text", {
+        "class": role[node.id] ? "object-name object-name-lit" : "object-name",
+        x: at.x.toFixed(1), y: at.y.toFixed(1)
+      }, node.label));
+      group.addEventListener("click", function () { pick(node.id); });
+      group.addEventListener("keydown", function (event) {
+        if (event.key === "Enter" || event.key === " ") { event.preventDefault(); pick(node.id); }
+      });
+      els.nodes.appendChild(group);
+    });
+  }
+
+  /* 头号结论：起点、每一名中介、终点，以及沿途每一段关系，都是可以手动选中的字。 */
+  function renderConclusion(path) {
+    clear(els.conclusion);
+    if (state.ends.length === 0) return;
+    if (state.ends.length === 1) {
+      var only = nodeById(state.ends[0]);
+      if (!only) return;
+      var head = document.createElement("strong");
+      head.textContent = only.label;
+      els.conclusion.appendChild(head);
+      els.conclusion.appendChild(document.createTextNode(" 已经是这一头"));
+      return;
+    }
+    var from = nodeById(state.ends[0]);
+    var to = nodeById(state.ends[1]);
+    if (!from || !to) return;
+    if (!path) {
+      var left = document.createElement("strong");
+      left.textContent = from.label;
+      els.conclusion.appendChild(left);
+      els.conclusion.appendChild(document.createTextNode(" 和 "));
+      var right = document.createElement("strong");
+      right.textContent = to.label;
+      els.conclusion.appendChild(right);
+      els.conclusion.appendChild(document.createTextNode(" 之间，材料里没有连上的关系"));
+      return;
+    }
+    path.ids.forEach(function (id, position) {
+      var name = document.createElement("strong");
+      name.textContent = nodeById(id).label;
+      els.conclusion.appendChild(name);
+      if (position >= path.steps.length) return;
+      var relation = document.createElement("em");
+      relation.textContent = " —" + path.steps[position].labels.join("／") + "→ ";
+      els.conclusion.appendChild(relation);
+    });
+    var count = document.createElement("span");
+    count.className = "count";
+    count.textContent = "　" + path.length + " 段关系，" +
+      (path.intermediaries ? path.intermediaries + " 名中介" : "没有中介");
+    els.conclusion.appendChild(count);
+  }
+
+  function render() {
+    var path = currentPath();
+    renderEdges(path);
+    renderNodes(path);
+    renderConclusion(path);
+  }
+
+  function cue(text, undo) {
+    clear(els.cue);
+    els.cue.appendChild(document.createTextNode(text || ""));
+    if (!undo) return;
+    var button = document.createElement("button");
+    button.type = "button";
+    button.id = "undo";
+    button.textContent = "撤回这一条";
+    button.addEventListener("click", undoLast);
+    els.cue.appendChild(button);
+  }
+
+  function pick(id) {
+    if (state.ends.length === 2 || state.ends.indexOf(id) >= 0) state.ends = [];
+    state.ends.push(id);
+    render();
+    if (state.ends.length === 1) cue("再点一个对象，看看两者通过谁连上");
+    else cue("点别的对象换一头");
+  }
+
+  function undoLast() {
+    if (!state.lastAdded) return;
+    state.nodes = state.lastAdded.nodes;
+    state.edges = state.lastAdded.edges;
+    state.ends = state.ends.filter(function (id) { return nodeById(id); });
+    state.lastAdded = null;
+    relayout(true);
+    render();
+    cue(state.edges.length ? "已经撤回那一条" : "写下谁、什么关系、和谁");
   }
 
   function addRelation() {
-    var result = E.addRelationLine(state.nodes, state.edges, els.relationLine.value);
+    var result = E.addRelation(state.nodes, state.edges, {
+      from: els.from.value,
+      label: els.relation.value,
+      to: els.to.value,
+      date: els.date.value
+    });
     if (result.error) {
-      els.message.textContent = result.error;
+      cue(result.error);
       return;
     }
+    state.lastAdded = { nodes: state.nodes, edges: state.edges };
     state.nodes = result.nodes;
     state.edges = result.edges;
-    els.message.textContent = "关系已加入：" + state.nodes.length + " 个节点、" + state.edges.length + " 条关系同步重算。";
-    els.relationLine.value = "";
-    renderProduct();
-  }
-
-  function loadDemo() {
-    var demo = E.defaultGraph();
-    state.nodes = demo.nodes;
-    state.edges = demo.edges;
-    state.pathFrom = "collins";
-    state.pathTo = "nixon";
-    state.pickNext = "from";
-    els.relationLine.value = demoLine;
-    els.message.textContent = "已恢复阿波罗 11 号公开史实样例。";
-    renderProduct();
-  }
-
-  function clearGraph() {
-    state.nodes = [];
-    state.edges = [];
-    state.pathFrom = "";
-    state.pathTo = "";
-    state.pickNext = "from";
-    els.relationLine.value = "";
-    els.message.textContent = "关系图已清空：请写下第一条具体关系。";
-    renderProduct();
-  }
-
-  function runTest() {
-    var report = E.runSelfTest();
-    els.testOut.textContent = report.passed + " / " + report.total + " 通过";
-    clear(els.testDetail);
-    if (!report.failures.length) {
-      var ok = document.createElement("li");
-      ok.textContent = "密度、度数、连通分量、圈秩、路径与确定性布局均通过。";
-      els.testDetail.appendChild(ok);
-    }
-    report.failures.forEach(function (failure) {
-      var item = document.createElement("li");
-      item.textContent = failure.name + "：" + failure.why;
-      els.testDetail.appendChild(item);
-    });
+    // 第一条关系落下时，它的两端自动成为当前这一问的两头。
+    if (state.edges.length === 1) state.ends = [result.edge.from, result.edge.to];
+    relayout(true);
+    render();
+    var written = els.from.value.trim() + " " + els.relation.value.trim() + " " + els.to.value.trim();
+    els.from.value = "";
+    els.relation.value = "";
+    els.to.value = "";
+    els.date.value = "";
+    els.from.focus();
+    cue("已记下：" + written, true);
   }
 
   function mount() {
-    [
-      "relation-line", "input-message", "product-meta", "stat-nodes", "stat-edges", "stat-degree",
-      "stat-components", "stat-cycles", "stat-density", "graph", "graph-empty", "path-result",
-      "path-prompt", "relationship-text", "test-out", "test-detail"
-    ].forEach(function (id) {
-      var key = id.replace(/-([a-z])/g, function (_, character) { return character.toUpperCase(); });
-      els[key] = document.getElementById(id);
-    });
-    els.message = els.inputMessage;
+    els.table = document.getElementById("table");
+    els.web = document.getElementById("web");
+    els.edges = document.getElementById("edge-layer");
+    els.relations = document.getElementById("relation-layer");
+    els.nodes = document.getElementById("node-layer");
+    els.conclusion = document.getElementById("conclusion");
+    els.cue = document.getElementById("cue");
+    els.from = document.getElementById("from");
+    els.relation = document.getElementById("relation");
+    els.to = document.getElementById("to");
+    els.date = document.getElementById("date");
 
-    document.getElementById("add-relation").addEventListener("click", addRelation);
-    els.relationLine.addEventListener("keydown", function (event) {
-      if (event.key === "Enter") addRelation();
+    measureViewport();
+    relayout(false);
+    render();
+
+    document.getElementById("entry").addEventListener("submit", function (event) {
+      event.preventDefault();
+      addRelation();
     });
-    document.getElementById("clear-graph").addEventListener("click", clearGraph);
-    document.getElementById("load-demo").addEventListener("click", loadDemo);
-    document.getElementById("scope-summary").addEventListener("click", function () { els.relationLine.focus(); });
-    document.getElementById("path-summary").addEventListener("click", function () {
-      state.pathFrom = "collins";
-      state.pathTo = "nixon";
-      state.pickNext = "from";
-      els.message.textContent = "已恢复默认路径问题。";
-      renderProduct();
+    document.addEventListener("keydown", function (event) {
+      if (event.key !== "Escape") return;
+      state.ends = [];
+      render();
+      cue(state.edges.length ? "写下下一条关系，或点两个对象看它们怎么连上" : "写下谁、什么关系、和谁");
     });
-    document.getElementById("run-test").addEventListener("click", runTest);
-    renderProduct();
+    window.addEventListener("resize", function () {
+      measureViewport();
+      relayout(true);
+      render();
+    });
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mount);
