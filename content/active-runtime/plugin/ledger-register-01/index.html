@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>台账</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <header class="head">
+    <h1>台账</h1>
+    <p>逐笔登记，余额、账龄、结存与折旧过程同屏可追溯</p>
+  </header>
+
+  <div class="workspace">
+    <aside class="controls">
+      <section>
+        <h2>用途与口径</h2>
+        <label class="field" for="mode">
+          <span>台账用途</span>
+          <select id="mode">
+            <option value="ledger">通用流水</option>
+            <option value="receivable">应收</option>
+            <option value="inventory">库存</option>
+            <option value="depreciation">折旧</option>
+          </select>
+        </label>
+        <label class="field as-of-field" for="as-of">
+          <span>账龄基准日</span>
+          <input id="as-of" type="date" value="2026-08-14">
+        </label>
+        <p id="mode-note" class="fine"></p>
+      </section>
+
+      <section class="guide">
+        <h2>怎么开始</h2>
+        <ol id="guide-list"></ol>
+      </section>
+
+      <section class="export">
+        <h2>把记录带走</h2>
+        <button id="make-csv" type="button">生成可选 CSV</button>
+        <textarea id="csv-out" readonly spellcheck="false" aria-label="可手动选择的 CSV 文本"></textarea>
+        <p class="fine">文本始终可手动选择，不依赖系统剪贴板。</p>
+      </section>
+    </aside>
+
+    <main class="results">
+      <section id="headline" class="headline" aria-label="台账合计"></section>
+      <section class="basis">
+        <p id="basis-line"></p>
+        <p id="reconcile-line"></p>
+      </section>
+      <p id="entry-status" class="status" role="status"></p>
+      <section class="detail" aria-label="台账明细">
+        <table>
+          <thead id="table-head"></thead>
+          <tbody id="table-body"></tbody>
+        </table>
+        <p id="empty-note" class="empty-note"></p>
+      </section>
+    </main>
+  </div>
+
+  <footer class="foot">
+    <button id="run-test" type="button">运行自测</button>
+    <span id="test-out">未运行</span>
+    <ul id="test-detail"></ul>
+  </footer>
+</div>
+<script src="engine.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

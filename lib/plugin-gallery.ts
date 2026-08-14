@@ -19,8 +19,6 @@ import raw from "@/content/plugin-gallery.json";
 /** 非编辑类：空手进入，自身即体验。编辑类：先有一件素材，工具围着它转。 */
 export type PluginKind = "standalone" | "editor";
 
-export type PluginStatus = "shipped" | "spec-only";
-
 export interface PluginCategory {
   id: string;
   label: string;
@@ -39,16 +37,14 @@ export interface PluginEntry {
   output: string;
   firstOpen: string;
   where: string;
-  status: PluginStatus;
   /**
    * 编辑类工具在平台受信任编辑器注册表里的适配器 id。
    *
-   * 标「已上线」的唯一凭据：拿这个 id 去 `TRUSTED_EDITOR_REGISTRY` 查，
-   * `routable` 必须为真。测试是这么判的，不是比对文件里有没有这串字。
-   * 非编辑类工具没有适配器，也就没有这个字段——它们一件都还没实装。
+   * 它只说明平台能让一件兼容素材进入对应工作台，不说明画廊已经有匿名直达 URL。
+   * 非编辑类工具没有适配器；它们的可用性只由 runtime plan 决定。
    */
   adapter?: string;
-  /** 为什么敢这么标——写的是可复核的代码位置，不是形容词。 */
+  /** 规格或能力的可复核代码依据；它本身不决定“现在能不能打开”。 */
   statusNote: string;
   caution?: string;
   specPath: string;
@@ -83,17 +79,7 @@ export const KIND_LABELS: Record<PluginKind, string> = {
 
 export const KIND_HINTS: Record<PluginKind, string> = {
   standalone: "不需要先有素材，点开就能开始。",
-  editor: "先从「我的库」打开一件素材，对应的工具自己接手。",
-};
-
-export const STATUS_LABELS: Record<PluginStatus, string> = {
-  shipped: "已上线",
-  "spec-only": "规格已定未实装",
-};
-
-export const STATUS_HINTS: Record<PluginStatus, string> = {
-  shipped: "现在就能用：从「我的库」打开对应素材即进入。",
-  "spec-only": "产品目标已经定稿，平台上还没有它的入口。列在这里是为了说清我们要做什么，不是说它已经能用。",
+  editor: "先看一件真实兼容素材；有直达入口就从这里打开，没有时按页面给出的步骤从「我的库」进入。",
 };
 
 export function categoryLabel(id: string): string {
@@ -110,16 +96,11 @@ export function findPlugin(id: string): PluginEntry | null {
   return PLUGIN_ITEMS.find((item) => item.id === id) || null;
 }
 
-export function countByStatus(status: PluginStatus): number {
-  return PLUGIN_ITEMS.filter((item) => item.status === status).length;
-}
-
 export interface PluginQuery {
   /** 自由文本，命中名称、一句话、能干什么、场景与类别名。 */
   text?: string;
   category?: string | "all";
   kind?: PluginKind | "all";
-  status?: PluginStatus | "all";
 }
 
 function haystack(item: PluginEntry): string {
@@ -132,7 +113,6 @@ function haystack(item: PluginEntry): string {
     item.where,
     categoryLabel(item.category),
     KIND_LABELS[item.kind],
-    STATUS_LABELS[item.status],
     ...item.does,
     ...item.scenarios,
   ]
@@ -144,13 +124,11 @@ export function filterPlugins({
   text = "",
   category = "all",
   kind = "all",
-  status = "all",
 }: PluginQuery = {}): PluginEntry[] {
   const needle = text.trim().toLowerCase();
   return PLUGIN_ITEMS.filter((item) => {
     if (kind !== "all" && item.kind !== kind) return false;
     if (category !== "all" && item.category !== category) return false;
-    if (status !== "all" && item.status !== status) return false;
     if (!needle) return true;
     return haystack(item).includes(needle);
   });
@@ -187,6 +165,160 @@ export const FORBIDDEN_LINK_PATTERNS: readonly string[] = [
 /** 详情页路径。列表卡片点进来的就是它，不带任何文件地址。 */
 export function pluginDetailHref(id: string): string {
   return `/plugin-gallery/${id}`;
+}
+
+/* ------------------------------------------------------------------ *
+ * 编辑器入口与真实演示素材
+ * ------------------------------------------------------------------ */
+
+export interface PluginEditorAccess {
+  adapter: string;
+  /** 仅在已经证明顶层窗口中可用时填写；协议 iframe 端点不得放进来。 */
+  entryUrl: string | null;
+  demoHref: `/works/${string}`;
+  demoName: string;
+  unavailableReason: string;
+  nextStep: string;
+}
+
+/**
+ * 编辑器地址不是插件隔离域。它只能是查证过的第一方产品页，而且必须全串匹配；
+ * query、fragment、userinfo、端口、近似域名与协议接收端都不在白名单里。
+ */
+const EDITOR_ENTRYPOINT_URL =
+  /^https:\/\/video\.oceanleo\.com\/canvas-board$/;
+
+export function isEditorEntrypointUrl(value: unknown): value is string {
+  return typeof value === "string" && EDITOR_ENTRYPOINT_URL.test(value);
+}
+
+const EDITOR_ACCESS: Readonly<Record<string, PluginEditorAccess>> = Object.freeze({
+  "image-editor": {
+    adapter: "image",
+    entryUrl: null,
+    demoHref: "/works/object-spec-plate-01",
+    demoName: "跑鞋 · 中距离训练款规格板",
+    unavailableReason: "图片工作台目前只能由「我的库」中的位图素材启动，没有登出状态可用的独立地址。",
+    nextStep: "先查看这件真实位图；取得原件后把它加入任一 OceanLeo 站点的「我的库」，再从库中点开图片进入编辑器。",
+  },
+  "design-canvas": {
+    adapter: "design-canvas",
+    entryUrl: null,
+    demoHref: "/works/resume-clinical-01",
+    demoName: "资质先行风格简历 · 三甲医院 ICU 重症护理",
+    unavailableReason: "设计子站现有地址是宿主协议端点，顶层打开不会保留具体设计文档，因此不能冒充匿名直达。",
+    nextStep: "先查看这件真实设计工程；取得原件后把它加入「我的库」，再从库中点开设计稿进入画布。",
+  },
+  "chart-editor": {
+    adapter: "chart-editor@1",
+    entryUrl: null,
+    demoHref: "/works/supply-size-histogram-01",
+    demoName: "素材库 238 个类目的规模分布",
+    unavailableReason: "图表工作台需要一件带 oceanleo.chart.v1 结构化源的库内素材，今天没有匿名启动页。",
+    nextStep: "先查看这件带结构化源的真实图表；取得原件后加入「我的库」，再从库中点开它进入图表编辑器。",
+  },
+  "richdoc-editor": {
+    adapter: "richdoc",
+    entryUrl: null,
+    demoHref: "/works/document-regulation-01",
+    demoName: "远程与混合办公设备借用管理办法",
+    unavailableReason: "文档工作台目前只能由「我的库」中的文档素材启动，没有匿名启动页。",
+    nextStep: "先查看这份真实 DOCX；取得原件后加入「我的库」，再从库中点开文档进入编辑器。",
+  },
+  "grid-editor": {
+    adapter: "grid",
+    entryUrl: null,
+    demoHref: "/works/pack-capacity-model-01",
+    demoName: "离线素材包容量测算（三情景）",
+    unavailableReason: "表格工作台目前只能由「我的库」中的表格素材启动，没有匿名启动页。",
+    nextStep: "先查看这份真实 XLSX；取得原件后加入「我的库」，再从库中点开表格进入编辑器。",
+  },
+  "deck-editor": {
+    adapter: "deck",
+    entryUrl: null,
+    demoHref: "/works/deck-nocturne-01",
+    demoName: "夜间海岸观测：2026 年度影像汇报",
+    unavailableReason: "演示文稿工作台目前只能由「我的库」中的 PPT 素材启动，没有匿名启动页。",
+    nextStep: "先查看这份真实 PPTX；取得原件后加入「我的库」，再从库中点开演示文稿进入编辑器。",
+  },
+  "pdf-editor": {
+    adapter: "pdf",
+    entryUrl: null,
+    demoHref: "/works/pdf-interview-record-01",
+    demoName: "社区食堂运营访谈纪要",
+    unavailableReason: "PDF 工作台目前只能由「我的库」中的 PDF 素材启动，没有匿名启动页。",
+    nextStep: "先查看这份真实 PDF；取得原件后加入「我的库」，再从库中点开它开始标注。",
+  },
+  "video-timeline": {
+    adapter: "video-timeline",
+    entryUrl: null,
+    demoHref: "/works/hard-cut-caption-14s-01",
+    demoName: "硬切字幕 · 九月食堂三件事",
+    unavailableReason: "视频时间线目前只能由「我的库」中的视频素材启动，没有匿名启动页。",
+    nextStep: "先查看这段真实 MP4；取得原件后加入「我的库」，再从库中点开视频进入时间线。",
+  },
+  "audio-editor": {
+    adapter: "audio",
+    entryUrl: null,
+    demoHref: "/works/ui-feedback-dry-01",
+    demoName: "干净瞬态 · 界面反馈音组",
+    unavailableReason: "音频工作台目前只能由「我的库」中的音频素材启动，没有匿名启动页。",
+    nextStep: "先试听这段真实 MP3；取得原件后加入「我的库」，再从库中点开音频进入编辑器。",
+  },
+  "model-3d-editor": {
+    adapter: "threed",
+    entryUrl: null,
+    demoHref: "/works/model-prismatic-massing-01",
+    demoName: "滨海科研园区体量研究 · 棱柱阵列",
+    unavailableReason: "3D 工作台目前只能由「我的库」中的整包模型启动，没有匿名启动页。",
+    nextStep: "先查看这件真实 glTF 模型；取得整包原件后加入「我的库」，再从库中点开模型进入 3D 工作台。",
+  },
+  "website-editor": {
+    adapter: "website",
+    entryUrl: null,
+    demoHref: "/works/law-intake-01",
+    demoName: "劳动仲裁受理台 · 获客落地页",
+    unavailableReason: "网站子站现有地址是宿主协议端点，顶层打开会离开编辑器，不能冒充匿名直达。",
+    nextStep: "先查看这件带 site.json 与 starter 的真实网站；取得源码后加入「我的库」，再从库中点开网站进入编辑器。",
+  },
+  "game-editor": {
+    adapter: "game",
+    entryUrl: null,
+    demoHref: "/works/one-breath-reflex-01",
+    demoName: "潮汐门",
+    unavailableReason: "游戏编辑必须由共享壳把一件游戏 bundle 挂进受控沙箱，今天没有匿名启动页。",
+    nextStep: "先打开这件真实游戏试玩；取得 bundle 原件后加入「我的库」，再从库中点开游戏进入编辑器。",
+  },
+  "workflow-canvas": {
+    adapter: "video-canvas",
+    entryUrl: "https://video.oceanleo.com/canvas-board",
+    demoHref: "/works/linear-conveyor-01",
+    demoName: "一条道传送带 · 整批图片过同一道工序",
+    unavailableReason: "",
+    nextStep: "直接打开工作流画布；需要一份参照时，可同时查看这件五节点真实流程。",
+  },
+});
+
+export function editorAccessForPlugin(
+  item: PluginEntry,
+): PluginEditorAccess | null {
+  if (item.kind !== "editor" || !item.adapter) return null;
+  const access = EDITOR_ACCESS[item.id];
+  return access?.adapter === item.adapter ? access : null;
+}
+
+export function pluginIsAvailable(
+  item: PluginEntry,
+  runtimePluginIds: ReadonlySet<string> | readonly string[] = [],
+): boolean {
+  if (item.kind === "standalone") {
+    const ids = runtimePluginIds instanceof Set
+      ? runtimePluginIds
+      : new Set(runtimePluginIds);
+    return ids.has(item.id);
+  }
+  const access = editorAccessForPlugin(item);
+  return isEditorEntrypointUrl(access?.entryUrl);
 }
 
 /* ------------------------------------------------------------------ *

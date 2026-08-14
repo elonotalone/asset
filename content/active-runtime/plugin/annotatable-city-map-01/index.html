@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>地图</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="app">
+  <header class="head">
+    <h1>地图</h1>
+    <span class="sub">OGC:CRS84 · 坐标顺序 [经度, 纬度] · 点位、路线与量算明细同屏</span>
+  </header>
+
+  <div class="body">
+    <aside class="assume" aria-label="地点输入与量算口径">
+      <div class="block-title">添加地点</div>
+      <p class="instruction" id="map-instruction">在图上点一下，落下第一个地点</p>
+      <div class="field">
+        <label for="place-name">地点名</label>
+        <input id="place-name" type="text" value="地点 1" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="field">
+        <label for="longitude">经度</label>
+        <input id="longitude" type="text" value="116.4074" inputmode="decimal" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="field">
+        <label for="latitude">纬度</label>
+        <input id="latitude" type="text" value="39.9042" inputmode="decimal" autocomplete="off" spellcheck="false">
+      </div>
+      <button class="primary" id="add-coordinate" type="button">按坐标添加</button>
+      <p class="input-note" id="input-note" aria-live="polite">输入框预填北京坐标，但不会替你先落钉。</p>
+
+      <div class="actions">
+        <button id="undo-point" type="button">撤回末点</button>
+        <button id="clear-route" type="button">清空路线</button>
+      </div>
+
+      <div class="basis-block">
+        <div class="block-title">量算口径</div>
+        <dl>
+          <div><dt>平均地球半径</dt><dd>6 371 008.8 m</dd></div>
+          <div><dt>距离</dt><dd>haversine 大圆距离</dd></div>
+          <div><dt>路线抽稀</dt><dd>长度差 ≤ 0.5%</dd></div>
+          <div><dt>面积单位阈值</dt><dd>1 000 m²</dd></div>
+        </dl>
+        <p>围合面积是球面量算值，不是地籍测量；直线连点不代表道路导航。</p>
+      </div>
+    </aside>
+
+    <section class="result">
+      <div class="headline" aria-label="路线结论">
+        <div class="metric" id="location-count"><span class="k">地点</span><strong class="v">0</strong><span class="u">个</span></div>
+        <div class="metric" id="total-distance"><span class="k">路线总长</span><strong class="v">0</strong><span class="u">m</span></div>
+        <div class="metric" id="area-value"><span class="k">围合面积</span><strong class="v">尚未形成</strong></div>
+      </div>
+
+      <div class="map-shell">
+        <div class="map-stage">
+          <svg id="world-map" viewBox="0 0 960 480" role="img" aria-label="可点击的全球地图">
+            <rect class="water" width="960" height="480"></rect>
+            <g id="graticule-layer"></g>
+            <g id="land-layer"></g>
+            <g id="border-layer"></g>
+            <g id="route-layer"></g>
+            <g id="marker-layer"></g>
+          </svg>
+          <div class="scale"><span></span><b>2 000 km</b><small>赤道附近</small></div>
+        </div>
+        <aside class="legend" aria-label="地图图例与来源">
+          <div class="block-title">图例</div>
+          <ul>
+            <li><i class="swatch land"></i>陆地 <code>#F2EDE3</code></li>
+            <li><i class="swatch water-swatch"></i>水体 <code>#A8C8DC</code></li>
+            <li><i class="swatch coast"></i>海岸 <code>#3F6478</code></li>
+            <li><i class="swatch pin"></i>图钉 <code>#AE3A0B</code></li>
+            <li><i class="swatch route"></i>路线 <code>#1D4ED8</code></li>
+          </ul>
+          <p class="source">来源：Natural Earth 4.1.0 地理数据（公共领域）</p>
+          <p class="source">world-atlas 2.0.2 TopoJSON 再分发（ISC）</p>
+        </aside>
+      </div>
+
+      <div class="basis-line" id="route-basis">零个用户地点；全球底图、国界与经纬网已离线装载。</div>
+
+      <div class="detail">
+        <table>
+          <thead><tr><th>序号</th><th>地点</th><th>CRS84 坐标 [经度, 纬度]</th><th>本段</th><th>累计</th></tr></thead>
+          <tbody id="route-rows"></tbody>
+        </table>
+        <p class="empty-row" id="empty-row">还没有用户地点；底图不是示例路线，等你落下第一枚图钉。</p>
+      </div>
+    </section>
+  </div>
+
+  <footer class="foot">
+    <button id="run-test" type="button">运行自测</button>
+    <span id="test-out">未运行</span>
+    <ul id="test-detail"></ul>
+  </footer>
+</main>
+<script src="engine.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>医疗计算器</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="wrap">
+  <header class="head">
+    <h1>医疗计算器</h1>
+    <p>常用体格与化验指标的教学计算辅助</p>
+  </header>
+
+  <section class="scope" aria-label="定位与适用范围">
+    <p><strong>不用于诊断或处方。</strong>页面不保存个体参数，结果需结合检验方法、适用人群与临床情境解读。</p>
+    <p>eGFR 采用 CKD-EPI 2021 去种族版成人肌酐公式；G1–G5 为慢性肾病 GFR 分层的参考口径。分段与公式会随指南与适用人群变化。</p>
+  </section>
+
+  <section class="inputs" aria-labelledby="input-title">
+    <h2 id="input-title">个体参数</h2>
+    <p class="section-note">输入格故意不带示例数；只有满足某项所需输入后，才显示该项个体结果。</p>
+    <div class="input-grid">
+      <label>
+        <span>身高</span>
+        <span class="entry"><input id="height" type="text" inputmode="decimal" autocomplete="off" aria-label="身高，厘米"><b>cm</b></span>
+      </label>
+      <label>
+        <span>体重</span>
+        <span class="entry"><input id="weight" type="text" inputmode="decimal" autocomplete="off" aria-label="体重，千克"><b>kg</b></span>
+      </label>
+      <label>
+        <span>年龄</span>
+        <span class="entry"><input id="age" type="text" inputmode="decimal" autocomplete="off" aria-label="年龄，岁"><b>岁</b></span>
+      </label>
+      <label>
+        <span>性别参数</span>
+        <span class="entry"><select id="sex" aria-label="eGFR 公式性别参数"><option value="">未选择</option><option value="female">女</option><option value="male">男</option></select></span>
+      </label>
+      <label>
+        <span>血清肌酐</span>
+        <span class="entry creatinine-entry"><input id="creatinine" type="text" inputmode="decimal" autocomplete="off" aria-label="血清肌酐"><select id="creatinine-unit" aria-label="血清肌酐单位"><option value="mgdl">mg/dL</option><option value="umoll">µmol/L</option></select></span>
+      </label>
+      <label>
+        <span>测得钙</span>
+        <span class="entry"><input id="calcium" type="text" inputmode="decimal" autocomplete="off" aria-label="测得钙，毫克每分升"><b>mg/dL</b></span>
+      </label>
+      <label>
+        <span>白蛋白</span>
+        <span class="entry"><input id="albumin" type="text" inputmode="decimal" autocomplete="off" aria-label="白蛋白，克每分升"><b>g/dL</b></span>
+      </label>
+    </div>
+    <p id="input-message" class="input-message" aria-live="polite"></p>
+  </section>
+
+  <section class="results" aria-labelledby="result-title">
+    <h2 id="result-title">计算结果</h2>
+
+    <div class="result-row" data-result="bmi">
+      <span class="result-name">体质指数 BMI</span>
+      <span id="bmi-value" class="result-value">待输入</span>
+      <span class="result-unit">kg/m²</span>
+      <span id="bmi-status" class="result-status">需要身高、体重</span>
+      <span class="result-basis">口径：体重 ÷ 身高米数²。本工具不附加 BMI 人群判读分段。</span>
+    </div>
+
+    <div class="result-row" data-result="bsa">
+      <span class="result-name">体表面积（Mosteller）</span>
+      <span id="bsa-value" class="result-value">待输入</span>
+      <span class="result-unit">m²</span>
+      <span id="bsa-status" class="result-status">需要身高、体重</span>
+      <span class="result-basis">口径：√(身高_cm × 体重_kg ÷ 3600)。适用范围与临床用途需另行确认。</span>
+    </div>
+
+    <div class="result-row" data-result="calcium">
+      <span class="result-name">校正钙</span>
+      <span id="calcium-value" class="result-value">待输入</span>
+      <span class="result-unit">mg/dL</span>
+      <span id="calcium-status" class="result-status">需要测得钙、白蛋白</span>
+      <span class="result-basis">常见口径：测得钙 + 0.8 × (4.0 − 白蛋白)。不同检验室与人群可采用不同口径。</span>
+    </div>
+
+    <div class="result-row" data-result="egfr">
+      <span class="result-name">eGFR（CKD-EPI 2021 去种族版）</span>
+      <span id="egfr-value" class="result-value">待输入</span>
+      <span class="result-unit">mL/min/1.73 m²</span>
+      <span id="egfr-status" class="result-status">需要肌酐、年龄、性别参数</span>
+      <span class="result-basis">来源与口径：142 × min(Scr/κ,1)^α × max(Scr/κ,1)^−1.200 × 0.9938^年龄 ×（女性 1.012）；κ 女 0.7、男 0.9，α 女 −0.241、男 −0.302。µmol/L 以 ÷88.4 近似换成 mg/dL。</span>
+    </div>
+  </section>
+
+  <section class="stages" aria-labelledby="stage-title">
+    <h2 id="stage-title">eGFR 参考分段</h2>
+    <p class="section-note">单位均为 mL/min/1.73 m²；分层不等于单凭一次计算就能诊断慢性肾病。</p>
+    <div class="stage-list" aria-label="eGFR G1 到 G5 分段">
+      <span><b>G1</b><i>≥90</i></span>
+      <span><b>G2</b><i>60–89</i></span>
+      <span><b>G3a</b><i>45–59</i></span>
+      <span><b>G3b</b><i>30–44</i></span>
+      <span><b>G4</b><i>15–29</i></span>
+      <span><b>G5</b><i>&lt;15</i></span>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <p>口径来源：Mosteller 体表面积公式、CKD-EPI 2021 去种族版成人肌酐公式、慢性肾病 GFR 分层。请以当前指南、检验单口径与专业人员意见为准。</p>
+    <div class="test-row">
+      <button id="run-test" type="button">运行自测</button>
+      <span id="test-out">未运行</span>
+    </div>
+    <ul id="test-detail"></ul>
+  </footer>
+</main>
+<script src="engine.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

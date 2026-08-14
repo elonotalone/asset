@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>话术分支</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="col">
+  <header class="head">
+    <h1>话术分支</h1>
+    <span class="sub">从一句开场长出真实对话路径，点名死端与走不到的段落</span>
+  </header>
+
+  <div class="done" id="done"></div>
+
+  <h2 class="question" id="question">开场第一句你会怎么说</h2>
+  <p class="question-hint" id="question-hint">空白不是错误。先写一句，分支图才开始生长。</p>
+
+  <section class="stage" aria-label="当前问题">
+    <label class="primary-label" id="primary-label" for="opening-input">开场白</label>
+    <textarea id="opening-input" rows="2" placeholder="例如：我们先把你最担心的结果说清楚。"></textarea>
+    <div class="actions" id="opening-actions" hidden>
+      <button id="continue-branch" type="button">继续：添加下一步</button>
+    </div>
+
+    <div id="branch-editor" hidden>
+      <textarea id="next-text" rows="2" placeholder="写下对方可能的回应，或你准备接上的一句"></textarea>
+      <div class="rule-row">
+        <label>说话方
+          <select id="next-speaker">
+            <option value="对方">对方</option>
+            <option value="我方">我方</option>
+          </select>
+        </label>
+        <label>回应包含
+          <input id="condition-value" type="text" placeholder="可留空">
+        </label>
+        <label>优先级
+          <input id="priority" type="number" min="1" step="1" value="1">
+        </label>
+      </div>
+      <div class="choice-row">
+        <label><input id="fallback" type="checkbox"> 条件都不命中时走这条兜底</label>
+        <label><input id="ending" type="checkbox"> 这一步就是结束</label>
+      </div>
+      <div class="actions">
+        <button id="add-next" type="button">加到分支图</button>
+        <button id="toggle-ending" type="button">把当前节点标成结束</button>
+        <button id="load-demo" type="button">载入可复核示例</button>
+      </div>
+      <div class="return-row">
+        <label for="return-target">澄清后回到已有主线</label>
+        <select id="return-target"></select>
+        <button id="add-return" type="button">连一条回边</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="product" aria-label="话术分支产物">
+    <div class="product-cap">
+      <span>产物 · 分支图</span>
+      <span id="coverage-state">覆盖尚未计算 · 0 个节点</span>
+    </div>
+    <div class="graph-scroll">
+      <svg id="graph" role="img" aria-label="话术分支图" viewBox="0 0 880 280"></svg>
+    </div>
+    <div id="diagnostics" class="diagnostics"></div>
+    <label class="export-label" for="export-output">可带走的话术文本</label>
+    <textarea id="export-output" rows="8" readonly>先写下开场白，这里会同步长出可手动选中的话术文本。</textarea>
+  </section>
+
+  <footer class="foot">
+    <button id="run-test" type="button">运行自测</button>
+    <span id="test-out">未运行</span>
+    <ul id="test-detail"></ul>
+  </footer>
+</main>
+<script src="engine.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>
