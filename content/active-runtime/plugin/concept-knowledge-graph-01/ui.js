@@ -9,6 +9,7 @@
   state.edgeTo = "";
   state.pathFrom = "";
   state.pathTo = "";
+  state.followupTarget = "";
   var els = {};
   var SVG_NS = "http://www.w3.org/2000/svg";
 
@@ -40,6 +41,19 @@
 
   function showMessage(text) {
     els.message.textContent = text || "";
+  }
+
+  function setDrawer(open) {
+    els.drawer.hidden = !open;
+    els.scrim.hidden = !open;
+    els.openTools.setAttribute("aria-expanded", open ? "true" : "false");
+    document.body.classList.toggle("drawer-open", open);
+    if (open) els.closeTools.focus();
+    else els.openTools.focus();
+  }
+
+  function focusPrerequisite() {
+    if (!els.prerequisiteStep.hidden) els.prerequisiteName.focus();
   }
 
   function refreshSelect(select, preferred) {
@@ -187,6 +201,16 @@
     });
   }
 
+  function syncFirstSteps() {
+    var empty = state.nodes.length === 0;
+    els.firstStep.hidden = !empty;
+    els.prerequisiteStep.hidden = empty || !state.followupTarget;
+    if (!els.prerequisiteStep.hidden) {
+      var target = state.nodes.filter(function (node) { return node.id === state.followupTarget; })[0];
+      els.prerequisiteQuestion.textContent = "“" + target.label + "”需要先会什么？";
+    }
+  }
+
   function renderPath() {
     if (!state.nodes.length || !state.pathFrom || !state.pathTo) {
       els.pathResult.textContent = "尚未分层：先加入概念与必修关系。";
@@ -211,6 +235,7 @@
     renderGraph(analysis);
     renderTable(analysis);
     renderPath();
+    syncFirstSteps();
   }
 
   function nextId() {
@@ -220,11 +245,7 @@
     return id;
   }
 
-  function addNode() {
-    var label = els.name.value.trim();
-    var minutes = Number(els.minutes.value);
-    var mastery = Number(els.mastery.value);
-    var days = Number(els.days.value);
+  function createNode(label, minutes, mastery, days) {
     if (!label) return showMessage("概念名不能为空。");
     if (state.nodes.length >= 120) return showMessage("已到 120 个概念上限；请先精简图谱。");
     if (state.nodes.some(function (node) { return node.label === label; })) return showMessage("同名概念已经在图里。");
@@ -232,12 +253,58 @@
       return showMessage("分钟须为正数，掌握度须在 0–1，天数不能为负。");
     }
     var id = nextId();
-    state.nodes.push({ id: id, label: label, minutes: minutes, mastery: mastery, daysSinceReview: days });
+    var node = { id: id, label: label, minutes: minutes, mastery: mastery, daysSinceReview: days };
+    state.nodes.push(node);
     state.edgeTo = id;
     state.pathTo = id;
-    els.name.value = "";
-    showMessage("已加入“" + label + "”；现在可以给它连接先修关系。");
+    return node;
+  }
+
+  function beginPrerequisiteStep(node) {
+    state.followupTarget = node.id;
+    setDrawer(false);
     render();
+    focusPrerequisite();
+  }
+
+  function addNode() {
+    var label = els.name.value.trim();
+    var node = createNode(label, Number(els.minutes.value), Number(els.mastery.value), Number(els.days.value));
+    if (!node) return;
+    els.name.value = "";
+    showMessage("已加入“" + label + "”；接下来写下它需要先会的概念。");
+    beginPrerequisiteStep(node);
+  }
+
+  function addQuickNode() {
+    var label = els.quickName.value.trim();
+    var node = createNode(label, 35, 0.30, 0);
+    if (!node) return;
+    els.quickName.value = "";
+    showMessage("已加入“" + label + "”；接下来写下它需要先会的概念。");
+    beginPrerequisiteStep(node);
+  }
+
+  function addPrerequisite() {
+    var label = els.prerequisiteName.value.trim();
+    var targetId = state.followupTarget;
+    if (!label) return showMessage("先写下一个必修前置概念。");
+    var fromNode = state.nodes.filter(function (node) { return node.label === label; })[0];
+    if (fromNode && fromNode.id === targetId) return showMessage("概念不能成为自己的前置。");
+    if (!fromNode) fromNode = createNode(label, 35, 0.30, 0);
+    if (!fromNode) return;
+    if (!state.edges.some(function (edge) { return edge.from === fromNode.id && edge.to === targetId && edge.kind === E.REQUIRED; })) {
+      state.edges.push({ from: fromNode.id, to: targetId, kind: E.REQUIRED, label: "必修先修" });
+    }
+    state.edgeFrom = fromNode.id;
+    state.edgeTo = targetId;
+    state.pathFrom = fromNode.id;
+    state.pathTo = targetId;
+    state.followupTarget = fromNode.id;
+    els.prerequisiteName.value = "";
+    showMessage("已把“" + fromNode.label + "”接到前面；继续往前写，或先停在这里。");
+    render();
+    focusPrerequisite();
   }
 
   function addEdge() {
@@ -265,7 +332,7 @@
   }
 
   function mount() {
-    ["threshold", "concept-name", "concept-minutes", "concept-mastery", "concept-days", "edge-from", "edge-kind", "edge-to", "path-from", "path-to", "input-message", "stat-nodes", "stat-layers", "stat-critical", "stat-learnable", "order-status", "graph", "graph-empty", "path-result", "selection-detail", "detail-body", "test-out", "test-detail"].forEach(function (id) {
+    ["threshold", "concept-name", "concept-minutes", "concept-mastery", "concept-days", "edge-from", "edge-kind", "edge-to", "path-from", "path-to", "input-message", "stat-nodes", "stat-layers", "stat-critical", "stat-learnable", "order-status", "graph", "graph-empty", "path-result", "selection-detail", "detail-body", "test-out", "test-detail", "open-tools", "close-tools", "tool-drawer", "drawer-scrim", "first-step", "quick-concept-name", "prerequisite-step", "prerequisite-question", "prerequisite-name"].forEach(function (id) {
       var key = id.replace(/-([a-z])/g, function (_, char) { return char.toUpperCase(); });
       els[key] = document.getElementById(id);
     });
@@ -275,7 +342,29 @@
     els.days = els.conceptDays;
     els.message = els.inputMessage;
     els.selection = els.selectionDetail;
+    els.drawer = els.toolDrawer;
+    els.scrim = els.drawerScrim;
+    els.quickName = els.quickConceptName;
 
+    els.openTools.addEventListener("click", function () { setDrawer(true); });
+    els.closeTools.addEventListener("click", function () { setDrawer(false); });
+    els.scrim.addEventListener("click", function () { setDrawer(false); });
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && !els.drawer.hidden) setDrawer(false);
+    });
+    document.getElementById("quick-concept-form").addEventListener("submit", function (event) {
+      event.preventDefault();
+      addQuickNode();
+    });
+    document.getElementById("prerequisite-form").addEventListener("submit", function (event) {
+      event.preventDefault();
+      addPrerequisite();
+    });
+    document.getElementById("no-prerequisite").addEventListener("click", function () {
+      state.followupTarget = "";
+      showMessage("已停在这里；需要补充概念或关系时，可打开口径与设置。");
+      render();
+    });
     document.getElementById("add-node").addEventListener("click", addNode);
     document.getElementById("add-edge").addEventListener("click", addEdge);
     document.getElementById("run-path").addEventListener("click", function () {
@@ -297,9 +386,12 @@
       state.nodes = [];
       state.edges = [];
       state.edgeFrom = state.edgeTo = state.pathFrom = state.pathTo = "";
+      state.followupTarget = "";
       els.selection.textContent = "点一个节点，可查看它的必修前驱与后继。";
       showMessage("图谱已清空：先写下你要弄懂的第一个概念。");
+      setDrawer(false);
       render();
+      els.quickName.focus();
     });
     document.getElementById("load-demo").addEventListener("click", function () {
       var demo = E.defaultGraph();
@@ -310,12 +402,15 @@
       state.edgeTo = "lenz-law";
       state.pathFrom = "magnetic-field";
       state.pathTo = "transformer";
+      state.followupTarget = "";
       els.threshold.value = "0.80";
       showMessage("已恢复电磁感应样例。");
+      setDrawer(false);
       render();
     });
     document.getElementById("run-test").addEventListener("click", runTest);
     render();
+    els.quickName.focus();
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mount);

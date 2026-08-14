@@ -9,13 +9,67 @@
 </head>
 <body>
 <main class="app">
-  <header class="head">
-    <h1>概念图谱</h1>
-    <p>把先修关系摊成学习顺序；必修边决定层级，相关边不冒充前提</p>
-  </header>
-
+  <button id="open-tools" class="tools-trigger" type="button" aria-controls="tool-drawer" aria-expanded="false">口径与设置</button>
   <div class="workspace">
-    <aside class="inputs" aria-label="图谱输入">
+    <section class="results" aria-label="分析结果">
+      <div class="headline" aria-label="结论">
+        <span>现在可以学</span>
+        <strong id="stat-learnable">0</strong>
+        <span>个概念</span>
+      </div>
+
+      <div class="graph-wrap">
+        <svg id="graph" role="img" aria-label="概念与先修关系图"></svg>
+        <p id="graph-empty" aria-hidden="true"></p>
+      </div>
+
+      <section id="first-step" class="first-step" aria-labelledby="first-step-title">
+        <form id="quick-concept-form">
+          <label id="first-step-title" for="quick-concept-name">先写下你要弄懂的第一个概念</label>
+          <div class="first-step-line">
+            <input id="quick-concept-name" type="text" placeholder="例如：电磁感应" autocomplete="off" required autofocus>
+            <button type="submit">画进图里</button>
+          </div>
+        </form>
+      </section>
+
+      <section id="prerequisite-step" class="prerequisite-step" aria-labelledby="prerequisite-question" hidden>
+        <span class="step-mark">下一笔</span>
+        <h2 id="prerequisite-question">它需要先会什么？</h2>
+        <form id="prerequisite-form">
+          <div class="first-step-line">
+            <input id="prerequisite-name" type="text" placeholder="写下一个必修前置概念" autocomplete="off" required>
+            <button type="submit">接到它前面</button>
+          </div>
+        </form>
+        <button id="no-prerequisite" class="quiet-action" type="button">它没有前置，先这样</button>
+      </section>
+
+      <section id="path-moment" class="path-moment" aria-live="polite" hidden>
+        <span>最短必修路径</span>
+        <strong id="path-moment-text"></strong>
+        <button id="clear-path" type="button">收起这道光</button>
+      </section>
+    </section>
+  </div>
+
+  <div id="drawer-scrim" class="drawer-scrim" hidden></div>
+  <aside id="tool-drawer" class="tool-drawer" aria-label="口径、设置与明细" hidden>
+    <header class="drawer-head">
+      <div>
+        <h1>概念图谱</h1>
+        <p>把先修关系摊成学习顺序；必修边决定层级，相关边不冒充前提</p>
+      </div>
+      <button id="close-tools" type="button" aria-label="关闭口径与设置">关闭</button>
+    </header>
+
+    <div class="drawer-scroll">
+      <section class="drawer-summary" aria-label="图谱统计">
+        <div><span>概念</span><strong id="stat-nodes">0</strong></div>
+        <div><span>学习层</span><strong id="stat-layers">0</strong></div>
+        <div><span>关键路径</span><strong id="stat-critical">—</strong></div>
+      </section>
+
       <section>
         <h2>学习口径</h2>
         <label class="field" for="threshold">
@@ -23,6 +77,21 @@
           <input id="threshold" type="number" min="0.50" max="0.95" step="0.01" value="0.80">
         </label>
         <p class="fine">范围 0.50–0.95；掌握度按 21 天半衰。相关关系只提示，不锁住课程。</p>
+        <div class="basis">
+          <p>有效掌握度 = 记录掌握度 × 0.5<sup>(距复习天数 ÷ 21)</sup>；阈值默认 0.80。</p>
+          <p id="order-status">Kahn 分层只计算必修先修；检测到循环时不伪造学习顺序。</p>
+          <p>关键路径按路径上各概念的预计学习分钟数累加。</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>图的读法</h2>
+        <div class="state-key" aria-label="颜色与状态图例">
+          <span class="key-learnable">发亮 · 现在可学</span>
+          <span class="key-locked">退淡 · 被前置锁住</span>
+          <span class="key-review">暖纸 · 待复习</span>
+        </div>
+        <p class="fine">清瘦实线是必修关系，会决定层级与可学状态；轻断续线是建议／相关关系，只影响推荐顺序，不构成前提。</p>
       </section>
 
       <section>
@@ -47,53 +116,39 @@
         <label class="field" for="path-from"><span>从</span><select id="path-from"></select></label>
         <label class="field" for="path-to"><span>到</span><select id="path-to"></select></label>
         <button id="run-path" type="button">计算最短路径</button>
+        <div class="path-panel">
+          <h3>路径结论</h3>
+          <p id="path-result" tabindex="0"></p>
+          <p id="selection-detail">点一个节点，可查看它的必修前驱与后继。</p>
+        </div>
       </section>
 
-      <p id="input-message" class="message" role="status"></p>
-      <div class="secondary-actions">
-        <button id="load-demo" type="button">恢复电磁感应样例</button>
-        <button id="clear-graph" type="button">清空，从第一个概念开始</button>
-      </div>
-      <p class="fine">最多 120 个概念。数据只留在当前页面，不上传、不保存。</p>
-    </aside>
+      <section class="detail-table">
+        <h2>概念明细</h2>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>层</th><th>概念</th><th>预计</th><th>记录掌握</th><th>有效掌握</th><th>必修前驱</th><th>状态</th></tr></thead>
+            <tbody id="detail-body"></tbody>
+          </table>
+        </div>
+      </section>
 
-    <section class="results" aria-label="分析结果">
-      <div class="headline" aria-label="结论">
-        <div><span>概念</span><strong id="stat-nodes">0</strong></div>
-        <div><span>学习层</span><strong id="stat-layers">0</strong></div>
-        <div><span>关键路径</span><strong id="stat-critical">—</strong></div>
-        <div><span>当前可学</span><strong id="stat-learnable">0</strong></div>
-      </div>
-      <div class="basis">
-        <p>有效掌握度 = 记录掌握度 × 0.5<sup>(距复习天数 ÷ 21)</sup>；阈值默认 0.80。</p>
-        <p id="order-status">Kahn 分层只计算必修先修；检测到循环时不伪造学习顺序。</p>
-      </div>
+      <section>
+        <p id="input-message" class="message" role="status"></p>
+        <div class="secondary-actions">
+          <button id="load-demo" type="button">载入示例 · 恢复电磁感应样例</button>
+          <button id="clear-graph" type="button">清空，从第一个概念开始</button>
+        </div>
+        <p class="fine">最多 120 个概念。数据只留在当前页面，不上传、不保存。</p>
+      </section>
 
-      <div class="graph-wrap">
-        <svg id="graph" role="img" aria-label="概念与先修关系图"></svg>
-        <p id="graph-empty">先写下你要弄懂的第一个概念</p>
-      </div>
-
-      <div class="path-panel">
-        <h2>路径结论</h2>
-        <p id="path-result" tabindex="0"></p>
-        <p id="selection-detail">点一个节点，可查看它的必修前驱与后继。</p>
-      </div>
-
-      <div class="detail-table">
-        <table>
-          <thead><tr><th>层</th><th>概念</th><th>预计</th><th>记录掌握</th><th>有效掌握</th><th>必修前驱</th><th>状态</th></tr></thead>
-          <tbody id="detail-body"></tbody>
-        </table>
-      </div>
-    </section>
-  </div>
-
-  <footer class="foot">
-    <button id="run-test" type="button">运行自测</button>
-    <span id="test-out">未运行</span>
-    <ul id="test-detail"></ul>
-  </footer>
+      <footer class="foot">
+        <button id="run-test" type="button">运行自测</button>
+        <span id="test-out">未运行</span>
+        <ul id="test-detail"></ul>
+      </footer>
+    </div>
+  </aside>
 </main>
 <script src="engine.js"></script>
 <script src="ui.js"></script>
