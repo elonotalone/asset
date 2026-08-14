@@ -11,6 +11,7 @@ import {
   editorAccessForPlugin,
   isEditorEntrypointUrl,
   isPluginRuntimeUrl,
+  type PluginEditorAccess,
   type PluginEntry,
 } from "@/lib/plugin-gallery";
 import { PluginGalleryRunner } from "@/components/PluginGalleryRunner";
@@ -48,6 +49,75 @@ function Bullets({ lines }: { lines: string[] }) {
         </li>
       ))}
     </ul>
+  );
+}
+
+function EditorAccessPanel({
+  access,
+}: {
+  access: PluginEditorAccess;
+}) {
+  const tt = useUI();
+  const safeEntryUrl = isEditorEntrypointUrl(access.entryUrl)
+    ? access.entryUrl
+    : null;
+
+  return (
+    <section className="rounded-2xl bg-white p-5 shadow-sm">
+      <div className="flex flex-wrap items-center gap-3">
+        <h2 className="text-sm font-semibold text-zinc-900">
+          {tt("现在从哪里开始")}
+        </h2>
+        <span
+          className={`rounded-full px-3 py-1 text-xs font-medium ${
+            safeEntryUrl
+              ? "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200"
+              : "bg-amber-50 text-amber-700 ring-1 ring-amber-200"
+          }`}
+        >
+          {safeEntryUrl ? tt("可以直接打开") : tt("暂不能匿名直达")}
+        </span>
+      </div>
+
+      {safeEntryUrl ? (
+        <>
+          <p className="mt-3 text-sm leading-7 text-zinc-600">
+            {tt("这个入口已用登出状态与被调用方代码逐项核验；会在 OceanLeo 第一方编辑器的新窗口中打开。")}
+          </p>
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <a
+              href={safeEntryUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full bg-sky-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-sky-700"
+            >
+              {tt("打开使用")}
+            </a>
+            <Link
+              href={access.demoHref}
+              className="rounded-full bg-zinc-100 px-4 py-2 text-sm font-medium text-zinc-700 transition hover:bg-zinc-200"
+            >
+              {tt("查看真实示例：{name}", { name: tt(access.demoName) })}
+            </Link>
+          </div>
+        </>
+      ) : (
+        <>
+          <p className="mt-3 text-sm leading-7 text-zinc-600">
+            {tt(access.unavailableReason)}
+          </p>
+          <p className="mt-2 text-sm leading-7 text-zinc-600">
+            {tt(access.nextStep)}
+          </p>
+          <Link
+            href={access.demoHref}
+            className="mt-4 inline-flex rounded-full bg-sky-50 px-4 py-2 text-sm font-semibold text-sky-700 ring-1 ring-sky-200 transition hover:bg-sky-100"
+          >
+            {tt("先查看真实素材：{name}", { name: tt(access.demoName) })}
+          </Link>
+        </>
+      )}
+    </section>
   );
 }
 
@@ -113,6 +183,10 @@ export function PluginGalleryDetail({
           />
         ) : null}
 
+        {editorAccess ? (
+          <EditorAccessPanel access={editorAccess} />
+        ) : null}
+
         <Section title="你能用它干什么">
           <Bullets lines={item.does} />
         </Section>
@@ -173,7 +247,7 @@ export function PluginGalleryDetail({
             </p>
           ) : editorRunnable ? (
             <p className="mt-2">
-              {tt("它会在经过核验的第一方编辑器中打开，不与插件隔离域混用。")}
+              {tt("它会在经过核验的第一方编辑器中打开，不与其他运行入口混用。")}
             </p>
           ) : editorAccess ? (
             <>

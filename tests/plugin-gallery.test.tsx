@@ -182,6 +182,25 @@ test("UC-1 runtime URL 只接受精确 namespace-C /embed", () => {
   }
 });
 
+test("编辑器入口只接受逐条核验的第一方产品页", () => {
+  assert.equal(
+    isEditorEntrypointUrl("https://video.oceanleo.com/canvas-board"),
+    true,
+  );
+  for (const rejected of [
+    "http://video.oceanleo.com/canvas-board",
+    "https://video.oceanleo.com/canvas-board/",
+    "https://video.oceanleo.com/canvas-board?blank=1",
+    "https://video.oceanleo.com/canvas-board#x",
+    "https://video.oceanleo.com.evil.com/canvas-board",
+    "https://website.oceanleo.com/embed/site-editor",
+    "https://design.oceanleo.com/embed/editor",
+    "https://s-0123456789abcdef0123456789abcdef.oceanleo.app/embed",
+  ]) {
+    assert.equal(isEditorEntrypointUrl(rejected), false, rejected);
+  }
+});
+
 test("详情只给真实 cover 与安全新窗口入口，歪 URL 时 fail-closed", () => {
   // UC-1: docs/architecture/oceanleo-untrusted-content-isolation.md §8.1
   const item = findPlugin("unit-converter");
@@ -272,7 +291,9 @@ test("任何路径都没有下载或安装入口", () => {
     }
     for (const href of hrefs(html)) {
       assert.ok(
-        href.startsWith("/plugin-gallery"),
+        href.startsWith("/plugin-gallery") ||
+          href.startsWith("/works/") ||
+          isEditorEntrypointUrl(href),
         `出现了指向站外或文件的链接: ${href}`,
       );
       for (const pattern of FORBIDDEN_LINK_PATTERNS) {
@@ -333,6 +354,46 @@ test("可用性只由 runtime descriptor 或已核验编辑器入口算出", () 
   for (const item of PLUGIN_ITEMS) {
     assert.ok(item.statusNote.length >= 30, `${item.id} 的能力依据不完整`);
     assert.ok(item.specPath.startsWith("docs/specs/oceanleo-plugins-v1/"));
+  }
+});
+
+test("34 格逐格都有可点入口或说清楚的下一步", () => {
+  const safeRuntimeUrl =
+    "https://s-0123456789abcdef0123456789abcdef.oceanleo.app/embed";
+  for (const item of PLUGIN_ITEMS) {
+    if (item.kind === "standalone") {
+      const pendingHtml = render(<PluginGalleryDetail item={item} />);
+      assert.ok(
+        pendingHtml.includes("安全运行地址生成后") &&
+          pendingHtml.includes("不会回退到本站运行"),
+        `${item.id} 缺运行地址时没有说清下一步`,
+      );
+      const runnableHtml = render(
+        <PluginGalleryDetail
+          item={item}
+          previewPath={`/previews/tools/${item.id}-01.cover.webp`}
+          runtimeUrl={safeRuntimeUrl}
+        />,
+      );
+      assert.match(runnableHtml, new RegExp(`href="${safeRuntimeUrl}"`));
+      assert.match(runnableHtml, />打开使用<\/a>/);
+      continue;
+    }
+
+    const access = editorAccessForPlugin(item);
+    assert.ok(access, `${item.id} 没有编辑器接入结论`);
+    const html = render(<PluginGalleryDetail item={item} />);
+    assert.match(html, new RegExp(`href="${access.demoHref}"`));
+    if (isEditorEntrypointUrl(access.entryUrl)) {
+      assert.match(html, new RegExp(`href="${access.entryUrl}"`));
+      assert.match(html, /target="_blank"/);
+      assert.match(html, /rel="noopener noreferrer"/);
+      assert.match(html, />打开使用<\/a>/);
+    } else {
+      assert.ok(html.includes(access.unavailableReason));
+      assert.ok(html.includes(access.nextStep));
+      assert.match(html, /暂不能匿名直达/);
+    }
   }
 });
 
