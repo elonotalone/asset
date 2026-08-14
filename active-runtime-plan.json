@@ -3,7 +3,7 @@
   "manifest": "active-runtime-manifest.json",
   "manifestSha256": "0967be937dc1c5b938a2fb66fbe0c18983bc443fdf2b2a4375cdd37426e54b9d",
   "itemCount": 30,
-  "totalBytes": 1414204,
+  "totalBytes": 1414228,
   "items": [
     {
       "item": {
@@ -152,11 +152,11 @@
         "source": "content/active-runtime/plugin/concept-knowledge-graph-01",
         "entry": "index.html"
       },
-      "host": "s-4c94f188d077b8f36cb0ec39057dc6d0.oceanleo.app",
-      "entryUrl": "https://s-4c94f188d077b8f36cb0ec39057dc6d0.oceanleo.app/embed",
-      "closureSha256": "74a6b85ca81a2e0c2e655481e8176ac444d3a6ee708965374cc1b5a7dc890961",
+      "host": "s-5d4d2d13ae9f75a28f65e1b260806b1a.oceanleo.app",
+      "entryUrl": "https://s-5d4d2d13ae9f75a28f65e1b260806b1a.oceanleo.app/embed",
+      "closureSha256": "f372f9825da096a37135bcffea65e936b41951532fcf26c55dcf8eb48284820a",
       "fileCount": 4,
-      "totalBytes": 39577,
+      "totalBytes": 39573,
       "files": [
         {
           "path": "engine.js",
@@ -175,8 +175,8 @@
         },
         {
           "path": "ui.js",
-          "sha256": "18dfac88ab31692ffd8b47d980fc99cf353ac620c1a283e3e98aec0656f57f11",
-          "bytes": 13596
+          "sha256": "28a330d2788f4c80a057219e3dbfc83c63f3cede0fc802bf691ba09caaed5b7a",
+          "bytes": 13592
         }
       ]
     },
@@ -572,11 +572,11 @@
         "source": "content/active-runtime/plugin/relationship-graph-01",
         "entry": "index.html"
       },
-      "host": "s-6893bc1476a99a5f2a84ab87d2b1388d.oceanleo.app",
-      "entryUrl": "https://s-6893bc1476a99a5f2a84ab87d2b1388d.oceanleo.app/embed",
-      "closureSha256": "1c56f4eaf19177fcef8a84f82565a9f7a1341be6ed20779073234647a918ca73",
+      "host": "s-bdc3ee224040c4e17d77592a99918a7e.oceanleo.app",
+      "entryUrl": "https://s-bdc3ee224040c4e17d77592a99918a7e.oceanleo.app/embed",
+      "closureSha256": "629e15be9fa1fad42dcef08b5839667292b1158351c8ccb5fdcf80b5d4b12104",
       "fileCount": 4,
-      "totalBytes": 36488,
+      "totalBytes": 36516,
       "files": [
         {
           "path": "engine.js",
@@ -595,8 +595,8 @@
         },
         {
           "path": "ui.js",
-          "sha256": "2cc08dfd032d64fd41e0057e38d67710b4e7eb6870a8e720beee6347aa9a424f",
-          "bytes": 10531
+          "sha256": "2324372e39bf15564e44469970a7b1feb012533a06363ddb86b6a192d5b9fb48",
+          "bytes": 10559
         }
       ]
     },
