@@ -2,13 +2,14 @@
   "use strict";
 
   var E = window.DialogueBranchEngine;
-  var SVG_NS = "http://www.w3.org/2000/svg";
-  var state = {
-    graph: { startId: null, nodes: [], edges: [] },
-    selectedId: null,
-    mode: "opening",
-    sequence: 1
-  };
+
+  var graph = { startId: null, nodes: [], edges: [] };
+  // 说话人默认就是两个认得的名字，随时可以在台词上改成「客服小林」「客户」。
+  var sides = { us: "我方", them: "对方" };
+  var currentId = null;
+  var draft = { text: "", condition: "" };
+  var pickingReturn = false;
+  var seq = 0;
   var els = {};
 
   function el(tag, cls, text) {
@@ -18,360 +19,406 @@
     return node;
   }
 
-  function svgEl(tag, attrs) {
-    var node = document.createElementNS(SVG_NS, tag);
-    Object.keys(attrs || {}).forEach(function (key) { node.setAttribute(key, attrs[key]); });
-    return node;
-  }
-
   function clear(node) {
     while (node.firstChild) node.removeChild(node.firstChild);
   }
 
-  function selectedNode() {
-    return E.findNode(state.graph, state.selectedId);
+  function other(side) {
+    return side === "us" ? "them" : "us";
   }
 
-  function startOpening(raw) {
-    var text = String(raw || "").trim();
-    var start = E.findNode(state.graph, state.graph.startId);
-    if (!start && text) {
-      start = { id: "opening", name: "开场", speaker: "我方", text: text, ending: false };
-      state.graph.startId = start.id;
-      state.graph.nodes.push(start);
-      state.selectedId = start.id;
-    } else if (start) {
-      start.text = text;
-      if (!text && state.graph.nodes.length === 1) {
-        state.graph = { startId: null, nodes: [], edges: [] };
-        state.selectedId = null;
-      }
-    }
-    els.openingActions.hidden = !text;
-    renderDone();
-    renderProduct();
+  function node(id) {
+    return E.findNode(graph, id);
   }
 
-  function renderDone() {
-    clear(els.done);
-    var start = E.findNode(state.graph, state.graph.startId);
-    if (!start) return;
-    var opening = el("button", "done-row");
-    opening.type = "button";
-    opening.appendChild(el("span", "key", "开场白"));
-    opening.appendChild(el("span", "value", start.text || "待补"));
-    opening.addEventListener("click", function () {
-      state.mode = "opening";
-      renderStage();
+  function forwardChildren(id) {
+    return E.outgoing(graph, id)
+      .filter(function (edge) { return edge.kind !== "return"; })
+      .sort(function (a, b) { return (a.priority || 0) - (b.priority || 0); });
+  }
+
+  function returnChildren(id) {
+    return E.outgoing(graph, id).filter(function (edge) { return edge.kind === "return"; });
+  }
+
+  function excerpt(text) {
+    var line = String(text || "").replace(/\s+/g, " ").trim();
+    return line.length > 20 ? line.slice(0, 20) + "…" : line;
+  }
+
+  // 有条件的兄弟分支存在时，没写条件的那条就是「其他情况」。
+  // 兜底不是用户勾的复选框，是这条路自己的位置决定的。
+  function normalizeFallback(fromId) {
+    var edges = forwardChildren(fromId);
+    var conditioned = edges.some(function (edge) { return edge.condition && edge.condition.value; });
+    edges.forEach(function (edge, index) {
+      edge.priority = index + 1;
+      edge.fallback = conditioned && !(edge.condition && edge.condition.value);
     });
-    els.done.appendChild(opening);
-
-    var chosen = selectedNode();
-    if (state.mode === "branch" && chosen) {
-      var current = el("button", "done-row");
-      current.type = "button";
-      current.appendChild(el("span", "key", "当前节点"));
-      current.appendChild(el("span", "value", chosen.name + " · " + chosen.text));
-      current.addEventListener("click", function () { renderStage(); });
-      els.done.appendChild(current);
-    }
   }
 
-  function renderStage() {
-    var start = E.findNode(state.graph, state.graph.startId);
-    if (!start || state.mode === "opening") {
-      els.question.textContent = "开场第一句你会怎么说";
-      els.questionHint.textContent = "空白不是错误。先写一句，分支图才开始生长。";
-      els.primaryLabel.hidden = false;
-      els.opening.hidden = false;
-      els.opening.value = start ? start.text : "";
-      els.openingActions.hidden = !String(els.opening.value).trim();
-      els.branchEditor.hidden = true;
-      return;
-    }
-
-    var chosen = selectedNode() || start;
-    state.selectedId = chosen.id;
-    els.question.textContent = "“" + chosen.name + "”之后，下一步可能是什么？";
-    els.questionHint.textContent = "一次只加一步。要从别处继续，直接点分支图里的那个节点。";
-    els.primaryLabel.hidden = true;
-    els.opening.hidden = true;
-    els.openingActions.hidden = true;
-    els.branchEditor.hidden = false;
-    els.toggleEnding.textContent = chosen.ending ? "取消当前节点的结束标记" : "把当前节点标成结束";
-    renderReturnOptions();
-  }
-
-  function renderReturnOptions() {
-    clear(els.returnTarget);
-    state.graph.nodes.forEach(function (node) {
-      if (node.id === state.selectedId) return;
-      var option = el("option", null, node.name + " · " + node.text);
-      option.value = node.id;
-      els.returnTarget.appendChild(option);
-    });
-    els.addReturn.disabled = els.returnTarget.options.length === 0;
-  }
-
-  function addNext() {
-    var text = els.nextText.value.trim();
-    var from = selectedNode();
-    if (!text || !from) return;
-    state.sequence += 1;
-    var id = "node-" + state.sequence;
-    var speaker = els.nextSpeaker.value;
-    var node = {
-      id: id,
-      name: speaker + "步骤 " + state.sequence,
-      speaker: speaker,
-      text: text,
-      ending: els.ending.checked
-    };
-    var fallback = els.fallback.checked;
-    var conditionText = els.conditionValue.value.trim();
-    state.graph.nodes.push(node);
-    state.graph.edges.push({
-      id: "edge-" + state.sequence,
-      from: from.id,
-      to: id,
-      priority: Math.max(1, Number(els.priority.value) || 1),
-      condition: (!fallback && conditionText) ? {
-        field: "reply", operator: "includes", value: conditionText
-      } : null,
-      fallback: fallback,
-      kind: "forward"
-    });
-    state.selectedId = id;
-    els.nextText.value = "";
-    els.conditionValue.value = "";
-    els.priority.value = "1";
-    els.fallback.checked = false;
-    els.ending.checked = false;
-    render();
-  }
-
-  function toggleEnding() {
-    var node = selectedNode();
-    if (!node) return;
-    node.ending = !node.ending;
-    render();
-  }
-
-  function addReturn() {
-    var from = selectedNode();
-    var to = els.returnTarget.value;
-    if (!from || !to || from.id === to) return;
-    var duplicate = state.graph.edges.some(function (edge) {
-      return edge.from === from.id && edge.to === to && edge.kind === "return";
-    });
-    if (!duplicate) {
-      state.sequence += 1;
-      state.graph.edges.push({
-        id: "return-" + state.sequence,
-        from: from.id,
-        to: to,
-        priority: 1,
-        condition: null,
-        fallback: false,
-        kind: "return"
-      });
-    }
-    render();
-  }
-
-  function loadDemo() {
-    state.graph = E.clone(E.DEMO);
-    state.selectedId = "need";
-    state.sequence = 20;
-    state.mode = "branch";
-    render();
-  }
-
-  function graphDepths() {
-    var depths = {};
-    if (!state.graph.startId) return depths;
-    depths[state.graph.startId] = 0;
-    var queue = [state.graph.startId];
+  function pathTo(id) {
+    var parents = {};
+    var seen = {};
+    var queue = [graph.startId];
+    seen[graph.startId] = true;
     while (queue.length) {
-      var id = queue.shift();
-      E.outgoing(state.graph, id).forEach(function (edge) {
-        if (edge.kind === "return" || depths[edge.to] !== undefined) return;
-        depths[edge.to] = depths[id] + 1;
-        queue.push(edge.to);
+      var at = queue.shift();
+      forwardChildren(at).forEach(function (edge) {
+        if (!seen[edge.to]) {
+          seen[edge.to] = true;
+          parents[edge.to] = at;
+          queue.push(edge.to);
+        }
       });
     }
-    var max = 0;
-    Object.keys(depths).forEach(function (id) { max = Math.max(max, depths[id]); });
-    state.graph.nodes.forEach(function (node) {
-      if (depths[node.id] === undefined) depths[node.id] = max + 1;
-    });
-    return depths;
-  }
-
-  function positionsFor(depths) {
-    var groups = {};
-    state.graph.nodes.forEach(function (node) {
-      var depth = depths[node.id] || 0;
-      if (!groups[depth]) groups[depth] = [];
-      groups[depth].push(node);
-    });
-    var positions = {};
-    Object.keys(groups).forEach(function (depthKey) {
-      var depth = Number(depthKey);
-      var group = groups[depth];
-      var step = 760 / Math.max(1, group.length);
-      group.forEach(function (node, index) {
-        positions[node.id] = { x: 60 + step * index + step / 2, y: 52 + depth * 126 };
-      });
-    });
-    return positions;
-  }
-
-  function renderGraph() {
-    clear(els.graph);
-    if (!state.graph.startId) {
-      els.graph.setAttribute("viewBox", "0 0 880 280");
-      var empty = svgEl("text", { x: "440", y: "140", "text-anchor": "middle", class: "empty-svg" });
-      empty.textContent = "开场第一句你会怎么说";
-      els.graph.appendChild(empty);
-      return;
+    var chain = [];
+    var cursor = id;
+    while (cursor) {
+      chain.unshift(cursor);
+      cursor = parents[cursor];
     }
-
-    var depths = graphDepths();
-    var positions = positionsFor(depths);
-    var maxDepth = 0;
-    Object.keys(depths).forEach(function (id) { maxDepth = Math.max(maxDepth, depths[id]); });
-    var height = Math.max(280, 130 + maxDepth * 126);
-    els.graph.setAttribute("viewBox", "0 0 880 " + height);
-
-    state.graph.edges.forEach(function (edge) {
-      var a = positions[edge.from];
-      var b = positions[edge.to];
-      if (!a || !b) return;
-      var path;
-      if (edge.kind === "return") {
-        path = "M " + a.x + " " + (a.y - 30) + " C " + (a.x + 90) + " " + (a.y - 80) + ", " +
-          (b.x + 90) + " " + (b.y + 80) + ", " + b.x + " " + (b.y + 30);
-      } else {
-        path = "M " + a.x + " " + (a.y + 30) + " C " + a.x + " " + (a.y + 72) + ", " +
-          b.x + " " + (b.y - 72) + ", " + b.x + " " + (b.y - 30);
-      }
-      els.graph.appendChild(svgEl("path", { d: path, class: "edge " + (edge.kind === "return" ? "return" : "forward") }));
-      var label = svgEl("text", {
-        x: String((a.x + b.x) / 2 + 6),
-        y: String((a.y + b.y) / 2),
-        class: "edge-label"
-      });
-      label.textContent = edge.kind === "return" ? "回主线" : (edge.fallback ? "兜底" : "优先 " + (edge.priority || 1));
-      els.graph.appendChild(label);
-    });
-
-    state.graph.nodes.forEach(function (node) {
-      var p = positions[node.id];
-      var group = svgEl("g", {
-        class: "node" + (node.id === state.selectedId ? " selected" : ""),
-        "data-id": node.id,
-        tabindex: "0",
-        role: "button",
-        "aria-label": "选择节点 " + node.name
-      });
-      group.appendChild(svgEl("rect", { x: String(p.x - 76), y: String(p.y - 31), width: "152", height: "62", rx: "2" }));
-      var name = svgEl("text", { x: String(p.x), y: String(p.y - 8), "text-anchor": "middle", class: "meta" });
-      name.textContent = node.name + (node.ending ? " · 结束" : "");
-      group.appendChild(name);
-      var line = svgEl("text", { x: String(p.x), y: String(p.y + 14), "text-anchor": "middle" });
-      line.textContent = node.text.length > 14 ? node.text.slice(0, 14) + "…" : node.text;
-      group.appendChild(line);
-      var choose = function () {
-        state.selectedId = node.id;
-        state.mode = "branch";
-        render();
-      };
-      group.addEventListener("click", choose);
-      group.addEventListener("keydown", function (event) {
-        if (event.key === "Enter" || event.key === " ") choose();
-      });
-      els.graph.appendChild(group);
-    });
+    return chain;
   }
 
-  function renderDiagnostics(analysis) {
-    clear(els.diagnostics);
-    if (!analysis.coverageCalculated) return;
-    if (!analysis.warnings.length) {
-      els.diagnostics.appendChild(el("p", "ok", "没有死端或不可达节点"));
-      return;
-    }
-    analysis.warnings.forEach(function (warning) {
-      els.diagnostics.appendChild(el("p", "warning", warning));
-    });
+  function composeSide() {
+    var here = node(currentId);
+    return here ? other(here.side) : "us";
   }
 
-  function renderProduct() {
-    var analysis = E.analyzeGraph(state.graph);
-    renderGraph();
-    renderDiagnostics(analysis);
-    if (!analysis.coverageCalculated) {
-      els.coverageState.textContent = "覆盖尚未计算 · 0 个节点";
+  function commitDraft() {
+    var text = draft.text.replace(/\s+/g, " ").trim();
+    if (!text) return;
+    var side = els.composeSide ? els.composeSide.getAttribute("data-side") : composeSide();
+    var id = "line-" + (++seq);
+    graph.nodes.push({
+      id: id,
+      name: excerpt(text),
+      side: side,
+      speaker: sides[side],
+      text: text,
+      ending: false
+    });
+    if (!graph.startId) {
+      graph.startId = id;
     } else {
-      els.coverageState.textContent = "最大深度 " + analysis.maxDepth + " 层 · " + state.graph.nodes.length + " 个节点 · 约 3.6 字/秒";
+      graph.edges.push({
+        id: "edge-" + id,
+        from: currentId,
+        to: id,
+        priority: forwardChildren(currentId).length + 1,
+        condition: draft.condition.trim()
+          ? { field: "reply", operator: "includes", value: draft.condition.trim() }
+          : null,
+        fallback: false,
+        kind: "forward"
+      });
+      normalizeFallback(currentId);
     }
-    els.exportOutput.value = E.exportScript(state.graph);
+    currentId = id;
+    draft.text = "";
+    draft.condition = "";
+    render();
+    if (els.input) els.input.focus();
   }
 
-  function runTest() {
-    var report = E.runSelfTest();
-    els.testOut.textContent = report.passed + " / " + report.total + " 通过";
-    clear(els.testDetail);
-    report.failures.forEach(function (failure) {
-      els.testDetail.appendChild(el("li", null, failure.name + " —— " + failure.why));
+  function cueFor(edge) {
+    if (!edge) return "";
+    if (edge.kind === "return") return "";
+    if (edge.condition && edge.condition.value) return "当" + sides.them + "提到「" + edge.condition.value + "」";
+    if (edge.fallback) return "其他情况";
+    return "";
+  }
+
+  function noteFor(target, role) {
+    if (target.ending) return "说到这里自然结束。";
+    if (role !== "current" && !E.outgoing(graph, target.id).length) return "这条走不通：说完就没有下文了。";
+    return "";
+  }
+
+  function speakerName(target) {
+    var name = el("span", "turn-speaker", sides[target.side]);
+    name.setAttribute("contenteditable", "true");
+    name.setAttribute("role", "textbox");
+    name.setAttribute("data-side-name", target.side);
+    name.setAttribute("aria-label", "说话人名字");
+    name.addEventListener("input", function () {
+      var value = name.textContent.replace(/\s+/g, " ").trim();
+      if (!value) return;
+      sides[target.side] = value;
+      graph.nodes.forEach(function (item) {
+        if (item.side === target.side) item.speaker = value;
+      });
+      var others = document.querySelectorAll('[data-side-name="' + target.side + '"]');
+      for (var i = 0; i < others.length; i++) {
+        if (others[i] !== name) others[i].textContent = value;
+      }
+      if (els.composeSide && els.composeSide.getAttribute("data-side") === target.side) {
+        els.composeSide.textContent = value;
+      }
+      updateHeadline();
     });
-    if (!report.failures.length) {
-      els.testDetail.appendChild(el("li", null, "死端、不可达、回边深度、优先级、兜底与 3.6 字/秒均已核对。"));
+    return name;
+  }
+
+  function turnBlock(id, role, edge, depth) {
+    var target = node(id);
+    var block = el("article", "turn");
+    block.setAttribute("data-turn", id);
+    block.setAttribute("data-role", role);
+    block.setAttribute("data-side", target.side);
+    block.setAttribute("data-depth", String(depth));
+    if (role === "current") block.setAttribute("data-current", "true");
+
+    var cue = cueFor(edge);
+    if (cue) block.appendChild(el("p", "turn-cue", cue));
+
+    var head = el("p", "turn-head");
+    head.appendChild(speakerName(target));
+    block.appendChild(head);
+
+    block.appendChild(el("p", "turn-line", target.text));
+
+    var note = noteFor(target, role);
+    if (note) block.appendChild(el("p", "turn-note", note));
+
+    var onward = forwardChildren(id)[0];
+    if (role === "branch" && onward) {
+      var next = node(onward.to);
+      block.appendChild(el("p", "turn-onward", "接着：" + sides[next.side] + "「" + excerpt(next.text) + "」"));
     }
+
+    var acts = el("div", "turn-acts");
+    if (role !== "current") {
+      var pick = el("button", "turn-pick", "从这句接下去");
+      pick.type = "button";
+      pick.addEventListener("click", function () {
+        currentId = id;
+        pickingReturn = false;
+        render();
+      });
+      acts.appendChild(pick);
+    }
+    if (role === "branch" && edge) {
+      var siblings = forwardChildren(edge.from);
+      var seat = siblings.indexOf(edge);
+      if (siblings.length > 1 && seat > 0) acts.appendChild(moveAction(edge, -1, "先走这条"));
+      if (siblings.length > 1 && seat < siblings.length - 1) acts.appendChild(moveAction(edge, 1, "放到后面"));
+    }
+    if (!target.ending && !E.outgoing(graph, id).length) {
+      var end = el("button", "turn-end", "就到这里结束");
+      end.type = "button";
+      end.setAttribute("data-end", id);
+      end.addEventListener("click", function () {
+        target.ending = true;
+        render();
+      });
+      acts.appendChild(end);
+    }
+    if (acts.childNodes.length) block.appendChild(acts);
+    return block;
+  }
+
+  function moveAction(edge, delta, label) {
+    var button = el("button", "turn-move", label);
+    button.type = "button";
+    button.setAttribute("data-move", edge.id);
+    button.addEventListener("click", function () {
+      var siblings = forwardChildren(edge.from);
+      var seat = siblings.indexOf(edge);
+      var swap = siblings[seat + delta];
+      if (!swap) return;
+      var keep = edge.priority;
+      edge.priority = swap.priority;
+      swap.priority = keep;
+      normalizeFallback(edge.from);
+      render();
+    });
+    return button;
+  }
+
+  function returnBlock(edge, depth) {
+    var target = node(edge.to);
+    var block = el("article", "turn turn-back");
+    block.setAttribute("data-turn", edge.to);
+    block.setAttribute("data-role", "return");
+    block.setAttribute("data-side", target.side);
+    block.setAttribute("data-depth", String(depth));
+    block.appendChild(el("p", "turn-cue", "澄清完，回到主线"));
+    var head = el("p", "turn-head");
+    head.appendChild(speakerName(target));
+    block.appendChild(head);
+    block.appendChild(el("p", "turn-line", target.text));
+    var acts = el("div", "turn-acts");
+    var pick = el("button", "turn-pick", "从这句接下去");
+    pick.type = "button";
+    pick.addEventListener("click", function () {
+      currentId = edge.to;
+      render();
+    });
+    acts.appendChild(pick);
+    block.appendChild(acts);
+    return block;
+  }
+
+  function returnPicker(chain) {
+    var wrap = el("p", "return-picker");
+    wrap.appendChild(el("span", "return-ask", "接回上文的哪一句"));
+    chain.slice(0, -1).forEach(function (id) {
+      var target = node(id);
+      var pick = el("button", "pick", sides[target.side] + "「" + excerpt(target.text) + "」");
+      pick.type = "button";
+      pick.setAttribute("data-return-to", id);
+      pick.addEventListener("click", function () {
+        graph.edges.push({
+          id: "edge-back-" + currentId + "-" + id,
+          from: currentId,
+          to: id,
+          priority: forwardChildren(currentId).length + 1,
+          condition: null,
+          fallback: false,
+          kind: "return"
+        });
+        pickingReturn = false;
+        render();
+      });
+      wrap.appendChild(pick);
+    });
+    return wrap;
+  }
+
+  function composeBlock() {
+    clear(els.compose);
+    var side = graph.startId ? composeSide() : "us";
+    var here = node(currentId);
+    var ask;
+    if (!graph.startId) ask = "开场第一句你会怎么说";
+    else if (side === "them") ask = sides.them + "接下来可能怎么说";
+    else ask = "你会怎么接";
+
+    els.compose.appendChild(el("p", "compose-ask", ask));
+
+    var line = el("div", "compose-line");
+    var speaker = el("button", "compose-speaker", sides[side]);
+    speaker.type = "button";
+    speaker.id = "compose-speaker";
+    speaker.setAttribute("data-side", side);
+    speaker.addEventListener("click", function () {
+      var flipped = other(speaker.getAttribute("data-side"));
+      speaker.setAttribute("data-side", flipped);
+      speaker.textContent = sides[flipped];
+      els.compose.querySelector(".compose-ask").textContent =
+        flipped === "them" ? sides.them + "接下来可能怎么说" : "你会怎么接";
+    });
+    line.appendChild(speaker);
+
+    var input = el("span", "compose-input");
+    input.id = "line-input";
+    input.setAttribute("contenteditable", "true");
+    input.setAttribute("role", "textbox");
+    input.setAttribute("aria-label", ask);
+    input.setAttribute("data-label", "写下这一句");
+    input.textContent = draft.text;
+    input.addEventListener("input", function () {
+      draft.text = input.textContent;
+    });
+    input.addEventListener("keydown", function (event) {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        commitDraft();
+      }
+    });
+    line.appendChild(input);
+
+    var commit = el("button", "compose-commit", "写进台本");
+    commit.type = "button";
+    commit.id = "commit-line";
+    commit.addEventListener("click", commitDraft);
+    line.appendChild(commit);
+    els.compose.appendChild(line);
+
+    if (here && forwardChildren(currentId).length) {
+      var when = el("p", "compose-when");
+      when.appendChild(document.createTextNode("当" + sides.them + "提到 "));
+      var condition = el("span", "compose-condition");
+      condition.id = "condition-input";
+      condition.setAttribute("contenteditable", "true");
+      condition.setAttribute("role", "textbox");
+      condition.setAttribute("aria-label", "这条分支在什么话下进入");
+      condition.setAttribute("data-label", "哪句话");
+      condition.textContent = draft.condition;
+      condition.addEventListener("input", function () {
+        draft.condition = condition.textContent;
+      });
+      when.appendChild(condition);
+      els.compose.appendChild(when);
+    }
+
+    if (here && pathTo(currentId).length > 1) {
+      var back = el("button", "compose-back", "接回上文");
+      back.type = "button";
+      back.id = "return-line";
+      back.addEventListener("click", function () {
+        pickingReturn = !pickingReturn;
+        render();
+      });
+      els.compose.appendChild(back);
+    }
+    els.composeSide = speaker;
+    els.input = input;
+  }
+
+  function updateHeadline() {
+    var analysis = E.analyzeGraph(graph);
+    if (!analysis.coverageCalculated) {
+      els.headline.textContent = "";
+      return;
+    }
+    var stranded = analysis.deadEnds.filter(function (item) { return item.id !== currentId; });
+    if (stranded.length) {
+      els.headline.textContent = sides[stranded[0].side] + "「" + excerpt(stranded[0].text) + "」说完就没有下文了。";
+      return;
+    }
+    if (analysis.unreachable.length) {
+      els.headline.textContent = "「" + excerpt(analysis.unreachable[0].text) + "」从开场走不到。";
+      return;
+    }
+    els.headline.textContent = graph.nodes.length > 1 ? "每条路都走得通。" : "";
   }
 
   function render() {
-    renderDone();
-    renderStage();
-    renderProduct();
+    clear(els.script);
+    if (graph.startId) {
+      var chain = pathTo(currentId);
+      chain.forEach(function (id, index) {
+        var role = index === chain.length - 1 ? "current" : "past";
+        els.script.appendChild(turnBlock(id, role, index > 0 ? incoming(chain[index - 1], id) : null, index));
+      });
+      if (pickingReturn) els.script.appendChild(returnPicker(chain));
+      forwardChildren(currentId).forEach(function (edge) {
+        els.script.appendChild(turnBlock(edge.to, "branch", edge, chain.length));
+      });
+      returnChildren(currentId).forEach(function (edge) {
+        els.script.appendChild(returnBlock(edge, chain.length));
+      });
+      E.analyzeGraph(graph).unreachable.forEach(function (item) {
+        var stray = turnBlock(item.id, "stray", null, 0);
+        stray.appendChild(el("p", "turn-note", "从开场走不到这一段。"));
+        els.script.appendChild(stray);
+      });
+    }
+    composeBlock();
+    updateHeadline();
+  }
+
+  function incoming(fromId, toId) {
+    return E.outgoing(graph, fromId).filter(function (edge) { return edge.to === toId; })[0] || null;
   }
 
   function mount() {
-    els.done = document.getElementById("done");
-    els.question = document.getElementById("question");
-    els.questionHint = document.getElementById("question-hint");
-    els.primaryLabel = document.getElementById("primary-label");
-    els.opening = document.getElementById("opening-input");
-    els.openingActions = document.getElementById("opening-actions");
-    els.branchEditor = document.getElementById("branch-editor");
-    els.nextText = document.getElementById("next-text");
-    els.nextSpeaker = document.getElementById("next-speaker");
-    els.conditionValue = document.getElementById("condition-value");
-    els.priority = document.getElementById("priority");
-    els.fallback = document.getElementById("fallback");
-    els.ending = document.getElementById("ending");
-    els.toggleEnding = document.getElementById("toggle-ending");
-    els.returnTarget = document.getElementById("return-target");
-    els.addReturn = document.getElementById("add-return");
-    els.graph = document.getElementById("graph");
-    els.diagnostics = document.getElementById("diagnostics");
-    els.coverageState = document.getElementById("coverage-state");
-    els.exportOutput = document.getElementById("export-output");
-    els.testOut = document.getElementById("test-out");
-    els.testDetail = document.getElementById("test-detail");
-
-    els.opening.addEventListener("input", function () { startOpening(els.opening.value); });
-    document.getElementById("continue-branch").addEventListener("click", function () {
-      if (!state.graph.startId) return;
-      state.mode = "branch";
-      render();
-    });
-    document.getElementById("add-next").addEventListener("click", addNext);
-    els.toggleEnding.addEventListener("click", toggleEnding);
-    els.addReturn.addEventListener("click", addReturn);
-    document.getElementById("load-demo").addEventListener("click", loadDemo);
-    document.getElementById("run-test").addEventListener("click", runTest);
+    els.script = document.getElementById("script");
+    els.compose = document.getElementById("compose");
+    els.headline = document.getElementById("headline");
     render();
   }
 
