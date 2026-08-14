@@ -77,10 +77,34 @@ function type(id, value) {
   input.value = value;
   input.dispatchEvent(new window.Event("input", { bubbles: true }));
 }
-function dragTerm(years) {
+/** 卡扣和曲线终点改的是同一个数，量纲是期，所以这里按期给。 */
+function dragTerm(months) {
   const range = $("#term");
-  range.value = String(years);
+  range.value = String(months);
   range.dispatchEvent(new window.Event("input", { bubbles: true }));
+}
+/*
+ * jsdom 没有版面，getBoundingClientRect 全是零，像素换算没法跑。
+ * 拖动这条路要测，就得先给画布一个假版面——量的是我自己的换算，不是浏览器的排版。
+ */
+function withPlotWidth(width, fn) {
+  const plot = $("#plot");
+  const real = plot.getBoundingClientRect;
+  plot.getBoundingClientRect = () => ({ left: 0, top: 0, width, height: 500, right: width, bottom: 500 });
+  try {
+    fn();
+  } finally {
+    plot.getBoundingClientRect = real;
+  }
+}
+function grabEnd(clientX) {
+  $("#axis .end").dispatchEvent(new window.MouseEvent("mousedown", { bubbles: true, clientX }));
+}
+function moveTo(clientX) {
+  window.dispatchEvent(new window.MouseEvent("mousemove", { bubbles: true, clientX }));
+}
+function letGo() {
+  window.dispatchEvent(new window.MouseEvent("mouseup", { bubbles: true }));
 }
 function click(id) {
   doc.getElementById(id).dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
@@ -102,9 +126,16 @@ check("引擎脚本被页面装上了", () => {
 check("首屏就是一档出厂房贷：100 万、4.20%、30 年 · 360 期、等额本息", () => {
   assert.equal($("#principal").value, "1 000 000.00");
   assert.equal($("#rate").value, "4.20");
-  assert.equal($("#term").value, "30");
+  assert.equal($("#term").value, "360");
   assert.equal(text("#term-read"), "30 年 · 360 期");
   assert.equal($("#method").value, "annuity");
+});
+
+check("时间轴终点自己就是期限把手，名字写在把手上", () => {
+  const end = $("#axis .end");
+  assert.ok(end, "终点没有做成可操作的把手");
+  assert.equal(end.tagName, "BUTTON");
+  assert.equal(text("#axis .end"), "30 年清零");
 });
 
 check("曲线由每一期真实余额连成，不是起点终点拉直线", () => {
@@ -124,7 +155,7 @@ check("对比轨迹一开始不存在", () => {
 /* ---------- 客厅里那一下：把期限终点从三十年拖到二十年 ---------- */
 
 check("拖到 20 年：结论当场写出每月多付多少、总利息少付多少", () => {
-  dragTerm(20);
+  dragTerm(240);
   assert.equal(text("#term-read"), "20 年 · 240 期");
   assert.match(
     verdict(),
@@ -151,20 +182,66 @@ check("两条轨迹共用同一套坐标尺度（对比方案更长，所以它�
 });
 
 check("拖回 30 年：差额归零，结论回到单个方案那一句", () => {
-  dragTerm(30);
+  dragTerm(360);
   assert.match(verdict(), /^30 年方案（等额本息）：每月还 4 890\.17 元，总利息 760 461\.83 元。$/);
   assert.equal($("#past").getAttribute("d"), "");
 });
 
+/* ---------- 手直接落在曲线终点上，把它往前拖 ---------- */
+
+check("抓住终点往左拖：把手跟着指针走，期限当场跟着变", () => {
+  withPlotWidth(1000, () => {
+    const at = () => Number(String($("#axis .end").style.left).replace("%", "")) / 100 * 1000;
+    const start = at();
+    grabEnd(start);
+    moveTo(500);
+    assert.equal(text("#term-read"), "15 年 · 180 期");
+    assert.ok(Math.abs(at() - 500) < 4, `把手停在 ${at()}，指针在 500，没跟上`);
+    assert.match(verdict(), /^15 年方案比 30 年方案每月多付 /);
+    letGo();
+  });
+});
+
+check("拖到左边尽头也不会拖出一个没法还的期限", () => {
+  withPlotWidth(1000, () => {
+    grabEnd(500);
+    moveTo(-4000);
+    assert.equal(text("#term-read"), "1 年 · 12 期");
+    letGo();
+  });
+});
+
+check("松手以后指针再动，期限不再跟着跑", () => {
+  withPlotWidth(1000, () => {
+    const before = text("#term-read");
+    moveTo(900);
+    assert.equal(text("#term-read"), before);
+  });
+});
+
+check("把手能用方向键改期限：一格一年，按住 Shift 走单期", () => {
+  dragTerm(240);
+  const end = () => $("#axis .end");
+  end().focus();
+  end().dispatchEvent(new window.KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }));
+  assert.equal(text("#term-read"), "21 年 · 252 期");
+  /* 整条轴重画了，焦点要接回新的把手，不然连按第二下就落空。 */
+  assert.equal(doc.activeElement, end());
+  end().dispatchEvent(new window.KeyboardEvent("keydown", { key: "ArrowLeft", shiftKey: true, bubbles: true }));
+  assert.equal(text("#term-read"), "20 年 11 个月 · 251 期");
+  assert.equal(text("#axis .end"), "20 年 11 个月清零");
+  dragTerm(360);
+});
+
 check("换等额本金：结论改说首期还款，方式名写全", () => {
-  dragTerm(20);
+  dragTerm(240);
   const method = $("#method");
   method.value = "equal-principal";
   method.dispatchEvent(new window.Event("change", { bubbles: true }));
   assert.match(verdict(), /^20 年方案比 30 年方案首期多付 /);
   method.value = "annuity";
   method.dispatchEvent(new window.Event("change", { bubbles: true }));
-  dragTerm(30);
+  dragTerm(360);
 });
 
 check("改本金：曲线和结论跟着换，金额仍然带元", () => {

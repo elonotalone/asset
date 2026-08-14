@@ -48,7 +48,7 @@ const clean = (value) => String(value || "").replace(/\s+/g, " ").trim();
 
 /* 客厅里那一下：手落在期限上，把三十年拖到二十年。 */
 const term = $("#term");
-term.value = "20";
+term.value = "240";
 term.dispatchEvent(new window.Event("input", { bubbles: true }));
 
 const knobs = [...doc.querySelectorAll("#knobs-loan .knob")].map((knob) => {
@@ -67,9 +67,11 @@ const out = {
   now: $("#now").getAttribute("d"),
   past: $("#past").getAttribute("d"),
   shade: $("#shade").getAttribute("d"),
-  axis: [...doc.querySelectorAll(".axis span")].map((span) => ({
-    text: clean(span.textContent),
-    at: Number(String(span.style.left).replace("%", "")) / 100
+  /* 终点那个刻度是按钮（它就是期限把手），所以取轴上所有子节点，不只取 span。 */
+  axis: [...doc.querySelectorAll("#axis > *")].map((node) => ({
+    text: clean(node.textContent),
+    at: Number(String(node.style.left).replace("%", "")) / 100,
+    grip: node.classList.contains("end")
   })),
   knobs,
   questions: [...doc.querySelectorAll(".question button")].map((button) => ({

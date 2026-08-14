@@ -118,10 +118,17 @@ now = points(data["now"])
 if len(now) > 1:
     d.line(now, fill=NOW, width=3, joint="curve")
 
-# 时间刻度只透出几个年份，不围成格子。
+# 时间刻度只透出几个年份，不围成格子；终点那一个是期限把手，所以它实一点、带虚线底。
 for tick in data["axis"]:
     x = PLOT[0] + tick["at"] * (PLOT[2] - PLOT[0])
-    text(x, PLOT[3] + 14, tick["text"], 16, FAINT, anchor="ma")
+    grip = tick.get("grip")
+    size = 17 if grip else 16
+    text(x, PLOT[3] + 14, tick["text"], size, INK if grip else FAINT, anchor="ma")
+    if grip:
+        half = width(tick["text"], size) / 2
+        base = PLOT[3] + 14 + size + 10
+        for seg in range(int(x - half), int(x + half), 8):
+            d.line([(seg, base), (min(seg + 4, x + half), base)], fill=ACCENT, width=2)
 
 # 对比方案的名字贴在它自己的终点旁，用户认得的名字，不是 A／B。
 if data["pastName"] and past:

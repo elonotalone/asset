@@ -68,6 +68,32 @@
     });
   }
 
+  var MIN_MONTHS = 12;
+  var MAX_MONTHS = 480;
+
+  function termRead(months) {
+    var years = Math.floor(months / 12);
+    var rest = months % 12;
+    return (rest === 0 ? years + " 年" : years + " 年 " + rest + " 个月") + " · " + months + " 期";
+  }
+
+  function showTerm(months) {
+    el("term").value = String(months);
+    el("term-read").textContent = termRead(months);
+  }
+
+  /** 期限只有这一个写入口：卡扣和曲线终点改的是同一个数，量纲都是期。 */
+  function setTerm(months) {
+    var next = Math.max(MIN_MONTHS, Math.min(MAX_MONTHS, Math.round(months)));
+    if (next === state.months) return;
+    /* 手一落在期限上，原来那条轨迹就留在纸上当对比方案。 */
+    if (state.compareMonths === null) state.compareMonths = state.months;
+    state.months = next;
+    showTerm(next);
+    hideReadout();
+    render();
+  }
+
   function termName(months) {
     var years = Math.floor(months / 12);
     var rest = months % 12;
@@ -109,13 +135,39 @@
     return yPixel(value, yMin, yMax) / VIEW.h;
   }
 
+  /** xFraction 的逆：指针落在屏幕哪里，就换回横轴上的第几期——两边共用同一套内缩。 */
+  function valueAt(clientX, rect, xMax) {
+    var inView = ((clientX - rect.left) / rect.width) * VIEW.w;
+    return ((inView - VIEW.left) / (VIEW.right - VIEW.left)) * xMax;
+  }
+
+  /*
+   * 终点那个刻度就是期限的把手：它自带「多少年清零」这个名字，所以不必再摆一个无名的拖点。
+   * 每次改期限整条轴都重画，所以把焦点接回新的把手，键盘连着按方向键才不会掉出去。
+   */
   function drawAxis(labels) {
+    var hadFocus = axis.contains(document.activeElement);
     clear(axis);
     labels.forEach(function (item) {
-      var span = document.createElement("span");
-      span.textContent = item.text;
-      span.style.left = (item.at * 100).toFixed(3) + "%";
-      axis.appendChild(span);
+      if (!item.grip) {
+        var span = document.createElement("span");
+        span.textContent = item.text;
+        span.style.left = (item.at * 100).toFixed(3) + "%";
+        axis.appendChild(span);
+        return;
+      }
+      var grip = document.createElement("button");
+      grip.type = "button";
+      grip.className = "end";
+      grip.id = "end";
+      grip.textContent = item.text;
+      grip.title = "拖动它，或按左右方向键，改期限";
+      grip.style.left = (item.at * 100).toFixed(3) + "%";
+      grip.addEventListener("pointerdown", beginDrag);
+      grip.addEventListener("mousedown", beginDrag);
+      grip.addEventListener("keydown", gripKey);
+      axis.appendChild(grip);
+      if (hadFocus) grip.focus();
     });
   }
 
@@ -176,7 +228,13 @@
       if (Math.abs(year * 12 - plan.periods) < 6) continue;
       labels.push({ text: year + " 年", at: xFraction(year * 12, xMax) });
     }
-    labels.push({ text: Math.round(plan.periods / 12) + " 年清零", at: xFraction(plan.periods, xMax) });
+    var endYears = Math.floor(plan.periods / 12);
+    var endRest = plan.periods % 12;
+    labels.push({
+      text: (endRest === 0 ? endYears + " 年" : endYears + " 年 " + endRest + " 个月") + "清零",
+      at: xFraction(plan.periods, xMax),
+      grip: true
+    });
     drawAxis(labels);
 
     var monthWord = plan.method === "annuity" ? "每月还" : "首期还";
@@ -267,12 +325,13 @@
   }
 
   function showReadout(event) {
+    if (drag) return;
     var rect = plot.getBoundingClientRect();
     if (!rect.width) return;
-    var fraction = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
+    var value = valueAt(event.clientX, rect, view.xMax);
     if (view.kind === "loan") {
       if (!view.plan) return;
-      var period = Math.min(view.plan.rows.length, Math.max(1, Math.round(fraction * view.xMax)));
+      var period = Math.min(view.plan.rows.length, Math.max(1, Math.round(value)));
       var row = view.plan.rows[period - 1];
       marker.setAttribute("cx", (xFraction(row.period, view.xMax) * VIEW.w).toFixed(2));
       marker.setAttribute("cy", yPixel(row.balance, view.yMin, view.yMax).toFixed(2));
@@ -290,7 +349,7 @@
       return;
     }
     if (!view.flows) return;
-    var index = Math.min(view.flows.length - 1, Math.max(0, Math.round(fraction * view.xMax)));
+    var index = Math.min(view.flows.length - 1, Math.max(0, Math.round(value)));
     var running = 0;
     for (var t = 0; t <= index; t++) running += view.flows[t] / Math.pow(1 + state.discount / 100, t);
     marker.setAttribute("cx", (xFraction(index, view.xMax) * VIEW.w).toFixed(2));
@@ -305,14 +364,41 @@
     place(readout, xFraction(index, view.xMax), yFraction(running, view.yMin, view.yMax));
   }
 
-  /* ---------- 操作带 ---------- */
+  /* ---------- 把手：抓住曲线终点把期限往前拉 ---------- */
 
-  function readTerm() {
-    var years = Number(el("term").value);
-    var months = Math.round(years * 12);
-    el("term-read").textContent = years + " 年 · " + months + " 期";
-    return months;
+  var drag = null;
+
+  /*
+   * 一次拖动里，像素和期的换算在按下那一刻定住：拖短了以后横轴还归对比方案管，
+   * 中途换尺度会让把手追不上指针。没有版面（rect 宽为 0）就不进入拖动，方向键那条路不受影响。
+   */
+  function beginDrag(event) {
+    if (view.kind !== "loan" || !view.plan) return;
+    var rect = plot.getBoundingClientRect();
+    if (!rect.width) return;
+    drag = { rect: rect, xMax: view.xMax, months: state.months, at: valueAt(event.clientX, rect, view.xMax) };
+    if (event.preventDefault) event.preventDefault();
   }
+
+  function moveDrag(event) {
+    if (!drag) return;
+    setTerm(drag.months + valueAt(event.clientX, drag.rect, drag.xMax) - drag.at);
+  }
+
+  function endDrag() {
+    drag = null;
+  }
+
+  function gripKey(event) {
+    var step = event.key === "ArrowLeft" ? -12 : event.key === "ArrowRight" ? 12 : 0;
+    if (!step) return;
+    /* 按住 Shift 走单期，平时一格是一年——报价单上谈的就是年。 */
+    if (event.shiftKey) step = step / 12;
+    setTerm(state.months + step);
+    event.preventDefault();
+  }
+
+  /* ---------- 操作带 ---------- */
 
   function switchQuestion(which) {
     state.question = which;
@@ -328,10 +414,9 @@
     el("principal").value = E.money(state.principal);
     el("rate").value = state.rate.toFixed(2);
     el("method").value = state.method;
-    el("term").value = String(state.months / 12);
     el("discount").value = String(state.discount);
     el("flows").value = state.flows.join(", ");
-    readTerm();
+    showTerm(state.months);
 
     el("principal").addEventListener("input", function () {
       var value = num(this.value);
@@ -348,12 +433,7 @@
       render();
     });
     el("term").addEventListener("input", function () {
-      var next = readTerm();
-      /* 手一落在期限上，原来那条轨迹就留在纸上当对比方案。 */
-      if (state.compareMonths === null) state.compareMonths = state.months;
-      state.months = next;
-      hideReadout();
-      render();
+      setTerm(Number(this.value));
     });
     el("discount").addEventListener("input", function () {
       var value = num(this.value);
@@ -371,6 +451,13 @@
     plot.addEventListener("pointerleave", hideReadout);
     plot.addEventListener("mousemove", showReadout);
     plot.addEventListener("mouseleave", hideReadout);
+
+    /* 拖动中指针会跑出把手，所以移动和松手都挂在窗口上。 */
+    window.addEventListener("pointermove", moveDrag);
+    window.addEventListener("mousemove", moveDrag);
+    window.addEventListener("pointerup", endDrag);
+    window.addEventListener("mouseup", endDrag);
+    window.addEventListener("pointercancel", endDrag);
 
     render();
   }

@@ -110,12 +110,24 @@ html, body {
   bottom: 0;
   height: 1.9em;
 }
-.axis span {
+.axis span, .axis .end {
   position: absolute;
   color: var(--faint);
   font-size: clamp(13px, 1.3vw, 16px);
   transform: translateX(-50%);
   white-space: nowrap;
+}
+/* 终点刻度就是期限的把手：它比别的刻度实一点，拖得动，也按得动。 */
+.axis .end {
+  border: 0;
+  border-bottom: 1px dashed var(--accent);
+  background: transparent;
+  padding: 0 2px 2px;
+  color: var(--ink);
+  font: inherit;
+  font-size: clamp(13px, 1.3vw, 16px);
+  cursor: ew-resize;
+  touch-action: none;
 }
 
 .band {
