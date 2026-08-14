@@ -397,7 +397,10 @@ test("可用性只由 runtime descriptor 或已核验编辑器入口算出", () 
   }
 });
 
-test("35 格逐格都有可点入口或说清楚的下一步", () => {
+test("UC-1,UC-3 35 格逐格都有可点入口或说清楚的下一步", () => {
+  // UC-1: docs/architecture/oceanleo-untrusted-content-isolation.md §8.1
+  // UC-3: 同文档 §8.3 —— 入口只能是逐条核验过的运行地址；没有核验过的入口时
+  // 页面必须如实说明缺口，绝不允许退回本站地址或任意 oceanleo.app 主机。
   const safeRuntimeUrl =
     "https://s-0123456789abcdef0123456789abcdef.oceanleo.app/embed";
   for (const item of PLUGIN_ITEMS) {
