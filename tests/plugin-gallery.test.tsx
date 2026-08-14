@@ -148,13 +148,13 @@ test("21 份独立工具规格保留，manifest runtime 与规格逐一对应", 
   );
 
   for (const item of pluginManifest.items as { source: string }[]) {
-    assert.deepEqual(readdirSync(item.source).sort(), [
-      "engine.js",
-      "index.html",
-      "style.css",
-      "ui.js",
-    ]);
-    for (const file of readdirSync(item.source)) {
+    // 代码文件是封闭集合；NOTICE 只装上游数据的许可与署名，可有可无但不得是别的名字。
+    const entries = readdirSync(item.source).sort();
+    assert.deepEqual(
+      entries.filter((name) => name !== "NOTICE"),
+      ["engine.js", "index.html", "style.css", "ui.js"],
+    );
+    for (const file of entries) {
       assert.equal(lstatSync(path.join(item.source, file)).isSymbolicLink(), false);
       assert.equal(lstatSync(path.join(item.source, file)).isFile(), true);
     }
@@ -183,7 +183,9 @@ test("UC-1 runtime URL 只接受精确 namespace-C /embed", () => {
   }
 });
 
-test("编辑器入口只接受逐条核验的第一方产品页", () => {
+test("UC-3 编辑器入口只接受逐条核验的第一方产品页", () => {
+  // UC-3: docs/architecture/oceanleo-untrusted-content-isolation.md §8.3
+  // 信任只能来自硬编码白名单，绝不能从主机名后缀推断。
   assert.equal(
     isEditorEntrypointUrl("https://video.oceanleo.com/canvas-board"),
     true,
