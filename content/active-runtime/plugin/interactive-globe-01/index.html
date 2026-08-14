@@ -8,61 +8,16 @@
 </head>
 <body>
 <main class="app">
-  <header class="head">
-    <h1>地球仪</h1>
-    <span class="sub">OGC:CRS84 · 大圆行程与昼夜分界同屏 · 太阳时 ≠ 行政时区</span>
-  </header>
+  <section class="space" aria-label="地球仪行程画布">
+    <div class="headline" aria-label="行程结论">
+      <div class="metric" id="total-distance"><strong class="v">0</strong><span class="u">m</span><span class="k">行程总长</span></div>
+      <div class="metric" id="destination-count"><strong class="v">0</strong><span class="u">个</span><span class="k">目的地</span></div>
+    </div>
 
-  <div class="body">
-    <aside class="assume" aria-label="日期、目的地与计算口径">
-      <div class="block-title">观察时刻</div>
-      <div class="field">
-        <label for="observation-time">日期与时间（UTC）</label>
-        <input id="observation-time" type="datetime-local" value="2026-08-14T12:00">
-      </div>
-      <p class="input-note" id="date-note" aria-live="polite">昼夜分界按这一个 UTC 时刻实时推算。</p>
+    <p class="instruction" id="globe-instruction">拖动地球；点一个国家，把它加进这次行程</p>
 
-      <div class="block-title destination-title">添加目的地</div>
-      <p class="instruction" id="globe-instruction">拖动地球；点一个国家，把它加进这次行程</p>
-      <div class="field">
-        <label for="destination-name">目的地名</label>
-        <input id="destination-name" type="text" value="目的地 1" autocomplete="off" spellcheck="false">
-      </div>
-      <div class="field pair">
-        <span><label for="longitude">经度</label><input id="longitude" type="text" value="116.4074" inputmode="decimal" autocomplete="off" spellcheck="false"></span>
-        <span><label for="latitude">纬度</label><input id="latitude" type="text" value="39.9042" inputmode="decimal" autocomplete="off" spellcheck="false"></span>
-      </div>
-      <button class="primary" id="add-coordinate" type="button">按坐标添加</button>
-      <p class="input-note" id="input-note" aria-live="polite">预填北京坐标，但不会替你先加入行程。</p>
-
-      <div class="actions">
-        <button id="undo-destination" type="button">撤回末站</button>
-        <button id="clear-route" type="button">清空行程</button>
-        <button id="reset-view" type="button">复位视角</button>
-      </div>
-
-      <div class="basis-block">
-        <div class="block-title">计算口径</div>
-        <dl>
-          <div><dt>平均地球半径</dt><dd>6 371 008.8 m</dd></div>
-          <div><dt>距离</dt><dd>haversine 大圆距离</dd></div>
-          <div><dt>太阳时差</dt><dd>经差 15° ≈ 1 小时</dd></div>
-          <div><dt>坐标顺序</dt><dd>[经度, 纬度]</dd></div>
-        </dl>
-        <p class="boundary">太阳时差只由经度估算，不等于行政时区；法定时间还受国界、政策与夏令时影响。</p>
-      </div>
-    </aside>
-
-    <section class="result">
-      <div class="headline" aria-label="行程与太阳结论">
-        <div class="metric" id="destination-count"><span class="k">目的地</span><strong class="v">0</strong><span class="u">个</span></div>
-        <div class="metric" id="total-distance"><span class="k">行程总长</span><strong class="v">0</strong><span class="u">m</span></div>
-        <div class="metric" id="solar-declination"><span class="k">太阳赤纬</span><strong class="v">—</strong></div>
-      </div>
-
-      <div class="globe-shell">
-        <div class="globe-stage">
-          <svg id="world-globe" viewBox="0 0 620 560" role="img" aria-label="可拖动、可点击的离线地球仪">
+    <div class="globe-stage">
+      <svg id="world-globe" viewBox="0 0 620 560" role="img" aria-label="可拖动、可点击的离线地球仪">
             <defs>
               <clipPath id="globe-clip"><circle cx="310" cy="280" r="245"></circle></clipPath>
               <radialGradient id="ocean-paint" cx="32%" cy="24%" r="78%">
@@ -112,11 +67,71 @@
             <g id="route-layer" clip-path="url(#globe-clip)" filter="url(#route-glow)"></g>
             <g id="marker-layer" clip-path="url(#globe-clip)"></g>
             <circle class="limb" cx="310" cy="280" r="245"></circle>
-          </svg>
-          <p class="drag-note">拖动改变中心视角 · 单击球面添加目的地</p>
-        </div>
-        <aside class="legend" aria-label="地球图例与来源">
-          <div class="block-title">图例</div>
+      </svg>
+
+      <nav class="globe-controls" aria-label="地球仪操作">
+        <button id="undo-destination" type="button">撤回末站</button>
+        <button id="clear-route" type="button">清空行程</button>
+        <button id="reset-view" type="button">复位视角</button>
+        <button class="details-toggle" id="details-toggle" type="button" aria-expanded="false" aria-controls="details-panel">口径与来源</button>
+      </nav>
+    </div>
+  </section>
+
+  <section class="details-panel" id="details-panel" aria-label="口径、来源与行程明细" hidden>
+    <header class="details-head">
+      <div>
+        <p class="details-kicker">行程细节</p>
+        <h1>口径与来源</h1>
+        <p class="sub">OGC:CRS84 · 大圆行程与昼夜分界同屏 · 太阳时 ≠ 行政时区</p>
+      </div>
+      <button class="close-details" id="close-details" type="button" aria-label="关闭口径与来源">关闭</button>
+    </header>
+
+    <div class="details-scroll">
+      <div class="details-grid">
+        <section class="detail-block" aria-labelledby="observe-title">
+          <h2 id="observe-title">观察时刻</h2>
+          <div class="field">
+            <label for="observation-time">日期与时间（UTC）</label>
+            <input id="observation-time" type="datetime-local" value="2026-08-14T12:00">
+          </div>
+          <p class="input-note" id="date-note" aria-live="polite">昼夜分界按这一个 UTC 时刻实时推算。</p>
+          <dl class="readout">
+            <div><dt>中心视角</dt><dd id="center-readout">[20.0°, 15.0°]</dd></div>
+            <div><dt>太阳直射点</dt><dd id="subsolar-readout">—</dd></div>
+            <div><dt>昼夜分界</dt><dd id="terminator-readout">按日期推算中</dd></div>
+            <div><dt>太阳赤纬</dt><dd id="solar-declination"><span class="v">—</span></dd></div>
+          </dl>
+        </section>
+
+        <section class="detail-block" aria-labelledby="coordinate-title">
+          <h2 id="coordinate-title">按坐标添加</h2>
+          <div class="field">
+            <label for="destination-name">目的地名</label>
+            <input id="destination-name" type="text" value="目的地 1" autocomplete="off" spellcheck="false">
+          </div>
+          <div class="field pair">
+            <span><label for="longitude">经度</label><input id="longitude" type="text" value="116.4074" inputmode="decimal" autocomplete="off" spellcheck="false"></span>
+            <span><label for="latitude">纬度</label><input id="latitude" type="text" value="39.9042" inputmode="decimal" autocomplete="off" spellcheck="false"></span>
+          </div>
+          <button class="primary" id="add-coordinate" type="button">按坐标添加</button>
+          <p class="input-note" id="input-note" aria-live="polite">预填北京坐标，但不会替你先加入行程。</p>
+        </section>
+
+        <section class="detail-block" aria-labelledby="basis-title">
+          <h2 id="basis-title">计算口径</h2>
+          <dl class="basis-list">
+            <div><dt>平均地球半径</dt><dd>6 371 008.8 m</dd></div>
+            <div><dt>距离</dt><dd>haversine 大圆距离</dd></div>
+            <div><dt>太阳时差</dt><dd>经差 15° ≈ 1 小时</dd></div>
+            <div><dt>坐标顺序</dt><dd>[经度, 纬度]</dd></div>
+          </dl>
+          <p class="boundary">太阳时差只由经度估算，不等于行政时区；法定时间还受国界、政策与夏令时影响。</p>
+        </section>
+
+        <section class="detail-block legend" aria-labelledby="legend-title">
+          <h2 id="legend-title">图例与数据来源</h2>
           <ul>
             <li><i class="swatch ocean-swatch"></i>海洋 <code>#0B3D5C</code></li>
             <li><i class="swatch land-swatch"></i>陆地 <code>#E8DCC8</code></li>
@@ -124,33 +139,36 @@
             <li><i class="swatch graticule-swatch"></i>经纬网 <code>#94A3B8</code></li>
             <li><i class="swatch night-swatch"></i>半透明夜半球</li>
           </ul>
-          <dl class="readout">
-            <div><dt>中心视角</dt><dd id="center-readout">[20.0°, 15.0°]</dd></div>
-            <div><dt>太阳直射点</dt><dd id="subsolar-readout">—</dd></div>
-            <div><dt>昼夜分界</dt><dd id="terminator-readout">按日期推算中</dd></div>
-          </dl>
           <p class="source">来源：Natural Earth 4.1.0 地理数据（公共领域）</p>
           <p class="source">world-atlas 2.0.2 TopoJSON 再分发（ISC）</p>
-        </aside>
+        </section>
       </div>
 
-      <div class="basis-line" id="route-basis">零个用户目的地；离线陆地、国界、经纬网与当日昼夜分界已装载。</div>
+      <section class="route-detail" aria-labelledby="route-title">
+        <div class="route-head">
+          <h2 id="route-title">站序路线</h2>
+          <p id="route-basis">零个用户目的地；离线陆地、国界、经纬网与当日昼夜分界已装载。</p>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>站序</th><th>目的地</th><th>CRS84 坐标 [经度, 纬度]</th><th>昼夜</th><th>本段</th><th>累计</th><th>相对起点太阳时差</th></tr></thead>
+            <tbody id="route-rows"></tbody>
+          </table>
+          <p class="empty-row" id="empty-row">还没有用户目的地；地球上的昼夜与国界不是示例行程。</p>
+        </div>
+      </section>
 
-      <div class="detail">
-        <table>
-          <thead><tr><th>站序</th><th>目的地</th><th>CRS84 坐标 [经度, 纬度]</th><th>昼夜</th><th>本段</th><th>累计</th><th>相对起点太阳时差</th></tr></thead>
-          <tbody id="route-rows"></tbody>
-        </table>
-        <p class="empty-row" id="empty-row">还没有用户目的地；地球上的昼夜与国界不是示例行程。</p>
-      </div>
-    </section>
-  </div>
-
-  <footer class="foot">
-    <button id="run-test" type="button">运行自测</button>
-    <span id="test-out">未运行</span>
-    <ul id="test-detail"></ul>
-  </footer>
+      <section class="selftest" aria-labelledby="selftest-title">
+        <div>
+          <h2 id="selftest-title">运行自测</h2>
+          <p>检查球面距离、太阳位置、投影与离线地理数据。</p>
+        </div>
+        <button id="run-test" type="button">运行自测</button>
+        <span id="test-out">未运行</span>
+        <ul id="test-detail"></ul>
+      </section>
+    </div>
+  </section>
 </main>
 <script src="engine.js"></script>
 <script src="ui.js"></script>

@@ -23,6 +23,8 @@
   var terminatorLayer = document.getElementById("terminator-layer");
   var routeLayer = document.getElementById("route-layer");
   var markerLayer = document.getElementById("marker-layer");
+  var detailsPanel = document.getElementById("details-panel");
+  var detailsToggle = document.getElementById("details-toggle");
 
   function $(id) { return document.getElementById(id); }
   function svgNode(name, attrs) {
@@ -54,6 +56,13 @@
   function setInputNote(message, error) {
     $("input-note").textContent = message;
     $("input-note").classList.toggle("error", Boolean(error));
+  }
+
+  function setDetailsOpen(open) {
+    detailsPanel.hidden = !open;
+    detailsToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    if (open) $("close-details").focus();
+    else detailsToggle.focus();
   }
 
   function pathData(points, closePath) {
@@ -267,6 +276,18 @@
     state.centerLongitude = 20;
     state.centerLatitude = 15;
     render();
+  });
+
+  detailsToggle.addEventListener("click", function () {
+    setDetailsOpen(detailsPanel.hidden);
+  });
+
+  $("close-details").addEventListener("click", function () {
+    setDetailsOpen(false);
+  });
+
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && !detailsPanel.hidden) setDetailsOpen(false);
   });
 
   $("observation-time").addEventListener("change", function () {
