@@ -7,82 +7,17 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="app">
-  <header class="head">
-    <h1>看板</h1>
-    <p>筛选、指标与图形同屏；每个结果都能倒查实际、目标和分段</p>
-  </header>
-
-  <div class="workspace">
-    <aside class="controls">
-      <section aria-labelledby="source-title">
-        <h2 id="source-title">从哪儿取数</h2>
-        <div class="source-choices">
-          <button type="button" data-source="app">带入 app 已有数据</button>
-          <button type="button" data-source="paste">粘贴自己的数据</button>
-          <button type="button" data-source="manual">手工创建第一个指标</button>
-        </div>
-        <p id="source-message" class="note">选择一种取数方式；尚未取数时，右侧保持真实的缺失状态。</p>
-        <div id="source-editor"></div>
-      </section>
-
-      <section class="filters" aria-labelledby="filter-title">
-        <h2 id="filter-title">筛选区</h2>
-        <p class="section-purpose">限定当前查看的时段与地区，不改动源数据。</p>
-        <label for="period-filter">时段</label>
-        <select id="period-filter"><option value="">全部时段</option></select>
-        <label for="region-filter">地区</label>
-        <select id="region-filter"><option value="">全部地区</option></select>
-      </section>
-    </aside>
-
-    <main class="results">
-      <section class="metrics" aria-labelledby="metric-title">
-        <div class="section-heading">
-          <div>
-            <h2 id="metric-title">指标区</h2>
-            <p class="section-purpose">同时核对实际、目标与达成率。</p>
-          </div>
-          <strong id="current-metric">尚未取数</strong>
-        </div>
-        <div class="headline">
-          <div><span>实际</span><output id="actual-value">数据缺失</output></div>
-          <div><span>目标</span><output id="target-value">数据缺失</output></div>
-          <div><span>达成率</span><output id="rate-value">数据缺失</output></div>
-        </div>
-        <p id="metric-reason" class="basis">达成率 = 实际 / 目标；每个指标可以有自己的目标与分段。</p>
-      </section>
-
-      <section class="chart-block" aria-labelledby="chart-title">
-        <div class="section-heading">
-          <div>
-            <h2 id="chart-title">图形区</h2>
-            <p class="section-purpose">柱形是明细表的附加视图，不替代表格。</p>
-          </div>
-        </div>
-        <svg id="metric-chart" viewBox="0 0 720 240" role="img" aria-label="筛选结果的达成率柱形"></svg>
-        <p id="chart-empty" class="empty">数据缺失</p>
-      </section>
-
-      <section class="detail" aria-labelledby="detail-title">
-        <h2 id="detail-title">逐行明细</h2>
-        <div class="table-scroll">
-          <table>
-            <thead><tr><th>指标</th><th>时段</th><th>地区</th><th>实际</th><th>目标</th><th>达成率</th><th>状态</th></tr></thead>
-            <tbody id="metric-rows"></tbody>
-          </table>
-        </div>
-        <p id="detail-empty" class="empty">数据缺失；取数后会在这里逐行摊开。</p>
-      </section>
-    </main>
+<main class="poster">
+  <div id="tracks" class="tracks"></div>
+  <div id="axis" class="axis"></div>
+  <div id="intake" class="intake">
+    <label class="do" for="paste">粘贴你的指标数据</label>
+    <textarea id="paste" rows="5" spellcheck="false" autocomplete="off"></textarea>
+    <p id="intake-why" class="why" role="alert" hidden></p>
+    <button id="load" type="button">让它们长出来</button>
   </div>
-
-  <footer class="foot">
-    <button id="run-test" type="button">运行自测</button>
-    <span id="test-out">未运行</span>
-    <ul id="test-detail"></ul>
-  </footer>
-</div>
+  <p id="action" class="action" hidden></p>
+</main>
 <script src="engine.js"></script>
 <script src="ui.js"></script>
 </body>
