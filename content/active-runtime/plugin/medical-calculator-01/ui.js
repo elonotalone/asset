@@ -94,9 +94,28 @@
     el("egfr-details").hidden = activeMetric !== "egfr";
   }
 
+  function renderEgfrScale(value, stage) {
+    var scale = el("egfr-scale");
+    var available = activeMetric === "egfr" && typeof value === "number" && isFinite(value);
+    scale.hidden = !available;
+
+    if (!available) {
+      el("egfr-marker").style.removeProperty("left");
+      el("egfr-stage").textContent = "";
+      scale.removeAttribute("aria-label");
+      return;
+    }
+
+    var position = Math.max(0, Math.min(value, 120)) / 120 * 100;
+    el("egfr-marker").style.left = position + "%";
+    el("egfr-stage").textContent = "参考分段 " + stage;
+    scale.setAttribute("aria-label", "eGFR " + value.toFixed(1) + "，参考分段 " + stage + "，位于横向刻度的 " + Math.round(position) + "% 位置");
+  }
+
   function render() {
     var values = valuesFromPage();
-    var results = displayResults(E.calculate(values));
+    var calculated = E.calculate(values);
+    var results = displayResults(calculated);
     var metric = metrics[activeMetric];
     var activeValue = results[activeMetric];
 
@@ -107,6 +126,7 @@
     el("hero-value").className = "hero-value" + (activeValue === null ? " is-empty" : "");
     el("hero-value").setAttribute("aria-label", activeValue === null ? "尚未计算" : metric.name + " " + activeValue + " " + metric.unit);
     renderDetails(metric);
+    renderEgfrScale(calculated.egfr, calculated.egfrStage);
 
     Object.keys(metrics).forEach(function (id) {
       el(id + "-mini").textContent = results[id] === null ? "—" : results[id];

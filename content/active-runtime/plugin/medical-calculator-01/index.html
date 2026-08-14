@@ -35,6 +35,21 @@
       <h2 id="hero-name">体质指数 BMI</h2>
       <p id="hero-unit" class="hero-unit">kg/m²</p>
 
+      <div id="egfr-scale" class="egfr-scale" role="img" hidden>
+        <div class="egfr-scale-track">
+          <div class="egfr-scale-band" aria-hidden="true">
+            <span class="stage-g5"></span>
+            <span class="stage-g4"></span>
+            <span class="stage-g3b"></span>
+            <span class="stage-g3a"></span>
+            <span class="stage-g2"></span>
+            <span class="stage-g1"></span>
+          </div>
+          <span id="egfr-marker" class="egfr-marker" aria-hidden="true"></span>
+        </div>
+        <p id="egfr-stage" class="egfr-stage" aria-live="polite"></p>
+      </div>
+
       <button id="details-toggle" class="details-toggle" type="button" aria-expanded="false" aria-controls="metric-details">
         口径与适用范围
       </button>
