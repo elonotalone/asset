@@ -210,12 +210,28 @@ check("工龄填出范围时就地说清要填什么，链尾不给数", () => {
   assert.equal(text("#labor-amount"), "600,000.00");
 });
 
-check("结论下面只有一行淡字，把口径的年份和「不构成法律意见」一起说了", () => {
+check("结论下面只有一行淡字，把适用地区、口径的年份和「不构成法律意见」一起说了", () => {
   const edge = text("#chain-labor .edge");
+  assert.match(edge, /中国大陆/);
   assert.match(edge, /2013 年修订的《劳动合同法》公开口径/);
   assert.match(edge, /不构成法律意见/);
   assert.match(edge, /结果会变/);
   assert.equal(doc.querySelectorAll("#chain-labor .edge").length, 1, "淡字不止一行");
+});
+
+/*
+ * 适用地区边界是设计文档 §0 点名要「直接读到」的两件事之一（另一件是不构成法律意见）。
+ * 它没有面板也没有标题，就靠这一行脚注，所以三条链各自都要能读到，一条都不能漏。
+ */
+check("三条链的脚注都写着适用地区，没有一条只剩免责声明", () => {
+  const edges = [...doc.querySelectorAll(".chain .edge")];
+  assert.equal(edges.length, 3, "不是每条链一行淡字");
+  for (const edge of edges) {
+    const line = edge.textContent.replace(/\s+/g, " ").trim();
+    assert.match(line, /中国大陆/, `这行淡字没写适用地区：${line}`);
+    assert.match(line, /不构成法律意见/, `这行淡字没写不构成法律意见：${line}`);
+    assert.equal(edge.querySelectorAll("*").length, 0, "淡字里又长出了标题或面板");
+  }
 });
 
 /* ---------- 换一件事：加班工资 ---------- */
