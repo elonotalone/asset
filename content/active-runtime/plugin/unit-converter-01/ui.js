@@ -1,171 +1,124 @@
-/*
- * 换算器 · 界面层
- *
- * 安全（红线，改之前先读 docs/design-guides/plugin/_INDEX.md 末尾两条）：
- *   - 全程 createElement + textContent，**没有一处 innerHTML**。
- *     跨仓扫描器 UC-4-INNER-HTML-ASSIGN 会扫 asset/public/works/**，这里必须是干净的。
- *   - 不碰 localStorage / cookie / parent / top：插件跑在不透明源里，碰了当场抛 SecurityError。
- *   - 不发任何网络请求，不引用任何外部资源。
- */
 (function () {
   "use strict";
 
   var E = window.UnitConverterEngine;
 
-  var state = {
-    cat: E.DEFAULT.cat,
-    from: E.DEFAULT.from,
-    raw: String(E.DEFAULT.value)
+  function el(id) { return document.getElementById(id); }
+
+  var pair = el("pair");
+  var bridge = el("bridge");
+  var relation = el("relation");
+  var sides = {
+    left: { box: el("side-left"), num: el("value-left"), unit: el("unit-left"), role: el("role-left") },
+    right: { box: el("side-right"), num: el("value-right"), unit: el("unit-right"), role: el("role-right") }
   };
 
-  var els = {};
+  /** 当前正在被编辑的那一端；另一端是跟着变的结果。 */
+  var source = "left";
+  var other = function (which) { return which === "left" ? "right" : "left"; };
 
-  function el(tag, cls, text) {
-    var node = document.createElement(tag);
-    if (cls) node.className = cls;
-    if (text !== undefined && text !== null) node.textContent = String(text);
-    return node;
+  function unitText(unit) {
+    return unit.label + "（" + unit.symbol + "）";
   }
 
-  function clear(node) {
-    while (node.firstChild) node.removeChild(node.firstChild);
-  }
-
-  /* ---------- 类别 ---------- */
-
-  function buildCategories() {
-    clear(els.cats);
+  /** 单位下拉按量纲分组：用户点单位名就换单位，量纲随之确定，不另立类别栏。 */
+  function fillUnitSelect(select) {
     E.CATEGORIES.forEach(function (cat) {
-      var b = el("button", "cat", cat.label);
-      b.type = "button";
-      b.setAttribute("aria-pressed", cat.id === state.cat ? "true" : "false");
-      b.addEventListener("click", function () {
-        if (state.cat === cat.id) return;
-        state.cat = cat.id;
-        state.from = cat.units[0].id;
-        buildCategories();
-        buildUnitPicker();
-        render();
+      var group = document.createElement("optgroup");
+      group.label = cat.label;
+      cat.units.forEach(function (unit) {
+        var option = document.createElement("option");
+        option.value = unit.id;
+        option.textContent = unitText(unit);
+        group.appendChild(option);
       });
-      els.cats.appendChild(b);
+      select.appendChild(group);
     });
   }
 
-  function buildUnitPicker() {
-    var cat = E.findCategory(state.cat);
-    clear(els.from);
-    cat.units.forEach(function (u) {
-      var o = el("option", null, u.label + "（" + E.symbolOf(u.id) + "）");
-      o.value = u.id;
-      if (u.id === state.from) o.selected = true;
-      els.from.appendChild(o);
-    });
+  function fitNumber(node, text) {
+    node.classList.remove("long", "longer");
+    if (text.length > 18) node.classList.add("longer");
+    else if (text.length > 11) node.classList.add("long");
   }
 
-  /* ---------- 结果 ---------- */
+  /** 结果那一端换数时滚一下：让人看见哪一端是输入、哪一端是响应。 */
+  function roll(node) {
+    node.classList.add("rolling");
+    window.setTimeout(function () { node.classList.remove("rolling"); }, 20);
+  }
 
-  function parseValue(raw) {
-    var s = String(raw).trim().replace(/[,\s]/g, "");
-    if (s === "" || s === "-" || s === "+" || s === ".") return null;
-    if (!/^[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?$/.test(s)) return null;
-    var n = Number(s);
-    return isFinite(n) ? n : null;
+  function writeResult(which, text, waiting) {
+    var node = sides[which].num;
+    if (node.value === text) return;
+    roll(node);
+    node.value = text;
+    node.classList.toggle("waiting", waiting === true);
+    fitNumber(node, text);
+  }
+
+  function markRoles() {
+    sides[source].role.textContent = "原数";
+    sides[other(source)].role.textContent = "结果";
   }
 
   function render() {
-    var cat = E.findCategory(state.cat);
-    var value = parseValue(state.raw);
+    var fromId = sides[source].unit.value;
+    var toId = sides[other(source)].unit.value;
+    markRoles();
 
-    clear(els.rows);
-    clear(els.badInput);
+    var word = E.relationOf(fromId, toId);
+    relation.textContent = word;
+    bridge.setAttribute("data-exact", word === "精确定义" ? "true" : "false");
 
+    var value = E.parse(sides[source].num.value);
     if (value === null) {
-      els.badInput.appendChild(
-        document.createTextNode("等一个数。支持小数、负数与 1.5e3 这种写法。")
-      );
+      writeResult(other(source), "等一个数", true);
       return;
     }
-
-    var rows = E.convertAll(state.cat, state.from, value);
-    rows.forEach(function (r) {
-      var row = el("div", "row");
-
-      row.appendChild(el("span", "name", r.label));
-      row.appendChild(el("span", "num", E.format(r.value)));
-      row.appendChild(el("span", "sym", r.symbol));
-
-      var fine = el("div", "fine");
-      fine.appendChild(
-        document.createTextNode(
-          "因子 " + E.format(r.factor) + (r.offset ? "，偏移 " + E.format(r.offset) : "") +
-          " · 基准 " + r.baseUnit + " · "
-        )
-      );
-      fine.appendChild(
-        el("span", r.exact ? "mark-exact" : "mark-approx", r.exact ? "精确" : "近似")
-      );
-      if (r.note) fine.appendChild(document.createTextNode(" · " + r.note));
-      if (r.isSource) {
-        fine.appendChild(el("span", "self", " · 这一行就是你输入的量"));
-      }
-      row.appendChild(fine);
-
-      els.rows.appendChild(row);
-    });
-
-    els.basis.textContent =
-      "本类基准单位 " + cat.base + "。线性单位按 基准 = 数值 × 因子 换算；" +
-      "温度这类仿射单位还要加偏移，反向为（基准 − 偏移）÷ 因子。";
+    var out = E.convert(fromId, value, toId);
+    writeResult(other(source), E.format(out.value), false);
+    fitNumber(sides[source].num, sides[source].num.value);
   }
 
-  /* ---------- 自测：跑的是内核自带那张用例表，和 node 自测同一张 ---------- */
-
-  function runTest() {
-    var r = E.runSelfTest();
-    els.testOut.textContent = r.passed + " / " + r.total + " 通过";
-    clear(els.testDetail);
-    r.failures.forEach(function (f) {
-      els.testDetail.appendChild(el("li", null, f.name + " —— " + f.why));
-    });
-    if (r.failures.length === 0) {
-      els.testDetail.appendChild(
-        el("li", null, "期望值全部抄自规格「已查证的知识」，不是回填的。")
-      );
+  /** 换到另一个量纲时，另一端落到这一对的默认搭档上，画面仍然只有一对数。 */
+  function alignCategories(changed) {
+    var changedUnit = sides[changed].unit.value;
+    var partnerSide = other(changed);
+    var here = E.categoryOfUnit(changedUnit);
+    var there = E.categoryOfUnit(sides[partnerSide].unit.value);
+    if (here && there && here.id === there.id) {
+      if (sides[partnerSide].unit.value !== changedUnit) return;
     }
+    sides[partnerSide].unit.value = E.partnerOf(changedUnit);
   }
-
-  /* ---------- 装配 ---------- */
 
   function mount() {
-    els.cats = document.getElementById("cats");
-    els.from = document.getElementById("from");
-    els.value = document.getElementById("value");
-    els.rows = document.getElementById("rows");
-    els.badInput = document.getElementById("bad-input");
-    els.basis = document.getElementById("basis");
-    els.testOut = document.getElementById("test-out");
-    els.testDetail = document.getElementById("test-detail");
-
-    els.value.value = state.raw;
-
-    els.value.addEventListener("input", function () {
-      state.raw = els.value.value;
-      render();
+    ["left", "right"].forEach(function (which) {
+      fillUnitSelect(sides[which].unit);
+      sides[which].num.addEventListener("input", function () {
+        source = which;
+        render();
+      });
+      sides[which].num.addEventListener("focus", function () {
+        source = which;
+        markRoles();
+      });
+      sides[which].unit.addEventListener("change", function () {
+        alignCategories(which);
+        render();
+      });
     });
-    els.from.addEventListener("change", function () {
-      state.from = els.from.value;
-      render();
-    });
-    document.getElementById("run-test").addEventListener("click", runTest);
 
-    buildCategories();
-    buildUnitPicker();
+    var start = E.DEFAULT;
+    sides.left.unit.value = start.from;
+    sides.right.unit.value = start.to;
+    sides.left.num.value = E.format(start.value);
+    fitNumber(sides.left.num, sides.left.num.value);
     render();
+    pair.setAttribute("data-ready", "true");
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", mount);
-  } else {
-    mount();
-  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mount);
+  else mount();
 })();
