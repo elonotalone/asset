@@ -63,14 +63,53 @@
       <div class="globe-shell">
         <div class="globe-stage">
           <svg id="world-globe" viewBox="0 0 620 560" role="img" aria-label="可拖动、可点击的离线地球仪">
-            <defs><clipPath id="globe-clip"><circle cx="310" cy="280" r="245"></circle></clipPath></defs>
+            <defs>
+              <clipPath id="globe-clip"><circle cx="310" cy="280" r="245"></circle></clipPath>
+              <radialGradient id="ocean-paint" cx="32%" cy="24%" r="78%">
+                <stop offset="0" stop-color="#166f9b"></stop>
+                <stop offset=".38" stop-color="#093b67"></stop>
+                <stop offset=".76" stop-color="#041a38"></stop>
+                <stop offset="1" stop-color="#010916"></stop>
+              </radialGradient>
+              <radialGradient id="land-paint" cx="28%" cy="21%" r="92%">
+                <stop offset="0" stop-color="#c9d2bd"></stop>
+                <stop offset=".42" stop-color="#809982"></stop>
+                <stop offset=".74" stop-color="#435f59"></stop>
+                <stop offset="1" stop-color="#1b2c31"></stop>
+              </radialGradient>
+              <radialGradient id="surface-shade" cx="31%" cy="24%" r="72%">
+                <stop offset="0" stop-color="#a7e2ff" stop-opacity=".13"></stop>
+                <stop offset=".57" stop-color="#07182d" stop-opacity="0"></stop>
+                <stop offset=".83" stop-color="#010611" stop-opacity=".28"></stop>
+                <stop offset="1" stop-color="#00040c" stop-opacity=".78"></stop>
+              </radialGradient>
+              <filter id="atmosphere-blur" x="-25%" y="-25%" width="150%" height="150%">
+                <feGaussianBlur stdDeviation="11"></feGaussianBlur>
+              </filter>
+              <filter id="land-relief" x="-8%" y="-8%" width="116%" height="116%">
+                <feTurbulence type="fractalNoise" baseFrequency=".018 .062" numOctaves="3" seed="27" result="terrain"></feTurbulence>
+                <feColorMatrix in="terrain" type="saturate" values="0" result="relief"></feColorMatrix>
+                <feComposite in="relief" in2="SourceGraphic" operator="in" result="texture"></feComposite>
+                <feBlend in="SourceGraphic" in2="texture" mode="soft-light"></feBlend>
+              </filter>
+              <filter id="night-soft" x="-6%" y="-6%" width="112%" height="112%">
+                <feGaussianBlur stdDeviation="4.8"></feGaussianBlur>
+              </filter>
+              <filter id="route-glow" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="3.2" result="blur"></feGaussianBlur>
+                <feMerge><feMergeNode in="blur"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge>
+              </filter>
+            </defs>
+            <circle class="atmosphere-halo" cx="310" cy="280" r="251"></circle>
+            <circle class="atmosphere-rim" cx="310" cy="280" r="247"></circle>
             <circle class="ocean" cx="310" cy="280" r="245"></circle>
             <g id="graticule-layer" clip-path="url(#globe-clip)"></g>
-            <g id="land-layer" clip-path="url(#globe-clip)"></g>
+            <g id="land-layer" clip-path="url(#globe-clip)" filter="url(#land-relief)"></g>
             <g id="border-layer" clip-path="url(#globe-clip)"></g>
-            <g id="night-layer" clip-path="url(#globe-clip)"></g>
+            <g id="night-layer" clip-path="url(#globe-clip)" filter="url(#night-soft)"></g>
             <g id="terminator-layer" clip-path="url(#globe-clip)"></g>
-            <g id="route-layer" clip-path="url(#globe-clip)"></g>
+            <circle class="surface-shade" cx="310" cy="280" r="245" clip-path="url(#globe-clip)"></circle>
+            <g id="route-layer" clip-path="url(#globe-clip)" filter="url(#route-glow)"></g>
             <g id="marker-layer" clip-path="url(#globe-clip)"></g>
             <circle class="limb" cx="310" cy="280" r="245"></circle>
           </svg>

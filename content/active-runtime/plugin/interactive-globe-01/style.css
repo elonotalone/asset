@@ -204,16 +204,25 @@ h1 { margin: 0; font-size: 24px; letter-spacing: .04em; }
 }
 #world-globe.dragging { cursor: grabbing; }
 
-.ocean { fill: #0b3d5c; }
-.limb { fill: none; stroke: #193748; stroke-width: 2.4; }
-.graticule-line { fill: none; stroke: #94a3b8; stroke-width: .65; opacity: .62; }
-.land-shape { fill: #e8dcc8; stroke: none; }
-.border-line { fill: none; stroke: #4a5568; stroke-width: .56; opacity: .82; }
-.night-band { fill: rgba(5, 12, 24, .48); shape-rendering: crispEdges; }
-.terminator-line { fill: none; stroke: #d8e2e9; stroke-width: 1.2; stroke-dasharray: 5 5; opacity: .95; }
-.route-line { fill: none; stroke: #f4b943; stroke-width: 2.5; stroke-linecap: round; }
-.marker-dot { fill: #f26b3a; stroke: #fff; stroke-width: 1.6; }
-.marker-label { fill: #fff; stroke: #173346; stroke-width: 3; paint-order: stroke; font-size: 12px; font-weight: 750; }
+.atmosphere-halo {
+  fill: none;
+  stroke: #309bff;
+  stroke-width: 14;
+  opacity: .58;
+  filter: url(#atmosphere-blur);
+}
+.atmosphere-rim { fill: none; stroke: #80d4ff; stroke-width: 2.2; opacity: .76; }
+.ocean { fill: url(#ocean-paint); }
+.surface-shade { fill: url(#surface-shade); pointer-events: none; }
+.limb { fill: none; stroke: rgba(146, 222, 255, .5); stroke-width: 1.25; }
+.graticule-line { fill: none; stroke: #8fc8dc; stroke-width: .52; opacity: .2; }
+.land-shape { fill: url(#land-paint); stroke: none; }
+.border-line { fill: none; stroke: #b3d2cf; stroke-width: .48; opacity: .3; }
+.night-band { fill: rgba(0, 3, 13, .7); }
+.terminator-line { fill: none; stroke: #7bc8eb; stroke-width: 7; opacity: .08; filter: blur(2.5px); }
+.route-line { fill: none; stroke: #ffcf66; stroke-width: 2.15; stroke-linecap: round; }
+.marker-dot { fill: #ffd166; stroke: #fff8d4; stroke-width: 1.4; }
+.marker-label { fill: #f4fbff; stroke: #07111e; stroke-width: 3; paint-order: stroke; font-size: 12px; font-weight: 650; }
 
 .drag-note {
   position: absolute;
