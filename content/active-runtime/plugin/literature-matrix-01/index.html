@@ -7,49 +7,26 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<main class="app">
-  <header class="head">
-    <h1>文献矩阵</h1>
-    <p>从识别到最终纳入，任何汇总都能回到具体题录</p>
-  </header>
+<main class="sheet">
+  <p class="tally">
+    <output id="tally">0</output>
+    <span class="what">最终纳入</span>
+    <span id="unread" class="off" hidden></span>
+    <button id="unknown" class="off pick" type="button" hidden aria-pressed="false"></button>
+  </p>
 
-  <section class="workspace">
-    <aside class="setup" aria-label="题录导入与抽取设置">
-      <h2>粘贴题录</h2>
-      <p class="fine">每行用制表符或竖线分隔：作者年份、研究设计、研究对象、样本量、状态。也可在状态前补齐全部抽取字段。</p>
-      <textarea id="record-input" spellcheck="false" aria-label="粘贴题录" placeholder="例如：Chen 2024 | 随机对照试验 | 社区老年人 | 286 | 纳入"></textarea>
-      <button id="import-records" type="button">导入题录</button>
-      <p id="import-note" class="fine">首屏不预置任何示例论文；当前等待整批导入。</p>
+  <div class="scroll" id="scroll">
+    <table>
+      <thead id="head"></thead>
+      <tbody id="body"></tbody>
+    </table>
+  </div>
 
-      <h2>抽取字段</h2>
-      <p class="fine">用中文逗号分隔；可增删、改写后应用到表头。</p>
-      <textarea id="field-input" class="fields" spellcheck="false" aria-label="抽取字段"></textarea>
-      <button id="apply-fields" type="button">应用字段</button>
-
-      <h2>偏倚观察</h2>
-      <ul class="bias-basis" id="bias-basis"></ul>
-
-      <h2>状态图例</h2>
-      <div id="legend" class="legend"></div>
-    </aside>
-
-    <section class="ledger" aria-label="筛选流程与文献抽取表">
-      <div class="metrics" id="metrics"></div>
-      <div class="relations" id="relations"></div>
-      <div class="matrix-scroll">
-        <table>
-          <thead id="matrix-head"></thead>
-          <tbody id="matrix-body"></tbody>
-        </table>
-      </div>
-    </section>
-  </section>
-
-  <footer class="foot">
-    <button id="run-test" type="button">运行自测</button>
-    <span id="test-out">未运行</span>
-    <ul id="test-detail"></ul>
-  </footer>
+  <form class="paste" id="paste-form">
+    <textarea id="paste" rows="2" spellcheck="false" aria-label="把题录整批粘进来"
+      placeholder="Chen 2024 | 随机对照试验 | 社区老年人 | 286 | 纳入"></textarea>
+    <button id="import" type="submit">导入</button>
+  </form>
 </main>
 <script src="engine.js"></script>
 <script src="ui.js"></script>

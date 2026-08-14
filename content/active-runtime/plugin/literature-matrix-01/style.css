@@ -1,77 +1,179 @@
+/*
+ * 一张摊平的对照表：哑光纸色、无光、密而不挤，一把尺子跟着光标往下走。
+ * 竖线一律不画（顺着一列往下扫不该被绊住），横线轻到只是节奏。
+ */
 :root {
-  --ink: #181a1f;
-  --muted: #69707c;
-  --faint: #989fa9;
-  --line: #dfe2e6;
-  --rule: #aeb4bd;
-  --shade: #f6f7f8;
-  --accent: #315b74;
-  --included: #166534;
-  --excluded: #9f1239;
-  --pending: #a16207;
-  --bg: #fff;
-  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --paper: #f7f5f0;
+  --ink: #24211c;
+  --muted: #6f6858;
+  --faint: #9a9385;
+  --hair: #e3ded2;
+  --band: #efeade;
+  --edge: #cdc6b6;
+  --be-included: #2f5d3a;
+  --be-excluded: #8b3a34;
+  --be-pending: #866219;
   --sans: system-ui, -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
 }
 
 * { box-sizing: border-box; }
-html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink); font: 14px/1.5 var(--sans); }
-button, textarea { font: inherit; color: inherit; }
-.app { display: flex; flex-direction: column; min-height: 100vh; height: 100%; }
+html, body { margin: 0; height: 100%; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font: 15px/1.55 var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
 
-.head { display: flex; align-items: baseline; gap: 14px; padding: 14px 20px 11px; border-bottom: 1px solid var(--line); }
-.head h1 { margin: 0; font-size: 17px; font-weight: 650; }
-.head p { margin: 0; color: var(--muted); font-size: 12px; }
+.sheet { display: flex; flex-direction: column; height: 100%; min-height: 100vh; }
 
-.workspace { display: grid; grid-template-columns: 315px minmax(0, 1fr); flex: 1 1 auto; min-height: 0; }
-.setup { padding: 15px 18px; border-right: 1px solid var(--line); overflow-y: auto; }
-.setup h2 { margin: 0; padding: 13px 0 6px; font-size: 12px; color: var(--muted); letter-spacing: .06em; font-weight: 600; }
-.setup h2:first-child { padding-top: 0; }
-.fine { margin: 0 0 7px; color: var(--faint); font-size: 11px; }
-textarea { width: 100%; resize: vertical; border: 0; border-bottom: 1px solid var(--rule); background: transparent; padding: 5px 0; min-height: 92px; }
-textarea.fields { min-height: 66px; }
-textarea:focus { outline: 0; border-bottom-color: var(--accent); }
-button { appearance: none; border: 1px solid var(--line); background: transparent; padding: 5px 11px; cursor: pointer; font-size: 12px; }
-button:hover { border-color: var(--ink); }
-button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-#import-note { padding-top: 7px; }
+/* 头号结论：孤零零浮在表上方的一个数，不带边框，不结成卡片 */
+.tally {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0 12px;
+  margin: 0;
+  padding: 26px 30px 18px;
+}
+#tally {
+  font: 300 46px/1 var(--mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.01em;
+}
+.tally .what { color: var(--muted); }
 
-.bias-basis { margin: 0; padding: 0; list-style: none; font-size: 12px; color: var(--muted); }
-.bias-basis li { padding: 3px 0; border-bottom: 1px solid var(--line); }
-.legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; }
-.status { font-weight: 650; white-space: nowrap; }
-.status-included { color: var(--included); }
-.status-excluded { color: var(--excluded); }
-.status-pending { color: var(--pending); }
+/* 对不上的那一声就长在这个数旁边：它是错误本身，不配标题、不做面板 */
+.off {
+  color: var(--be-excluded);
+  font-size: 14px;
+  align-self: center;
+  background: none;
+  border: 0;
+  padding: 0;
+  font-family: inherit;
+  text-align: left;
+}
+.off.pick { cursor: pointer; text-decoration: underline; text-decoration-style: dotted; text-underline-offset: 4px; }
+.off.pick.on { text-decoration-style: solid; }
+.off.pick:focus-visible { outline: 2px solid var(--be-excluded); outline-offset: 3px; }
 
-.ledger { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
-.metrics { display: grid; grid-template-columns: repeat(7, minmax(90px, 1fr)); border-bottom: 1px solid var(--line); }
-.metric { padding: 13px 12px 10px; min-width: 0; }
-.metric + .metric { border-left: 1px solid var(--line); }
-.metric .k { color: var(--accent); font-size: 11px; white-space: nowrap; }
-.metric .v { display: block; font: 28px/1.2 var(--mono); text-align: right; font-variant-numeric: tabular-nums; }
-.relations { display: grid; grid-template-columns: repeat(5, minmax(150px, 1fr)); border-bottom: 1px solid var(--line); font: 11px/1.45 var(--mono); color: var(--muted); }
-.relation { padding: 7px 10px; }
-.relation + .relation { border-left: 1px solid var(--line); }
-.relation strong { display: block; color: var(--ink); font-weight: 500; }
-.relation.bad strong { color: var(--excluded); }
+.scroll { flex: 1 1 auto; overflow: auto; min-height: 180px; }
 
-.matrix-scroll { flex: 1 1 auto; overflow: auto; min-height: 220px; }
-table { border-collapse: collapse; min-width: 1600px; width: 100%; }
-th { position: sticky; top: 0; z-index: 1; background: var(--bg); border-bottom: 1px solid var(--rule); padding: 8px 10px 6px; text-align: left; color: var(--muted); font-size: 11px; font-weight: 500; white-space: nowrap; }
-td { padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; min-width: 110px; }
-tbody tr:nth-child(even) td { background: var(--shade); }
-td.num { font-family: var(--mono); text-align: right; font-variant-numeric: tabular-nums; }
-.empty td { height: 190px; text-align: center; color: var(--faint); vertical-align: middle; background: var(--bg) !important; }
-.bias-cell { min-width: 230px; color: var(--muted); font-size: 11px; }
+table { border-collapse: separate; border-spacing: 0; width: 100%; }
 
-.foot { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; border-top: 1px solid var(--line); padding: 8px 20px; color: var(--muted); font-size: 11px; }
-#test-detail { margin: 0; padding-left: 18px; }
+th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--paper);
+  border-bottom: 1px solid var(--edge);
+  padding: 0 14px 7px;
+  text-align: left;
+  vertical-align: bottom;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+th.num { text-align: right; }
+th.status { min-width: 148px; }
+th.bias { min-width: 150px; }
+th.add { min-width: 96px; }
 
-@media (max-width: 840px) {
-  .app { height: auto; }
-  .workspace { grid-template-columns: 1fr; }
-  .setup { border-right: 0; border-bottom: 1px solid var(--line); }
-  .metrics, .relations { overflow-x: auto; grid-template-columns: repeat(7, 120px); }
-  .relations { grid-template-columns: repeat(5, 190px); }
+/* 第一列横向滚动时钉在左边：扫到第八列还知道自己在看哪一篇 */
+th.name { z-index: 3; left: 0; }
+td.name { position: sticky; left: 0; z-index: 1; background: var(--paper); }
+th.name, td.name { border-right: 1px solid var(--hair); }
+
+td {
+  padding: 5px 8px;
+  border-bottom: 1px solid var(--hair);
+  vertical-align: top;
+}
+td.wide { min-width: 200px; }
+
+/* 尺子：光标停在哪一行，那一行浮起极淡的一条通条底色，亮过不留痕 */
+tbody tr:hover td, tbody tr:hover td.name { background: var(--band); }
+
+.cell, .colname {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  padding: 3px 6px;
+  margin: 0;
+  border-radius: 0;
+}
+.cell:focus, .colname:focus { outline: 0; box-shadow: inset 0 -1px 0 var(--edge); }
+.colname { color: var(--muted); font-weight: 500; }
+.colname::placeholder { color: var(--faint); }
+
+textarea.cell { resize: none; overflow: auto; min-height: 1.55em; display: block; }
+
+td.num .cell {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* 空的格子不是真空白，是一枚统一的短横 —— 整张表哪里有洞一眼看得见 */
+.cell.hole { text-align: center; }
+.cell::placeholder { color: var(--faint); opacity: 1; }
+
+/* 纸上仅有的一点彩：状态那一枚记号。形状之外才是颜色 */
+select.mark {
+  appearance: none;
+  -webkit-appearance: none;
+  font-weight: 500;
+  cursor: pointer;
+}
+.be-included { color: var(--be-included); }
+.be-excluded { color: var(--be-excluded); }
+.be-pending { color: var(--be-pending); }
+
+tr.bare td {
+  height: 132px;
+  padding-left: 14px;
+  color: var(--muted);
+  vertical-align: middle;
+}
+
+/* 粘贴入口：表的附属，收在窄边上，不把画布切成两半 */
+.paste {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  padding: 10px 30px 14px;
+  border-top: 1px solid var(--hair);
+}
+#paste {
+  flex: 1 1 auto;
+  resize: vertical;
+  border: 0;
+  border-bottom: 1px solid var(--edge);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  padding: 4px 2px;
+  min-height: 2.4em;
+}
+#paste::placeholder { color: var(--faint); }
+#paste:focus { outline: 0; border-bottom-color: var(--ink); }
+#import {
+  border: 1px solid var(--edge);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  padding: 5px 18px;
+  cursor: pointer;
+}
+#import:hover { border-color: var(--ink); }
+#import:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+@media (max-width: 720px) {
+  .tally { padding: 18px 16px 12px; }
+  .paste { padding: 10px 16px 12px; }
 }
