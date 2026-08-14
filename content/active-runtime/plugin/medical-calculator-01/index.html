@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>医疗计算器</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="clinic-sheet">
+    <nav class="metric-strip" aria-label="选择计算指标">
+      <button class="metric-tab is-current" type="button" data-metric="bmi" aria-current="true">
+        <span>体质指数</span>
+        <output id="bmi-mini" hidden></output>
+      </button>
+      <button class="metric-tab" type="button" data-metric="bsa">
+        <span>体表面积</span>
+        <output id="bsa-mini" hidden></output>
+      </button>
+      <button class="metric-tab" type="button" data-metric="egfr">
+        <span>eGFR</span>
+        <output id="egfr-mini" hidden></output>
+      </button>
+      <button class="metric-tab" type="button" data-metric="calcium">
+        <span>校正钙</span>
+        <output id="calcium-mini" hidden></output>
+      </button>
+    </nav>
+
+    <section class="focus" aria-labelledby="metric-name">
+      <div class="result-zone">
+        <output id="hero-value" class="hero-value" data-empty="true" aria-live="polite"></output>
+
+        <div class="result-caption">
+          <h1 id="metric-name">体质指数 BMI</h1>
+          <span id="hero-unit">kg/m²</span>
+        </div>
+
+        <div id="egfr-scale" class="egfr-scale" role="img" hidden>
+          <div class="scale-track" aria-hidden="true">
+            <span id="scale-marker" class="scale-marker">
+              <span id="scale-stage" class="scale-stage"></span>
+            </span>
+          </div>
+        </div>
+
+        <p class="disclaimer">不用于诊断或处方</p>
+      </div>
+
+      <section class="action" aria-labelledby="prompt">
+        <p id="prompt" class="prompt">先说身高和体重</p>
+
+        <div class="input-group" data-inputs="body" role="group" aria-labelledby="prompt">
+          <label>
+            <span>身高</span>
+            <span class="entry">
+              <input id="height" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" aria-label="身高，厘米">
+              <b>cm</b>
+            </span>
+          </label>
+          <label>
+            <span>体重</span>
+            <span class="entry">
+              <input id="weight" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" aria-label="体重，千克">
+              <b>kg</b>
+            </span>
+          </label>
+        </div>
+
+        <div class="input-group" data-inputs="egfr" role="group" aria-labelledby="prompt" hidden>
+          <label>
+            <span>年龄</span>
+            <span class="entry">
+              <input id="age" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" aria-label="年龄，岁">
+              <b>岁</b>
+            </span>
+          </label>
+          <label>
+            <span>性别参数</span>
+            <span class="entry select-entry">
+              <select id="sex" aria-label="eGFR 公式性别参数">
+                <option value="">请选择</option>
+                <option value="female">女</option>
+                <option value="male">男</option>
+              </select>
+            </span>
+          </label>
+          <label class="creatinine-field">
+            <span>血清肌酐</span>
+            <span class="entry creatinine-entry">
+              <input id="creatinine" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" aria-label="血清肌酐">
+              <select id="creatinine-unit" aria-label="血清肌酐单位">
+                <option value="mgdl">mg/dL</option>
+                <option value="umoll">µmol/L</option>
+              </select>
+            </span>
+          </label>
+        </div>
+
+        <div class="input-group" data-inputs="calcium" role="group" aria-labelledby="prompt" hidden>
+          <label>
+            <span>测得钙</span>
+            <span class="entry">
+              <input id="calcium" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" aria-label="测得钙，毫克每分升">
+              <b>mg/dL</b>
+            </span>
+          </label>
+          <label>
+            <span>白蛋白</span>
+            <span class="entry">
+              <input id="albumin" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" aria-label="白蛋白，克每分升">
+              <b>g/dL</b>
+            </span>
+          </label>
+        </div>
+
+        <p id="input-message" class="input-message" aria-live="polite" hidden></p>
+      </section>
+    </section>
+  </main>
+
+  <script src="engine.js"></script>
+  <script src="ui.js"></script>
+</body>
+</html>
