@@ -18,6 +18,114 @@
       "kind": "plugin",
       "source": "content/active-runtime/plugin/unit-converter-01",
       "entry": "index.html"
+    },
+    {
+      "id": "annotatable-city-map-01",
+      "kind": "plugin",
+      "source": "content/active-runtime/plugin/annotatable-city-map-01",
+      "entry": "index.html"
+    },
+    {
+      "id": "concept-knowledge-graph-01",
+      "kind": "plugin",
+      "source": "content/active-runtime/plugin/concept-knowledge-graph-01",
+      "entry": "index.html"
+    },
+    {
+      "id": "contract-assembly-01",
+      "kind": "plugin",
+      "source": "content/active-runtime/plugin/contract-assembly-01",
+      "entry": "index.html"
+    },
+    {
+      "id": "dialogue-branch-script-01",
+      "kind": "plugin",
+      "source": "content/active-runtime/plugin/dialogue-branch-script-01",
+      "entry": "index.html"
+    },
+    {
+      "id": "executable-notebook-01",
+      "kind": "plugin",
+      "source": "content/active-runtime/plugin/executable-notebook-01",
+      "entry": "index.html"
+    },
+    {
+      "id": "floorplan-annotation-01",
+      "kind": "plugin",
+      "source": "content/active-runtime/plugin/floorplan-annotation-01",
+      "entry": "index.html"
+    },
+    {
+      "id": "formula-derivation-walkthrough-01",
+      "kind": "plugin",
+      "source": "content/active-runtime/plugin/formula-derivation-walkthrough-01",
+      "entry": "index.html"
+    },
+    {
+      "id": "interactive-globe-01",
+      "kind": "plugin",
+      "source": "content/active-runtime/plugin/interactive-globe-01",
+      "entry": "index.html"
+    },
+    {
+      "id": "ledger-register-01",
+      "kind": "plugin",
+      "source": "content/active-runtime/plugin/ledger-register-01",
+      "entry": "index.html"
+    },
+    {
+      "id": "legal-calculator-01",
+      "kind": "plugin",
+      "source": "content/active-runtime/plugin/legal-calculator-01",
+      "entry": "index.html"
+    },
+    {
+      "id": "literature-matrix-01",
+      "kind": "plugin",
+      "source": "content/active-runtime/plugin/literature-matrix-01",
+      "entry": "index.html"
+    },
+    {
+      "id": "medical-calculator-01",
+      "kind": "plugin",
+      "source": "content/active-runtime/plugin/medical-calculator-01",
+      "entry": "index.html"
+    },
+    {
+      "id": "metrics-dashboard-01",
+      "kind": "plugin",
+      "source": "content/active-runtime/plugin/metrics-dashboard-01",
+      "entry": "index.html"
+    },
+    {
+      "id": "relationship-graph-01",
+      "kind": "plugin",
+      "source": "content/active-runtime/plugin/relationship-graph-01",
+      "entry": "index.html"
+    },
+    {
+      "id": "self-test-quiz-01",
+      "kind": "plugin",
+      "source": "content/active-runtime/plugin/self-test-quiz-01",
+      "entry": "index.html"
+    },
+    {
+      "id": "spaced-repetition-scheduler-01",
+      "kind": "plugin",
+      "source": "content/active-runtime/plugin/spaced-repetition-scheduler-01",
+      "entry": "index.html"
+    },
+    {
+      "id": "three-statement-model-01",
+      "kind": "plugin",
+      "source": "content/active-runtime/plugin/three-statement-model-01",
+      "entry": "index.html"
+    },
+    {
+      "id": "voiceover-script-01",
+      "kind": "plugin",
+      "source": "content/active-runtime/plugin/voiceover-script-01",
+      "entry": "index.html"
     }
   ]
 }
