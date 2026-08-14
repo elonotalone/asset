@@ -234,6 +234,62 @@ select:focus-visible,
   stroke: #63818d;
 }
 
+#graph.path-focus-active .graph-connection,
+#graph.path-focus-active .graph-node {
+  opacity: .09;
+  filter: saturate(.25);
+}
+
+#graph.path-focus-active .graph-connection.is-path {
+  color: #168fb9;
+  opacity: 1;
+  filter: drop-shadow(0 0 6px rgba(22, 143, 185, .62));
+}
+
+#graph.path-focus-active .graph-connection.is-path .graph-edge {
+  stroke-width: 3;
+  stroke-dasharray: 11 8;
+  animation: path-flow .9s linear infinite;
+}
+
+#graph.path-focus-active .graph-connection.is-path .edge-label {
+  fill: #126985;
+  font-weight: 700;
+}
+
+#graph.path-focus-active .graph-node.is-path {
+  color: #123d4e;
+  opacity: 1;
+  filter: drop-shadow(0 0 13px rgba(28, 151, 192, .36));
+}
+
+#graph.path-focus-active .graph-node.is-path .node-aura {
+  fill: rgba(205, 246, 255, .62);
+  stroke: rgba(34, 157, 197, .42);
+  stroke-width: 1;
+  animation: path-node-glow 1.45s ease-in-out infinite;
+}
+
+#graph.path-focus-active .graph-node.is-path .node-card {
+  fill: #fbfeff;
+  stroke: #168fb9;
+  stroke-width: 2.6;
+  stroke-dasharray: none;
+}
+
+#graph.path-focus-active .graph-node.is-path .node-status {
+  fill: #16718f;
+  font-weight: 700;
+}
+
+@keyframes path-flow {
+  to { stroke-dashoffset: -38; }
+}
+
+@keyframes path-node-glow {
+  50% { fill: rgba(205, 246, 255, .92); stroke: rgba(34, 157, 197, .72); }
+}
+
 .headline {
   position: absolute;
   z-index: 6;
@@ -347,6 +403,52 @@ select:focus-visible,
 }
 
 .quiet-action:hover { border-color: var(--hairline); }
+
+.path-moment {
+  position: absolute;
+  z-index: 8;
+  left: 50%;
+  bottom: 34px;
+  width: min(720px, calc(100% - 72px));
+  padding: 14px 52px 15px 17px;
+  border: 1px solid rgba(32, 140, 177, .3);
+  background: rgba(239, 249, 252, .9);
+  box-shadow: 0 15px 48px rgba(27, 111, 141, .17);
+  text-align: center;
+  transform: translateX(-50%);
+  backdrop-filter: blur(13px);
+}
+
+.path-moment span {
+  display: block;
+  margin-bottom: 4px;
+  color: #28738e;
+  font: 600 9px/1.2 var(--mono);
+  letter-spacing: .14em;
+}
+
+.path-moment strong {
+  display: block;
+  color: #16495c;
+  font-size: 12px;
+  font-weight: 580;
+  line-height: 1.55;
+}
+
+.path-moment button {
+  position: absolute;
+  top: 50%;
+  right: 13px;
+  padding: 3px 0;
+  border: 0;
+  border-bottom: 1px solid rgba(32, 110, 140, .22);
+  background: transparent;
+  color: var(--muted-ink);
+  font-size: 9px;
+  transform: translateY(-50%);
+}
+
+.path-moment button:hover { color: var(--ink); border-color: var(--bright-line); }
 
 .drawer-scrim {
   position: absolute;
@@ -604,6 +706,21 @@ select:focus-visible,
   }
   .first-step-line input { width: 100%; }
   .prerequisite-step { bottom: 22px; }
+  .path-moment {
+    bottom: 22px;
+    width: calc(100% - 44px);
+    padding-right: 17px;
+  }
+  .path-moment button {
+    position: static;
+    margin-top: 8px;
+    transform: none;
+  }
   .drawer-head,
   .drawer-scroll { padding-right: 18px; padding-left: 18px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #graph.path-focus-active .graph-connection.is-path .graph-edge,
+  #graph.path-focus-active .graph-node.is-path .node-aura { animation: none; }
 }

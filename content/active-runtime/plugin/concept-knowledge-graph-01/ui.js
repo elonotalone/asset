@@ -10,6 +10,7 @@
   state.pathFrom = "";
   state.pathTo = "";
   state.followupTarget = "";
+  state.activePath = null;
   var els = {};
   var SVG_NS = "http://www.w3.org/2000/svg";
 
@@ -86,6 +87,14 @@
     group.appendChild(svgElement("polygon", { points: points, "class": "graph-arrow" }));
   }
 
+  function pathContainsEdge(edge) {
+    if (!state.activePath || edge.kind !== E.REQUIRED) return false;
+    for (var index = 0; index < state.activePath.ids.length - 1; index++) {
+      if (state.activePath.ids[index] === edge.from && state.activePath.ids[index + 1] === edge.to) return true;
+    }
+    return false;
+  }
+
   function drawEdge(svg, edge, positions) {
     var a = positions[edge.from];
     var b = positions[edge.to];
@@ -100,8 +109,9 @@
     var endX = b.x - ux * 70;
     var endY = b.y - uy * 31;
     var related = edge.kind === E.RELATED;
+    var focusClass = state.activePath ? (pathContainsEdge(edge) ? " is-path" : " is-dimmed") : "";
     var group = svgElement("g", {
-      "class": "graph-connection" + (related ? " related" : " required"),
+      "class": "graph-connection" + (related ? " related" : " required") + focusClass,
       "data-from": edge.from,
       "data-to": edge.to,
       "data-kind": edge.kind
@@ -129,11 +139,13 @@
       return items.length ? items.map(function (edge) { return map[edge[key]].label; }).join("、") : "无";
     }
     els.selection.textContent = map[id].label + "｜必修前驱：" + names(incoming, "from") + "；必修后继：" + names(outgoing, "to") + "。";
+    setDrawer(true);
   }
 
   function drawNode(svg, node, stateRow, pos, analysis) {
+    var focusClass = state.activePath ? (state.activePath.ids.indexOf(node.id) !== -1 ? " is-path" : " is-dimmed") : "";
     var group = svgElement("g", {
-      "class": "graph-node",
+      "class": "graph-node" + focusClass,
       "data-id": node.id,
       "data-status": stateRow.status,
       role: "button",
@@ -162,6 +174,7 @@
 
   function renderGraph(analysis) {
     clear(els.graph);
+    els.graph.classList.toggle("path-focus-active", Boolean(state.activePath));
     var layout = analysis.layout;
     els.graph.setAttribute("viewBox", "0 0 " + layout.width + " " + layout.height);
     els.graph.setAttribute("preserveAspectRatio", "xMidYMid meet");
@@ -212,6 +225,8 @@
   }
 
   function renderPath() {
+    els.pathMoment.hidden = !state.activePath;
+    if (state.activePath) els.pathMomentText.textContent = state.activePath.labels.join(" → ");
     if (!state.nodes.length || !state.pathFrom || !state.pathTo) {
       els.pathResult.textContent = "尚未分层：先加入概念与必修关系。";
       return;
@@ -255,6 +270,7 @@
     var id = nextId();
     var node = { id: id, label: label, minutes: minutes, mastery: mastery, daysSinceReview: days };
     state.nodes.push(node);
+    state.activePath = null;
     state.edgeTo = id;
     state.pathTo = id;
     return node;
@@ -296,6 +312,7 @@
     if (!state.edges.some(function (edge) { return edge.from === fromNode.id && edge.to === targetId && edge.kind === E.REQUIRED; })) {
       state.edges.push({ from: fromNode.id, to: targetId, kind: E.REQUIRED, label: "必修先修" });
     }
+    state.activePath = null;
     state.edgeFrom = fromNode.id;
     state.edgeTo = targetId;
     state.pathFrom = fromNode.id;
@@ -317,6 +334,7 @@
       return showMessage("这条同类型关系已经存在。");
     }
     state.edges.push({ from: from, to: to, kind: kind, label: kind === E.REQUIRED ? "必修先修" : "相关" });
+    state.activePath = null;
     state.pathFrom = from;
     state.pathTo = to;
     showMessage("关系已加入；层级、路径与明细已重算。");
@@ -332,7 +350,7 @@
   }
 
   function mount() {
-    ["threshold", "concept-name", "concept-minutes", "concept-mastery", "concept-days", "edge-from", "edge-kind", "edge-to", "path-from", "path-to", "input-message", "stat-nodes", "stat-layers", "stat-critical", "stat-learnable", "order-status", "graph", "graph-empty", "path-result", "selection-detail", "detail-body", "test-out", "test-detail", "open-tools", "close-tools", "tool-drawer", "drawer-scrim", "first-step", "quick-concept-name", "prerequisite-step", "prerequisite-question", "prerequisite-name"].forEach(function (id) {
+    ["threshold", "concept-name", "concept-minutes", "concept-mastery", "concept-days", "edge-from", "edge-kind", "edge-to", "path-from", "path-to", "input-message", "stat-nodes", "stat-layers", "stat-critical", "stat-learnable", "order-status", "graph", "graph-empty", "path-result", "selection-detail", "detail-body", "test-out", "test-detail", "open-tools", "close-tools", "tool-drawer", "drawer-scrim", "first-step", "quick-concept-name", "prerequisite-step", "prerequisite-question", "prerequisite-name", "path-moment", "path-moment-text"].forEach(function (id) {
       var key = id.replace(/-([a-z])/g, function (_, char) { return char.toUpperCase(); });
       els[key] = document.getElementById(id);
     });
@@ -370,12 +388,20 @@
     document.getElementById("run-path").addEventListener("click", function () {
       state.pathFrom = els.pathFrom.value;
       state.pathTo = els.pathTo.value;
-      renderPath();
+      state.activePath = E.shortestPath(state.nodes, E.requiredEdges(state.nodes, state.edges), state.pathFrom, state.pathTo);
+      if (state.activePath) {
+        state.followupTarget = "";
+        showMessage("最短必修路径已点亮；路径之外的图已退暗。");
+        setDrawer(false);
+        render();
+      } else {
+        renderPath();
+      }
     });
     els.edgeFrom.addEventListener("change", function () { state.edgeFrom = els.edgeFrom.value; });
     els.edgeTo.addEventListener("change", function () { state.edgeTo = els.edgeTo.value; });
-    els.pathFrom.addEventListener("change", function () { state.pathFrom = els.pathFrom.value; });
-    els.pathTo.addEventListener("change", function () { state.pathTo = els.pathTo.value; });
+    els.pathFrom.addEventListener("change", function () { state.pathFrom = els.pathFrom.value; state.activePath = null; render(); });
+    els.pathTo.addEventListener("change", function () { state.pathTo = els.pathTo.value; state.activePath = null; render(); });
     els.threshold.addEventListener("change", function () {
       state.threshold = E.normalizeThreshold(els.threshold.value);
       els.threshold.value = state.threshold.toFixed(2);
@@ -387,6 +413,7 @@
       state.edges = [];
       state.edgeFrom = state.edgeTo = state.pathFrom = state.pathTo = "";
       state.followupTarget = "";
+      state.activePath = null;
       els.selection.textContent = "点一个节点，可查看它的必修前驱与后继。";
       showMessage("图谱已清空：先写下你要弄懂的第一个概念。");
       setDrawer(false);
@@ -403,9 +430,15 @@
       state.pathFrom = "magnetic-field";
       state.pathTo = "transformer";
       state.followupTarget = "";
+      state.activePath = null;
       els.threshold.value = "0.80";
       showMessage("已恢复电磁感应样例。");
       setDrawer(false);
+      render();
+    });
+    document.getElementById("clear-path").addEventListener("click", function () {
+      state.activePath = null;
+      showMessage("路径聚焦已收起，整张图恢复显示。");
       render();
     });
     document.getElementById("run-test").addEventListener("click", runTest);
