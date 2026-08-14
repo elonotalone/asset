@@ -2,9 +2,18 @@
   "use strict";
 
   var E = window.MedicalCalculatorEngine;
-  var ids = ["height", "weight", "age", "sex", "creatinine", "creatinine-unit", "calcium", "albumin"];
+  var activeMetric = "bmi";
+  var inputIds = ["height", "weight", "age", "sex", "creatinine", "creatinine-unit", "calcium", "albumin"];
+  var metrics = {
+    bmi: { name: "体质指数 BMI", unit: "kg/m²", prompt: "先说身高和体重", inputs: "body" },
+    bsa: { name: "体表面积", unit: "m²", prompt: "身高和体重，足够算出体表面积", inputs: "body" },
+    egfr: { name: "eGFR", unit: "mL/min/1.73 m²", prompt: "告诉我年龄、性别和肌酐", inputs: "egfr" },
+    calcium: { name: "校正钙", unit: "mg/dL", prompt: "填入测得钙和白蛋白", inputs: "calcium" }
+  };
 
-  function el(id) { return document.getElementById(id); }
+  function el(id) {
+    return document.getElementById(id);
+  }
 
   function numberFrom(id) {
     var raw = el(id).value.trim().replace(/[, \s]/g, "");
@@ -14,21 +23,8 @@
     return isFinite(value) ? value : NaN;
   }
 
-  function setResult(id, value, status) {
-    var valueEl = el(id + "-value");
-    valueEl.textContent = value === null ? "待输入" : value;
-    valueEl.className = "result-value" + (value === null ? " waiting" : "");
-    el(id + "-status").textContent = status;
-  }
-
-  function missing(values) {
-    var labels = [];
-    for (var i = 0; i < values.length; i++) if (values[i][0] === null) labels.push(values[i][1]);
-    return labels.length ? "还需要" + labels.join("、") : "";
-  }
-
-  function render() {
-    var values = {
+  function valuesFromPage() {
+    return {
       heightCm: numberFrom("height"),
       weightKg: numberFrom("weight"),
       age: numberFrom("age"),
@@ -38,53 +34,72 @@
       calcium: numberFrom("calcium"),
       albumin: numberFrom("albumin")
     };
+  }
 
+  function displayResults(out) {
+    return {
+      bmi: out.bmi === null ? null : out.bmi.toFixed(2),
+      bsa: out.bsa === null ? null : out.bsa.toFixed(3),
+      egfr: out.egfr === null ? null : out.egfr.toFixed(1),
+      calcium: out.correctedCalcium === null ? null : out.correctedCalcium.toFixed(2)
+    };
+  }
+
+  function invalidFields(values) {
+    var fields = {
+      body: [[values.heightCm, "身高"], [values.weightKg, "体重"]],
+      egfr: [[values.age, "年龄"], [values.creatinine, "肌酐"]],
+      calcium: [[values.calcium, "测得钙"], [values.albumin, "白蛋白"]]
+    };
     var invalid = [];
-    [[values.heightCm, "身高"], [values.weightKg, "体重"], [values.age, "年龄"], [values.creatinine, "肌酐"], [values.calcium, "测得钙"], [values.albumin, "白蛋白"]].forEach(function (pair) {
+    fields[metrics[activeMetric].inputs].forEach(function (pair) {
       if (typeof pair[0] === "number" && (!isFinite(pair[0]) || pair[0] <= 0)) invalid.push(pair[1]);
     });
+    return invalid;
+  }
+
+  function render() {
+    var values = valuesFromPage();
+    var results = displayResults(E.calculate(values));
+    var metric = metrics[activeMetric];
+    var activeValue = results[activeMetric];
+
+    el("prompt").textContent = metric.prompt;
+    el("hero-name").textContent = metric.name;
+    el("hero-unit").textContent = metric.unit;
+    el("hero-value").textContent = activeValue === null ? "—" : activeValue;
+    el("hero-value").className = "hero-value" + (activeValue === null ? " is-empty" : "");
+    el("hero-value").setAttribute("aria-label", activeValue === null ? "尚未计算" : metric.name + " " + activeValue + " " + metric.unit);
+
+    Object.keys(metrics).forEach(function (id) {
+      el(id + "-mini").textContent = results[id] === null ? "—" : results[id];
+    });
+
+    document.querySelectorAll("[data-inputs]").forEach(function (set) {
+      set.hidden = set.getAttribute("data-inputs") !== metric.inputs;
+    });
+
+    document.querySelectorAll("[data-metric]").forEach(function (tab) {
+      var current = tab.getAttribute("data-metric") === activeMetric;
+      tab.classList.toggle("is-current", current);
+      if (current) tab.setAttribute("aria-current", "true");
+      else tab.removeAttribute("aria-current");
+    });
+
+    var invalid = invalidFields(values);
     el("input-message").textContent = invalid.length ? invalid.join("、") + "需输入大于 0 的有限数值。" : "";
-
-    var out = E.calculate(values);
-    var bodyMissing = missing([[values.heightCm, "身高"], [values.weightKg, "体重"]]);
-    setResult("bmi", out.bmi === null ? null : out.bmi.toFixed(2), out.bmi === null ? bodyMissing || "请检查身高、体重" : "已按 BMI 公式计算；不附加健康判断");
-    setResult("bsa", out.bsa === null ? null : out.bsa.toFixed(3), out.bsa === null ? bodyMissing || "请检查身高、体重" : "已按 Mosteller 口径计算");
-
-    var calciumMissing = missing([[values.calcium, "测得钙"], [values.albumin, "白蛋白"]]);
-    setResult("calcium", out.correctedCalcium === null ? null : out.correctedCalcium.toFixed(2), out.correctedCalcium === null ? calciumMissing || "请检查测得钙、白蛋白" : "已按常见白蛋白校正口径计算");
-
-    var sexValue = values.sex || null;
-    var egfrMissing = missing([[values.creatinine, "肌酐"], [values.age, "年龄"], [sexValue, "性别参数"]]);
-    setResult("egfr", out.egfr === null ? null : out.egfr.toFixed(1), out.egfr === null ? egfrMissing || "请检查肌酐、年龄、性别参数" : "参考分段 " + out.egfrStage + "；分段不是诊断结论");
-  }
-
-  function clear(node) {
-    while (node.firstChild) node.removeChild(node.firstChild);
-  }
-
-  function runTest() {
-    var result = E.runSelfTest();
-    el("test-out").textContent = result.passed + " / " + result.total + " 通过";
-    var detail = el("test-detail");
-    clear(detail);
-    if (result.failures.length === 0) {
-      var ok = document.createElement("li");
-      ok.textContent = "BMI、Mosteller、校正钙、CKD-EPI 分段与边界用例全部通过。";
-      detail.appendChild(ok);
-    } else {
-      result.failures.forEach(function (failure) {
-        var item = document.createElement("li");
-        item.textContent = failure.name + " —— " + failure.why;
-        detail.appendChild(item);
-      });
-    }
   }
 
   function mount() {
-    ids.forEach(function (id) {
+    inputIds.forEach(function (id) {
       el(id).addEventListener(id === "sex" || id === "creatinine-unit" ? "change" : "input", render);
     });
-    el("run-test").addEventListener("click", runTest);
+    document.querySelectorAll("[data-metric]").forEach(function (tab) {
+      tab.addEventListener("click", function () {
+        activeMetric = tab.getAttribute("data-metric");
+        render();
+      });
+    });
     render();
   }
 
