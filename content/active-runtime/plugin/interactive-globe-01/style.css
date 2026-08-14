@@ -175,34 +175,72 @@ button {
 }
 
 .marker-halo {
-  fill: rgba(255, 229, 119, .2);
+  fill: rgba(255, 229, 119, .28);
+  stroke: rgba(255, 244, 183, .82);
+  stroke-width: 1.3;
 }
 
 .marker-dot {
-  fill: #fff3ad;
-  stroke: rgba(255, 255, 255, .88);
-  stroke-width: 1.4;
+  fill: #fff5b8;
+  stroke: rgba(255, 255, 255, .96);
+  stroke-width: 1.7;
 }
 
 .marker-index {
   fill: #06101d;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 800;
   text-anchor: middle;
   dominant-baseline: central;
   pointer-events: none;
 }
 
+.marker-name,
 .marker-time {
-  fill: rgba(240, 248, 255, .86);
-  font-size: 10px;
-  font-weight: 560;
-  letter-spacing: .025em;
   paint-order: stroke;
-  stroke: rgba(1, 5, 14, .9);
+  stroke: rgba(1, 5, 14, .96);
   stroke-linejoin: round;
-  stroke-width: 3px;
   pointer-events: none;
+}
+
+.marker-name {
+  fill: #fffdf3;
+  font-size: 17px;
+  font-weight: 720;
+  letter-spacing: .035em;
+  stroke-width: 4.5px;
+}
+
+.marker-time {
+  fill: rgba(226, 241, 251, .82);
+  font-size: 13px;
+  font-weight: 540;
+  letter-spacing: .025em;
+  stroke-width: 3.5px;
+}
+
+.marker-halo.marker-night {
+  fill: rgba(255, 225, 104, .42);
+  stroke: #fff0a3;
+  stroke-width: 2.2;
+}
+
+.marker-dot.marker-night {
+  fill: #fffbe8;
+  stroke: #ffc955;
+  stroke-width: 2.2;
+}
+
+.marker-name.marker-night {
+  fill: #ffffff;
+  stroke: #00030a;
+  stroke-width: 5.5px;
+}
+
+.marker-time.marker-night {
+  fill: #eaf7ff;
+  stroke: #00030a;
+  stroke-width: 4.5px;
 }
 
 .globe-action {
@@ -310,6 +348,7 @@ button {
   letter-spacing: -.055em;
   line-height: .9;
   text-shadow: 0 0 32px rgba(93, 189, 255, .1);
+  white-space: nowrap;
 }
 
 .metric-unit {

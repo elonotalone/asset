@@ -374,21 +374,22 @@
 
       var x = CX + projected.x;
       var y = CY + projected.y;
+      var nightClass = E.daylight(coordinate, state.solar) === false ? " marker-night" : "";
       markerLayer.appendChild(svgNode("circle", {
-        "class": "marker-halo",
+        "class": "marker-halo" + nightClass,
         cx: x.toFixed(2),
         cy: y.toFixed(2),
         r: "10"
       }));
       markerLayer.appendChild(svgNode("circle", {
-        "class": "marker-dot",
+        "class": "marker-dot" + nightClass,
         cx: x.toFixed(2),
         cy: y.toFixed(2),
         r: "5.6"
       }));
 
       var number = svgNode("text", {
-        "class": "marker-index",
+        "class": "marker-index" + nightClass,
         x: x.toFixed(2),
         y: y.toFixed(2)
       });
@@ -398,7 +399,7 @@
       var labelOnLeft = projected.x > RADIUS * 0.54;
       var labelX = x + (labelOnLeft ? -15 : 15);
       var name = svgNode("text", {
-        "class": "marker-name",
+        "class": "marker-name" + nightClass,
         x: labelX.toFixed(2),
         y: (y - 9).toFixed(2),
         "text-anchor": labelOnLeft ? "end" : "start"
@@ -408,7 +409,7 @@
 
       if (destinationIndex > 0) {
         var time = svgNode("text", {
-          "class": "marker-time",
+          "class": "marker-time" + nightClass,
           x: labelX.toFixed(2),
           y: (y + 8).toFixed(2),
           "text-anchor": labelOnLeft ? "end" : "start"
