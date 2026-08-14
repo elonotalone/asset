@@ -183,6 +183,43 @@ test("UC-1 runtime URL 只接受精确 namespace-C /embed", () => {
   }
 });
 
+test("UC-3 runtime URL 只接受插件 id 精确白名单或 namespace-C", () => {
+  // UC-3: docs/architecture/oceanleo-untrusted-content-isolation.md §8.3
+  // 信任只能来自硬编码白名单，绝不能从主机名后缀推断。
+  assert.equal(
+    isPluginRuntimeUrl(
+      "https://plugins.oceanleo.app/annotatable-city-map-01/",
+    ),
+    true,
+  );
+  assert.equal(
+    isPluginRuntimeUrl(
+      "https://s-0123456789abcdef0123456789abcdef.oceanleo.app/embed",
+    ),
+    true,
+  );
+
+  for (const rejected of [
+    "http://plugins.oceanleo.app/annotatable-city-map-01/",
+    "https://plugins.oceanleo.app:443/annotatable-city-map-01/",
+    "https://user@plugins.oceanleo.app/annotatable-city-map-01/",
+    "https://plugins.oceanleo.app/annotatable-city-map-01/?x=1",
+    "https://plugins.oceanleo.app/annotatable-city-map-01/#x",
+    "https://plugins.oceanleo.app/ANNOTATABLE-CITY-MAP-01/",
+    "https://PLUGINS.oceanleo.app/annotatable-city-map-01/",
+    "https://plugins.oceanleo.app.evil.com/annotatable-city-map-01/",
+    "https://plugins.oceanleo.com/annotatable-city-map-01/",
+    "https://plugins.oceanleo.app/annotatable-city-map-01",
+    "https://plugins.oceanleo.app/annotatable-city-map-01/index.html",
+    "https://plugins.oceanleo.app/not-a-real-plugin-99/",
+    "https://other.oceanleo.app/annotatable-city-map-01/",
+    "https://s-0123456789ABCDEF0123456789ABCDEF.oceanleo.app/embed",
+    "https://s-0123456789abcdef0123456789abcdef0.oceanleo.app/embed",
+  ]) {
+    assert.equal(isPluginRuntimeUrl(rejected), false, rejected);
+  }
+});
+
 test("UC-3 编辑器入口只接受逐条核验的第一方产品页", () => {
   // UC-3: docs/architecture/oceanleo-untrusted-content-isolation.md §8.3
   // 信任只能来自硬编码白名单，绝不能从主机名后缀推断。

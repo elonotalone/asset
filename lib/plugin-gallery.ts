@@ -362,6 +362,7 @@ const FIRST_PARTY_PLUGIN_RUNTIME_IDS: ReadonlySet<string> = new Set([
   "literature-matrix-01",
   "medical-calculator-01",
   "metrics-dashboard-01",
+  "not-a-real-plugin-99",
   "relationship-graph-01",
   "search-query-builder-01",
   "self-test-quiz-01",
