@@ -128,17 +128,26 @@
   }
 
   function pointInRing(coordinate, ring) {
-    var longitude = coordinate[0];
+    if (!ring.length) return false;
+    var points = [];
+    var previousLongitude = ring[0][0];
+    points.push([previousLongitude, ring[0][1]]);
+    for (var pointIndex = 1; pointIndex < ring.length; pointIndex++) {
+      previousLongitude = longitudeNear(ring[pointIndex][0], previousLongitude);
+      points.push([previousLongitude, ring[pointIndex][1]]);
+    }
+
+    var longitude = longitudeNear(coordinate[0], points[0][0]);
     var latitude = coordinate[1];
     var inside = false;
 
-    for (var current = 0, previous = ring.length - 1; current < ring.length; previous = current++) {
-      var currentLongitude = longitudeNear(ring[current][0], longitude);
-      var previousLongitude = longitudeNear(ring[previous][0], longitude);
-      var currentLatitude = ring[current][1];
-      var previousLatitude = ring[previous][1];
+    for (var current = 0, previous = points.length - 1; current < points.length; previous = current++) {
+      var currentLongitude = points[current][0];
+      var previousPointLongitude = points[previous][0];
+      var currentLatitude = points[current][1];
+      var previousLatitude = points[previous][1];
       var crossesLatitude = (currentLatitude > latitude) !== (previousLatitude > latitude);
-      if (crossesLatitude && longitude < (previousLongitude - currentLongitude) *
+      if (crossesLatitude && longitude < (previousPointLongitude - currentLongitude) *
           (latitude - currentLatitude) / (previousLatitude - currentLatitude) + currentLongitude) {
         inside = !inside;
       }
