@@ -135,47 +135,10 @@
     };
   }
 
-  function languageLabel(mode) {
-    if (mode === "en") return "英文·按词";
-    if (mode === "mixed") return "中英混排·分开计";
-    return "中文·按字";
-  }
-
-  function countLabel(row) {
-    if (row.counts.mode === "en") return row.counts.english + " 词";
-    if (row.counts.mode === "mixed") return row.counts.chinese + " 字 + " + row.counts.english + " 词";
-    return row.counts.chinese + " 字";
-  }
-
-  function exportScript(paragraphs, settings, targetSeconds) {
-    settings = settings || {};
-    var timeline = buildTimeline(paragraphs, settings);
-    var target = nonNegative(targetSeconds, 0);
-    var lines = [
-      "口播脚本",
-      "目标：" + formatClock(target) + "｜中文 " + positive(settings.chineseRate, DEFAULTS.chineseRate) +
-        " 字/分钟｜英文 " + positive(settings.englishRate, DEFAULTS.englishRate) +
-        " 词/分钟｜" + positive(settings.fps, DEFAULTS.fps) + " fps",
-      "计数口径：中文按字、英文按词；中英混排分别计时后相加，两种单位不等价。",
-      ""
-    ];
-    if (!timeline.rows.length) {
-      lines.push("还没有段落。添加第一段后，时间码会在这里同步生成。");
-      return lines.join("\n");
-    }
-    timeline.rows.forEach(function (row) {
-      var paragraph = row.paragraph;
-      lines.push((row.index + 1) + ". " + (paragraph.title || "未命名段落"));
-      lines.push(row.startCode + " --> " + row.endCode + "｜" + languageLabel(paragraph.mode) +
-        "｜" + countLabel(row) + "｜停顿 " + row.pauseSeconds.toFixed(1) + " 秒");
-      lines.push("口播：" + String(paragraph.text || ""));
-      if (paragraph.subtitle) lines.push("字幕：" + paragraph.subtitle);
-      if (paragraph.visualNote) lines.push("画面：" + paragraph.visualNote);
-      lines.push("");
-    });
-    lines.push("总计：" + formatClock(timeline.totalSeconds) + "｜末帧 " + timeline.totalFrames);
-    return lines.join("\n");
-  }
+  // 这里原来有 exportScript()：把整篇脚本连同一行「计数口径：……」再排一遍，
+  // 供页面底部那个只读导出框显示。那个框已经删掉——可带走的就是屏幕上这份稿子本身，
+  // 正文可编辑也可手动选中。序列化没有第二个调用者，跟着一起删，
+  // 免得留一份没人看、却会和真界面各说各话的第二套口径。
 
   function clone(value) {
     return JSON.parse(JSON.stringify(value));
@@ -293,9 +256,6 @@
     formatClock: formatClock,
     formatFramecode: formatFramecode,
     buildTimeline: buildTimeline,
-    languageLabel: languageLabel,
-    countLabel: countLabel,
-    exportScript: exportScript,
     clone: clone,
     DEMO: DEMO,
     CASES: CASES,

@@ -185,6 +185,19 @@ check("超出目标时长时，结尾直接说还得删掉多少", () => {
   assert.match(text("#headline"), /还剩 \d+\.\d 秒。/);
 });
 
+check("数值和它的单位是一个词，不会被行宽拆到两行", () => {
+  const stats = all("#headline .stat").map((node) => textFrom(node));
+  assert.equal(stats.length, 1);
+  assert.match(stats[0], /^\d+(?:\.\d)? 秒$/);
+  const css = code("style.css").replace(/\s+/g, " ");
+  for (const selector of [".stat", ".seg-breath", ".target-line", ".target-foot", ".seg-code span"]) {
+    const rule = css
+      .split("}")
+      .find((chunk) => chunk.includes(selector) && /white-space: *nowrap/.test(chunk));
+    assert.ok(rule, `${selector} 缺少 white-space: nowrap`);
+  }
+});
+
 check("中英混排由这一段自己的字判定，不要求先选计数模式", () => {
   const drafts = $("#draft-text");
   drafts.textContent = "这一版把 ROI 讲清楚。";

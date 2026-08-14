@@ -322,6 +322,18 @@
     updateHeadline(line);
   }
 
+  // 数值和它的单位是一个整体：拆到两行就读不出节奏了，所以它们同在一个不折行的 span 里。
+  function stat(value, unit) {
+    return el("span", "stat", value + " " + unit);
+  }
+
+  function sayHeadline(parts) {
+    clear(els.headline);
+    parts.forEach(function (part) {
+      els.headline.appendChild(typeof part === "string" ? document.createTextNode(part) : part);
+    });
+  }
+
   function updateHeadline(line) {
     if (!state.started) {
       els.headline.textContent = "";
@@ -330,13 +342,18 @@
     line = line || timeline();
     var target = targetSeconds();
     if (!line.rows.length) {
-      els.headline.textContent = target + " 秒大约能念 " + E.budgetFor(target, settings.chineseRate) + " 个字。";
+      sayHeadline([
+        stat(target, "秒"),
+        "大约能念 ",
+        stat(E.budgetFor(target, settings.chineseRate), "个字"),
+        "。"
+      ]);
       return;
     }
     var remaining = target - line.totalSeconds;
-    els.headline.textContent = remaining >= 0
-      ? "还剩 " + remaining.toFixed(1) + " 秒。"
-      : "超出 " + Math.abs(remaining).toFixed(1) + " 秒，得删掉这么多。";
+    sayHeadline(remaining >= 0
+      ? ["还剩 ", stat(remaining.toFixed(1), "秒"), "。"]
+      : ["超出 ", stat(Math.abs(remaining).toFixed(1), "秒"), "，得删掉这么多。"]);
   }
 
   function render() {

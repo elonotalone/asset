@@ -81,9 +81,36 @@ check("末段原始终点等于每段时长之和，末帧按累计秒数一次�
 check("中英混排明确分开统计，不把字与词伪装成同一单位", () => {
   const counts = E.measureText("复利 ROI grows fast", "mixed");
   assert.deepEqual(counts, { chinese: 2, english: 3, mode: "mixed" });
-  const exported = E.exportScript(E.DEMO, { chineseRate: 216, englishRate: 150, fps: 25 }, 90);
-  assert.match(exported, /中文按字、英文按词/);
-  assert.match(exported, /两种单位不等价/);
+
+  // 「两种单位不等价」以前只是导出文本里的一句话。导出框删掉、exportScript 也删掉之后，
+  // 这句话必须由时长本身证明：2 个汉字走 216 字/分钟、3 个英文词走 150 词/分钟，
+  // 各自计时再相加，而不是把 5 个单位丢给同一个语速。
+  const settings = { chineseRate: 216, englishRate: 150 };
+  const sentence = "复利 ROI grows fast";
+  const mixed = E.paragraphDuration({ text: sentence, mode: "mixed", pauseSeconds: 0 }, settings);
+  assert.equal(mixed.chineseSeconds, 2 / (216 / 60));
+  assert.equal(mixed.englishSeconds, 3 / (150 / 60));
+  assert.equal(mixed.speakingSeconds, mixed.chineseSeconds + mixed.englishSeconds);
+  assert.notEqual(mixed.speakingSeconds, 5 / (216 / 60));
+  assert.notEqual(mixed.speakingSeconds, 5 / (150 / 60));
+
+  // 模式不是装饰：按 zh 计会漏掉英文词，按 en 计会漏掉汉字，两者相加才等于混排。
+  const asChinese = E.paragraphDuration({ text: sentence, mode: "zh", pauseSeconds: 0 }, settings);
+  const asEnglish = E.paragraphDuration({ text: sentence, mode: "en", pauseSeconds: 0 }, settings);
+  assert.equal(asChinese.englishSeconds, 0);
+  assert.equal(asEnglish.chineseSeconds, 0);
+  assert.ok(Math.abs(asChinese.speakingSeconds + asEnglish.speakingSeconds - mixed.speakingSeconds) < 1e-12);
+});
+
+check("内核不再留第二份导出序列化，可带走的就是屏幕上那份稿子", () => {
+  // 删掉的是 exportScript() 与只给它用的 languageLabel()／countLabel()。
+  // 它们连同那行「计数口径：……」是页面底部只读导出框的遗留物，界面早已不调用；
+  // 留着就等于把口径写两遍，迟早和真界面各说各话。
+  assert.equal(typeof E.exportScript, "undefined");
+  assert.equal(typeof E.languageLabel, "undefined");
+  assert.equal(typeof E.countLabel, "undefined");
+  assert.equal(typeof E.buildTimeline, "function");
+  assert.equal(typeof E.formatFramecode, "function");
 });
 
 console.log("\n口播脚本自测：" + (failed === 0 ? "全部通过" : failed + " 项未通过"));

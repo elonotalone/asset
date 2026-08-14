@@ -66,7 +66,13 @@ body {
   text-align: right;
 }
 
-.seg-code span { display: block; }
+.seg-code span { display: block; white-space: nowrap; }
+
+/* 数值和它的单位不许被行宽拆散：时间码、「N 秒」、「N 个字」都当成一个词 */
+.stat,
+.seg-breath,
+.target-line,
+.target-foot { white-space: nowrap; }
 
 .code-end { color: var(--hint); }
 
