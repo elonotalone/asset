@@ -339,9 +339,44 @@ export function filterAvailablePlugins(
  * userinfo、端口、query、fragment、近似域名和额外路径都会被拒绝。这里没有任何
  * `oceanleo.com` 或相对 URL fallback；缺 plan 侧车时页面只能显示“暂不可用”。
  */
-const PLUGIN_RUNTIME_URL =
+const SANDBOX_PLUGIN_RUNTIME_URL =
   /^https:\/\/s-[0-9a-f]{32}\.oceanleo\.app\/embed$/;
 
+/**
+ * UC-3: docs/architecture/oceanleo-untrusted-content-isolation.md §8.3
+ * 命名空间 D 只信任 active-runtime-manifest.json 中 kind === "plugin" 的现有 id；
+ * 信任绝不能从 plugins.oceanleo.app 主机名后缀或任意目录名格式推断。
+ */
+const FIRST_PARTY_PLUGIN_RUNTIME_IDS: ReadonlySet<string> = new Set([
+  "annotatable-city-map-01",
+  "concept-knowledge-graph-01",
+  "contract-assembly-01",
+  "dialogue-branch-script-01",
+  "executable-notebook-01",
+  "financial-calculator-01",
+  "floorplan-annotation-01",
+  "formula-derivation-walkthrough-01",
+  "interactive-globe-01",
+  "ledger-register-01",
+  "legal-calculator-01",
+  "literature-matrix-01",
+  "medical-calculator-01",
+  "metrics-dashboard-01",
+  "relationship-graph-01",
+  "search-query-builder-01",
+  "self-test-quiz-01",
+  "spaced-repetition-scheduler-01",
+  "three-statement-model-01",
+  "unit-converter-01",
+  "voiceover-script-01",
+]);
+
+const FIRST_PARTY_PLUGIN_RUNTIME_URL =
+  /^https:\/\/plugins\.oceanleo\.app\/([^/]+)\/$/;
+
 export function isPluginRuntimeUrl(value: unknown): value is string {
-  return typeof value === "string" && PLUGIN_RUNTIME_URL.test(value);
+  if (typeof value !== "string") return false;
+  if (SANDBOX_PLUGIN_RUNTIME_URL.test(value)) return true;
+  const match = FIRST_PARTY_PLUGIN_RUNTIME_URL.exec(value);
+  return match !== null && FIRST_PARTY_PLUGIN_RUNTIME_IDS.has(match[1]);
 }
