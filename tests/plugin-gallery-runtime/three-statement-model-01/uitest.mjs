@@ -92,7 +92,7 @@ check("首屏带通用假设，不装真实公司数据", () => {
 
 check("首屏三张完整报表都已有 2027E–2029E 数字", () => {
   for (const tableId of ["income-table", "cashflow-table", "balance-table"]) {
-    const table = document.getElementById(tableId);
+    const table = doc.getElementById(tableId);
     assert.deepEqual([...table.querySelectorAll("thead th")].slice(1).map((node) => node.textContent.trim()), ["2027E", "2028E", "2029E"]);
     assert.ok(table.querySelectorAll("tbody tr").length >= 10, `${tableId} 行数不足`);
     assert.ok([...table.querySelectorAll("tbody td")].every((node) => /\d/.test(node.textContent)), `${tableId} 有空数字格`);
