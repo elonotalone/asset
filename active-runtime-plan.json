@@ -3,7 +3,7 @@
   "manifest": "active-runtime-manifest.json",
   "manifestSha256": "0967be937dc1c5b938a2fb66fbe0c18983bc443fdf2b2a4375cdd37426e54b9d",
   "itemCount": 30,
-  "totalBytes": 1442790,
+  "totalBytes": 1423052,
   "items": [
     {
       "item": {
@@ -152,11 +152,11 @@
         "source": "content/active-runtime/plugin/concept-knowledge-graph-01",
         "entry": "index.html"
       },
-      "host": "s-93cb096769c2827c20f222e3e83c1369.oceanleo.app",
-      "entryUrl": "https://s-93cb096769c2827c20f222e3e83c1369.oceanleo.app/embed",
-      "closureSha256": "0fee6b5928e96e32d64bfcf455ad30a48aa4418f5ca2b2a7e7b00e3073bef67c",
+      "host": "s-9a12aef7af3dbb5f1eb96f375ddc294f.oceanleo.app",
+      "entryUrl": "https://s-9a12aef7af3dbb5f1eb96f375ddc294f.oceanleo.app/embed",
+      "closureSha256": "83cb38f667776827b3ebc2651db45ba5595967c708aedf299fc0425d173c4d41",
       "fileCount": 4,
-      "totalBytes": 56974,
+      "totalBytes": 40942,
       "files": [
         {
           "path": "engine.js",
@@ -165,18 +165,18 @@
         },
         {
           "path": "index.html",
-          "sha256": "8359173622cf97c7a69e4013a38c1388880f16e81d3f2fad69ef4e6f6c62aa4f",
-          "bytes": 7407
+          "sha256": "9dcc89ef2c1e1f0c63432366ba10fc5e4e1a5fc4903ec2a197fc953a054f4074",
+          "bytes": 3435
         },
         {
           "path": "style.css",
-          "sha256": "e3e0c9459d353d3a9de7c504c713f71553069a0b90e3cbd0de8916542014ce2b",
-          "bytes": 14368
+          "sha256": "35fc1d342c23348c1877d43b34f9be772a364d6e7ed70ac8d44721daddba0eb6",
+          "bytes": 7162
         },
         {
           "path": "ui.js",
-          "sha256": "a6762da171b47909ff390b094487c445dbbcf993b3b415be71c135b70225fc93",
-          "bytes": 19387
+          "sha256": "b019cc510743026a00bba9cda22ef7eddf310d2e41498548564e8d09d503e5b4",
+          "bytes": 14533
         }
       ]
     },
@@ -362,12 +362,17 @@
         "source": "content/active-runtime/plugin/interactive-globe-01",
         "entry": "index.html"
       },
-      "host": "s-00e25f597b9e4605ea04db901988cb12.oceanleo.app",
-      "entryUrl": "https://s-00e25f597b9e4605ea04db901988cb12.oceanleo.app/embed",
-      "closureSha256": "9c9720233b10082330a30e9add7c1544818a9a178542b49d63d723623805b963",
-      "fileCount": 4,
-      "totalBytes": 157005,
+      "host": "s-fd5eb6833dcfddeb54b1c93f6f096287.oceanleo.app",
+      "entryUrl": "https://s-fd5eb6833dcfddeb54b1c93f6f096287.oceanleo.app/embed",
+      "closureSha256": "1e63c224ffffda639e5dd919876415feaaa024beac31bb9fddae972c4dc0b61a",
+      "fileCount": 5,
+      "totalBytes": 153954,
       "files": [
+        {
+          "path": "NOTICE",
+          "sha256": "c0f3ba78dc8a4c19003b0faaf4806a1554492b8cda307f3f52377785a3bfae8e",
+          "bytes": 1024
+        },
         {
           "path": "engine.js",
           "sha256": "4ec55450b3590b1eac6d6225ef157c695d18f96567a56873de2b828d0210b1ac",
@@ -375,18 +380,18 @@
         },
         {
           "path": "index.html",
-          "sha256": "a2b50a0fb15c67a822440352131cdd94f4e417151fc0e49a43aab37df5751792",
-          "bytes": 9939
+          "sha256": "32e06a2d40f93be61188c9062ed1dae0d40c66184703867527cf49e420ad89b7",
+          "bytes": 6394
         },
         {
           "path": "style.css",
-          "sha256": "8677a048c37dc9e1fd18b37e3118a3a8fb0a599777b9ea0b0ad77f7f6758df6f",
-          "bytes": 9663
+          "sha256": "e5e2c4a4fc85df9fea5911dd46bcb30dd66e02bb816e064c4b89fb6a9687364e",
+          "bytes": 7046
         },
         {
           "path": "ui.js",
-          "sha256": "a37e795156ff6826ca524a4fc398f93f5c8967e209ca3ffc15249c9132ee40fc",
-          "bytes": 12984
+          "sha256": "38c70cd65c36be7930a8d72b4b240dc0ba14fe7d1d1d233c0b5a2143b66a6458",
+          "bytes": 15071
         }
       ]
     },
@@ -502,12 +507,17 @@
         "source": "content/active-runtime/plugin/medical-calculator-01",
         "entry": "index.html"
       },
-      "host": "s-e0accd372a0bccebb4a546be36c41529.oceanleo.app",
-      "entryUrl": "https://s-e0accd372a0bccebb4a546be36c41529.oceanleo.app/embed",
-      "closureSha256": "2efd3dae7aa96bc791c89d19ce26c567a494551d2f8a26249811661299fa977c",
-      "fileCount": 4,
-      "totalBytes": 24764,
+      "host": "s-3bb7eb0f69cd400f4f596b9c73916967.oceanleo.app",
+      "entryUrl": "https://s-3bb7eb0f69cd400f4f596b9c73916967.oceanleo.app/embed",
+      "closureSha256": "bb1af76e049ec1706a48c3e13e18b706054214a81881935ababcf2e22e3e53ab",
+      "fileCount": 5,
+      "totalBytes": 24109,
       "files": [
+        {
+          "path": "NOTICE",
+          "sha256": "fda1c16ff71357396bc20763f49137afc0ebcaeaf700d0666faa720135e35be2",
+          "bytes": 897
+        },
         {
           "path": "engine.js",
           "sha256": "26582bf5a56e010747b8467818166001f03fd6b8b61740079e8eec768987aa5b",
@@ -515,18 +525,18 @@
         },
         {
           "path": "index.html",
-          "sha256": "184c23cf60803e854d3dbe08d32833bb8463c22e09e5ba564dbf6068fa025f97",
-          "bytes": 5751
+          "sha256": "1b2f43534f3ec2a02a3d3930657b3ae6bbd2cc3d39985de54da37a0eb9334445",
+          "bytes": 4720
         },
         {
           "path": "style.css",
-          "sha256": "aa34a1217a72f3b1a1d9a350e0292353b43bd3acb858d2c32c772d5744c43bf6",
-          "bytes": 7406
+          "sha256": "a6df00403ca6eaa75e6e5b65548da6c876b5bd26bd872b20052bdd4e51f8f96c",
+          "bytes": 6926
         },
         {
           "path": "ui.js",
-          "sha256": "0bc7104f9c1f2360d875340ab8a8e0b73eb68762aff3b752b4ea537f94d3cdac",
-          "bytes": 6376
+          "sha256": "00f68aa3cbf71285d3a22d861c2e4de18e1433312450fad93087f494914952f2",
+          "bytes": 6335
         }
       ]
     },
