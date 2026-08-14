@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>法律计算器</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="wrap">
+  <header class="head">
+    <h1>法律计算器</h1>
+    <p>中国大陆公开口径的计算与释法示例</p>
+  </header>
+
+  <section class="scope" aria-label="适用地区与免责声明">
+    <p><strong>适用地区：中国大陆。</strong>用于计算与释法示例，不构成法律意见或裁判结论；实际结果取决于事实认定、证据、当地口径与规则变化。</p>
+    <p>个案参数故意保持空白，只有填写该项目全部事实后才出现个案数字。工具离线运行，不联网查询法规、当地工资或历史 LPR。</p>
+  </section>
+
+  <section class="sources" aria-labelledby="source-title">
+    <h2 id="source-title">法源与生效日期</h2>
+    <p><b>劳动补偿 / 违法解除</b>《中华人民共和国劳动合同法》第 47、87 条；2008-01-01 施行，2013-07-01 修订文本。</p>
+    <p><b>加班工资</b>《中华人民共和国劳动法》第 44 条，1995-01-01 施行；劳社部发〔2008〕3 号，2008-01-03 发布。</p>
+    <p><b>财产案件受理费</b>《诉讼费用交纳办法》第 13 条，国务院令第 481 号，2007-04-01 施行。</p>
+    <p><b>民间借贷</b>相关司法解释第 25 条，2021-01-01 施行文本；历史公开口径以合同成立时一年期 LPR 四倍表述。</p>
+  </section>
+
+  <nav class="category-nav" aria-label="计算项目">
+    <button type="button" class="active" data-target="labor">劳动补偿</button>
+    <button type="button" data-target="overtime">加班工资</button>
+    <button type="button" data-target="filing-fee">案件受理费</button>
+    <button type="button" data-target="lending">民间借贷</button>
+  </nav>
+
+  <section id="labor" class="calculator" aria-labelledby="labor-title" tabindex="-1">
+    <h2 id="labor-title">劳动补偿与违法解除</h2>
+    <p class="basis">每满一年计 1 个月；余段满 6 个月按 1 年，不满 6 个月计 0.5 个月。月工资高于当地月均工资 3 倍时，基数取 3 倍且补偿年限最高 12 年；违法解除按经济补偿 2 倍演示。</p>
+    <div class="input-grid">
+      <label><span>月工资</span><span class="entry"><input id="labor-salary" type="text" inputmode="decimal" autocomplete="off" aria-label="月工资"><b>元</b></span></label>
+      <label><span>当地上年度职工月平均工资</span><span class="entry"><input id="local-average" type="text" inputmode="decimal" autocomplete="off" aria-label="当地上年度职工月平均工资"><b>元</b></span></label>
+      <label><span>完整年数</span><span class="entry"><input id="service-years" type="text" inputmode="numeric" autocomplete="off" aria-label="完整年数"><b>年</b></span></label>
+      <label><span>余下月数</span><span class="entry"><input id="service-months" type="text" inputmode="numeric" autocomplete="off" aria-label="余下月数，零到十一"><b>月（0–11）</b></span></label>
+      <label><span>余下天数</span><span class="entry"><input id="service-days" type="text" inputmode="numeric" autocomplete="off" aria-label="余下天数"><b>天</b></span></label>
+    </div>
+    <p id="labor-message" class="input-message" aria-live="polite"></p>
+    <div class="result-row">
+      <span class="result-name">经济补偿</span><span id="compensation-value" class="result-value waiting">待输入</span><span class="result-unit">元</span>
+      <span id="compensation-status" class="result-status">需要月工资、当地月均工资和完整工龄</span>
+    </div>
+    <div class="result-row">
+      <span class="result-name">违法解除赔偿金</span><span id="illegal-value" class="result-value waiting">待输入</span><span class="result-unit">元</span>
+      <span id="illegal-status" class="result-status">经济补偿 × 2；是否违法解除需另行判断</span>
+    </div>
+    <p class="source-note">法源 / 日期：《劳动合同法》第 47、87 条；2008-01-01 施行，2013-07-01 修订文本。此处只演示金额口径。</p>
+  </section>
+
+  <section id="overtime" class="calculator" aria-labelledby="overtime-title" tabindex="-1">
+    <h2 id="overtime-title">加班工资</h2>
+    <p class="basis">小时工资 = 月工资 ÷ 21.75 天 ÷ 8 小时；工作日延时 150%、休息日 200%、法定节假日 300%。休息日能否补休等事实需另行判断。</p>
+    <div class="input-grid">
+      <label><span>月工资</span><span class="entry"><input id="overtime-salary" type="text" inputmode="decimal" autocomplete="off" aria-label="加班计算月工资"><b>元</b></span></label>
+      <label><span>工作日延时</span><span class="entry"><input id="weekday-hours" type="text" inputmode="decimal" autocomplete="off" aria-label="工作日延时小时"><b>小时</b></span></label>
+      <label><span>休息日</span><span class="entry"><input id="rest-hours" type="text" inputmode="decimal" autocomplete="off" aria-label="休息日加班小时"><b>小时</b></span></label>
+      <label><span>法定节假日</span><span class="entry"><input id="holiday-hours" type="text" inputmode="decimal" autocomplete="off" aria-label="法定节假日加班小时"><b>小时</b></span></label>
+    </div>
+    <p id="overtime-message" class="input-message" aria-live="polite"></p>
+    <div class="result-row">
+      <span class="result-name">加班工资合计</span><span id="overtime-value" class="result-value waiting">待输入</span><span class="result-unit">元</span>
+      <span id="overtime-status" class="result-status">需要月工资与三类加班小时</span>
+    </div>
+    <p class="source-note">法源 / 日期：《劳动法》第 44 条，1995-01-01 施行；月计薪天数取劳社部发〔2008〕3 号公开口径，2008-01-03 发布。</p>
+  </section>
+
+  <section id="filing-fee" class="calculator" aria-labelledby="fee-title" tabindex="-1">
+    <h2 id="fee-title">财产案件受理费</h2>
+    <p class="basis">按诉讼请求金额分段累加：不超过 1 万元固定 50 元；其后各段依次为 2.5%、2%、1.5%、1%、0.9%、0.8%、0.7%、0.6%、0.5%。不是用最高档费率乘全部标的额。</p>
+    <div class="input-grid one-line">
+      <label><span>诉讼请求金额</span><span class="entry"><input id="claim-amount" type="text" inputmode="decimal" autocomplete="off" aria-label="诉讼请求金额"><b>元</b></span></label>
+    </div>
+    <p id="fee-message" class="input-message" aria-live="polite"></p>
+    <div class="result-row">
+      <span class="result-name">案件受理费</span><span id="fee-value" class="result-value waiting">待输入</span><span class="result-unit">元</span>
+      <span id="fee-status" class="result-status">输入标的额后逐段列出，明细之和必须回到总额</span>
+    </div>
+    <ol id="fee-breakdown" class="breakdown"><li>待输入：尚无个案分段金额。</li></ol>
+    <p class="source-note">法源 / 日期：《诉讼费用交纳办法》第 13 条，国务院令第 481 号，2007-04-01 施行。简易程序、调解撤诉、反诉上诉、保全与执行费不在本项内。</p>
+  </section>
+
+  <section id="lending" class="calculator" aria-labelledby="lending-title" tabindex="-1">
+    <h2 id="lending-title">民间借贷保护上限历史口径</h2>
+    <p class="basis">曾以合同成立时一年期 LPR 的 4 倍表述。请自行核对合同成立日对应的 LPR 与适用文本；本离线工具不提供当前值或历史查询。</p>
+    <div class="input-grid">
+      <label><span>合同成立日</span><span class="entry"><input id="contract-date" type="date" autocomplete="off" aria-label="合同成立日"></span></label>
+      <label><span>该日一年期 LPR</span><span class="entry"><input id="lpr-rate" type="text" inputmode="decimal" autocomplete="off" aria-label="合同成立时一年期 LPR"><b>%</b></span></label>
+    </div>
+    <p id="lending-message" class="input-message" aria-live="polite"></p>
+    <div class="result-row">
+      <span class="result-name">司法保护年利率上限演示</span><span id="lpr-cap-value" class="result-value waiting">待输入</span><span class="result-unit">%</span>
+      <span id="lpr-cap-status" class="result-status">需要合同成立日与该日一年期 LPR</span>
+    </div>
+    <p class="source-note">法源 / 日期：相关民间借贷司法解释第 25 条，2021-01-01 施行文本。规则与条号可能变化，结果不是对合同效力的判断。</p>
+  </section>
+
+  <footer class="foot">
+    <p>已知边界：不判断劳动关系、解除性质、时效、税费、举证、地方差异或伤残赔偿；不覆盖中国大陆以外地区。请以事项发生时有效规则及专业意见为准。</p>
+    <div class="test-row"><button id="run-test" type="button">运行自测</button><span id="test-out">未运行</span></div>
+    <ul id="test-detail"></ul>
+  </footer>
+</main>
+<script src="engine.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>
