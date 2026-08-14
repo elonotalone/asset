@@ -2,166 +2,187 @@
   "use strict";
 
   var E = window.SpacedRepetitionEngine;
+  var DAY_MS = 24 * 60 * 60 * 1000;
   var today = E.todayISO();
+  var RATINGS = [
+    { q: 1, name: "忘记了", tone: "close" },
+    { q: 3, name: "有点吃力", tone: "near" },
+    { q: 4, name: "记住了", tone: "mid" },
+    { q: 5, name: "很轻松", tone: "far" }
+  ];
+
   var cards = [];
   var nextId = 1;
+  var phase = "front";
+  var focusId = 0;
+  var rated = null;
   var els = {};
 
-  function node(tag, cls, value) {
+  function node(tag, cls, text) {
     var out = document.createElement(tag);
     if (cls) out.className = cls;
-    if (value !== undefined && value !== null) out.textContent = String(value);
+    if (text !== undefined && text !== null) out.textContent = String(text);
     return out;
   }
   function clear(target) { while (target.firstChild) target.removeChild(target.firstChild); }
-  function value(id) { return document.getElementById(id).value; }
+  function excerpt(text, limit) {
+    var value = String(text || "").replace(/\s+/g, " ").trim();
+    return value.length > limit ? value.slice(0, limit) + "…" : value;
+  }
+  function daysBetween(from, to) {
+    return Math.round((Date.parse(to + "T00:00:00Z") - Date.parse(from + "T00:00:00Z")) / DAY_MS);
+  }
+  function whenLabel(date) {
+    var gap = daysBetween(today, date);
+    if (gap <= 0) return "今天再来";
+    return gap + " 天后";
+  }
+  function cardById(id) {
+    for (var i = 0; i < cards.length; i++) if (cards[i].id === id) return cards[i];
+    return null;
+  }
   function replaceCard(next) {
     cards = cards.map(function (card) { return card.id === next.id ? next : card; });
   }
-  function offsetLabel(offset) {
-    if (offset === 0) return "今天";
-    if (offset === 1) return "明天";
-    return "+" + offset + " 天";
-  }
 
-  function renderSummary() {
+  function currentCard() {
     var due = E.dueCards(cards, today);
-    var next = E.nextDueDate(cards);
-    els.cardCount.textContent = cards.length + " 张";
-    els.dueCount.textContent = due.length + " 张";
-    els.nextDue.textContent = next || "—";
-    els.basis.textContent = cards.length
-      ? "日期按 UTC 日历日计算；间隔始终从上一轮已经取整的天数继续。"
-      : "零张卡是正常起点；算法摘要与未来日期轴已展开。";
-    els.add.textContent = cards.length ? "再加一张卡" : "加第一张卡";
+    if (!due.length) return null;
+    if (focusId) {
+      for (var i = 0; i < due.length; i++) if (due[i].id === focusId) return due[i];
+    }
+    return due[0];
   }
 
-  function ratingButton(card, q, back, rating) {
-    var button = node("button", null, String(q));
-    button.type = "button";
-    button.setAttribute("aria-label", "评分 " + q);
-    button.addEventListener("click", function () {
-      var reviewed = E.reviewCard(card, q, today);
-      if (reviewed.error) { els.note.textContent = reviewed.error; return; }
-      replaceCard(reviewed.card);
-      els.note.textContent = reviewed.reason + " 下次复习：" + reviewed.card.dueDate;
-      back.hidden = true;
-      rating.hidden = true;
-      renderAll();
-    });
-    return button;
-  }
+  /* ---------- 一张卡的三步：读正面、揭开答案、评价这次回忆 ---------- */
 
-  function renderQueue() {
-    var due = E.dueCards(cards, today);
-    clear(els.queueList);
-    els.queueEmpty.hidden = due.length > 0;
-    due.forEach(function (card) {
-      var article = node("article", "due-card");
-      var head = node("div", "card-head");
-      head.appendChild(node("strong", null, card.front));
-      head.appendChild(node("span", "card-meta", "下次复习：" + card.dueDate));
-      article.appendChild(head);
+  function renderReview(card) {
+    clear(els.review);
+    els.review.className = "card";
+    var faces = node("div", "faces");
+    faces.appendChild(node("p", "face", card.front));
+    els.review.appendChild(faces);
 
-      var reveal = node("button", "reveal", "显示答案");
+    if (phase === "front") {
+      var act = node("div", "act");
+      var reveal = node("button", "go", "想好了，看答案");
       reveal.type = "button";
-      var back = node("p", "card-back", card.back);
-      back.hidden = true;
-      var rating = node("div", "rating");
-      rating.hidden = true;
-      rating.appendChild(node("span", null, "回忆质量 q"));
-      for (var q = 0; q <= 5; q++) rating.appendChild(ratingButton(card, q, back, rating));
-      reveal.addEventListener("click", function () {
-        back.hidden = false;
-        rating.hidden = false;
-        reveal.hidden = true;
+      reveal.addEventListener("click", function () { phase = "back"; show(); });
+      act.appendChild(reveal);
+      els.review.appendChild(act);
+      return;
+    }
+
+    faces.appendChild(node("div", "seam"));
+    faces.appendChild(node("p", "face face-answer", card.back));
+
+    if (phase === "back") {
+      var ask = node("div", "rate");
+      RATINGS.forEach(function (rating) {
+        var button = node("button", "rate-go", rating.name);
+        button.type = "button";
+        button.addEventListener("click", function () {
+          var done = E.reviewCard(card, rating.q, today);
+          if (done.error) { els.warn.textContent = done.error; return; }
+          replaceCard(done.card);
+          rated = { id: card.id, front: card.front, dueDate: done.card.dueDate, tone: rating.tone, name: rating.name };
+          phase = "rated";
+          focusId = 0;
+          show();
+        });
+        ask.appendChild(button);
       });
-      article.appendChild(reveal);
-      article.appendChild(back);
-      article.appendChild(rating);
-      els.queueList.appendChild(article);
+      els.review.appendChild(ask);
+      return;
+    }
+
+    faces.classList.add("retreat-" + rated.tone);
+    var stamp = node("p", "next-see");
+    stamp.appendChild(node("span", "next-word", "下次见"));
+    stamp.appendChild(node("span", "next-date", rated.dueDate));
+    stamp.appendChild(node("span", "next-gap", whenLabel(rated.dueDate)));
+    els.review.appendChild(stamp);
+
+    var after = node("div", "act");
+    var upcoming = E.dueCards(cards, today);
+    var go = node("button", "go go-quiet", upcoming.length
+      ? "下一张：" + excerpt(upcoming[0].front, 14)
+      : "今天到这里");
+    go.type = "button";
+    go.addEventListener("click", function () {
+      rated = null;
+      phase = "front";
+      show();
     });
+    after.appendChild(go);
+    els.review.appendChild(after);
   }
 
-  function appendCell(row, value) { row.appendChild(node("td", null, value)); }
-
-  function renderRegistry() {
-    clear(els.cardRows);
-    els.registryEmpty.hidden = cards.length > 0;
-    cards.forEach(function (card) {
-      var row = document.createElement("tr");
-      appendCell(row, card.front);
-      appendCell(row, String(card.repetitions));
-      appendCell(row, card.intervalDays + " 天");
-      appendCell(row, card.easeFactor.toFixed(2));
-      appendCell(row, card.dueDate);
-      els.cardRows.appendChild(row);
-    });
+  function renderHeadline() {
+    clear(els.headline);
+    if (!cards.length || currentCard() || phase === "rated") { els.headline.hidden = true; return; }
+    var date = E.nextDueDate(cards);
+    els.headline.appendChild(node("p", "headline-main", "今天的卡都复习完了"));
+    if (date) {
+      var back = cards.filter(function (card) { return card.dueDate === date; })[0];
+      var line = node("p", "headline-note");
+      line.appendChild(document.createTextNode("最近回来的是「" + excerpt(back.front, 20) + "」，"));
+      line.appendChild(node("span", "next-date", date));
+      line.appendChild(node("span", "next-gap", whenLabel(date)));
+      els.headline.appendChild(line);
+    }
+    els.headline.hidden = false;
   }
 
-  function renderTimeline() {
-    clear(els.timelineRows);
-    E.buildTimeline(cards, today, 7).forEach(function (item) {
-      var row = document.createElement("tr");
-      if (item.offset === 0) row.className = "today-row";
-      appendCell(row, item.date);
-      appendCell(row, offsetLabel(item.offset));
-      appendCell(row, item.count + " 张");
-      els.timelineRows.appendChild(row);
-    });
-  }
-
-  function renderAll() {
-    renderSummary();
-    renderQueue();
-    renderRegistry();
-    renderTimeline();
-  }
-
-  function addCard() {
+  function keepCard() {
     var made = E.createCard({
       id: nextId,
-      front: value("front"),
-      back: value("back"),
+      front: els.front.value,
+      back: els.back.value,
       createdOn: today,
-      startNow: document.getElementById("start-now").checked
+      startNow: true
     });
-    if (made.error) { els.error.textContent = made.error; return; }
-    els.error.textContent = "";
+    if (made.error) { els.warn.textContent = made.error; return; }
+    els.warn.textContent = "";
     cards.push(made.card);
     nextId++;
-    document.getElementById("front").value = "";
-    document.getElementById("back").value = "";
-    els.note.textContent = "已加入“" + made.card.front + "”；下次复习：" + made.card.dueDate;
-    renderAll();
+    focusId = made.card.id;
+    phase = "front";
+    rated = null;
+    els.front.value = "";
+    els.back.value = "";
+    show();
   }
 
-  function runTest() {
-    var report = E.runSelfTest();
-    els.testOut.textContent = report.passed + " / " + report.total + " 通过";
-    clear(els.testDetail);
-    report.failures.forEach(function (failure) { els.testDetail.appendChild(node("li", null, failure.name + " —— " + failure.why)); });
-    if (report.failures.length === 0) els.testDetail.appendChild(node("li", null, "SM-2 起点、更新式、失败保 EF、取整间隔与日期运算均通过。"));
+  function show() {
+    var card = phase === "rated" && rated ? cardById(rated.id) : currentCard();
+    var reviewing = !!card;
+    els.review.hidden = !reviewing;
+    els.newCard.hidden = reviewing;
+    if (reviewing) {
+      renderReview(phase === "rated" ? { front: rated.front, back: card.back, id: card.id } : card);
+    } else {
+      var written = !!els.front.value.trim();
+      els.backWrap.hidden = !written;
+      els.newAct.hidden = !written;
+      els.front.focus();
+    }
+    renderHeadline();
   }
 
   function mount() {
-    els.add = document.getElementById("add-card");
-    els.error = document.getElementById("editor-error");
-    els.cardCount = document.getElementById("card-count");
-    els.dueCount = document.getElementById("due-count");
-    els.nextDue = document.getElementById("next-due");
-    els.basis = document.getElementById("basis-line");
-    els.queueEmpty = document.getElementById("queue-empty");
-    els.queueList = document.getElementById("queue-list");
-    els.note = document.getElementById("action-note");
-    els.cardRows = document.getElementById("card-rows");
-    els.registryEmpty = document.getElementById("registry-empty");
-    els.timelineRows = document.getElementById("timeline-rows");
-    els.testOut = document.getElementById("test-out");
-    els.testDetail = document.getElementById("test-detail");
-    els.add.addEventListener("click", addCard);
-    document.getElementById("run-test").addEventListener("click", runTest);
-    renderAll();
+    els.front = document.getElementById("front");
+    els.back = document.getElementById("back");
+    els.backWrap = document.getElementById("back-wrap");
+    els.newAct = document.getElementById("new-act");
+    els.newCard = document.getElementById("new-card");
+    els.review = document.getElementById("review");
+    els.headline = document.getElementById("headline");
+    els.warn = document.getElementById("new-warn");
+
+    els.front.addEventListener("input", function () { if (!currentCard()) show(); });
+    document.getElementById("keep").addEventListener("click", keepCard);
+    show();
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mount);

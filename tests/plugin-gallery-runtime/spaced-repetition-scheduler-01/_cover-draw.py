@@ -1,148 +1,101 @@
 #!/usr/bin/env python3
+"""封面绘制：只画 _cover-data.mjs 从真实界面取回的文字，版面照 style.css 的节奏。"""
 import json
 import os
 import sys
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 W, H = 1200, 750
-INK, MUTED, FAINT = "#17191d", "#68707b", "#969da6"
-DIVIDER, RULE, SHADE, ACCENT, BG = "#dfe3e7", "#aeb5bd", "#f6f7f8", "#1d4ed8", "#ffffff"
+PAPER, INK, SEAM, EDGE = "#fffdf9", "#1f2328", "#e8e2d6", "#ddd7ca"
+SERIF = "/host/usr/share/fonts/opentype/noto/NotoSerifCJK-Regular.ttc"
+SERIF_MID = "/host/usr/share/fonts/opentype/noto/NotoSerifCJK-Bold.ttc"
 SANS = "/host/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc"
-MONO = "/host/usr/share/fonts/truetype/noto/NotoSansMono-Regular.ttf"
 
-with open(sys.argv[1], encoding="utf-8") as fh:
-    data = json.load(fh)
-img = Image.new("RGB", (W, H), BG)
+FRONT_SIZE, BACK_SIZE, PILL_SIZE = 31, 27, 21
+LEADING = 1.75
+PAD_X, PAD_TOP, PAD_BOTTOM = 58, 54, 46
+CARD_X0, CARD_X1 = 196, 1004
+
+with open(sys.argv[1], encoding="utf-8") as handle:
+    data = json.load(handle)
+
+img = Image.new("RGB", (W, H), "#f4f4f1")
 d = ImageDraw.Draw(img)
-fonts = {}
+cache = {}
 
-def font(size, mono=False):
-    key = (size, mono)
-    if key not in fonts:
-        fonts[key] = ImageFont.truetype(MONO if mono else SANS, size)
-    return fonts[key]
 
-def runs(value):
-    out, current, ascii_run = [], "", None
+def font(size, face=SERIF):
+    key = (size, face)
+    if key not in cache:
+        cache[key] = ImageFont.truetype(face, size)
+    return cache[key]
+
+
+def width(value, size, face=SERIF):
+    return d.textlength(str(value), font=font(size, face))
+
+
+def wrap(value, size, limit, face=SERIF):
+    rows, line = [], ""
     for char in str(value):
-        is_ascii = ord(char) < 128
-        if ascii_run is None or is_ascii == ascii_run:
-            current += char
+        if width(line + char, size, face) > limit and line:
+            rows.append(line)
+            line = char
         else:
-            out.append((current, ascii_run))
-            current = char
-        ascii_run = is_ascii
-    if current:
-        out.append((current, ascii_run))
-    return out
+            line += char
+    if line:
+        rows.append(line)
+    return rows
 
-def width(value, size=17, mono=False):
-    if not mono:
-        return d.textlength(str(value), font=font(size))
-    return sum(d.textlength(token, font=font(size, ascii_run)) for token, ascii_run in runs(value))
 
-def text(x, y, value, size=17, fill=INK, mono=False, anchor="la"):
-    if not mono:
-        d.text((x, y), str(value), font=font(size), fill=fill, anchor=anchor)
-        return
-    if anchor == "ra":
-        x -= width(value, size, True)
-    for token, ascii_run in runs(value):
-        selected = font(size, ascii_run)
-        d.text((x, y), token, font=selected, fill=fill, anchor="la")
-        x += d.textlength(token, font=selected)
+COLUMN = CARD_X1 - CARD_X0 - PAD_X * 2
+front_rows = wrap(data["front"], FRONT_SIZE, COLUMN, SERIF_MID)
+back_rows = wrap(data["back"], BACK_SIZE, COLUMN, SERIF)
+front_h = int(FRONT_SIZE * LEADING) * len(front_rows)
+back_h = int(BACK_SIZE * LEADING) * len(back_rows)
+content_h = front_h + 26 + 1 + 30 + back_h + 34 + 48
+card_h = PAD_TOP + content_h + PAD_BOTTOM
+CARD_Y0 = max(70, (H - card_h) // 2)
+CARD_Y1 = CARD_Y0 + card_h
 
-def ellipsis(value, max_width, size=17, mono=False):
-    value = str(value)
-    if width(value, size, mono) <= max_width:
-        return value
-    while value and width(value + "…", size, mono) > max_width:
-        value = value[:-1]
-    return value + "…"
+# 背景：光从上方缓慢铺下来的很淡的雾。
+for y in range(H):
+    ratio = y / (H - 1)
+    if ratio < 0.62:
+        t, top, bottom = ratio / 0.62, (250, 250, 248), (244, 244, 241)
+    else:
+        t, top, bottom = (ratio - 0.62) / 0.38, (244, 244, 241), (238, 238, 234)
+    d.line([(0, y), (W, y)], fill=tuple(int(top[i] + (bottom[i] - top[i]) * t) for i in range(3)))
 
-def line(x0, y, x1, color=DIVIDER, weight=1):
-    d.line([(x0, y), (x1, y)], fill=color, width=weight)
+overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+ImageDraw.Draw(overlay).rounded_rectangle(
+    [CARD_X0 + 2, CARD_Y0 + 14, CARD_X1 + 2, CARD_Y1 + 18], 14, fill=(31, 35, 40, 52)
+)
+img = Image.alpha_composite(img.convert("RGBA"), overlay.filter(ImageFilter.GaussianBlur(17))).convert("RGB")
+d = ImageDraw.Draw(img)
+d.rounded_rectangle([CARD_X0, CARD_Y0, CARD_X1, CARD_Y1], 12, fill=PAPER, outline=EDGE, width=1)
 
-pad, split, right = 42, 398, 1160
-text(pad, 28, data["title"], 23)
-text(pad + width(data["title"], 23) + 16, 34, ellipsis(data["sub"], 900, 15), 15, MUTED)
-line(0, 70, W)
-d.line([(split, 70), (split, 704)], fill=DIVIDER, width=1)
 
-# 左：录卡输入与算法摘要，全部取自真实 DOM。
-text(pad, 91, data["editorTitle"], 14, MUTED)
-text(pad, 126, data["frontLabel"], 13, MUTED)
-text(pad, 153, ellipsis(data["front"], split - pad - 25, 15), 15)
-line(pad, 184, split - 24)
-text(pad, 205, data["backLabel"], 13, MUTED)
-text(pad, 232, ellipsis(data["back"], split - pad - 25, 15), 15)
-line(pad, 263, split - 24)
-d.rectangle([pad, 284, pad + 14, 298], outline=ACCENT, width=1)
-d.line([(pad + 3, 291), (pad + 6, 295), (pad + 12, 287)], fill=ACCENT, width=2)
-text(pad + 26, 283, data["startNow"], 13, MUTED)
-d.rectangle([pad, 317, pad + 108, 350], outline=DIVIDER, width=1)
-text(pad + 12, 324, data["addButton"], 13)
-line(pad, 380, split - 24)
-text(pad, 399, data["rulesTitle"], 14, MUTED)
-y = 431
-for label, value in data["rules"]:
-    text(pad, y, label, 12, MUTED)
-    text(split - 24, y, value, 12, INK, mono=True, anchor="ra")
-    line(pad, y + 23, split - 24)
-    y += 34
-for note in data["ruleNotes"]:
-    text(pad, y + 3, ellipsis(note, split - pad - 24, 11), 11, MUTED)
-    y += 29
+def draw_rows(x, y, rows, size, face):
+    for row in rows:
+        d.text((x, y), row, font=font(size, face), fill=INK)
+        y += int(size * LEADING)
+    return y
 
-# 右：真实结论读数与本次评分理由。
-rx, y = split + 30, 92
-x = rx
-for cell in data["headline"]:
-    text(x, y, cell["k"], 13, ACCENT)
-    text(x, y + 24, cell["v"], 31, INK, mono=True)
-    x += 225
-text(rx, 155, ellipsis(data["basis"], right - rx, 13), 13, MUTED)
-line(rx, 184, right)
-text(rx, 204, data["queueTitle"], 14, MUTED)
-text(rx, 236, data["queueEmpty"], 17)
-text(rx, 268, ellipsis(data["actionNote"], right - rx, 12), 12, MUTED)
 
-# 卡片登记：真实评分后的次数、间隔、EF 与日期。
-line(rx, 307, right)
-text(rx, 326, data["registryTitle"], 14, MUTED)
-y = 365
-cols = [rx, rx + 330, rx + 430, rx + 520, right]
-for i, heading in enumerate(data["registryHead"]):
-    text(cols[i], y, heading, 12, MUTED, anchor="ra" if i else "la")
-line(rx, y + 24, right, RULE, 2)
-y += 36
-for row in data["registryRows"]:
-    text(cols[0], y, ellipsis(row[0], 300, 14), 14)
-    for i in range(1, len(row)):
-        text(cols[i], y, row[i], 14, INK, mono=True, anchor="ra")
+LEFT = CARD_X0 + PAD_X
+y = draw_rows(LEFT, CARD_Y0 + PAD_TOP, front_rows, FRONT_SIZE, SERIF_MID)
+y += 26
+d.line([(LEFT, y), (CARD_X1 - PAD_X, y)], fill=SEAM, width=1)
+y = draw_rows(LEFT, y + 30, back_rows, BACK_SIZE, SERIF)
 
-# 未来日期轴：取真实 UI 的前五行，灰阶隔行底纹。
-y += 52
-line(rx, y, right)
-text(rx, y + 18, data["timelineTitle"], 14, MUTED)
-y += 55
-tcols = [rx, rx + 350, right]
-for i, heading in enumerate(data["timelineHead"]):
-    text(tcols[i], y, heading, 12, MUTED, anchor="ra" if i else "la")
-line(rx, y + 23, right, RULE, 2)
-y += 32
-for n, row in enumerate(data["timelineRows"][:5]):
-    if n % 2:
-        d.rectangle([rx, y - 4, right, y + 23], fill=SHADE)
-    text(tcols[0], y, row[0], 13, INK, mono=True)
-    text(tcols[1], y, row[1], 13, MUTED, anchor="ra")
-    text(tcols[2], y, row[2], 13, INK, mono=True, anchor="ra")
-    y += 29
-
-line(0, 704, W)
-d.rectangle([pad, 716, pad + 88, 743], outline=DIVIDER, width=1)
-text(pad + 10, 720, data["selftestButton"], 13)
-text(pad + 108, 720, data["selftest"], 13, MUTED, mono=True)
+y += 34
+x = LEFT
+for name in data["ratings"]:
+    pill = width(name, PILL_SIZE, SANS) + 46
+    d.rounded_rectangle([x, y, x + pill, y + 48], 24, outline=EDGE, width=1)
+    d.text((x + 23, y + 10), name, font=font(PILL_SIZE, SANS), fill=INK)
+    x += pill + 14
 
 out = sys.argv[2]
 os.makedirs(os.path.dirname(out), exist_ok=True)
