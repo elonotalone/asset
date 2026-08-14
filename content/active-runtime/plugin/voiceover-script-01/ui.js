@@ -2,13 +2,33 @@
   "use strict";
 
   var E = window.VoiceoverScriptEngine;
-  var state = { paragraphs: [], editingIndex: null, sequence: 0 };
-  var els = {};
 
-  function el(tag, cls, value) {
+  // 语速与帧率用默认值，不上屏、也不让人先配置：默认值应该先让第一句话写得出来。
+  var settings = {
+    chineseRate: E.DEFAULTS.chineseRate,
+    englishRate: E.DEFAULTS.englishRate,
+    fps: E.DEFAULTS.fps
+  };
+
+  var state = {
+    target: "",
+    started: false,
+    segments: [],
+    draft: blankDraft()
+  };
+
+  var seq = 0;
+  var els = {};
+  var codeSlots = {};
+
+  function blankDraft() {
+    return { title: "", text: "", pause: "0.6", subtitle: "", visual: "" };
+  }
+
+  function el(tag, cls, text) {
     var node = document.createElement(tag);
     if (cls) node.className = cls;
-    if (value !== undefined && value !== null) node.textContent = String(value);
+    if (text !== undefined && text !== null) node.textContent = String(text);
     return node;
   }
 
@@ -16,192 +36,328 @@
     while (node.firstChild) node.removeChild(node.firstChild);
   }
 
-  function numericValue(node, fallback) {
-    var n = Number(node.value);
-    return isFinite(n) ? n : fallback;
-  }
-
-  function settings() {
-    return {
-      chineseRate: Math.max(1, numericValue(els.chineseRate, E.DEFAULTS.chineseRate)),
-      englishRate: Math.max(1, numericValue(els.englishRate, E.DEFAULTS.englishRate)),
-      fps: Math.max(1, numericValue(els.fps, E.DEFAULTS.fps))
-    };
-  }
-
   function targetSeconds() {
-    if (!String(els.targetSeconds.value).trim()) return 0;
-    return Math.max(0, numericValue(els.targetSeconds, 0));
+    var value = Number(String(state.target).replace(/[^\d.]/g, ""));
+    return isFinite(value) && value > 0 ? value : 0;
   }
 
-  function showEditor(index) {
-    state.editingIndex = typeof index === "number" ? index : null;
-    var paragraph = state.editingIndex === null ? null : state.paragraphs[state.editingIndex];
-    els.editor.hidden = false;
-    els.editorTitle.textContent = paragraph ? "编辑第 " + (state.editingIndex + 1) + " 段" : "添加段落";
-    els.segmentTitle.value = paragraph ? paragraph.title : "";
-    els.languageMode.value = paragraph ? paragraph.mode : "zh";
-    els.segmentText.value = paragraph ? paragraph.text : "";
-    els.pauseSeconds.value = paragraph ? String(paragraph.pauseSeconds) : "0.5";
-    els.subtitle.value = paragraph ? paragraph.subtitle : "";
-    els.visualNote.value = paragraph ? paragraph.visualNote : "";
-    els.segmentText.focus();
+  // 中英混排不是用户要选的口径，从这一段自己的字里看得出来。
+  function detectMode(text) {
+    var chinese = /[\u3400-\u9fff]/.test(text);
+    var latin = /[A-Za-z0-9]/.test(text);
+    if (chinese && latin) return "mixed";
+    if (latin) return "en";
+    return "zh";
   }
 
-  function hideEditor() {
-    state.editingIndex = null;
-    els.editor.hidden = true;
-  }
-
-  function saveSegment() {
-    var spoken = els.segmentText.value.trim();
-    if (!spoken) return;
-    var paragraph = {
-      id: state.editingIndex === null ? "segment-" + (++state.sequence) : state.paragraphs[state.editingIndex].id,
-      title: els.segmentTitle.value.trim() || "未命名段落",
-      mode: els.languageMode.value,
-      text: spoken,
-      pauseSeconds: Math.max(0, numericValue(els.pauseSeconds, 0)),
-      subtitle: els.subtitle.value.trim(),
-      visualNote: els.visualNote.value.trim()
+  function paragraphOf(segment) {
+    return {
+      title: segment.title,
+      text: segment.text,
+      mode: detectMode(segment.text),
+      pauseSeconds: Number(segment.pause),
+      subtitle: segment.subtitle,
+      visualNote: segment.visual
     };
-    if (state.editingIndex === null) state.paragraphs.push(paragraph);
-    else state.paragraphs[state.editingIndex] = paragraph;
-    hideEditor();
-    render();
   }
 
-  function deleteSegment(index) {
-    state.paragraphs.splice(index, 1);
-    hideEditor();
-    render();
+  function draftInPlay() {
+    return state.draft.text.trim() !== "" || state.draft.title.trim() !== "";
   }
 
-  function loadDemo() {
-    els.targetSeconds.value = "90";
-    els.chineseRate.value = "216";
-    els.englishRate.value = "150";
-    els.fps.value = "25";
-    state.paragraphs = E.clone(E.DEMO);
-    state.sequence = state.paragraphs.length;
-    hideEditor();
-    render();
+  function timeline() {
+    var list = state.segments.map(paragraphOf);
+    if (draftInPlay()) list.push(paragraphOf(state.draft));
+    return E.buildTimeline(list, settings);
   }
 
-  function renderConclusions(timeline) {
-    var target = targetSeconds();
-    var set = settings();
-    if (!target) {
-      els.timeRange.textContent = "待填写";
-      els.budget.textContent = "待填写";
-      els.remaining.textContent = "待填写";
-      els.remaining.className = "";
-    } else {
-      els.timeRange.textContent = "0:00 → " + E.formatClock(target);
-      els.budget.textContent = "约 " + E.budgetFor(target, set.chineseRate) + " 字";
-      var remaining = target - timeline.totalSeconds;
-      els.remaining.textContent = (remaining < 0 ? "超出 " : "") + E.formatClock(Math.abs(remaining));
-      els.remaining.className = remaining < 0 ? "negative" : "";
-    }
-    els.used.textContent = E.formatClock(timeline.totalSeconds);
-    els.calculationBasis.textContent = "中文预算 = 目标秒数 × " + set.chineseRate + " ÷ 60；段落停顿固定；累计时间码按 " + set.fps + " fps 对齐到整帧。";
-  }
-
-  function appendAction(cell, label, handler, className) {
-    var button = el("button", className || null, label);
-    button.type = "button";
-    button.addEventListener("click", handler);
-    cell.appendChild(button);
-  }
-
-  function renderTable(timeline) {
-    clear(els.timelineBody);
-    timeline.rows.forEach(function (row, index) {
-      var tr = el("tr");
-      tr.setAttribute("data-index", String(index));
-      tr.setAttribute("data-start-frame", String(row.startFrame));
-      tr.setAttribute("data-end-frame", String(row.endFrame));
-
-      var title = el("td");
-      title.appendChild(el("span", "row-title", (index + 1) + ". " + (row.paragraph.title || "未命名段落")));
-      title.appendChild(el("span", "row-sub", row.paragraph.subtitle || "无单独字幕"));
-      tr.appendChild(title);
-
-      var count = el("td");
-      count.appendChild(el("span", "row-title", E.languageLabel(row.paragraph.mode)));
-      count.appendChild(el("span", "row-sub", E.countLabel(row)));
-      tr.appendChild(count);
-      tr.appendChild(el("td", "numeric start-code", row.startCode));
-      tr.appendChild(el("td", "numeric end-code", row.endCode));
-      tr.appendChild(el("td", "numeric", row.speakingSeconds.toFixed(2) + " s"));
-      tr.appendChild(el("td", "numeric", row.pauseSeconds.toFixed(1) + " s"));
-
-      var actions = el("td", "row-actions");
-      appendAction(actions, "编辑", function () { showEditor(index); }, "edit-segment");
-      appendAction(actions, "删除", function () { deleteSegment(index); }, "delete-segment");
-      tr.appendChild(actions);
-      els.timelineBody.appendChild(tr);
+  function editable(cls, value, label, onInput) {
+    var node = el("p", cls, value);
+    node.setAttribute("contenteditable", "true");
+    node.setAttribute("role", "textbox");
+    node.setAttribute("data-label", label);
+    node.setAttribute("aria-label", label);
+    node.addEventListener("input", function () {
+      onInput(node.textContent.replace(/\s+/g, " ").trim());
+      refresh();
     });
-    els.emptyState.hidden = timeline.rows.length > 0;
-    els.rowCount.textContent = timeline.rows.length + " 段";
+    return node;
+  }
+
+  function codeRail(key) {
+    var rail = el("p", "seg-code");
+    var start = el("span", "code-start", "");
+    var end = el("span", "code-end", "");
+    rail.appendChild(start);
+    rail.appendChild(end);
+    codeSlots[key] = { start: start, end: end, rail: rail };
+    return rail;
+  }
+
+  function breathLine(segment, key) {
+    var line = el("p", "seg-breath");
+    line.appendChild(document.createTextNode("句末停 "));
+    var value = el("span", "seg-pause", segment.pause);
+    value.setAttribute("contenteditable", "true");
+    value.setAttribute("role", "textbox");
+    value.setAttribute("inputmode", "decimal");
+    value.setAttribute("aria-label", "段后停顿秒数");
+    value.addEventListener("input", function () {
+      segment.pause = value.textContent.replace(/[^\d.]/g, "");
+      refresh();
+    });
+    line.appendChild(value);
+    line.appendChild(document.createTextNode(" 秒"));
+    codeSlots[key].breath = line;
+    return line;
+  }
+
+  function segmentBlock(segment, index) {
+    var key = segment.id;
+    var block = el("article", "seg");
+    block.setAttribute("data-segment", key);
+
+    block.appendChild(codeRail(key));
+
+    var head = el("h2", "seg-title");
+    head.appendChild(el("span", "seg-order", String(index + 1)));
+    var name = el("span", "seg-name", segment.title);
+    name.setAttribute("contenteditable", "true");
+    name.setAttribute("role", "textbox");
+    name.setAttribute("data-label", "这一段叫什么");
+    name.setAttribute("aria-label", "段落名称");
+    name.addEventListener("input", function () {
+      segment.title = name.textContent.replace(/\s+/g, " ").trim();
+    });
+    head.appendChild(name);
+    block.appendChild(head);
+
+    block.appendChild(editable("seg-text", segment.text, "这一段要念的话", function (value) {
+      segment.text = value;
+    }));
+
+    block.appendChild(breathLine(segment, key));
+
+    var subtitle = editable("seg-subtitle", segment.subtitle, "这一段的字幕", function (value) {
+      segment.subtitle = value;
+    });
+    subtitle.setAttribute("data-kind", "字幕");
+    block.appendChild(subtitle);
+
+    var visual = editable("seg-visual", segment.visual, "给剪辑的画面备注", function (value) {
+      segment.visual = value;
+    });
+    visual.setAttribute("data-kind", "画面");
+    block.appendChild(visual);
+
+    var aside = el("p", "seg-aside", "");
+    codeSlots[key].aside = aside;
+    block.appendChild(aside);
+
+    var drop = el("button", "quiet", "删掉这一段");
+    drop.type = "button";
+    drop.setAttribute("data-drop", key);
+    drop.addEventListener("click", function () {
+      state.segments = state.segments.filter(function (item) { return item.id !== key; });
+      render();
+    });
+    block.appendChild(drop);
+    return block;
+  }
+
+  function draftBlock() {
+    var block = el("article", "seg seg-draft");
+    block.appendChild(codeRail("draft"));
+
+    var ask = el("p", "compose-ask", state.segments.length ? "接下来这一段说什么" : "开场第一句怎么说");
+    block.appendChild(ask);
+
+    var head = el("h2", "seg-title");
+    head.appendChild(el("span", "seg-order", String(state.segments.length + 1)));
+    var name = el("span", "seg-name", state.draft.title);
+    name.id = "draft-title";
+    name.setAttribute("contenteditable", "true");
+    name.setAttribute("role", "textbox");
+    name.setAttribute("data-label", "这一段叫什么");
+    name.setAttribute("aria-label", "段落名称");
+    name.addEventListener("input", function () {
+      state.draft.title = name.textContent.replace(/\s+/g, " ").trim();
+      refresh();
+    });
+    head.appendChild(name);
+    block.appendChild(head);
+
+    var text = editable("seg-text", state.draft.text, "这一段要念的话", function (value) {
+      state.draft.text = value;
+    });
+    text.id = "draft-text";
+    block.appendChild(text);
+
+    var breath = breathLine(state.draft, "draft");
+    breath.querySelector(".seg-pause").id = "draft-pause";
+    block.appendChild(breath);
+
+    var subtitle = editable("seg-subtitle", state.draft.subtitle, "这一段的字幕", function (value) {
+      state.draft.subtitle = value;
+    });
+    subtitle.id = "draft-subtitle";
+    subtitle.setAttribute("data-kind", "字幕");
+    block.appendChild(subtitle);
+
+    var visual = editable("seg-visual", state.draft.visual, "给剪辑的画面备注", function (value) {
+      state.draft.visual = value;
+    });
+    visual.id = "draft-visual";
+    visual.setAttribute("data-kind", "画面");
+    block.appendChild(visual);
+
+    var aside = el("p", "seg-aside", "");
+    codeSlots.draft.aside = aside;
+    block.appendChild(aside);
+
+    var commit = el("button", "seg-commit", "写进脚本");
+    commit.type = "button";
+    commit.id = "draft-commit";
+    commit.addEventListener("click", commitDraft);
+    block.appendChild(commit);
+    return block;
+  }
+
+  function commitDraft() {
+    if (!state.draft.text.trim() && !state.draft.title.trim()) return;
+    state.segments.push({
+      id: "seg-" + (++seq),
+      title: state.draft.title,
+      text: state.draft.text,
+      pause: state.draft.pause,
+      subtitle: state.draft.subtitle,
+      visual: state.draft.visual
+    });
+    state.draft = blankDraft();
+    render();
+    var next = document.getElementById("draft-text");
+    if (next) next.focus();
+  }
+
+  function openingBlock() {
+    var ask = el("p", "target-ask");
+    ask.appendChild(el("span", "compose-ask", "这段话要在多久内说完"));
+    var line = el("span", "target-line");
+    var value = el("span", "target-value", state.target);
+    value.id = "target-seconds";
+    value.setAttribute("contenteditable", "true");
+    value.setAttribute("role", "textbox");
+    value.setAttribute("inputmode", "numeric");
+    value.setAttribute("data-label", "60");
+    value.setAttribute("aria-label", "目标时长秒数");
+    value.addEventListener("input", function () {
+      state.target = value.textContent.replace(/[^\d.]/g, "");
+      updateHeadline();
+    });
+    value.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        startWriting();
+      }
+    });
+    line.appendChild(value);
+    line.appendChild(document.createTextNode(" 秒"));
+    ask.appendChild(line);
+
+    var go = el("button", "seg-commit", "开始写");
+    go.type = "button";
+    go.id = "target-commit";
+    go.addEventListener("click", startWriting);
+    ask.appendChild(go);
+    return ask;
+  }
+
+  function startWriting() {
+    if (!targetSeconds()) return;
+    state.started = true;
+    render();
+    var text = document.getElementById("draft-text");
+    if (text) text.focus();
+  }
+
+  function targetFoot() {
+    var foot = el("p", "target-foot");
+    foot.appendChild(document.createTextNode("目标 "));
+    var value = el("span", "target-value", state.target);
+    value.id = "target-seconds";
+    value.setAttribute("contenteditable", "true");
+    value.setAttribute("role", "textbox");
+    value.setAttribute("inputmode", "numeric");
+    value.setAttribute("aria-label", "目标时长秒数");
+    value.addEventListener("input", function () {
+      state.target = value.textContent.replace(/[^\d.]/g, "");
+      refresh();
+    });
+    foot.appendChild(value);
+    foot.appendChild(document.createTextNode(" 秒"));
+    return foot;
+  }
+
+  function refresh() {
+    var line = timeline();
+    var keys = state.segments.map(function (segment) { return segment.id; });
+    if (draftInPlay()) keys.push("draft");
+    keys.forEach(function (key, index) {
+      var slot = codeSlots[key];
+      var row = line.rows[index];
+      if (!slot || !row) return;
+      slot.start.textContent = row.startCode;
+      slot.end.textContent = row.endCode;
+      if (slot.breath) slot.breath.style.setProperty("--breath", String(row.pauseSeconds));
+      if (slot.aside) {
+        var mode = row.counts.mode;
+        slot.aside.textContent = mode === "zh" ? "" : "这段里的英文与数字按词另算。";
+      }
+    });
+    if (!draftInPlay() && codeSlots.draft) {
+      codeSlots.draft.start.textContent = line.totalSeconds ? E.formatFramecode(line.totalFrames, settings.fps) : "";
+      codeSlots.draft.end.textContent = "";
+      if (codeSlots.draft.aside) codeSlots.draft.aside.textContent = "";
+    }
+    updateHeadline(line);
+  }
+
+  function updateHeadline(line) {
+    if (!state.started) {
+      els.headline.textContent = "";
+      return;
+    }
+    line = line || timeline();
+    var target = targetSeconds();
+    if (!line.rows.length) {
+      els.headline.textContent = target + " 秒大约能念 " + E.budgetFor(target, settings.chineseRate) + " 个字。";
+      return;
+    }
+    var remaining = target - line.totalSeconds;
+    els.headline.textContent = remaining >= 0
+      ? "还剩 " + remaining.toFixed(1) + " 秒。"
+      : "超出 " + Math.abs(remaining).toFixed(1) + " 秒，得删掉这么多。";
   }
 
   function render() {
-    var set = settings();
-    var timeline = E.buildTimeline(state.paragraphs, set);
-    renderConclusions(timeline);
-    renderTable(timeline);
-    els.addSegment.disabled = !targetSeconds();
-    els.addSegment.textContent = state.paragraphs.length ? "添加下一段" : "添加第一段";
-    els.exportOutput.value = E.exportScript(state.paragraphs, set, targetSeconds());
-  }
-
-  function runTest() {
-    var report = E.runSelfTest();
-    els.testOut.textContent = report.passed + " / " + report.total + " 通过";
-    clear(els.testDetail);
-    report.failures.forEach(function (failure) {
-      els.testDetail.appendChild(el("li", null, failure.name + " —— " + failure.why));
-    });
-    if (!report.failures.length) {
-      els.testDetail.appendChild(el("li", null, "预算、固定停顿、帧对齐、后续平移与中英计数均已核对。"));
+    clear(els.script);
+    codeSlots = {};
+    if (!state.started) {
+      els.script.appendChild(openingBlock());
+      updateHeadline();
+      return;
     }
+    state.segments.forEach(function (segment, index) {
+      els.script.appendChild(segmentBlock(segment, index));
+    });
+    els.script.appendChild(draftBlock());
+    els.script.appendChild(targetFoot());
+    refresh();
   }
 
   function mount() {
-    els.targetSeconds = document.getElementById("target-seconds");
-    els.chineseRate = document.getElementById("chinese-rate");
-    els.englishRate = document.getElementById("english-rate");
-    els.fps = document.getElementById("fps");
-    els.addSegment = document.getElementById("add-segment");
-    els.editor = document.getElementById("editor");
-    els.editorTitle = document.getElementById("editor-title");
-    els.segmentTitle = document.getElementById("segment-title");
-    els.languageMode = document.getElementById("language-mode");
-    els.segmentText = document.getElementById("segment-text");
-    els.pauseSeconds = document.getElementById("pause-seconds");
-    els.subtitle = document.getElementById("subtitle");
-    els.visualNote = document.getElementById("visual-note");
-    els.timeRange = document.getElementById("time-range");
-    els.budget = document.getElementById("budget");
-    els.used = document.getElementById("used");
-    els.remaining = document.getElementById("remaining");
-    els.calculationBasis = document.getElementById("calculation-basis");
-    els.timelineBody = document.getElementById("timeline-body");
-    els.emptyState = document.getElementById("empty-state");
-    els.rowCount = document.getElementById("row-count");
-    els.exportOutput = document.getElementById("export-output");
-    els.testOut = document.getElementById("test-out");
-    els.testDetail = document.getElementById("test-detail");
-
-    [els.targetSeconds, els.chineseRate, els.englishRate, els.fps].forEach(function (node) {
-      node.addEventListener("input", render);
-    });
-    els.addSegment.addEventListener("click", function () { showEditor(null); });
-    document.getElementById("save-segment").addEventListener("click", saveSegment);
-    document.getElementById("cancel-edit").addEventListener("click", hideEditor);
-    document.getElementById("load-demo").addEventListener("click", loadDemo);
-    document.getElementById("run-test").addEventListener("click", runTest);
+    els.script = document.getElementById("script");
+    els.headline = document.getElementById("headline");
     render();
   }
 
