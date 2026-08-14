@@ -3,7 +3,7 @@
   "manifest": "active-runtime-manifest.json",
   "manifestSha256": "0967be937dc1c5b938a2fb66fbe0c18983bc443fdf2b2a4375cdd37426e54b9d",
   "itemCount": 30,
-  "totalBytes": 1423052,
+  "totalBytes": 1430477,
   "items": [
     {
       "item": {
@@ -362,11 +362,11 @@
         "source": "content/active-runtime/plugin/interactive-globe-01",
         "entry": "index.html"
       },
-      "host": "s-fd5eb6833dcfddeb54b1c93f6f096287.oceanleo.app",
-      "entryUrl": "https://s-fd5eb6833dcfddeb54b1c93f6f096287.oceanleo.app/embed",
-      "closureSha256": "1e63c224ffffda639e5dd919876415feaaa024beac31bb9fddae972c4dc0b61a",
+      "host": "s-bacb99f342f1c4f54242ef3936bdd845.oceanleo.app",
+      "entryUrl": "https://s-bacb99f342f1c4f54242ef3936bdd845.oceanleo.app/embed",
+      "closureSha256": "93829bfc9b95ac58a3eb9fd1a30262503a76545abb07fca96fe392ea4fbb13e8",
       "fileCount": 5,
-      "totalBytes": 153954,
+      "totalBytes": 161379,
       "files": [
         {
           "path": "NOTICE",
@@ -380,18 +380,18 @@
         },
         {
           "path": "index.html",
-          "sha256": "32e06a2d40f93be61188c9062ed1dae0d40c66184703867527cf49e420ad89b7",
-          "bytes": 6394
+          "sha256": "dff6f15b8ee2e50e50af5ea83ede4310a84437defff88df3d0de6b007d99c7ea",
+          "bytes": 6365
         },
         {
           "path": "style.css",
-          "sha256": "e5e2c4a4fc85df9fea5911dd46bcb30dd66e02bb816e064c4b89fb6a9687364e",
-          "bytes": 7046
+          "sha256": "2cbcd1d7a50d5473d3d41da44c1805263fb1742eee49f844f45570567882f16b",
+          "bytes": 7658
         },
         {
           "path": "ui.js",
-          "sha256": "38c70cd65c36be7930a8d72b4b240dc0ba14fe7d1d1d233c0b5a2143b66a6458",
-          "bytes": 15071
+          "sha256": "4886997f8904ff6a249db25a251f46764aa016af790d25822e71bd164fe355f5",
+          "bytes": 21913
         }
       ]
     },
