@@ -1,15 +1,13 @@
 :root {
-  --ink: #16181d;
-  --muted: #68707c;
-  --faint: #9299a3;
-  --divider: #e4e7eb;
-  --accent: #1d4ed8;
-  --bg: #ffffff;
-  --fs-value: 28px;
-  --fs-body: 15px;
-  --fs-fine: 12px;
-  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --paper: #f2efe9;
+  --ink: #23201c;
+  --muted: #6f6a61;
+  --faint: #a8a29a;
+  --rail: #cdc7bc;
+  --rail-on: #6a6459;
+  --pin: #8c4a3c;
   --sans: system-ui, -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
 }
 
 * { box-sizing: border-box; }
@@ -17,61 +15,96 @@
 html, body {
   margin: 0;
   min-height: 100%;
-  background: var(--bg);
+  background: var(--paper);
   color: var(--ink);
   font-family: var(--sans);
-  font-size: var(--fs-body);
-  line-height: 1.55;
+  font-size: clamp(15px, 1.5vw, 18px);
+  line-height: 1.5;
   -webkit-text-size-adjust: 100%;
 }
 
-.wrap { width: min(920px, 100%); margin: 0 auto; padding: 28px 28px 44px; }
-.head { display: flex; align-items: baseline; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid var(--divider); }
-h1, h2, p { margin: 0; }
-.head h1, h2 { font-size: var(--fs-body); font-weight: 600; }
-.head p, .scope, .sources, .basis, .source-note, .foot { color: var(--muted); font-size: var(--fs-fine); }
-.scope, .sources { padding: 13px 0 14px; border-bottom: 1px solid var(--divider); }
-.scope p + p, .sources p + p { margin-top: 5px; }
-.scope strong, .sources b { color: var(--ink); font-weight: 500; }
-.sources h2 { padding-bottom: 5px; color: var(--ink); }
+/* 一页案卷：暖灰纸，左边缘一道安静的装订阴影。 */
+body {
+  background-image: linear-gradient(90deg, rgba(35, 32, 28, 0.09), rgba(35, 32, 28, 0) 26px);
+}
 
-.category-nav { display: flex; gap: 24px; padding: 14px 0 0; border-bottom: 1px solid var(--divider); }
-.category-nav button {
+.file {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
+  padding: clamp(28px, 7vh, 84px) clamp(26px, 4vw, 64px);
+}
+
+/* 事项未选时，屏幕只问这一句。 */
+.ask-line {
+  margin: 0 0 clamp(18px, 3vh, 30px);
+  font-size: clamp(21px, 2.6vw, 30px);
+  font-weight: 400;
+}
+.picks { display: flex; flex-wrap: wrap; gap: clamp(14px, 2vw, 28px); }
+.picks button {
   border: 0;
-  border-bottom: 2px solid transparent;
+  border-top: 2px solid var(--rail);
   border-radius: 0;
   background: transparent;
-  padding: 0 0 9px;
-  color: var(--muted);
+  padding: 12px 2px 0;
+  color: var(--ink);
   font: inherit;
+  font-size: clamp(17px, 1.9vw, 22px);
+  text-align: left;
   cursor: pointer;
 }
-.category-nav button.active { border-bottom-color: var(--accent); color: var(--accent); }
-.category-nav button:focus-visible, input:focus-visible, #run-test:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.picks button:hover { border-top-color: var(--pin); }
 
-.calculator { padding-top: 18px; border-bottom: 1px solid var(--divider); scroll-margin-top: 12px; }
-.calculator h2 { padding-bottom: 3px; }
-.basis { max-width: 84em; }
-.input-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: 34px;
-  padding-top: 9px;
+/* 判定链：节点按规则发生的先后横过纸面，每个节点自带一段连接线，线就长在节点的实际位置上。 */
+.nodes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
-.input-grid.one-line { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-.input-grid > label {
-  display: grid;
-  grid-template-columns: minmax(9em, 1fr) minmax(11em, 1.2fr);
-  align-items: baseline;
+.node {
+  position: relative;
+  flex: 1 1 11em;
   min-width: 0;
-  padding: 8px 0 7px;
-  border-top: 1px solid var(--divider);
-  color: var(--muted);
+  border-top: 1px solid var(--rail);
+  padding: 20px clamp(12px, 1.6vw, 22px) 26px 0;
 }
-.entry { display: flex; align-items: baseline; min-width: 0; gap: 8px; }
+.node[data-state="settled"] { border-top-color: var(--rail-on); }
+.node[data-state="asleep"] { border-top-color: var(--rail); }
+.node.wide { flex: 2 1 22em; }
+.node.end { flex: 1 1 14em; padding-right: 0; }
+
+/* 节点头上那颗钉：走到这一步的落稳了，正在等的那个是空心的。 */
+.node::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: 0;
+  width: 7px;
+  height: 7px;
+  border: 1px solid var(--rail);
+  border-radius: 50%;
+  background: var(--paper);
+}
+.node[data-state="settled"]::before { border-color: var(--rail-on); background: var(--rail-on); }
+.node[data-state="waiting"]::before { border-color: var(--pin); background: var(--paper); }
+
+.name { display: block; color: var(--muted); }
+.node[data-state="waiting"] .name { color: var(--ink); }
+.node[data-state="asleep"] .name { color: var(--faint); }
+/* 尚未走到的部分隐在纸面里，但位置留着，链的形状不会跳。 */
+.node[data-state="asleep"] .entry,
+.node[data-state="asleep"] .ruler { visibility: hidden; }
+
+.entry { display: flex; align-items: baseline; gap: 7px; padding-top: 6px; min-width: 0; }
+.entry.span3 { flex-wrap: wrap; }
 .entry input {
   width: 100%;
-  min-width: 0;
+  min-width: 3.4em;
   border: 0;
   border-bottom: 1px solid var(--ink);
   border-radius: 0;
@@ -80,53 +113,107 @@ h1, h2, p { margin: 0; }
   padding: 2px 0;
   font: inherit;
   font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
   text-align: right;
 }
-.entry b { flex: 0 0 auto; color: var(--muted); font-size: var(--fs-fine); font-weight: 400; white-space: nowrap; }
-.input-message { min-height: 1.7em; padding-top: 4px; color: var(--muted); font-size: var(--fs-fine); }
-
-.result-row {
-  display: grid;
-  grid-template-columns: minmax(15em, 1fr) auto minmax(3em, auto);
-  align-items: baseline;
-  column-gap: 12px;
-  padding: 11px 0 9px;
-  border-top: 1px solid var(--divider);
+.entry.span3 input { width: 3.6em; flex: 0 0 auto; }
+.entry b {
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-size: clamp(13px, 1.3vw, 16px);
+  font-weight: 400;
+  white-space: nowrap;
 }
-.result-name { grid-column: 1; color: var(--muted); }
-.result-value {
-  grid-column: 2;
+.entry .value {
   color: var(--ink);
   font-family: var(--mono);
-  font-size: var(--fs-value);
-  font-weight: 400;
-  line-height: 1.15;
-  text-align: right;
+  font-size: clamp(19px, 2vw, 24px);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
-.result-value.waiting { color: var(--faint); font-family: var(--sans); font-size: var(--fs-body); }
-.result-unit { grid-column: 3; color: var(--muted); white-space: nowrap; }
-.result-status { grid-column: 1 / -1; padding-top: 3px; color: var(--muted); font-size: var(--fs-fine); }
-.source-note { padding: 0 0 14px; }
+.entry .value.big { font-size: clamp(28px, 3.6vw, 46px); line-height: 1.1; }
 
-.breakdown { margin: 0 0 11px; padding: 8px 0 0 1.5em; border-top: 1px solid var(--divider); color: var(--muted); font-size: var(--fs-fine); }
-.breakdown li { padding: 2px 0; }
-.foot { padding-top: 17px; }
-.test-row { display: flex; align-items: center; gap: 12px; padding-top: 11px; }
-#run-test { border: 1px solid var(--divider); border-radius: 0; background: transparent; padding: 5px 12px; color: var(--ink); font: inherit; font-size: var(--fs-fine); cursor: pointer; }
-#run-test:hover { border-color: var(--ink); }
-#test-detail { margin: 7px 0 0; padding-left: 1.2em; }
+/* 加班的三类小时各带自己的倍数，倍数只在那一类真有小时之后才浮出来。 */
+.entry.stack { flex-direction: column; align-items: stretch; gap: 10px; }
+.kind { display: flex; align-items: baseline; gap: 7px; }
+.kind i { flex: 0 0 6.4em; color: var(--muted); font-style: normal; }
+.kind input { width: 4.6em; flex: 0 0 auto; }
+.kind em {
+  color: var(--pin);
+  font-family: var(--mono);
+  font-style: normal;
+  white-space: nowrap;
+}
 
-@media (max-width: 700px) {
-  .wrap { padding: 20px 16px 34px; }
-  .head { display: block; }
-  .head p { padding-top: 4px; }
-  .category-nav { gap: 14px; overflow-x: auto; }
-  .category-nav button { white-space: nowrap; }
-  .input-grid, .input-grid.one-line { grid-template-columns: 1fr; }
-  .input-grid > label { grid-template-columns: minmax(8em, 1fr) minmax(10em, 1.2fr); }
-  .result-row { grid-template-columns: minmax(0, 1fr) auto auto; }
-  .result-value { grid-column: 2; }
-  .result-unit { grid-column: 3; font-size: var(--fs-fine); }
+/* 门槛改变了结果时，纸面浮出一枚克制的印记，写成用户能复述的话。 */
+.mark {
+  position: relative;
+  margin: 12px 0 0;
+  border: 1px solid rgba(140, 74, 60, 0.45);
+  border-radius: 12px 12px 12px 2px;
+  padding: 7px 11px;
+  color: var(--pin);
+  font-size: clamp(13px, 1.35vw, 16px);
+  line-height: 1.45;
+}
+
+/* 受理费的分段标尺：墨水填过已经经过的区间，落点直接可见。 */
+.ruler {
+  position: relative;
+  display: flex;
+  margin-top: 14px;
+  height: 30px;
+  border-bottom: 1px solid var(--rail-on);
+}
+.ruler .seg {
+  position: relative;
+  flex: 1 1 0;
+  border-left: 1px solid var(--rail);
+}
+.ruler .seg:first-child { border-left: 0; }
+.ruler .seg span {
+  position: absolute;
+  bottom: -1.7em;
+  right: 0;
+  color: var(--faint);
+  font-size: clamp(12.5px, 1.2vw, 15px);
+  white-space: nowrap;
+  transform: translateX(50%);
+}
+.ruler-ink {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 100%;
+  background: rgba(35, 32, 28, 0.13);
+  transition: width 140ms ease-out;
+}
+.ruler-node { flex: 3 1 26em; padding-bottom: 46px; }
+
+/* 结论下面只有这一行淡字，它不配标题，也不需要打开和关闭。 */
+.edge {
+  max-width: 62em;
+  margin: clamp(22px, 4vh, 40px) 0 0;
+  color: var(--muted);
+  font-size: clamp(13px, 1.35vw, 16px);
+}
+
+.again {
+  align-self: flex-start;
+  margin-top: clamp(20px, 3.4vh, 34px);
+  border: 0;
+  border-bottom: 1px solid var(--rail);
+  border-radius: 0;
+  background: transparent;
+  padding: 0 0 3px;
+  color: var(--muted);
+  font: inherit;
+  cursor: pointer;
+}
+.again:hover { border-bottom-color: var(--pin); color: var(--ink); }
+input:focus-visible, button:focus-visible { outline: 2px solid var(--pin); outline-offset: 3px; }
+
+@media (max-width: 860px) {
+  .node, .node.wide, .node.end, .ruler-node { flex: 1 1 100%; padding-right: 0; }
+  .node.end { padding-bottom: 8px; }
 }
