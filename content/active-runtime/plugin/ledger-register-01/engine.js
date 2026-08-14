@@ -233,6 +233,71 @@
     };
   }
 
+  /* 到基准日为止走完了几个整年。365 天算一年，按 UTC 零点取整；不满一年是 0。 */
+  function elapsedYears(purchaseDate, asOf) {
+    var from = parseIsoDate(purchaseDate);
+    var to = parseIsoDate(asOf);
+    if (from === null || to === null) return null;
+    return Math.max(0, Math.floor((to - from) / (365 * 86400000)));
+  }
+
+  /* 一项资产在基准日的账面净值：走完 k 个整年就取年表第 k 年的年末净值。
+     不满一年不提折旧（净值 = 原值），走完年限按残值封底。 */
+  function bookValueAt(asset, asOf) {
+    var item = asset || {};
+    var schedule = depreciationSchedule(item.cost, item.salvage, item.life, item.method);
+    if (!schedule) return null;
+    var years = elapsedYears(item.date, asOf);
+    if (years === null) return null;
+    var bookValue = years === 0
+      ? schedule.cost
+      : years >= schedule.life ? schedule.salvage : schedule.rows[years - 1].endingBook;
+    return {
+      schedule: schedule,
+      elapsedYears: years,
+      bookValue: round2(bookValue),
+      accumulated: round2(schedule.cost - bookValue)
+    };
+  }
+
+  function depreciationLedger(assets, asOf) {
+    if (!Array.isArray(assets)) return null;
+    if (parseIsoDate(asOf) === null) return null;
+    var rows = [];
+    var costTotal = 0;
+    var bookValueTotal = 0;
+    var accumulatedTotal = 0;
+    for (var i = 0; i < assets.length; i++) {
+      var asset = assets[i] || {};
+      if (!String(asset.item || "").trim()) return null;
+      var at = bookValueAt(asset, asOf);
+      if (!at) return null;
+      costTotal = round2(costTotal + at.schedule.cost);
+      bookValueTotal = round2(bookValueTotal + at.bookValue);
+      accumulatedTotal = round2(accumulatedTotal + at.accumulated);
+      rows.push({
+        date: asset.date,
+        item: String(asset.item).trim(),
+        cost: at.schedule.cost,
+        salvage: at.schedule.salvage,
+        life: at.schedule.life,
+        method: at.schedule.method,
+        elapsedYears: at.elapsedYears,
+        bookValue: at.bookValue,
+        accumulated: at.accumulated,
+        schedule: at.schedule
+      });
+    }
+    return {
+      rows: rows,
+      count: rows.length,
+      asOf: asOf,
+      costTotal: costTotal,
+      accumulatedTotal: accumulatedTotal,
+      bookValueTotal: bookValueTotal
+    };
+  }
+
   var CASES = [
     {
       name: "流水 1250.50 借方进入余额",
@@ -277,6 +342,23 @@
         var r = depreciationSchedule(100000, 10000, 5, "sum-of-years");
         return r.denominator === 15 && r.rows.map(function (x) { return x.depreciation; }).join(",") === "30000,24000,18000,12000,6000";
       }
+    },
+    {
+      name: "直线折旧走满两个整年后净值 64000",
+      run: function () {
+        var r = depreciationLedger([{
+          date: "2024-08-14", item: "备份硬盘", cost: 100000, salvage: 10000, life: 5, method: "straight-line"
+        }], "2026-08-14");
+        return r.rows[0].elapsedYears === 2 && r.bookValueTotal === 64000 && r.accumulatedTotal === 36000;
+      }
+    },
+    {
+      name: "不满一年不提折旧，超过年限封在残值",
+      run: function () {
+        var young = bookValueAt({ date: "2026-03-01", item: "灯架", cost: 8000, salvage: 800, life: 4, method: "straight-line" }, "2026-08-14");
+        var old = bookValueAt({ date: "2015-01-01", item: "旧机身", cost: 8000, salvage: 800, life: 4, method: "straight-line" }, "2026-08-14");
+        return young.elapsedYears === 0 && young.bookValue === 8000 && old.bookValue === 800;
+      }
     }
   ];
 
@@ -302,6 +384,9 @@
     ageReceivables: ageReceivables,
     inventory: inventory,
     depreciationSchedule: depreciationSchedule,
+    elapsedYears: elapsedYears,
+    bookValueAt: bookValueAt,
+    depreciationLedger: depreciationLedger,
     CASES: CASES,
     runSelfTest: runSelfTest
   };

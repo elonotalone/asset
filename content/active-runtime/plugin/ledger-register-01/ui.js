@@ -1,414 +1,486 @@
-/* 台账 · DOM 装配层。所有计算来自 LedgerEngine。 */
+/* 台账 · 装配。敲完一行就落进流里，读数跟着这一笔动一下。 */
 (function () {
   "use strict";
 
   var E = window.LedgerEngine;
-  var state = {
-    mode: "ledger",
-    asOf: "2026-08-14",
-    message: "",
-    error: false,
-    entries: { ledger: [], receivable: [], inventory: [], depreciation: [] }
-  };
-  var els = {};
+  var doc = document;
 
-  var META = {
+  var METHODS = [
+    { id: "straight-line", label: "直线" },
+    { id: "double-declining", label: "双倍余额" },
+    { id: "sum-of-years", label: "年数总和" }
+  ];
+
+  /* 四种用途换的是流本身和它顶上那个数的名字，不是多开一块区域。 */
+  var USES = {
     ledger: {
-      note: "余额 = 上一笔余额 + 借方 − 贷方；逐笔取分，总额处列示舍入调整。",
-      guide: ["点明细第一行的日期。", "填项目与借方或贷方。", "点“记入台账”，合计和连续余额同步更新。"],
-      heads: ["日期", "项目", "借方", "贷方", "余额", "操作"]
+      reading: "余额", unit: "元",
+      cols: [
+        { key: "date", name: "日期", kind: "date", entry: true },
+        { key: "item", name: "项目", kind: "text", entry: true, hint: "这一笔是什么" },
+        { key: "debit", name: "借方", kind: "money", entry: true },
+        { key: "credit", name: "贷方", kind: "money", entry: true },
+        { key: "balance", name: "余额", kind: "money" }
+      ]
     },
     receivable: {
-      note: "未收 = 金额 − 已收；按到期日至基准日的自然日数进入六档账龄。",
-      guide: ["确认账龄基准日。", "填发生日、事项、到期日、金额与已收。", "六档金额自动回勾未收合计。"],
-      heads: ["日期", "客户或事项", "到期日", "金额", "已收", "未收", "账龄", "分档", "操作"]
+      reading: "未收", unit: "元", asOf: true,
+      cols: [
+        { key: "date", name: "开票日", kind: "date", entry: true },
+        { key: "item", name: "客户", kind: "text", entry: true, hint: "这笔款是谁的" },
+        { key: "dueDate", name: "到期日", kind: "date", entry: true },
+        { key: "amount", name: "金额", kind: "money", entry: true },
+        { key: "received", name: "已收", kind: "money", entry: true },
+        { key: "outstanding", name: "未收", kind: "money" },
+        { key: "age", name: "账龄", kind: "text" }
+      ]
     },
     inventory: {
-      note: "数量口径：期末 = 期初 + 入库 − 出库；每一行与合计都可复核。",
-      guide: ["填日期和品项。", "填期初、入库、出库数量。", "记入后立即得到逐项期末与合计。"],
-      heads: ["日期", "品项", "期初", "入库", "出库", "期末", "操作"]
+      reading: "结存", unit: "件", 
+      cols: [
+        { key: "date", name: "日期", kind: "date", entry: true },
+        { key: "item", name: "货品", kind: "text", entry: true, hint: "进出的是什么" },
+        { key: "opening", name: "期初", kind: "count", entry: true },
+        { key: "inbound", name: "入库", kind: "count", entry: true },
+        { key: "outbound", name: "出库", kind: "count", entry: true },
+        { key: "ending", name: "结存", kind: "count" }
+      ]
     },
     depreciation: {
-      note: "直线、双倍余额递减（末期转直线）与年数总和法均摊开完整年限。",
-      guide: ["填资产、原值、残值与年限。", "选择折旧方法。", "记入后逐年净值完整摊开，绝不低于残值。"],
-      heads: ["资产", "方法", "年", "年初净值", "本年折旧", "年末净值", "计算口径"]
+      reading: "净值", unit: "元", asOf: true,
+      cols: [
+        { key: "date", name: "购入", kind: "date", entry: true },
+        { key: "item", name: "资产", kind: "text", entry: true, hint: "这项资产是什么" },
+        { key: "cost", name: "原值", kind: "money", entry: true },
+        { key: "salvage", name: "残值", kind: "money", entry: true },
+        { key: "life", name: "年限", kind: "whole", entry: true },
+        { key: "method", name: "方法", kind: "pick", entry: true },
+        { key: "bookValue", name: "净值", kind: "money" }
+      ]
     }
   };
 
-  function el(tag, cls, text) {
-    var node = document.createElement(tag);
-    if (cls) node.className = cls;
-    if (text !== undefined && text !== null) node.textContent = String(text);
+  var ORDER = ["ledger", "receivable", "inventory", "depreciation"];
+  var books = { ledger: [], receivable: [], inventory: [], depreciation: [] };
+  var current = "ledger";
+  var asOf = todayIso();
+
+  var head = doc.getElementById("roll-head");
+  var body = doc.getElementById("roll-body");
+  var entryRow = doc.getElementById("entry-row");
+  var entryWhy = doc.getElementById("entry-why");
+  var form = doc.getElementById("entry-form");
+  var readingName = doc.getElementById("reading-name");
+  var readingValue = doc.getElementById("reading-value");
+  var readingUnit = doc.getElementById("reading-unit");
+  var latest = doc.getElementById("latest");
+  var reconcile = doc.getElementById("reconcile");
+  var asOfBox = doc.getElementById("as-of");
+  var asOfInput = doc.getElementById("as-of-date");
+  var usesBox = doc.getElementById("uses");
+  var takeawayOpen = doc.getElementById("takeaway-open");
+  var takeaway = doc.getElementById("takeaway");
+  var fields = {};
+
+  function todayIso() {
+    var now = new Date();
+    return [
+      now.getUTCFullYear(),
+      String(now.getUTCMonth() + 1).padStart(2, "0"),
+      String(now.getUTCDate()).padStart(2, "0")
+    ].join("-");
+  }
+
+  function el(tag, className, text) {
+    var node = doc.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined) node.textContent = text;
     return node;
   }
-  function clear(node) { while (node.firstChild) node.removeChild(node.firstChild); }
-  function amount(raw, blankAsZero) {
-    var value = String(raw === undefined ? "" : raw).trim().replace(/[,\s]/g, "");
-    if (value === "" && blankAsZero) return 0;
-    if (!/^(\d+(\.\d*)?|\.\d+)$/.test(value)) return null;
-    var number = Number(value);
-    return isFinite(number) ? number : null;
-  }
-  function cell(text, cls) { return el("td", cls || null, text); }
 
-  function metric(label, value) {
-    var box = el("div", "metric");
-    box.appendChild(el("div", "label", label));
-    box.appendChild(el("div", "value", value));
-    els.headline.appendChild(box);
+  function isText(col) { return col.kind === "text" || col.kind === "date" || col.kind === "pick" || col.key === "age"; }
+
+  function number(raw, allowEmpty) {
+    var text = String(raw === undefined || raw === null ? "" : raw).replace(/[\s,]/g, "").replace(/[−–—]/g, "-");
+    if (text === "") return allowEmpty ? 0 : null;
+    if (!/^\d+(?:\.\d*)?$|^\.\d+$/.test(text)) return null;
+    var value = Number(text);
+    return isFinite(value) ? value : null;
   }
 
-  function inputCell(row, id, type, label, placeholder) {
-    var td = document.createElement("td");
-    var input = document.createElement("input");
-    input.id = id;
-    input.type = type || "text";
-    input.setAttribute("aria-label", label);
-    input.placeholder = placeholder || "";
-    input.autocomplete = "off";
-    td.appendChild(input);
-    row.appendChild(td);
-    return input;
+  /* ---- 屏幕上的一行 ------------------------------------------------- */
+
+  function computed() {
+    var entries = books[current];
+    if (current === "ledger") {
+      var l = E.ledger(entries);
+      return {
+        /* 借贷是二选一：没走那一边就空着，不写一个 0.00 去挤占眼睛。 */
+        rows: l.rows.map(function (row) {
+          return {
+            date: row.date, item: row.item,
+            debit: row.debit ? E.money(row.debit) : "",
+            credit: row.credit ? E.money(row.credit) : "",
+            balance: E.money(row.balance)
+          };
+        }),
+        reading: l.reportedClosing,
+        adjustment: l.roundingAdjustment
+      };
+    }
+    if (current === "receivable") {
+      var r = E.ageReceivables(entries, asOf);
+      return {
+        rows: r.rows.map(function (row) {
+          return {
+            date: row.date, item: row.item, dueDate: row.dueDate,
+            amount: E.money(row.amount), received: E.money(row.received),
+            outstanding: E.money(row.outstanding),
+            age: row.ageDays + " 天 · " + row.bucket
+          };
+        }),
+        reading: r.outstandingTotal
+      };
+    }
+    if (current === "inventory") {
+      var i = E.inventory(entries);
+      return {
+        rows: i.rows.map(function (row) {
+          return {
+            date: row.date, item: row.item,
+            opening: E.money(row.opening), inbound: E.money(row.inbound),
+            outbound: E.money(row.outbound), ending: E.money(row.ending)
+          };
+        }),
+        reading: i.endingTotal
+      };
+    }
+    var d = E.depreciationLedger(entries, asOf);
+    return {
+      rows: d.rows.map(function (row) {
+        return {
+          date: row.date, item: row.item,
+          cost: E.money(row.cost), salvage: E.money(row.salvage),
+          life: String(row.life), method: label(row.method),
+          bookValue: E.money(row.bookValue),
+          schedule: row.schedule,
+          elapsedYears: row.elapsedYears
+        };
+      }),
+      reading: d.bookValueTotal
+    };
   }
 
-  function actionCell(row, label, handler) {
-    var td = el("td", "add-cell");
-    var button = el("button", null, label);
+  function label(methodId) {
+    for (var i = 0; i < METHODS.length; i++) if (METHODS[i].id === methodId) return METHODS[i].label;
+    return methodId;
+  }
+
+  function rowNode(row, index) {
+    var use = USES[current];
+    var tr = el("tr", "line");
+    tr.setAttribute("data-index", String(index));
+    use.cols.forEach(function (col, position) {
+      var cell = position === 1 ? el("th") : el("td");
+      if (position === 1) cell.setAttribute("scope", "row");
+      cell.className = isText(col) ? "text" : "num";
+      if (col.key === "item") {
+        cell.classList.add("name-cell");
+        if (row.schedule) {
+          var opener = el("button", "name", row.item);
+          opener.type = "button";
+          opener.setAttribute("aria-expanded", "false");
+          opener.addEventListener("click", function () { toggleYears(tr, row, opener); });
+          cell.appendChild(opener);
+        } else {
+          cell.appendChild(doc.createTextNode(row.item));
+        }
+        var drop = el("button", "drop", "删除");
+        drop.type = "button";
+        drop.setAttribute("aria-label", "删除 " + row.item);
+        drop.addEventListener("click", function () { remove(index); });
+        cell.appendChild(drop);
+      } else {
+        cell.textContent = row[col.key];
+      }
+      tr.appendChild(cell);
+    });
+    return tr;
+  }
+
+  /* 年表是那一行的内部构造：原地摊开，原地收回，不进弹窗也不进抽屉。 */
+  function toggleYears(tr, row, opener) {
+    var open = opener.getAttribute("aria-expanded") === "true";
+    opener.setAttribute("aria-expanded", open ? "false" : "true");
+    var next = tr.nextSibling;
+    if (open) {
+      if (next && next.classList && next.classList.contains("years")) next.remove();
+      return;
+    }
+    var holder = el("tr", "years");
+    var cell = el("td");
+    cell.colSpan = USES[current].cols.length;
+    row.schedule.rows.forEach(function (year) {
+      var line = el("div", "year-line");
+      line.appendChild(el("span", null, "第 " + year.year + " 年 · " + year.basis));
+      line.appendChild(el("span", null, "年初 " + E.money(year.beginningBook) + " 元"));
+      line.appendChild(el("span", null, "折旧 " + E.money(year.depreciation) + " 元"));
+      line.appendChild(el("span", null, "年末 " + E.money(year.endingBook) + " 元"));
+      cell.appendChild(line);
+    });
+    holder.appendChild(cell);
+    tr.parentNode.insertBefore(holder, tr.nextSibling);
+  }
+
+  function ageRows() {
+    var lines = body.querySelectorAll("tr.line");
+    for (var i = 0; i < lines.length; i++) {
+      lines[i].classList.remove("last", "near");
+      if (i === lines.length - 1) lines[i].classList.add("last");
+      else if (i === lines.length - 2) lines[i].classList.add("near");
+    }
+  }
+
+  function readOut(state) {
+    var use = USES[current];
+    readingName.textContent = use.reading;
+    readingUnit.textContent = use.unit;
+    readingValue.textContent = E.money(state.reading);
+    readingValue.classList.toggle("down", state.reading < 0);
+    asOfBox.hidden = !use.asOf;
+
+    var adjustment = state.adjustment;
+    if (adjustment) {
+      reconcile.hidden = false;
+      reconcile.textContent = "其中舍入调整 " + E.money(adjustment) + " 元";
+    } else {
+      reconcile.hidden = true;
+      reconcile.textContent = "";
+    }
+
+    var last = state.rows[state.rows.length - 1];
+    if (!last) {
+      latest.textContent = "";
+      return;
+    }
+    var tail = use.cols[use.cols.length - 1];
+    latest.textContent = "最新 " + last.date + " " + last.item + " " + last[tail.key] + " " + use.unit;
+  }
+
+  function paintAll() {
+    var state = computed();
+    body.textContent = "";
+    state.rows.forEach(function (row, index) { body.appendChild(rowNode(row, index)); });
+    ageRows();
+    readOut(state);
+    if (takeawayOpen.getAttribute("aria-expanded") === "true") fillTakeaway(state);
+  }
+
+  /* ---- 录入 --------------------------------------------------------- */
+
+  function buildEntry() {
+    var use = USES[current];
+    head.textContent = "";
+    entryRow.textContent = "";
+    fields = {};
+    use.cols.forEach(function (col) {
+      var th = el("th", isText(col) ? "text" : "num", col.name);
+      th.setAttribute("scope", "col");
+      head.appendChild(th);
+
+      var cell = el("td", isText(col) ? "text" : "num");
+      if (col.entry) {
+        var input;
+        if (col.kind === "pick") {
+          input = el("select");
+          METHODS.forEach(function (method) {
+            var option = el("option", null, method.label);
+            option.value = method.id;
+            input.appendChild(option);
+          });
+        } else {
+          input = el("input");
+          input.type = col.kind === "date" ? "date" : "text";
+          if (col.kind !== "date") input.inputMode = col.kind === "whole" || col.kind === "count" ? "numeric" : "decimal";
+          if (col.hint) input.placeholder = col.hint;
+        }
+        input.id = "entry-" + col.key;
+        input.setAttribute("aria-label", col.name);
+        if (col.kind === "date") input.value = col.key === "dueDate" ? "" : asOf;
+        fields[col.key] = input;
+        cell.appendChild(input);
+      }
+      entryRow.appendChild(cell);
+    });
+  }
+
+  function refuse(reason) {
+    entryWhy.hidden = false;
+    entryWhy.textContent = reason;
+    return null;
+  }
+
+  function accept() {
+    entryWhy.hidden = true;
+    entryWhy.textContent = "";
+  }
+
+  function draft() {
+    var date = fields.date.value;
+    if (!E.parseIsoDate(date)) return refuse("日期要填一个真有的日子，例如 " + asOf);
+    var item = String(fields.item.value || "").trim();
+    if (!item) return refuse(USES[current].cols[1].name + "要写清是什么，不然对不上票据");
+
+    if (current === "ledger") {
+      var debit = number(fields.debit.value, true);
+      var credit = number(fields.credit.value, true);
+      if (debit === null || credit === null) return refuse("借方和贷方只能填不带负号的金额");
+      if (debit === 0 && credit === 0) return refuse("这一笔要填借方或贷方");
+      return { date: date, item: item, debit: debit, credit: credit };
+    }
+    if (current === "receivable") {
+      var due = fields.dueDate.value;
+      if (!E.parseIsoDate(due)) return refuse("到期日要填一个真有的日子，缺了它算不出账龄");
+      var amount = number(fields.amount.value, false);
+      var received = number(fields.received.value, true);
+      if (amount === null || !(amount > 0)) return refuse("金额要填一个大于 0 的数");
+      if (received === null) return refuse("已收只能填不带负号的金额");
+      if (received > amount) return refuse("已收不能大于金额");
+      return { date: date, item: item, dueDate: due, amount: amount, received: received };
+    }
+    if (current === "inventory") {
+      var opening = number(fields.opening.value, true);
+      var inbound = number(fields.inbound.value, true);
+      var outbound = number(fields.outbound.value, true);
+      if (opening === null || inbound === null || outbound === null) return refuse("期初、入库、出库只能填不带负号的数量");
+      if (opening === 0 && inbound === 0 && outbound === 0) return refuse("这一行要填期初、入库或出库");
+      return { date: date, item: item, opening: opening, inbound: inbound, outbound: outbound };
+    }
+    var cost = number(fields.cost.value, false);
+    var salvage = number(fields.salvage.value, true);
+    var life = number(fields.life.value, false);
+    if (cost === null || !(cost > 0)) return refuse("原值要填一个大于 0 的金额");
+    if (salvage === null) return refuse("残值只能填不带负号的金额");
+    if (salvage > cost) return refuse("残值不能高于原值");
+    if (life === null || !Number.isInteger(life) || life < 1 || life > 100) return refuse("年限要填 1 到 100 的整数");
+    return {
+      date: date, item: item, cost: cost, salvage: salvage, life: life,
+      method: fields.method.value
+    };
+  }
+
+  function record() {
+    var made = draft();
+    if (!made) return;
+    accept();
+    books[current].push(made);
+    var state = computed();
+    var index = state.rows.length - 1;
+    var node = rowNode(state.rows[index], index);
+    node.classList.add("fresh");
+    body.appendChild(node);
+    ageRows();
+    readOut(state);
+    if (takeawayOpen.getAttribute("aria-expanded") === "true") fillTakeaway(state);
+    setTimeout(function () { node.classList.add("settled"); }, 30);
+    USES[current].cols.forEach(function (col) {
+      if (!col.entry || col.kind === "date" || col.kind === "pick") return;
+      fields[col.key].value = "";
+    });
+    fields.item.focus();
+    keepInView();
+  }
+
+  /* 纸往上走一行：让手边这一端留在视野里。没有滚动能力的环境里什么也不做。 */
+  function keepInView() {
+    if (typeof window.scrollTo !== "function") return;
+    try {
+      window.scrollTo(0, doc.documentElement.scrollHeight);
+    } catch (err) {
+      /* jsdom 之类没有视口的环境，位置本来就无从谈起 */
+    }
+  }
+
+  function remove(index) {
+    books[current].splice(index, 1);
+    paintAll();
+  }
+
+  /* ---- 带走 --------------------------------------------------------- */
+
+  function fillTakeaway(state) {
+    var use = USES[current];
+    var lines = [use.cols.map(function (col) { return col.name; }).join("\t")];
+    state.rows.forEach(function (row) {
+      lines.push(use.cols.map(function (col) { return row[col.key]; }).join("\t"));
+    });
+    lines.push("");
+    lines.push(use.reading + "\t" + E.money(state.reading) + " " + use.unit);
+    takeaway.textContent = lines.join("\n");
+  }
+
+  takeawayOpen.addEventListener("click", function () {
+    var open = takeawayOpen.getAttribute("aria-expanded") === "true";
+    takeawayOpen.setAttribute("aria-expanded", open ? "false" : "true");
+    takeaway.hidden = open;
+    if (!open) {
+      fillTakeaway(computed());
+      var range = doc.createRange();
+      range.selectNodeContents(takeaway);
+      var selection = window.getSelection();
+      if (selection) { selection.removeAllRanges(); selection.addRange(range); }
+    }
+  });
+
+  /* ---- 用途长在那个数的名字上 --------------------------------------- */
+
+  ORDER.forEach(function (id) {
+    var button = el("button", null, USES[id].reading);
     button.type = "button";
-    button.addEventListener("click", handler);
-    td.appendChild(button);
-    row.appendChild(td);
-  }
-
-  function removeButton(index, mode) {
-    var button = el("button", null, "删除");
-    button.type = "button";
-    button.setAttribute("aria-label", "删除第 " + (index + 1) + " 条记录");
+    button.setAttribute("data-use", id);
+    button.setAttribute("aria-pressed", String(id === current));
     button.addEventListener("click", function () {
-      state.entries[mode].splice(index, 1);
-      state.message = "已删除第 " + (index + 1) + " 条。";
-      state.error = false;
-      render();
-    });
-    return button;
-  }
-
-  function setStatus(message, isError) {
-    state.message = message;
-    state.error = !!isError;
-    render();
-  }
-
-  function addLedger() {
-    var entry = {
-      date: document.getElementById("draft-date").value,
-      item: document.getElementById("draft-item").value.trim(),
-      debit: amount(document.getElementById("draft-debit").value, true),
-      credit: amount(document.getElementById("draft-credit").value, true)
-    };
-    if (!entry.date || !entry.item || entry.debit === null || entry.credit === null || (entry.debit === 0 && entry.credit === 0)) {
-      setStatus("请填有效日期、项目，并至少填一个非零借方或贷方金额。", true);
-      return;
-    }
-    var candidate = state.entries.ledger.concat([entry]);
-    if (!E.ledger(candidate)) { setStatus("这一行含无效日期或金额，尚未记入。", true); return; }
-    state.entries.ledger = candidate;
-    setStatus("已记入第 " + candidate.length + " 条流水。", false);
-  }
-
-  function addReceivable() {
-    var entry = {
-      date: document.getElementById("draft-date").value,
-      item: document.getElementById("draft-item").value.trim(),
-      dueDate: document.getElementById("draft-due").value,
-      amount: amount(document.getElementById("draft-amount").value, false),
-      received: amount(document.getElementById("draft-received").value, true)
-    };
-    if (!entry.date || !entry.item || !entry.dueDate || entry.amount === null || entry.amount <= 0 || entry.received === null) {
-      setStatus("请填有效日期、事项、到期日和正数金额；已收可留空为 0。", true);
-      return;
-    }
-    var candidate = state.entries.receivable.concat([entry]);
-    if (!E.ageReceivables(candidate, state.asOf)) { setStatus("这一行或账龄基准日无效，尚未记入。", true); return; }
-    state.entries.receivable = candidate;
-    setStatus("已记入第 " + candidate.length + " 笔应收。", false);
-  }
-
-  function addInventory() {
-    var entry = {
-      date: document.getElementById("draft-date").value,
-      item: document.getElementById("draft-item").value.trim(),
-      opening: amount(document.getElementById("draft-opening").value, false),
-      inbound: amount(document.getElementById("draft-inbound").value, true),
-      outbound: amount(document.getElementById("draft-outbound").value, true)
-    };
-    if (!entry.date || !entry.item || entry.opening === null || entry.inbound === null || entry.outbound === null) {
-      setStatus("请填有效日期、品项与非负数量；入库、出库可留空为 0。", true);
-      return;
-    }
-    var candidate = state.entries.inventory.concat([entry]);
-    if (!E.inventory(candidate)) { setStatus("这一行含无效日期或数量，尚未记入。", true); return; }
-    state.entries.inventory = candidate;
-    setStatus("已记入第 " + candidate.length + " 个库存品项。", false);
-  }
-
-  function addDepreciation() {
-    var entry = {
-      item: document.getElementById("draft-asset").value.trim(),
-      cost: amount(document.getElementById("draft-cost").value, false),
-      salvage: amount(document.getElementById("draft-salvage").value, true),
-      life: Number(document.getElementById("draft-life").value),
-      method: document.getElementById("draft-method").value
-    };
-    var schedule = E.depreciationSchedule(entry.cost, entry.salvage, entry.life, entry.method);
-    if (!entry.item || !schedule) {
-      setStatus("请填资产、非负原值/残值和正整数年限；残值不得高于原值。", true);
-      return;
-    }
-    state.entries.depreciation.push(entry);
-    setStatus("已生成“" + entry.item + "”的完整折旧年表。", false);
-  }
-
-  function renderHead() {
-    clear(els.tableHead);
-    var tr = document.createElement("tr");
-    META[state.mode].heads.forEach(function (label) { tr.appendChild(el("th", null, label)); });
-    els.tableHead.appendChild(tr);
-  }
-
-  function renderDraft() {
-    var tr = el("tr", "draft-row");
-    if (state.mode === "ledger") {
-      inputCell(tr, "draft-date", "date", "日期");
-      inputCell(tr, "draft-item", "text", "项目", "例如：差旅预付款");
-      inputCell(tr, "draft-debit", "text", "借方", "0.00");
-      inputCell(tr, "draft-credit", "text", "贷方", "0.00");
-      tr.appendChild(cell("0.00", "amount"));
-      actionCell(tr, "记入台账", addLedger);
-    } else if (state.mode === "receivable") {
-      inputCell(tr, "draft-date", "date", "日期");
-      inputCell(tr, "draft-item", "text", "客户或事项", "客户或事项");
-      inputCell(tr, "draft-due", "date", "到期日");
-      inputCell(tr, "draft-amount", "text", "金额", "0.00");
-      inputCell(tr, "draft-received", "text", "已收", "0.00");
-      tr.appendChild(cell("—"));
-      tr.appendChild(cell("—"));
-      tr.appendChild(cell("—"));
-      actionCell(tr, "记入台账", addReceivable);
-    } else if (state.mode === "inventory") {
-      inputCell(tr, "draft-date", "date", "日期");
-      inputCell(tr, "draft-item", "text", "品项", "品项名称");
-      inputCell(tr, "draft-opening", "text", "期初", "0.00");
-      inputCell(tr, "draft-inbound", "text", "入库", "0.00");
-      inputCell(tr, "draft-outbound", "text", "出库", "0.00");
-      tr.appendChild(cell("—"));
-      actionCell(tr, "记入台账", addInventory);
-    } else {
-      var td = document.createElement("td");
-      td.colSpan = 7;
-      var editor = el("div", "depr-editor");
-      var fields = [
-        ["资产", "draft-asset", "text", "例如：生产设备"],
-        ["原值", "draft-cost", "text", "100000.00"],
-        ["残值", "draft-salvage", "text", "10000.00"],
-        ["年限", "draft-life", "number", "5"]
-      ];
-      fields.forEach(function (field) {
-        var label = el("label", null, field[0]);
-        var input = document.createElement("input");
-        input.id = field[1]; input.type = field[2]; input.placeholder = field[3]; input.setAttribute("aria-label", field[0]);
-        label.appendChild(input); editor.appendChild(label);
+      current = id;
+      Array.prototype.forEach.call(usesBox.querySelectorAll("button"), function (node) {
+        node.setAttribute("aria-pressed", String(node.getAttribute("data-use") === id));
       });
-      var methodLabel = el("label", null, "方法");
-      var select = document.createElement("select");
-      select.id = "draft-method";
-      [["straight-line", "直线"], ["double-declining", "双倍余额递减"], ["sum-of-years", "年数总和"]].forEach(function (pair) {
-        var option = el("option", null, pair[1]); option.value = pair[0]; select.appendChild(option);
-      });
-      methodLabel.appendChild(select); editor.appendChild(methodLabel);
-      var button = el("button", null, "生成年表"); button.type = "button"; button.addEventListener("click", addDepreciation); editor.appendChild(button);
-      td.appendChild(editor); tr.appendChild(td);
-    }
-    els.tableBody.appendChild(tr);
-  }
-
-  function renderLedger() {
-    var result = E.ledger(state.entries.ledger);
-    metric("记录", String(result.count));
-    metric("借方合计", E.money(result.debitTotal));
-    metric("贷方合计", E.money(result.creditTotal));
-    metric("期末余额", E.money(result.reportedClosing));
-    els.basisLine.textContent = "金额单位 元 · 每笔四舍五入到分 · 余额 = 上笔余额 + 借方 − 贷方";
-    els.reconcileLine.textContent = "分位余额 " + E.money(result.roundedClosing) + " + 舍入调整 " + E.money(result.roundingAdjustment) + " = 报告期末 " + E.money(result.reportedClosing) + "（未逐笔舍入总额 " + E.money(result.rawClosingRounded) + "）";
-    renderDraft();
-    result.rows.forEach(function (row, index) {
-      var tr = el("tr", "data-row");
-      [row.date, row.item, E.money(row.debit), E.money(row.credit), E.money(row.balance)].forEach(function (value, col) { tr.appendChild(cell(value, col > 1 ? "amount" : null)); });
-      var action = document.createElement("td"); action.appendChild(removeButton(index, "ledger")); tr.appendChild(action);
-      els.tableBody.appendChild(tr);
+      usesBox.hidden = true;
+      readingName.setAttribute("aria-expanded", "false");
+      takeawayOpen.setAttribute("aria-expanded", "false");
+      takeaway.hidden = true;
+      accept();
+      buildEntry();
+      paintAll();
+      fields.date.focus();
     });
-    els.emptyNote.textContent = result.count ? "共 " + result.count + " 条，全部摊开；表区可独立滚动。" : "0 条记录。上面空白首行就是入口，没有示例记录，也无需先新建文件。";
-  }
+    usesBox.appendChild(button);
+  });
 
-  function renderReceivable() {
-    var result = E.ageReceivables(state.entries.receivable, state.asOf);
-    metric("记录", String(result.count));
-    metric("金额合计", E.money(result.amountTotal));
-    metric("已收合计", E.money(result.receivedTotal));
-    metric("未收合计", E.money(result.outstandingTotal));
-    els.basisLine.textContent = "金额单位 元 · 未收 = max(金额 − 已收, 0) · 账龄基准日 " + state.asOf;
-    els.reconcileLine.textContent = E.AGE_BUCKETS.map(function (bucket) { return bucket + " 天 " + E.money(result.buckets[bucket]); }).join(" · ") + " · 六档合计 " + E.money(result.bucketTotal) + " = 未收 " + E.money(result.outstandingTotal) + "（" + (result.ties ? "已对上" : "未对上") + "）";
-    renderDraft();
-    result.rows.forEach(function (row, index) {
-      var tr = el("tr", "data-row");
-      [row.date, row.item, row.dueDate, E.money(row.amount), E.money(row.received), E.money(row.outstanding), row.ageDays + " 天", row.bucket].forEach(function (value, col) { tr.appendChild(cell(value, col >= 3 && col <= 5 ? "amount" : null)); });
-      var action = document.createElement("td"); action.appendChild(removeButton(index, "receivable")); tr.appendChild(action);
-      els.tableBody.appendChild(tr);
-    });
-    els.emptyNote.textContent = result.count ? "六档账龄逐笔可追溯，且始终回勾未收合计。" : "0 条应收。空白首行等待第一笔，不预装客户数据。";
-  }
+  readingName.addEventListener("click", function () {
+    var open = readingName.getAttribute("aria-expanded") === "true";
+    readingName.setAttribute("aria-expanded", open ? "false" : "true");
+    usesBox.hidden = open;
+  });
 
-  function renderInventory() {
-    var result = E.inventory(state.entries.inventory);
-    metric("记录", String(result.count));
-    metric("期初合计", E.money(result.openingTotal));
-    metric("入库合计", E.money(result.inboundTotal));
-    metric("出库合计", E.money(result.outboundTotal));
-    metric("期末合计", E.money(result.endingTotal));
-    els.basisLine.textContent = "数量单位按用户当前品项口径 · 期末 = 期初 + 入库 − 出库 · 逐项取两位";
-    els.reconcileLine.textContent = E.money(result.openingTotal) + " + " + E.money(result.inboundTotal) + " − " + E.money(result.outboundTotal) + " = " + E.money(result.endingTotal);
-    renderDraft();
-    result.rows.forEach(function (row, index) {
-      var tr = el("tr", "data-row");
-      [row.date, row.item, E.money(row.opening), E.money(row.inbound), E.money(row.outbound), E.money(row.ending)].forEach(function (value, col) { tr.appendChild(cell(value, col >= 2 ? "amount" : null)); });
-      var action = document.createElement("td"); action.appendChild(removeButton(index, "inventory")); tr.appendChild(action);
-      els.tableBody.appendChild(tr);
-    });
-    els.emptyNote.textContent = result.count ? "每一行都把期初、变动与期末摊开。" : "0 条库存。空白首行等待第一个品项。";
-  }
+  asOfInput.value = asOf;
+  asOfInput.addEventListener("input", function () {
+    if (!E.parseIsoDate(asOfInput.value)) return;
+    asOf = asOfInput.value;
+    paintAll();
+  });
 
-  function methodName(method) {
-    return method === "straight-line" ? "直线" : method === "double-declining" ? "双倍余额递减" : "年数总和";
-  }
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
+    record();
+  });
 
-  function renderDepreciation() {
-    var schedules = state.entries.depreciation.map(function (entry) { return E.depreciationSchedule(entry.cost, entry.salvage, entry.life, entry.method); });
-    var costTotal = 0, depreciationTotal = 0, finalTotal = 0;
-    schedules.forEach(function (schedule) {
-      costTotal = E.round2(costTotal + schedule.cost);
-      depreciationTotal = E.round2(depreciationTotal + schedule.depreciationTotal);
-      finalTotal = E.round2(finalTotal + schedule.finalBook);
-    });
-    metric("资产", String(schedules.length));
-    metric("原值合计", E.money(costTotal));
-    metric("累计折旧", E.money(depreciationTotal));
-    metric("期末净值", E.money(finalTotal));
-    els.basisLine.textContent = "金额单位 元 · 直线：(原值−残值)/年限 · 双倍余额递减末期转直线 · 年数总和分母 n×(n+1)/2";
-    els.reconcileLine.textContent = "原值 " + E.money(costTotal) + " − 累计折旧 " + E.money(depreciationTotal) + " = 期末净值 " + E.money(finalTotal) + "；每项净值均封底于残值。";
-    renderDraft();
-    schedules.forEach(function (schedule, assetIndex) {
-      var entry = state.entries.depreciation[assetIndex];
-      schedule.rows.forEach(function (row, rowIndex) {
-        var tr = el("tr", "schedule-row data-row");
-        var nameCell = cell(rowIndex === 0 ? entry.item : "");
-        if (rowIndex === 0) nameCell.appendChild(removeButton(assetIndex, "depreciation"));
-        tr.appendChild(nameCell);
-        [methodName(entry.method), String(row.year), E.money(row.beginningBook), E.money(row.depreciation), E.money(row.endingBook), row.basis].forEach(function (value, col) { tr.appendChild(cell(value, col >= 2 && col <= 4 ? "amount" : null)); });
-        els.tableBody.appendChild(tr);
-      });
-    });
-    els.emptyNote.textContent = schedules.length ? "完整年限全部摊开，不折叠、不分页。" : "0 项资产。上面空白输入行等待第一项，不预装示例资产。";
-  }
+  buildEntry();
+  paintAll();
+  fields.date.focus();
 
-  function csvEscape(value) {
-    var text = String(value);
-    return /[",\n]/.test(text) ? '"' + text.replace(/"/g, '""') + '"' : text;
-  }
-  function csvLine(values) { return values.map(csvEscape).join(","); }
-  function csvForCurrentMode() {
-    var lines = [];
-    if (state.mode === "ledger") {
-      lines.push(csvLine(["日期", "项目", "借方", "贷方", "余额"]));
-      E.ledger(state.entries.ledger).rows.forEach(function (row) { lines.push(csvLine([row.date, row.item, row.debit.toFixed(2), row.credit.toFixed(2), row.balance.toFixed(2)])); });
-    } else if (state.mode === "receivable") {
-      lines.push(csvLine(["日期", "客户或事项", "到期日", "金额", "已收", "未收", "账龄天数", "分档"]));
-      E.ageReceivables(state.entries.receivable, state.asOf).rows.forEach(function (row) { lines.push(csvLine([row.date, row.item, row.dueDate, row.amount.toFixed(2), row.received.toFixed(2), row.outstanding.toFixed(2), row.ageDays, row.bucket])); });
-    } else if (state.mode === "inventory") {
-      lines.push(csvLine(["日期", "品项", "期初", "入库", "出库", "期末"]));
-      E.inventory(state.entries.inventory).rows.forEach(function (row) { lines.push(csvLine([row.date, row.item, row.opening.toFixed(2), row.inbound.toFixed(2), row.outbound.toFixed(2), row.ending.toFixed(2)])); });
-    } else {
-      lines.push(csvLine(["资产", "方法", "年", "年初净值", "本年折旧", "年末净值", "计算口径"]));
-      state.entries.depreciation.forEach(function (entry) {
-        E.depreciationSchedule(entry.cost, entry.salvage, entry.life, entry.method).rows.forEach(function (row) { lines.push(csvLine([entry.item, methodName(entry.method), row.year, row.beginningBook.toFixed(2), row.depreciation.toFixed(2), row.endingBook.toFixed(2), row.basis])); });
-      });
-    }
-    return lines.join("\n");
-  }
-
-  function renderGuide() {
-    els.modeNote.textContent = META[state.mode].note;
-    clear(els.guideList);
-    META[state.mode].guide.forEach(function (text) { els.guideList.appendChild(el("li", null, text)); });
-    els.asOfField.classList.toggle("on", state.mode === "receivable");
-  }
-
-  function render() {
-    clear(els.headline);
-    clear(els.tableBody);
-    els.status.textContent = state.message;
-    els.status.className = "status" + (state.error ? " negative" : state.message ? " positive" : "");
-    renderGuide();
-    renderHead();
-    if (state.mode === "ledger") renderLedger();
-    else if (state.mode === "receivable") renderReceivable();
-    else if (state.mode === "inventory") renderInventory();
-    else renderDepreciation();
-  }
-
-  function runTest() {
-    var result = E.runSelfTest();
-    els.testOut.textContent = result.passed + " / " + result.total + " 通过";
-    clear(els.testDetail);
-    if (!result.failures.length) els.testDetail.appendChild(el("li", null, "流水、账龄、库存与三种折旧口径均通过。"));
-    result.failures.forEach(function (failure) { els.testDetail.appendChild(el("li", null, failure.name + " —— " + failure.why)); });
-  }
-
-  function mount() {
-    els.headline = document.getElementById("headline");
-    els.tableHead = document.getElementById("table-head");
-    els.tableBody = document.getElementById("table-body");
-    els.basisLine = document.getElementById("basis-line");
-    els.reconcileLine = document.getElementById("reconcile-line");
-    els.emptyNote = document.getElementById("empty-note");
-    els.status = document.getElementById("entry-status");
-    els.modeNote = document.getElementById("mode-note");
-    els.guideList = document.getElementById("guide-list");
-    els.asOfField = document.querySelector(".as-of-field");
-    els.csvOut = document.getElementById("csv-out");
-    els.testOut = document.getElementById("test-out");
-    els.testDetail = document.getElementById("test-detail");
-
-    document.getElementById("mode").addEventListener("change", function (event) {
-      state.mode = event.target.value;
-      state.message = "";
-      state.error = false;
-      els.csvOut.value = "";
-      render();
-    });
-    document.getElementById("as-of").addEventListener("change", function (event) {
-      if (E.parseIsoDate(event.target.value) === null) { setStatus("账龄基准日无效。", true); return; }
-      state.asOf = event.target.value;
-      render();
-    });
-    document.getElementById("make-csv").addEventListener("click", function () {
-      els.csvOut.value = csvForCurrentMode();
-      els.csvOut.focus();
-      els.csvOut.select();
-    });
-    document.getElementById("run-test").addEventListener("click", runTest);
-    render();
-  }
-
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mount);
-  else mount();
+  window.LedgerRoll = {
+    record: record,
+    use: function (id) { usesBox.querySelector('[data-use="' + id + '"]').click(); },
+    state: computed
+  };
 })();
