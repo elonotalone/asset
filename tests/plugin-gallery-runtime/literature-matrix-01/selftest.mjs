@@ -62,7 +62,7 @@ check("关系 3：已评估 = 待取全文 − 未取到 = 28 − 4 = 24", () =>
   assert.equal(audit.evaluated, 24);
   assert.equal(audit.relations[2].ok, true);
 });
-check("关系 4：已纳入 = 已评估 − 全文排除 = 24 − 6 = 18", () => {
+check("关系 4：已纳入 = 已评估 − 全文排除 − 待定 = 24 − 6 − 0 = 18", () => {
   assert.equal(audit.included, 18);
   assert.equal(audit.relations[3].ok, true);
 });
