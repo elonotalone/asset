@@ -30,7 +30,12 @@
   }
 
   function statusLabel(status) {
-    return { mastered: "已掌握", learnable: "可学", review: "待复习", locked: "未解锁" }[status] || status;
+    return {
+      mastered: "已经掌握",
+      learnable: "现在就能学",
+      review: "该回头复习",
+      locked: "还缺前置"
+    }[status] || status;
   }
 
   function showMessage(text) {
@@ -57,14 +62,14 @@
     state.pathTo = refreshSelect(els.pathTo, state.pathTo);
   }
 
-  function drawArrow(svg, x, y, angle, related) {
+  function drawArrow(group, x, y, angle) {
     var size = 6;
     var bx = x - Math.cos(angle) * size * 1.7;
     var by = y - Math.sin(angle) * size * 1.7;
     var px = Math.cos(angle + Math.PI / 2) * size;
     var py = Math.sin(angle + Math.PI / 2) * size;
     var points = [x + "," + y, (bx + px) + "," + (by + py), (bx - px) + "," + (by - py)].join(" ");
-    svg.appendChild(svgElement("polygon", { points: points, fill: related ? "#8b929c" : "#34495e" }));
+    group.appendChild(svgElement("polygon", { points: points, "class": "graph-arrow" }));
   }
 
   function drawEdge(svg, edge, positions) {
@@ -76,24 +81,30 @@
     var dist = Math.sqrt(dx * dx + dy * dy) || 1;
     var ux = dx / dist;
     var uy = dy / dist;
-    var startX = a.x + ux * 57;
-    var startY = a.y + uy * 24;
-    var endX = b.x - ux * 57;
-    var endY = b.y - uy * 24;
+    var startX = a.x + ux * 70;
+    var startY = a.y + uy * 31;
+    var endX = b.x - ux * 70;
+    var endY = b.y - uy * 31;
     var related = edge.kind === E.RELATED;
-    svg.appendChild(svgElement("line", {
+    var group = svgElement("g", {
+      "class": "graph-connection" + (related ? " related" : " required"),
+      "data-from": edge.from,
+      "data-to": edge.to,
+      "data-kind": edge.kind
+    });
+    group.appendChild(svgElement("line", {
       x1: startX, y1: startY, x2: endX, y2: endY,
-      "class": "graph-edge" + (related ? " related" : ""),
-      "data-from": edge.from, "data-to": edge.to, "data-kind": edge.kind
+      "class": "graph-edge"
     }));
-    drawArrow(svg, endX, endY, Math.atan2(dy, dx), related);
+    drawArrow(group, endX, endY, Math.atan2(dy, dx));
     var label = svgElement("text", {
       x: (startX + endX) / 2,
       y: (startY + endY) / 2 - 6,
       "class": "edge-label"
     });
     label.textContent = edge.label || (related ? "相关" : "必修先修");
-    svg.appendChild(label);
+    group.appendChild(label);
+    svg.appendChild(group);
   }
 
   function selectNode(id, analysis) {
@@ -115,13 +126,14 @@
       tabindex: "0",
       transform: "translate(" + pos.x + " " + pos.y + ")"
     });
-    group.appendChild(svgElement("rect", { x: -57, y: -25, width: 114, height: 50, rx: 2 }));
-    var label = svgElement("text", { x: 0, y: -3 });
+    group.appendChild(svgElement("ellipse", { cx: 0, cy: 0, rx: 83, ry: 43, "class": "node-aura" }));
+    group.appendChild(svgElement("rect", { x: -70, y: -31, width: 140, height: 62, rx: 3, "class": "node-card" }));
+    var label = svgElement("text", { x: 0, y: -4, "class": "node-name" });
     var short = node.label.length > 10 ? node.label.slice(0, 9) + "…" : node.label;
     label.textContent = short;
     group.appendChild(label);
-    var status = svgElement("text", { x: 0, y: 14, "class": "node-status" });
-    status.textContent = "第 " + (stateRow.level === null ? "?" : stateRow.level) + " 层 · " + statusLabel(stateRow.status);
+    var status = svgElement("text", { x: 0, y: 16, "class": "node-status" });
+    status.textContent = statusLabel(stateRow.status);
     group.appendChild(status);
     var title = svgElement("title");
     title.textContent = node.label + "，有效掌握度 " + stateRow.effectiveMastery.toFixed(3);
@@ -138,7 +150,7 @@
     clear(els.graph);
     var layout = analysis.layout;
     els.graph.setAttribute("viewBox", "0 0 " + layout.width + " " + layout.height);
-    els.graph.setAttribute("height", String(layout.height));
+    els.graph.setAttribute("preserveAspectRatio", "xMidYMid meet");
     els.graphEmpty.hidden = state.nodes.length > 0;
     state.edges.forEach(function (edge) { drawEdge(els.graph, edge, layout.positions); });
     var stateMap = Object.create(null);
