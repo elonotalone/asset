@@ -256,6 +256,21 @@
     return references;
   }
 
+  /*
+   * 把错误钉到具体那一格上。
+   * 规格 §2 要求「纸上只有那一处变色，就地写清是哪个名字没定义、哪几行绕成了环」，
+   * §6 把「只说表达式有误、不说是哪一格」列为做坏了。
+   * 语法错原来只带字符位置（`第 7 个字符`），界面无从知道该给哪一行上色。
+   */
+  function located(error, name, index) {
+    if (error && error.cell === undefined) {
+      error.cell = name || "";
+      error.row = index;
+      if (name) error.message = "格子“" + name + "”：" + error.message;
+    }
+    return error;
+  }
+
   function validateName(name, label) {
     if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(name)) {
       throw new NotebookError("INVALID_NAME", (label || "名称") + "“" + name + "”不合法。");
@@ -275,25 +290,42 @@
       names[name] = "parameter";
     });
 
-    rows.forEach(function (cell) {
+    var indexByName = Object.create(null);
+    rows.forEach(function (cell, index) {
       var name = String(cell && cell.name || "").trim();
-      validateName(name, "格子名");
-      if (names[name]) throw new NotebookError("DUPLICATE_NAME", "名称“" + name + "”已经存在。");
-      if (CELL_TYPES.indexOf(cell.type) < 0) {
-        throw new NotebookError("INVALID_TYPE", "格子“" + name + "”的类型无效。");
+      try {
+        validateName(name, "格子名");
+        if (names[name]) throw new NotebookError("DUPLICATE_NAME", "名称“" + name + "”已经存在。");
+        if (CELL_TYPES.indexOf(cell.type) < 0) {
+          throw new NotebookError("INVALID_TYPE", "格子“" + name + "”的类型无效。");
+        }
+      } catch (error) {
+        error.cell = name;
+        error.row = index;
+        throw error;
       }
       names[name] = "cell";
       cellByName[name] = cell;
+      indexByName[name] = index;
     });
 
     var missing = [];
-    rows.forEach(function (cell) {
-      var deps = cell.type === "text" ? [] : referencesOf(cell.content);
+    rows.forEach(function (cell, index) {
+      var deps;
+      try {
+        deps = cell.type === "text" ? [] : referencesOf(cell.content);
+      } catch (error) {
+        throw located(error, cell.name, index);
+      }
       dependencies[cell.name] = deps;
       deps.forEach(function (dep) {
-        if (!names[dep]) missing.push({ cell: cell.name, reference: dep });
+        if (!names[dep]) missing.push({ cell: cell.name, reference: dep, row: index });
         else if (names[dep] === "cell" && cellByName[dep].type === "text") {
-          throw new NotebookError("INVALID_REFERENCE", "格子“" + cell.name + "”不能把说明文字“" + dep + "”当作数值引用。");
+          throw new NotebookError(
+            "INVALID_REFERENCE",
+            "格子“" + cell.name + "”不能把说明文字“" + dep + "”当作数值引用。",
+            { cell: cell.name, row: index }
+          );
         }
       });
     });
@@ -305,7 +337,7 @@
       throw new NotebookError(
         "UNDEFINED_REFERENCE",
         "未定义引用：" + missing.map(function (item) { return item.reference + "（被 " + item.cell + " 使用）"; }).join("、") + "。",
-        { references: missingNames, details: missing }
+        { references: missingNames, details: missing, cell: missing[0].cell, row: missing[0].row }
       );
     }
 
@@ -334,7 +366,7 @@
       throw new NotebookError(
         "CIRCULAR_REFERENCE",
         "循环引用：" + cycle.join(" → ") + "。",
-        { cycle: cycle.slice(0, -1) }
+        { cycle: cycle.slice(0, -1), cell: cycle[0], row: indexByName[cycle[0]] }
       );
     }
 
@@ -367,6 +399,7 @@
     return {
       rows: rows,
       cellByName: cellByName,
+      indexByName: indexByName,
       dependencies: dependencies,
       reverse: reverse,
       order: order,
@@ -430,13 +463,18 @@
     analysis.order.forEach(function (name) {
       if (partial && !targets[name]) return;
       var cell = analysis.cellByName[name];
-      var value = evaluate(cell.content, values);
-      if (cell.type === "assertion" && typeof value !== "boolean") {
-        throw new NotebookError("ASSERTION_TYPE", "断言格“" + name + "”必须得到真或假。");
+      var value;
+      try {
+        value = evaluate(cell.content, values);
+        if (cell.type === "assertion" && typeof value !== "boolean") {
+          throw new NotebookError("ASSERTION_TYPE", "必须得到真或假。");
+        }
+        results[name] = cell.type === "assertion"
+          ? { type: "assertion", value: value, passed: value }
+          : { type: "expression", value: requireNumber(value, "结果") };
+      } catch (error) {
+        throw located(error, name, analysis.indexByName[name]);
       }
-      results[name] = cell.type === "assertion"
-        ? { type: "assertion", value: value, passed: value }
-        : { type: "expression", value: requireNumber(value, "表达式格“" + name + "”") };
       values[name] = value;
       order.push(name);
     });
@@ -492,12 +530,57 @@
       try {
         runNotebook({ parameters: {}, cells: [{ name: "total", type: "expression", content: "missing+1" }] });
       } catch (error) {
-        if (error.code === "UNDEFINED_REFERENCE" && error.message.indexOf("missing") >= 0) return;
+        if (error.code === "UNDEFINED_REFERENCE" && error.message.indexOf("missing") >= 0
+          && error.cell === "total" && error.row === 0) return;
         throw error;
       }
       throw new Error("未定义引用没有报错");
     });
-    return { total: 4, passed: 4 - failures.length, failures: failures };
+    expect("语法错也点到具体那一格", function () {
+      try {
+        runNotebook({
+          parameters: { area: 620 },
+          cells: [
+            { name: "good", type: "expression", content: "area*2" },
+            { name: "bad", type: "expression", content: "area*#" }
+          ]
+        });
+      } catch (error) {
+        if (error.code === "SYNTAX" && error.cell === "bad" && error.row === 1
+          && error.message.indexOf("bad") >= 0) return;
+        throw error;
+      }
+      throw new Error("语法错没有点名到格子");
+    });
+    expect("求值错点到具体那一格", function () {
+      try {
+        runNotebook({
+          parameters: { zero: 0, one: 1 },
+          cells: [{ name: "ratio", type: "expression", content: "one/zero" }]
+        });
+      } catch (error) {
+        if (error.code === "DIVISION_NEAR_ZERO" && error.cell === "ratio") return;
+        throw error;
+      }
+      throw new Error("除零没有点名到格子");
+    });
+    expect("循环引用报出整条环并点名起点", function () {
+      try {
+        runNotebook({
+          parameters: {},
+          cells: [
+            { name: "a", type: "expression", content: "b+1" },
+            { name: "b", type: "expression", content: "a+1" }
+          ]
+        });
+      } catch (error) {
+        if (error.code === "CIRCULAR_REFERENCE" && /a → b → a/.test(error.message)
+          && error.cell === "a") return;
+        throw error;
+      }
+      throw new Error("循环引用没有报出整条环");
+    });
+    return { total: 7, passed: 7 - failures.length, failures: failures };
   }
 
   var api = {

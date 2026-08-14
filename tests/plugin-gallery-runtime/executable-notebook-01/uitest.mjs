@@ -1,28 +1,26 @@
-/* 可执行笔记 · 界面自测（jsdom 程序化装载，不启动浏览器） */
-import assert from "node:assert/strict";
-import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
-import path from "node:path";
-import { createRequire } from "node:module";
+import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import path from "node:path";
+import assert from "node:assert/strict";
+import { createRequire } from "node:module";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const runtimeDir = path.resolve(here, "../../../content/active-runtime/plugin/executable-notebook-01");
 const require = createRequire(import.meta.url);
 
 function loadJsdom() {
-  const roots = ["/root/projects/asset", "/root/projects/oceanleo-ui", "/root/projects/oceanleo"];
   const direct = ["/root/projects/med/node_modules/jsdom", "/root/projects/notebook/node_modules/jsdom"];
-  for (const candidate of direct) if (existsSync(candidate)) return require(candidate);
-  for (const root of roots) {
+  for (const item of direct) if (existsSync(item)) return require(item);
+  for (const root of ["/root/projects/asset", "/root/projects/oceanleo-ui", "/root/projects/oceanleo"]) {
     const store = path.join(root, "node_modules", ".pnpm");
     if (!existsSync(store)) continue;
     for (const entry of readdirSync(store)) {
       if (!entry.startsWith("jsdom@")) continue;
-      const candidate = path.join(store, entry, "node_modules", "jsdom");
-      if (existsSync(candidate)) return require(candidate);
+      const item = path.join(store, entry, "node_modules", "jsdom");
+      if (existsSync(item)) return require(item);
     }
   }
-  throw new Error("找不到 jsdom：可执行笔记界面自测无法运行");
+  throw new Error("找不到 jsdom：界面自测无法运行");
 }
 
 const { JSDOM } = loadJsdom();
@@ -33,7 +31,6 @@ const dom = new JSDOM(readFileSync(htmlPath, "utf8"), {
   resources: "usable",
   pretendToBeVisual: true,
 });
-
 await new Promise((resolve) => {
   if (dom.window.document.readyState === "complete") resolve();
   else dom.window.addEventListener("load", resolve);
@@ -42,53 +39,249 @@ await new Promise((resolve) => {
 const { window } = dom;
 const doc = window.document;
 const $ = (selector) => doc.querySelector(selector);
-const text = (selector) => $(selector)?.textContent.replace(/\s+/g, " ").trim() || "";
+const all = (selector) => [...doc.querySelectorAll(selector)];
+const textFrom = (node) => (node ? node.textContent.replace(/\s+/g, " ").trim() : "");
+const text = (selector) => textFrom($(selector));
 const screen = () => doc.body.textContent.replace(/\s+/g, " ").trim();
 let failed = 0;
 
-function check(name, action) {
+function check(name, fn) {
   try {
-    action();
+    fn();
     console.log("  ok   " + name);
   } catch (error) {
-    failed += 1;
-    console.log("  FAIL " + name + "\n       " + (error?.message || String(error)));
+    failed++;
+    console.log("  FAIL " + name + "\n       " + (error && error.message ? error.message : String(error)));
   }
 }
-
-function submit(form) {
-  form.dispatchEvent(new window.Event("submit", { bubbles: true, cancelable: true }));
+function fire(node, type) {
+  node.dispatchEvent(new window.Event(type, { bubbles: true }));
+}
+function click(node) {
+  node.dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
+}
+function write(name, body) {
+  $("#new-name").value = name;
+  $("#new-body").value = body;
+  $("#tail").dispatchEvent(new window.Event("submit", { bubbles: true, cancelable: true }));
+}
+function rows() {
+  return all("#doc .row");
+}
+function rowNamed(label) {
+  return rows().find((row) => textFrom(row.querySelector(".who")).includes(label));
+}
+function answerOf(label) {
+  const row = rowNamed(label);
+  const knob = row.querySelector(".knob");
+  return knob ? knob.value : textFrom(row.querySelector(".printed"));
+}
+function unitOf(label) {
+  return rowNamed(label).querySelector(".unit").value;
+}
+function tune(label, value) {
+  const knob = rowNamed(label).querySelector(".knob");
+  knob.value = value;
+  fire(knob, "change");
 }
 
-function change(element) {
-  element.dispatchEvent(new window.Event("change", { bubbles: true }));
-}
+console.log("可执行笔记界面自测（jsdom，非浏览器）");
 
-function addParameter(name, value) {
-  $("#parameter-name").value = name;
-  $("#parameter-value").value = String(value);
-  submit($("#parameter-form"));
-}
+check("经典脚本已把同一份内核装到页面", () => {
+  assert.ok(window.ExecutableNotebookEngine);
+});
 
-function addCell(type, name, content) {
-  $("#cell-type").value = type;
-  change($("#cell-type"));
-  $("#cell-name").value = name;
-  $("#cell-content").value = content;
-  submit($("#cell-form"));
-}
+check("首屏是一张真正的空稿纸，不给出厂示例笔记", () => {
+  assert.equal(rows().length, 0);
+  assert.equal(text("#headline"), "先写下一个你会反复改的量");
+  assert.equal($("#new-name").value, "");
+  assert.equal($("#new-body").value, "");
+  // 提示词自己就把写法说完了：全名 + 短名字，值 + 单位
+  assert.match($("#new-name").getAttribute("placeholder"), /^\S+\s+[A-Za-z_]\w*$/);
+  assert.match($("#new-body").getAttribute("placeholder"), /^\d/);
+  assert.doesNotMatch(screen(), /换办公室|620/);
+});
 
-function editParameter(name, value) {
-  const input = doc.querySelector(`[data-parameter="${name}"]`);
-  input.value = String(value);
-  change(input);
-}
+check("屏幕上没有眉标、政策自述、编号眉标、计数徽章、语法说明与运行自测", () => {
+  assert.equal($("#run-test"), null);
+  assert.equal(doc.querySelectorAll("h1, h2").length, 0);
+  for (const banned of [
+    "EXECUTABLE LEDGER", "把口径、计算与边界写在一起", "封闭数学表达式", "不执行自由代码",
+    "PARAMETERS", "NOTEBOOK", "个参数", "个格子", "条依赖", "运行自测", "复核表达式",
+    "本次重算", "重算完成", "笔记已同步", "表达式支持四则", "留空也不会读取系统时间",
+    "说明文字解释口径", "无依赖", "引用 ",
+  ]) {
+    assert.doesNotMatch(screen(), new RegExp(banned.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")), banned);
+  }
+});
 
-function editCell(name, content) {
-  const input = doc.querySelector(`[data-cell-editor="${name}"]`);
-  input.value = content;
-  change(input);
-}
+check("写办公面积 → 写单位租金 → 写引用两者的式子，三次录入就有第一个答数", () => {
+  write("办公面积 area", "620 m²");
+  assert.equal(rows().length, 1);
+  assert.equal(answerOf("办公面积"), "620", "第一行就有回报：右边立刻出现它自己的值");
+  assert.equal(unitOf("办公面积"), "m²", "单位跟着数字一起落到它旁边");
+
+  write("租金 rent", "32 元/m²/月");
+  assert.equal(answerOf("租金"), "32");
+  assert.equal(unitOf("租金"), "元/m²/月");
+
+  write("月租 monthly", "area*rent");
+  assert.equal(answerOf("月租"), "19840");
+  assert.equal(rows().length, 3);
+});
+
+check("量的完整名字与短变量名同时在，没有只剩 A1 或行号", () => {
+  const who = textFrom(rowNamed("办公面积").querySelector(".who"));
+  assert.match(who, /办公面积/);
+  assert.match(who, /area/);
+  assert.doesNotMatch(screen(), /\bA1\b/);
+});
+
+check("式子原文与它引用的量名都留在同一行，右边是机器的答数", () => {
+  const row = rowNamed("月租");
+  assert.equal(row.querySelector(".hand.body").value, "area*rent");
+  assert.equal(textFrom(row.querySelector(".printed")), "19840");
+});
+
+check("每一行上没有常驻的类型徽章和「引用 …」小标签", () => {
+  assert.equal(doc.querySelectorAll(".cell-type, .cell-deps").length, 0);
+  assert.doesNotMatch(screen(), /表达式|说明文字|断言/);
+});
+
+check("把人数从 20 改成 30，只有被它影响的行跟着变，别的行纹丝不动", () => {
+  write("人数 heads", "20");
+  write("工位成本 desks", "heads*4200");
+  write("年租 annual", "monthly*12");
+  write("三年总成本 total", "annual*3+desks");
+  assert.equal(answerOf("三年总成本"), "798240");
+
+  tune("人数", "30");
+  assert.equal(answerOf("工位成本"), "126000", "被影响的行跟着变了");
+  assert.equal(answerOf("三年总成本"), "840240");
+  assert.equal(answerOf("月租"), "19840", "没被影响的行纹丝不动");
+  assert.equal(answerOf("年租"), "238080");
+});
+
+check("拧一个量之后，被影响的那几行按上游到下游的次序依次亮一下，亮过退回原样", () => {
+  const queue = [];
+  const realTimeout = window.setTimeout;
+  // 定时器交给测试逐个跑掉，就能看清点亮的次序
+  window.setTimeout = (fn) => { queue.push(fn); return 0; };
+  tune("人数", "40");
+  const lit = [];
+  let guard = 0;
+  while (queue.length && guard++ < 200) {
+    queue.shift()();
+    for (const row of rows()) {
+      if (!row.className.includes("lit")) continue;
+      const name = textFrom(row.querySelector(".who"));
+      if (!lit.includes(name)) lit.push(name);
+    }
+  }
+  window.setTimeout = realTimeout;
+
+  assert.deepEqual(
+    lit.map((name) => name.replace(/[A-Za-z_]\w*$/, "").trim()),
+    ["工位成本", "三年总成本"],
+    "亮起来的就是真正重算过的那两行，上游先亮",
+  );
+  assert.equal(all("#doc .row.lit").length, 0, "亮过之后纸面回到原样，不留高亮");
+  assert.equal(answerOf("工位成本"), "168000");
+  assert.equal(answerOf("三年总成本"), "882240");
+});
+
+check("钉住哪一格，头号结论就是它的全名、完整金额与单位", () => {
+  rowNamed("三年总成本").querySelector(".unit").value = "元";
+  fire(rowNamed("三年总成本").querySelector(".unit"), "change");
+  click(rowNamed("三年总成本").querySelector(".pin"));
+  const head = text("#headline");
+  assert.match(head, /三年总成本/);
+  assert.match(head, /882240/);
+  assert.match(head, /元/);
+  const css = readFileSync(path.join(runtimeDir, "style.css"), "utf8");
+  assert.match(css, /\.big[^-][^}]*white-space:\s*nowrap/s, "金额不许在千位处折行");
+});
+
+check("断言未通过是那声提醒，不做成和语法错一样的红", () => {
+  write("预算 budget", "800000");
+  write("不超预算 withinBudget", "total<=budget");
+  assert.equal(answerOf("不超预算"), "未通过");
+  const printed = rowNamed("不超预算").querySelector(".printed");
+  assert.ok(printed.className.includes("over"));
+  assert.ok(!rowNamed("不超预算").className.includes("wrong"));
+  assert.match(text("#headline"), /不超预算 越界了/);
+  tune("人数", "10");
+  assert.equal(answerOf("不超预算"), "通过");
+  assert.doesNotMatch(text("#headline"), /越界/);
+});
+
+check("说明文字就是文稿里的一行，右边没有答数位", () => {
+  write("", "金额单位为元，租期按整月计算");
+  const note = rows().find((row) => row.className.includes("note"));
+  assert.ok(note);
+  assert.equal(note.querySelector(".hand.note").value, "金额单位为元，租期按整月计算");
+  assert.equal(note.querySelector(".printed"), null);
+});
+
+check("未定义引用点名：哪一格用了哪个不存在的名字，其余行照旧显示上一次的值", () => {
+  write("搬迁 moving", "movingCost+1");
+  assert.match(text("#doc .said"), /moving/);
+  assert.match(text("#doc .said"), /movingCost/);
+  assert.ok(rowNamed("搬迁").className.includes("wrong"));
+  assert.equal(answerOf("月租"), "19840", "别的行不整片变灰");
+  const box = rowNamed("搬迁").querySelector(".hand.body");
+  box.value = "";
+  fire(box, "change");
+  assert.equal($("#doc .said"), null);
+});
+
+check("循环引用把整条环写出来，不静默排一个假顺序", () => {
+  write("甲 alpha", "beta+1");
+  assert.match(text("#doc .said"), /alpha/);
+  const box = rowNamed("甲").querySelector(".hand.body");
+  box.value = "alpha+1";
+  fire(box, "change");
+  assert.match(text("#doc .said"), /循环引用/);
+  assert.match(text("#doc .said"), /alpha → alpha|alpha → beta → alpha/);
+  box.value = "";
+  fire(box, "change");
+});
+
+check("语法错就地长在那一行上，点名是哪一格", () => {
+  write("错的 wrongOne", "area*#");
+  assert.match(text("#doc .said"), /wrongOne/);
+  assert.ok(rowNamed("错的").className.includes("wrong"));
+  const box = rowNamed("错的").querySelector(".hand.body");
+  box.value = "";
+  fire(box, "change");
+  assert.equal($("#doc .said"), null);
+});
+
+check("同一列的数字右对齐，小数点对到一条竖线上", () => {
+  write("折扣 discount", "0.85");
+  write("折后年租 annualNet", "annual*discount");
+  assert.equal(answerOf("折后年租"), "202368");
+  const knob = rowNamed("折扣").querySelector(".knob");
+  assert.equal(knob.style.paddingRight, "0ch");
+  assert.equal(rowNamed("月租").querySelector(".printed").style.paddingRight, "3ch");
+  const css = readFileSync(path.join(runtimeDir, "style.css"), "utf8");
+  assert.match(css, /\.printed,\s*\.knob\s*\{[^}]*text-align:\s*right/s);
+  assert.match(css, /font-variant-numeric:\s*tabular-nums/);
+});
+
+check("人写的与机器算的靠质地分开，不靠框线，也不只靠色相", () => {
+  const css = readFileSync(path.join(runtimeDir, "style.css"), "utf8");
+  assert.match(css, /\.hand\s*\{[^}]*border:\s*0/s);
+  assert.match(css, /\.printed,\s*\.knob\s*\{[^}]*font-family:\s*var\(--mono\)/s);
+  assert.doesNotMatch(css, /box-shadow:\s*0\s+\d+px\s+\d+px/, "不要卡片阴影");
+  assert.doesNotMatch(css, /border-radius:\s*[1-9]/, "不要把每一行套成一张圆角白卡");
+});
+
+check("没写死 9px／10px 这类小字", () => {
+  const css = readFileSync(path.join(runtimeDir, "style.css"), "utf8");
+  assert.doesNotMatch(css, /font-size:\s*(?:[0-9]|1[01])px/);
+  assert.doesNotMatch(css, /字号不得小于|不小于\s*\d+\s*px/);
+});
 
 function code(file) {
   return readFileSync(path.join(runtimeDir, file), "utf8")
@@ -97,134 +290,37 @@ function code(file) {
     .replace(/^[ \t]*\/\/.*$/gm, " ");
 }
 
-console.log("可执行笔记界面自测（jsdom，非浏览器）");
-
-check("入口装载了同目录内核与界面脚本", () => {
-  assert.ok(window.ExecutableNotebookEngine);
-  assert.equal(typeof window.ExecutableNotebookEngine.runNotebook, "function");
-});
-
-check("首屏是真空笔记，参数、格子与依赖都从零开始", () => {
-  assert.equal(text("#progress-summary"), "0 个参数 · 0 个格子 · 0 条依赖");
-  assert.match(screen(), /先加一个可以改的量/);
-  assert.match(screen(), /这是一份真正的空笔记/);
-  assert.match(screen(), /可以先写说明文字/);
-  assert.equal(doc.querySelectorAll(".parameter-row").length, 0);
-  assert.equal(doc.querySelectorAll(".cell-row").length, 0);
-  assert.equal($("#cell-content").disabled, false);
-});
-
-check("加入参数与表达式格后，三个进展数同步变化并显示结果", () => {
-  addParameter("area", 620);
-  assert.equal(text("#progress-summary"), "1 个参数 · 0 个格子 · 0 条依赖");
-  addCell("expression", "monthlyRent", "area*32");
-  assert.equal(text("#progress-summary"), "1 个参数 · 1 个格子 · 1 条依赖");
-  assert.match(text("#cell-list"), /monthlyRent/);
-  assert.match(text("#cell-list"), /19840/);
-});
-
-check("参数变化只沿当前依赖向下重算", () => {
-  editParameter("area", 700);
-  assert.match(text("#cell-list"), /22400/);
-  assert.equal(text("#run-order"), "monthlyRent");
-  editParameter("area", 620);
-  assert.match(text("#cell-list"), /19840/);
-});
-
-check("真实办公室方案能装入表达式、说明文字与断言三类格子", () => {
-  addParameter("rent", 32);
-  addParameter("people", 24);
-  addParameter("months", 36);
-  addParameter("moveCost", 180000);
-  addParameter("budget", 1100000);
-  editCell("monthlyRent", "area*rent");
-  addCell("expression", "leaseCost", "monthlyRent*months");
-  addCell("expression", "movePerMonth", "moveCost/months");
-  addCell("expression", "totalCost", "leaseCost+moveCost");
-  addCell("expression", "costPerSeat", "monthlyRent/people");
-  addCell("expression", "budgetGap", "budget-totalCost");
-  addCell("assertion", "withinBudget", "totalCost<=budget");
-  addCell("text", "basis", "金额单位为元；租期按整月计算，基准日期由作者显式给出。");
-  $("#baseline-date").value = "2026-08-14";
-  change($("#baseline-date"));
-
-  assert.equal(text("#progress-summary"), "6 个参数 · 8 个格子 · 14 条依赖");
-  assert.match(text("#cell-list"), /714240/);
-  assert.match(text("#cell-list"), /894240/);
-  assert.match(text("#cell-list"), /205760/);
-  assert.match(text("#cell-list"), /withinBudget[\s\S]*通过/);
-  assert.match(doc.querySelector('[data-cell-editor="basis"]').value, /金额单位为元/);
-  assert.equal(
-    text("#run-order"),
-    "monthlyRent → leaseCost → movePerMonth → totalCost → costPerSeat → budgetGap → withinBudget",
-  );
-});
-
-check("循环引用与未定义引用在界面上点名，不压成笼统错误", () => {
-  editCell("monthlyRent", "missing+1");
-  assert.match(text("#notebook-message"), /未定义引用：missing/);
-  editCell("monthlyRent", "leaseCost+1");
-  assert.match(text("#notebook-message"), /循环引用/);
-  assert.match(text("#notebook-message"), /monthlyRent/);
-  assert.match(text("#notebook-message"), /leaseCost/);
-  editCell("monthlyRent", "area*rent");
-  assert.match(text("#cell-list"), /19840/);
-});
-
-check("页面自带运行自测按钮并把通过数写到屏上", () => {
-  $("#run-test").dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
-  assert.equal(text("#test-out"), "4 / 4 通过");
-});
-
-check("所有 src/href 都是同目录相对路径，没有外部资源", () => {
-  for (const match of code("index.html").matchAll(/(?:src|href)\s*=\s*["']([^"']+)["']/g)) {
-    assert.doesNotMatch(match[1], /^(?:[a-z]+:|\/\/|\/|\.\.\/)/i, match[1]);
+check("所有 src/href 都是同目录相对路径且文件存在", () => {
+  const html = code("index.html");
+  const refs = [...html.matchAll(/(?:src|href)\s*=\s*"([^"]+)"/g)].map((match) => match[1]);
+  assert.ok(refs.length >= 3);
+  for (const ref of refs) {
+    assert.doesNotMatch(ref, /^(?:[a-z]+:|\/|#)/i, `不是同目录相对路径：${ref}`);
+    assert.equal(path.dirname(ref), ".", `跨出同目录：${ref}`);
+    assert.ok(existsSync(path.join(runtimeDir, ref)), `文件不存在：${ref}`);
   }
-  assert.doesNotMatch(code("style.css"), /@import|url\s*\(/i);
 });
 
-check("页面不用 ES module，也不嵌套 iframe", () => {
+check("页面不用 ES module", () => {
   assert.doesNotMatch(code("index.html"), /type\s*=\s*["']module["']/i);
+});
+
+check("页面没有 iframe", () => {
   assert.equal(doc.querySelectorAll("iframe").length, 0);
 });
 
-check("源码不碰网络、存储、父窗口或自由代码执行入口", () => {
-  const source = ["index.html", "engine.js", "ui.js"].map(code).join("\n");
-  assert.doesNotMatch(source, /fetch\s*\(|XMLHttpRequest|WebSocket\s*\(|EventSource\s*\(|sendBeacon\s*\(|importScripts\s*\(|WebTransport\s*\(|RTCPeerConnection\s*\(|(?:Shared)?Worker\s*\(|serviceWorker\s*\.\s*register\s*\(/);
-  assert.doesNotMatch(source, /document\s*\.\s*cookie|localStorage|sessionStorage|indexedDB|document\s*\.\s*domain/);
-  assert.doesNotMatch(source, /window\s*\.\s*(?:parent|top)\b/);
-  assert.doesNotMatch(source, /(?<![\w.$])eval\s*\(|new\s+Function\b|Function\s*\(/);
+check("源码没有网络、存储、父窗口 API，也没有自由代码执行入口", () => {
+  const source = ["index.html", "engine.js", "ui.js", "style.css"].map(code).join("\n");
+  const forbidden = [
+    /fetch\s*\(/, /XMLHttpRequest/, /WebSocket\s*\(/, /EventSource\s*\(/, /sendBeacon\s*\(/,
+    /importScripts\s*\(/, /WebTransport\s*\(/, /RTCPeerConnection\s*\(/,
+    /(?:^|[^\w])Worker\s*\(/, /SharedWorker\s*\(/, /serviceWorker\s*\.\s*register\s*\(/,
+    /localStorage/, /sessionStorage/, /indexedDB/, /document\s*\.\s*cookie/,
+    /window\s*\.\s*(?:parent|top)\b/, /document\s*\.\s*domain/,
+    /(?:^|[^\w.])eval\s*\(/, /new\s+Function\s*\(/, /new\s+Date/, /Date\.now/, /Math\.random/,
+  ];
+  for (const pattern of forbidden) assert.doesNotMatch(source, pattern);
 });
-
-if (process.env.W07_PREVIEW_DATA) {
-  const preview = {
-    eyebrow: text(".eyebrow"),
-    title: text("h1"),
-    lead: text(".lead"),
-    policy: text(".policy"),
-    parameterTitle: text("#parameter-title"),
-    parameterCount: text("#parameter-count"),
-    parameters: [...doc.querySelectorAll(".parameter-row")].map((row) => ({
-      name: row.querySelector(".parameter-name")?.textContent.trim() || "",
-      value: row.querySelector("input")?.value || "",
-    })),
-    baseline: $("#baseline-date").value,
-    notebookTitle: text("#notebook-title"),
-    cellCount: text("#cell-count"),
-    cells: [...doc.querySelectorAll(".cell-row")].map((row) => ({
-      type: row.querySelector(".cell-type")?.textContent.trim() || "",
-      name: row.querySelector(".cell-name")?.textContent.trim() || "",
-      dependencies: row.querySelector(".cell-deps")?.textContent.trim() || "",
-      content: row.querySelector(".cell-editor")?.value || "",
-      result: row.querySelector(".cell-result strong")?.textContent.trim() || "",
-    })),
-    runOrder: text("#run-order"),
-    selftest: text("#test-out"),
-    progress: text("#progress-summary"),
-    footer: text("footer span"),
-  };
-  writeFileSync(process.env.W07_PREVIEW_DATA, JSON.stringify(preview, null, 2) + "\n");
-}
 
 console.log("\n可执行笔记界面自测：" + (failed === 0 ? "全部通过" : failed + " 项未通过"));
 dom.window.close();

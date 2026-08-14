@@ -4,119 +4,31 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>可执行笔记</title>
+  <!--
+    规格：docs/specs/oceanleo-plugins-v1/plugins/executable-notebook.md（oceandino 仓）
+
+    经典 <script src>，不是 type="module"：不透明源下模块脚本按 CORS 取回会失败。
+    零外部资源、零存储、零网络请求、不访问 parent/top。
+    只认封闭数学表达式，不执行用户写的自由代码；不读时钟、不产生随机数。
+  -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="masthead">
-    <div>
-      <p class="eyebrow">EXECUTABLE LEDGER · 可执行笔记</p>
-      <h1>把口径、计算与边界写在一起</h1>
-      <p class="lead">参数一改，只沿依赖向下重算；每个结果都能回到它引用的量。</p>
+  <main class="paper">
+
+    <p class="headline" id="headline"></p>
+
+    <div class="scroll" id="scroll">
+      <div class="doc" id="doc"></div>
+
+      <form class="tail" id="tail" autocomplete="off">
+        <input id="new-name" class="hand name" placeholder="水电 utilities" aria-label="名字">
+        <input id="new-body" class="hand body" placeholder="8600 元/月" aria-label="内容">
+        <button id="add" type="submit">写下</button>
+      </form>
     </div>
-    <p class="policy">封闭数学表达式，不执行自由代码<br>时间与随机量必须作为显式参数</p>
-  </header>
 
-  <main class="workbench">
-    <aside class="parameter-pane" aria-labelledby="parameter-title">
-      <div class="section-heading">
-        <div>
-          <p class="section-kicker">01 · PARAMETERS</p>
-          <h2 id="parameter-title">参数</h2>
-        </div>
-        <span id="parameter-count" class="count">0 个参数</span>
-      </div>
-
-      <div id="parameter-empty" class="empty-state">
-        <strong>先加一个可以改的量</strong>
-        <span>名称用于表达式引用；数值会保持原始精度参与重算。</span>
-      </div>
-      <div id="parameter-list" class="parameter-list" aria-live="polite"></div>
-
-      <form id="parameter-form" class="entry-form">
-        <div class="field-pair">
-          <label>
-            <span>名称</span>
-            <input id="parameter-name" autocomplete="off" placeholder="例如 area" required>
-          </label>
-          <label>
-            <span>数值</span>
-            <input id="parameter-value" inputmode="decimal" autocomplete="off" placeholder="例如 620" required>
-          </label>
-        </div>
-        <button id="add-parameter" type="submit">加入参数</button>
-        <p id="parameter-message" class="message" role="status"></p>
-      </form>
-
-      <label class="baseline-field">
-        <span>基准日期（显式输入）</span>
-        <input id="baseline-date" autocomplete="off" placeholder="例如 2026-08-14">
-        <small>留空也不会读取系统时间；相同输入始终得到相同结果。</small>
-      </label>
-
-      <div class="self-test">
-        <div>
-          <strong>运行自测</strong>
-          <span>复核表达式、依赖顺序与错误点名</span>
-        </div>
-        <button id="run-test" class="quiet-button" type="button">运行自测</button>
-        <output id="test-out" aria-live="polite">尚未运行</output>
-      </div>
-    </aside>
-
-    <section class="notebook-pane" aria-labelledby="notebook-title">
-      <div class="section-heading notebook-heading">
-        <div>
-          <p class="section-kicker">02 · NOTEBOOK</p>
-          <h2 id="notebook-title">文稿与格子</h2>
-        </div>
-        <span id="cell-count" class="count">0 个格子</span>
-      </div>
-
-      <div id="cell-empty" class="empty-state notebook-empty">
-        <strong>这是一份真正的空笔记</strong>
-        <span>可以先写说明文字，也可以从第一个表达式开始。</span>
-      </div>
-
-      <form id="cell-form" class="cell-form">
-        <div class="cell-fields">
-          <label>
-            <span>类型</span>
-            <select id="cell-type">
-              <option value="expression">表达式</option>
-              <option value="text">说明文字</option>
-              <option value="assertion">断言</option>
-            </select>
-          </label>
-          <label>
-            <span>格子名</span>
-            <input id="cell-name" autocomplete="off" placeholder="例如 monthlyRent" required>
-          </label>
-        </div>
-        <label>
-          <span>内容</span>
-          <textarea id="cell-content" rows="2" placeholder="例如 area*rent" required></textarea>
-        </label>
-        <p class="syntax-note">表达式支持四则、幂、括号、一元负号、比较符，以及 sqrt / abs / min / max / pow / round 等内置函数。</p>
-        <button id="add-cell" type="submit">加入格子</button>
-      </form>
-
-      <div id="run-status" class="run-status" aria-live="polite">
-        <div>
-          <span>本次重算</span>
-          <strong id="run-order">尚无格子</strong>
-        </div>
-        <p id="notebook-message" class="message" role="status"></p>
-      </div>
-
-      <div id="cell-list" class="cell-list" aria-live="polite"></div>
-    </section>
   </main>
-
-  <footer>
-    <strong id="progress-summary">0 个参数 · 0 个格子 · 0 条依赖</strong>
-    <span>表达式给结果 · 说明文字解释口径 · 断言检查是否越界</span>
-  </footer>
-
   <script src="engine.js"></script>
   <script src="ui.js"></script>
 </body>
