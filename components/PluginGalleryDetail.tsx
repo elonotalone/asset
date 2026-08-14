@@ -7,9 +7,9 @@ import {
   KIND_LABELS,
   PLUGIN_GALLERY_POLICY,
   PLUGIN_GALLERY_TITLE,
-  STATUS_HINTS,
-  STATUS_LABELS,
   categoryLabel,
+  editorAccessForPlugin,
+  isEditorEntrypointUrl,
   isPluginRuntimeUrl,
   type PluginEntry,
 } from "@/lib/plugin-gallery";
@@ -63,8 +63,10 @@ export function PluginGalleryDetail({
   runtimeUrl?: string | null;
 }) {
   const tt = useUI();
-  const shipped = item.status === "shipped";
   const runnable = isPluginRuntimeUrl(runtimeUrl);
+  const editorAccess = editorAccessForPlugin(item);
+  const editorRunnable = isEditorEntrypointUrl(editorAccess?.entryUrl);
+  const available = runnable || editorRunnable;
   const hasPreview = previewPath !== null;
 
   return (
@@ -83,10 +85,10 @@ export function PluginGalleryDetail({
           </h1>
           <span
             className={`rounded-full px-3 py-1 text-xs font-medium ${
-              runnable || shipped ? "bg-white/25" : "bg-black/25"
+              available ? "bg-white/25" : "bg-black/25"
             }`}
           >
-            {runnable ? tt("现在可以使用") : tt(STATUS_LABELS[item.status])}
+            {available ? tt("现在可以使用") : tt("入口尚未接通")}
           </span>
         </div>
         <p className="mt-3 max-w-2xl text-sm leading-7 text-white/90">
@@ -150,16 +152,18 @@ export function PluginGalleryDetail({
         <Section title="它现在到底能不能用">
           <p
             className={`inline-block rounded-full px-3 py-1 text-xs font-medium ${
-              runnable || shipped
+              available
                 ? "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200"
                 : "bg-amber-50 text-amber-700 ring-1 ring-amber-200"
             }`}
           >
             {runnable
               ? tt("能用：点击上方的「打开使用」进入")
-              : hasPreview
+              : editorRunnable
+                ? tt("能用：已有经过核验的编辑器入口")
+                : hasPreview
                 ? tt("暂不可用：安全运行地址尚未生成")
-                : tt(STATUS_LABELS[item.status])}
+                : tt("暂不可用：入口尚未接通")}
           </p>
           {/* 安全运行入口与平台入口是两件事：能从展厅打开，不等于 app 里已经有它的入口。
               两句都说，才不会把「能试」说成「已上线」。 */}
@@ -167,14 +171,26 @@ export function PluginGalleryDetail({
             <p className="mt-2">
               {tt("它会在隔离的安全站点中打开，不用登录，也不会读取本站登录状态。")}
             </p>
+          ) : editorRunnable ? (
+            <p className="mt-2">
+              {tt("它会在经过核验的第一方编辑器中打开，不与插件隔离域混用。")}
+            </p>
+          ) : editorAccess ? (
+            <>
+              <p className="mt-2">{tt(editorAccess.unavailableReason)}</p>
+              <p className="mt-2">{tt(editorAccess.nextStep)}</p>
+            </>
           ) : hasPreview ? (
             <p className="mt-2">
               {tt("可以先看实际界面；安全地址准备好之前，不会回退到本站运行。")}
             </p>
-          ) : null}
-          <p className="mt-2">{tt(STATUS_HINTS[item.status])}</p>
+          ) : (
+            <p className="mt-2">
+              {tt("安全运行地址生成后，这一页会自动显示「打开使用」；在此之前不会回退到本站运行。")}
+            </p>
+          )}
           <p className="mt-2 text-xs leading-6 text-zinc-500">
-            {tt("这么标的依据：")}
+            {tt("能力与接入依据：")}
             {tt(item.statusNote)}
           </p>
           <p className="mt-2 text-xs leading-6 text-zinc-400">

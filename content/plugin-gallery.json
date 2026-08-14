@@ -6,10 +6,6 @@
     "downloadable": false,
     "reason": "这些是在 app 里打开来用的软件，没有可以存到硬盘、离线打开的文件。本板块只展示能力，不提供下载或安装。用户在这些工具里做出来的东西（表格、PDF、长图、网页）才是可下载的素材，落在「我的库」。"
   },
-  "statusLegend": {
-    "shipped": "已上线：从「我的库」打开对应素材即可进入。",
-    "spec-only": "规格已定未实装：产品目标已经写死，平台上还没有它的入口。"
-  },
   "categories": [
     { "id": "space", "label": "出行与空间", "kind": "standalone" },
     { "id": "finance", "label": "财务与经营", "kind": "standalone" },
@@ -44,7 +40,6 @@
       "output": "带地点、路线与量算结果的地图，导出物落进「我的库」。",
       "firstOpen": "整个右侧先出现全球底图，海洋、陆地、海岸、国界与经纬网清楚可辨，旁边有图例、比例与来源署名；提示「在图上点一下，落下第一个地点」。",
       "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "status": "spec-only",
       "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
       "specPath": "docs/specs/oceanleo-plugins-v1/plugins/city-map.md"
     },
@@ -67,7 +62,6 @@
       "output": "带目的地与大圆航线的球面视图，导出物落进「我的库」。",
       "firstOpen": "右侧已经是一颗可转动的地球：陆地、海洋、国界、经纬网与当前昼夜分界清楚可见；提示「拖动地球；点一个国家，把它加进这次行程」。",
       "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "status": "spec-only",
       "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
       "specPath": "docs/specs/oceanleo-plugins-v1/plugins/interactive-globe.md"
     },
@@ -91,7 +85,6 @@
       "output": "可打印的平面图与面积、尺寸清单，导出物落进「我的库」。",
       "firstOpen": "右侧先出现米制底纸：浅灰网格、原点、比例尺与北针都已可见，但一面墙也没有替你画；提示「沿网格拖一条线，画出第一面墙」。",
       "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "status": "spec-only",
       "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
       "specPath": "docs/specs/oceanleo-plugins-v1/plugins/floorplan.md"
     },
@@ -115,7 +108,6 @@
       "output": "自己的账目表，可导出成 Excel 落进「我的库」。",
       "firstOpen": "一张带列名、没有任何示例记录的空表，底部合计如实显示 0.00；可以直接点第一行录入日期，不用先新建文件或删掉别人留下的例子。",
       "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "status": "spec-only",
       "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
       "specPath": "docs/specs/oceanleo-plugins-v1/plugins/ledger.md"
     },
@@ -138,7 +130,6 @@
       "output": "三张联动财务表与敏感性结果，可导出落进「我的库」。",
       "firstOpen": "给出一组可修改的通用假设和由它们算出的三表；改动第一个与自己不符的假设后，三张表、检查结果与敏感性结果一起变化。",
       "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "status": "spec-only",
       "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
       "specPath": "docs/specs/oceanleo-plugins-v1/plugins/three-statement-model.md"
     },
@@ -161,7 +152,6 @@
       "output": "一屏可复算的指标视图，可导出落进「我的库」。",
       "firstOpen": "先说明筛选区、指标区与图形区各自的作用，指标显示「数据缺失」而不是伪造的零，并给出显眼的「从哪儿取数」入口。",
       "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "status": "spec-only",
       "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
       "specPath": "docs/specs/oceanleo-plugins-v1/plugins/metrics-dashboard.md"
     },
@@ -184,7 +174,6 @@
       "output": "可复核的计算结果与逐期明细，可导出落进「我的库」。",
       "firstOpen": "直接展示一个可修改的房贷测算档位（本金 1 000 000 元、年利率 4.20%、360 期、等额本息），并说明这是公式的出厂参数。",
       "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "status": "spec-only",
       "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
       "caution": "提供计算与教学，不提供投资建议。",
       "specPath": "docs/specs/oceanleo-plugins-v1/plugins/financial-calculator.md"
@@ -208,7 +197,6 @@
       "output": "带公式名、单位与参考分段的计算结果，可导出落进「我的库」。",
       "firstOpen": "个体参数全空，但能算什么、各项需要哪些输入、用什么单位、分段怎么读以及免责声明都已可见。",
       "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "status": "spec-only",
       "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
       "caution": "用于教学与计算辅助，不用于诊断或处方；分段与公式会随指南变化。",
       "specPath": "docs/specs/oceanleo-plugins-v1/plugins/medical-calculator.md"
@@ -232,7 +220,6 @@
       "output": "带法源与生效日期的分段计算结果，可导出落进「我的库」。",
       "firstOpen": "个案参数空白，但计算项目、公开规则说明、法条锚与免责声明已经可见；填入自己的事实后才出现个案数字。",
       "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "status": "spec-only",
       "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
       "caution": "用于计算与释法示例，不构成法律意见或裁判结论；法律与数值会变。",
       "specPath": "docs/specs/oceanleo-plugins-v1/plugins/legal-calculator.md"
@@ -257,7 +244,6 @@
       "output": "换算结果与因子说明，可导出落进「我的库」。",
       "firstOpen": "没有上下文时从 1 m 起步，同时显示厘米、毫米、英寸与英尺；在血糖场景则直接展示 mg/dL 与 mmol/L。第一个动作只是把数改成自己的。",
       "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "status": "spec-only",
       "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
       "specPath": "docs/specs/oceanleo-plugins-v1/plugins/unit-converter.md"
     },
@@ -280,7 +266,6 @@
       "output": "证据抽取表与筛选流程计数，可导出落进「我的库」。",
       "firstOpen": "一张零条题录的抽取表，顶部计数全为零，突出「粘贴题录」入口；表头说明能比较哪些信息，但不预置任何示例论文。",
       "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "status": "spec-only",
       "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
       "specPath": "docs/specs/oceanleo-plugins-v1/plugins/literature-matrix.md"
     },
@@ -303,7 +288,6 @@
       "output": "可复制的查询串与可复算的检索策略，可导出落进「我的库」。",
       "firstOpen": "顶部问「一句话说清你要查什么」，概念区提示加入第一个概念块，编译区暂时空着；写下第一个词就能看见最小查询结果，不会先弹一堆数量告警。",
       "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "status": "spec-only",
       "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
       "specPath": "docs/specs/oceanleo-plugins-v1/plugins/search-query-builder.md"
     },
@@ -326,7 +310,6 @@
       "output": "带先修关系、层次与掌握状态的知识图，可导出落进「我的库」。",
       "firstOpen": "空画布中央提示「先写下你要弄懂的第一个概念」，状态栏显示尚未分层；第一个概念没有前驱，自然处在可学位置。",
       "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "status": "spec-only",
       "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
       "specPath": "docs/specs/oceanleo-plugins-v1/plugins/concept-graph.md"
     },
@@ -349,7 +332,6 @@
       "output": "自测结果与错题清单，可导出落进「我的库」。",
       "firstOpen": "从零道题开始，提示「出第一道题」；判分设置可见，但不塞示例题，一道题也可以开始作答。",
       "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "status": "spec-only",
       "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
       "specPath": "docs/specs/oceanleo-plugins-v1/plugins/self-test-quiz.md"
     },
@@ -372,7 +354,6 @@
       "output": "自己的卡片与排程记录，可导出落进「我的库」。",
       "firstOpen": "队列显示「今天没有要复习的卡片」，入口提示「加第一张卡」；算法摘要与未来日期轴已经可见。",
       "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "status": "spec-only",
       "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
       "specPath": "docs/specs/oceanleo-plugins-v1/plugins/spaced-repetition.md"
     },
@@ -395,7 +376,6 @@
       "output": "可读、可改、可追溯的推导过程，可导出落进「我的库」。",
       "firstOpen": "左侧提示「先把这个公式里出现的量列出来」，右侧提示「还没有推导步骤」；加入第一个量就能写第一步。",
       "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "status": "spec-only",
       "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
       "specPath": "docs/specs/oceanleo-plugins-v1/plugins/formula-walkthrough.md"
     },
@@ -418,7 +398,6 @@
       "output": "关系图与结构读数，可导出落进「我的库」。",
       "firstOpen": "一次输入就得到两个节点与第一条边，不用先建一堆孤立节点，也不会看到预置人物或公司。",
       "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "status": "spec-only",
       "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
       "caution": "帮你发现值得追问的结构，不替你断定关系的法律或事实含义。",
       "specPath": "docs/specs/oceanleo-plugins-v1/plugins/relationship-graph.md"
@@ -442,7 +421,6 @@
       "output": "带参数与依赖关系的可复算文稿，可导出落进「我的库」。",
       "firstOpen": "参数区提示「先加一个可以改的量」，文稿区允许先写一段文字；底部从「0 个参数 · 0 个格子 · 0 条依赖」开始。",
       "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "status": "spec-only",
       "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
       "specPath": "docs/specs/oceanleo-plugins-v1/plugins/executable-notebook.md"
     },
@@ -465,7 +443,6 @@
       "output": "装配好的合同文本与检查结果，可导出落进「我的库」。",
       "firstOpen": "下方按类目折叠展示条款库，右侧是一张空白预览页；状态显示已选 0 条、待填 0 项，首次打开不预勾任何条款。",
       "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "status": "spec-only",
       "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
       "caution": "帮你组织与检查合同，不替代律师意见。",
       "specPath": "docs/specs/oceanleo-plugins-v1/plugins/contract-assembly.md"
@@ -489,7 +466,6 @@
       "output": "对话分支图与覆盖检查结果，可导出落进「我的库」。",
       "firstOpen": "覆盖情况尚未计算，也不会先出现一片告警；写下开场白后继续回答「对方可能怎么回」，逐步长出第一组分支。",
       "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "status": "spec-only",
       "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
       "specPath": "docs/specs/oceanleo-plugins-v1/plugins/dialogue-branch.md"
     },
@@ -512,7 +488,6 @@
       "output": "带时间轴与字幕时间码的口播脚本，可导出落进「我的库」。",
       "firstOpen": "语速从约 216 字/分钟的普通中文口播参考值起步；填入 90 秒后时间轴显示 0:00 到 1:30，给出约 324 字预算，段落区等你写第一段。",
       "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "status": "spec-only",
       "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
       "specPath": "docs/specs/oceanleo-plugins-v1/plugins/voiceover-script.md"
     },
@@ -535,7 +510,6 @@
       "output": "同一素材的新版本，以及可发布的位图。",
       "firstOpen": "右侧先完整显示所选图片及其真实尺寸，裁切框、缩放与图层入口围绕这张图出现；没有图片时不会给你一块要你猜编辑什么的空画布。",
       "where": "所有带素材库的 OceanLeo 站点：从库里打开一张位图即进入，不占操控台按键。",
-      "status": "shipped",
       "statusNote": "受信任编辑器注册表 `oceanleo-ui/src/shell/workbench-capability-registry.ts` 里有 `image` 适配器（工程格式 oceanleo.fabric-image.v1，load/mutate/save/reopen 全套），`workbench-routes.ts` 的 `editorCapabilityFor()` 会把位图素材路由过去。",
       "specPath": "docs/specs/oceanleo-plugins-v1/editors/image-editor.md"
     },
@@ -558,7 +532,6 @@
       "output": "可继续编辑的设计工程，以及导出的成品图。",
       "firstOpen": "右侧先完整呈现所选设计稿及其图层，画板尺寸、缩放与选择状态清楚可见。",
       "where": "所有带素材库的 OceanLeo 站点；它由 design 子站的编辑器嵌入承接。",
-      "status": "shipped",
       "statusNote": "注册表里有 `design-canvas` 适配器（工程格式 oceanleo.design-document.v1），走嵌入路由，由 design 子站的 /embed/editor 承接。",
       "caution": "嵌入式编辑器按当前域名家族取子站地址；某个家族没有对应子站时，界面会如实说「暂未开放」，不会把内容送去别的家族。",
       "specPath": "docs/specs/oceanleo-plugins-v1/editors/design-canvas.md"
@@ -582,7 +555,6 @@
       "output": "更新后的图表与可继续编辑的结构化源，以及 SVG / PNG。",
       "firstOpen": "从库里打开图表后，右侧先呈现真实图形与对应数据，可以从任一处开始修改。",
       "where": "所有带素材库的 OceanLeo 站点：从库里打开图表即进入。",
-      "status": "shipped",
       "statusNote": "注册表里有 `chart-editor@1` 适配器（工程格式 oceanleo.chart.v1）。只渲染过 HTML/封面、没有 option 源的历史图表会被明确判为不可编辑并给出原因，这一条在 `workbench-routes.ts` 里逐因分开回答。",
       "caution": "历史图表若只有渲染 HTML 或封面，需要先补录结构化源才能编辑。",
       "specPath": "docs/specs/oceanleo-plugins-v1/editors/chart-editor.md"
@@ -606,7 +578,6 @@
       "output": "文档的新版本与可导出的 DOCX。",
       "firstOpen": "右侧直接显示所选文档的真实正文与结构，光标可以立即落进段落；没有文档时不会凭空开一篇「未命名空白文档」冒充入口。",
       "where": "所有带素材库的 OceanLeo 站点：从库里打开文档即进入。",
-      "status": "shipped",
       "statusNote": "注册表里有 `richdoc` 适配器（工程格式 tiptap-json@1，load/mutate/save/reopen 全套），docx/md/txt/html 等素材由 `editorCapabilityFor()` 路由过去。",
       "specPath": "docs/specs/oceanleo-plugins-v1/editors/richdoc-editor.md"
     },
@@ -629,7 +600,6 @@
       "output": "表格的新版本与可导出的 XLSX。",
       "firstOpen": "右侧先显示所选表格的真实工作表、行列、数值与公式，当前单元格可以立即编辑。",
       "where": "所有带素材库的 OceanLeo 站点：从库里打开表格即进入。",
-      "status": "shipped",
       "statusNote": "注册表里有 `grid` 适配器（工程格式 oceanleo.grid.v1，load/mutate/save/reopen 全套），实现见 `oceanleo-ui/src/shell/doc-editors/GridEditor.tsx`。",
       "specPath": "docs/specs/oceanleo-plugins-v1/editors/grid-editor.md"
     },
@@ -652,7 +622,6 @@
       "output": "演示文稿的新版本与可导出的 PPTX。",
       "firstOpen": "右侧直接显示所选 PPT 的真实页面、缩略图与当前页元素；新建空白演示属于素材创建流程，不由一枚「PPT 编辑器」按键凭空代替。",
       "where": "所有带素材库的 OceanLeo 站点：从库里打开 PPT 即进入。",
-      "status": "shipped",
       "statusNote": "注册表里有 `deck` 适配器（工程格式 oceanleo.deck.v1，load/mutate/save/reopen 全套），pptx 与结构化 slides 都路由到它。",
       "specPath": "docs/specs/oceanleo-plugins-v1/editors/deck-editor.md"
     },
@@ -675,7 +644,6 @@
       "output": "带标注与新页序的 PDF。",
       "firstOpen": "右侧直接显示所选 PDF 的第一页、页数与缩略图条，可以立即翻页或开始高亮。",
       "where": "所有带素材库的 OceanLeo 站点：从库里打开 PDF 即进入。",
-      "status": "shipped",
       "statusNote": "注册表里有 `pdf` 适配器（工程格式 pdf-binary@1，load/mutate/save/reopen 全套），实现见 `oceanleo-ui/src/shell/media-editors/` 的 PDF 工作台。",
       "specPath": "docs/specs/oceanleo-plugins-v1/editors/pdf-editor.md"
     },
@@ -698,7 +666,6 @@
       "output": "新的成片与可继续修改的剪辑工程。",
       "firstOpen": "右侧先显示所选视频的第一帧、播放控件与对应时间线，原片已经落在主视频轨上。",
       "where": "所有带素材库的 OceanLeo 站点：从库里打开视频即进入。",
-      "status": "shipped",
       "statusNote": "注册表里有 `video-timeline` 适配器（工程格式 oceanleo.timeline.v1，load/mutate/save/reopen 全套），实现见 `oceanleo-ui/src/shell/video-editor/VideoTimelineEditor.tsx`。",
       "specPath": "docs/specs/oceanleo-plugins-v1/editors/video-timeline.md"
     },
@@ -721,7 +688,6 @@
       "output": "同一段音频的新版本，原件仍在，可以来回比较。",
       "firstOpen": "右侧直接显示这段音频的波形、播放位置与时长，可以立即试听；没有音频素材时不会给你一条没有声音的空时间轴。",
       "where": "所有带素材库的 OceanLeo 站点：从库里打开音频即进入。",
-      "status": "shipped",
       "statusNote": "注册表里有 `audio` 适配器（工程格式 oceanleo.audio-project.v1，load/mutate/save/reopen 全套），实现见 `oceanleo-ui/src/shell/media-editors/AudioWorkbenchView.tsx`。",
       "specPath": "docs/specs/oceanleo-plugins-v1/editors/audio-editor.md"
     },
@@ -744,7 +710,6 @@
       "output": "调整后的模型视图与导出的 PNG。",
       "firstOpen": "右侧加载所选模型并自动把它框进视野，可以立即旋转、缩放与检查材质。",
       "where": "所有带素材库的 OceanLeo 站点：从库里打开 3D 模型即进入。",
-      "status": "shipped",
       "statusNote": "注册表里有 `threed` 适配器（工程格式 oceanleo.model-view@1，load/mutate/save/reopen 全套），实现见 `oceanleo-ui/src/shell/media-editors/Model3DStage.tsx`。",
       "caution": "HDRI 与纹理是环境光照和贴图素材，不是模型，可以预览但不进这个工作台。",
       "specPath": "docs/specs/oceanleo-plugins-v1/editors/model-3d-editor.md"
@@ -768,7 +733,6 @@
       "output": "网站的新健康版本与可导出的源码。",
       "firstOpen": "右侧先运行所选网站，链接、滚动与响应式布局都可体验。",
       "where": "所有带素材库的 OceanLeo 站点；它由 website 子站的编辑器嵌入承接。",
-      "status": "shipped",
       "statusNote": "注册表里有 `website` 适配器（工程格式 website-source@1），走嵌入路由，由 website 子站的 /embed/site-editor 承接。",
       "caution": "用户生成的网站属于不可信可执行内容，运行与预览只在 oceanleo.app 隔离域，不与主站登录凭据混用；某个域名家族没有对应子站时界面会如实说「暂未开放」。",
       "specPath": "docs/specs/oceanleo-plugins-v1/editors/website-editor.md"
@@ -792,7 +756,6 @@
       "output": "游戏的新版本源码，旧版本仍在列表里，随时能退回去。",
       "firstOpen": "右侧直接运行所选游戏并展示修改入口，先玩到当前版本再描述下一轮想改什么。",
       "where": "所有带素材库的 OceanLeo 站点：从库里打开游戏即进入。",
-      "status": "shipped",
       "statusNote": "注册表里有 `game` 适配器（工程格式 oceanleo.game-bundle.v1，load/mutate/save/reopen 全套）；它特意不走嵌入路由，可玩预览留在受控沙箱宿主里。",
       "caution": "试玩与登录态和主站数据隔离，游戏内容在不可信内容域与受限沙箱中运行。",
       "specPath": "docs/specs/oceanleo-plugins-v1/editors/game-editor.md"
@@ -816,7 +779,6 @@
       "output": "更新后的工作流与运行产物。",
       "firstOpen": "右侧直接展示所选工作流的节点、连线、入口与输出，可以从当前图继续连接或运行；新建工作流属于素材创建，不由这枚入口凭空开空图。",
       "where": "所有带素材库的 OceanLeo 站点；工作流素材由 video 子站的节点画布嵌入承接。",
-      "status": "shipped",
       "statusNote": "artifact 能力矩阵把 `workflow` 类素材绑到 `video-canvas` 适配器（工程格式 oceanleo.video-canvas.v1），注册表里可路由，走嵌入路由由 video 子站的 /canvas-board 承接。",
       "caution": "嵌入式编辑器按当前域名家族取子站地址；某个家族没有对应子站时，界面会如实说「暂未开放」。",
       "specPath": "docs/specs/oceanleo-plugins-v1/editors/workflow-canvas.md"

@@ -4,7 +4,6 @@ import {
   lstatSync,
   readFileSync,
   readdirSync,
-  realpathSync,
   statSync,
 } from "node:fs";
 import path from "node:path";
@@ -12,7 +11,6 @@ import test from "node:test";
 import { renderToStaticMarkup } from "react-dom/server";
 
 import { I18nProvider } from "@oceanleo/ui/i18n/provider.js";
-import { TRUSTED_EDITOR_REGISTRY } from "@oceanleo/ui/workbench";
 
 import { PluginGallery } from "@/components/PluginGallery";
 import { PluginGalleryDetail } from "@/components/PluginGalleryDetail";
@@ -24,10 +22,13 @@ import {
   PLUGIN_CATEGORIES,
   PLUGIN_GALLERY_POLICY,
   PLUGIN_ITEMS,
+  editorAccessForPlugin,
   filterPlugins,
   findPlugin,
+  isEditorEntrypointUrl,
   isPluginRuntimeUrl,
   pluginDetailHref,
+  pluginIsAvailable,
 } from "@/lib/plugin-gallery";
 
 function render(node: React.ReactElement): string {
@@ -58,17 +59,18 @@ const detailHtml = PLUGIN_ITEMS.map((item) =>
 const pluginManifest = JSON.parse(
   readFileSync("content/active-runtime/manifest.plugin.json", "utf8"),
 );
-const runtimeHostById: Record<string, string> = {
-  "financial-calculator-01": "s-11111111111111111111111111111111.oceanleo.app",
-  "search-query-builder-01": "s-22222222222222222222222222222222.oceanleo.app",
-  "unit-converter-01": "s-33333333333333333333333333333333.oceanleo.app",
-};
+const runtimeHostById: Record<string, string> = Object.fromEntries(
+  pluginManifest.items.map((item: Record<string, unknown>, index: number) => [
+    String(item.id),
+    `s-${(index + 1).toString(16).padStart(32, "0")}.oceanleo.app`,
+  ]),
+);
 const validPlan = {
   schema: "oceanleo.active-runtime-plan.v1",
   manifest: "active-runtime-manifest.json",
   manifestSha256: "a".repeat(64),
   itemCount: pluginManifest.items.length,
-  totalBytes: 3,
+  totalBytes: pluginManifest.items.length,
   items: pluginManifest.items.map((item: Record<string, unknown>) => {
     const host = runtimeHostById[String(item.id)];
     return {
@@ -82,14 +84,6 @@ const validPlan = {
     };
   }),
 };
-
-/**
- * 平台侧的真相要**跑出来**，不能在源码里搜字符串——源码里出现一个适配器名字，
- * 不代表用户到得了它。`plugin-module.ts` 不在包的 exports 里，只能按真实路径导入。
- */
-const { pluginModules } = (await import(
-  realpathSync("node_modules/@oceanleo/ui/src/shell/plugin-module.ts")
-)) as { pluginModules: () => unknown[] };
 
 test("34 件工具全部列得出，且每件都点得开", () => {
   assert.equal(PLUGIN_ITEMS.length, 34);
@@ -106,29 +100,19 @@ test("34 件工具全部列得出，且每件都点得开", () => {
   }
 });
 
-test("21 份独立工具规格保留，三件 runtime 与规格逐一对应", () => {
+test("21 份独立工具规格保留，manifest runtime 与规格逐一对应", () => {
   assert.equal(PLUGIN_ITEMS.filter((item) => item.kind === "standalone").length, 21);
   assert.equal(pluginManifest.schema, "oceanleo.active-runtime-manifest.v1");
-  assert.equal(pluginManifest.items.length, 3);
+  assert.ok(pluginManifest.items.length >= 3);
   assert.ok(pluginManifest.items.every((item: { kind: string }) => item.kind === "plugin"));
 
   const descriptors = pluginRuntimeDescriptorsFrom(pluginManifest, validPlan);
   assert.deepEqual(
     descriptors.map(({ pluginId, runtimeId }) => ({ pluginId, runtimeId })),
-    [
-      {
-        pluginId: "financial-calculator",
-        runtimeId: "financial-calculator-01",
-      },
-      {
-        pluginId: "search-query-builder",
-        runtimeId: "search-query-builder-01",
-      },
-      {
-        pluginId: "unit-converter",
-        runtimeId: "unit-converter-01",
-      },
-    ],
+    pluginManifest.items.map((item: { id: string }) => ({
+      pluginId: item.id.replace(/-\d+$/, ""),
+      runtimeId: item.id,
+    })),
   );
   assert.ok(descriptors.every((descriptor) => isPluginRuntimeUrl(descriptor.runtimeUrl)));
   assert.ok(
@@ -140,22 +124,24 @@ test("21 份独立工具规格保留，三件 runtime 与规格逐一对应", ()
   const tamperedPlan = structuredClone(validPlan);
   tamperedPlan.items[0].entryUrl += "?unexpected=1";
   const tamperedDescriptors = pluginRuntimeDescriptorsFrom(pluginManifest, tamperedPlan);
+  const firstRuntimeId = String(pluginManifest.items[0].id);
   assert.equal(
     tamperedDescriptors.find(
-      (descriptor) => descriptor.runtimeId === "financial-calculator-01",
+      (descriptor) => descriptor.runtimeId === firstRuntimeId,
     )?.runtimeUrl,
     null,
   );
   assert.ok(
     tamperedDescriptors
-      .filter((descriptor) => descriptor.runtimeId !== "financial-calculator-01")
+      .filter((descriptor) => descriptor.runtimeId !== firstRuntimeId)
       .every((descriptor) => isPluginRuntimeUrl(descriptor.runtimeUrl)),
   );
   const escapedPlan = structuredClone(validPlan);
   escapedPlan.items[1].files[0].path = "../index.html";
+  const secondRuntimeId = String(pluginManifest.items[1].id);
   assert.equal(
     pluginRuntimeDescriptorsFrom(pluginManifest, escapedPlan).find(
-      (descriptor) => descriptor.runtimeId === "search-query-builder-01",
+      (descriptor) => descriptor.runtimeId === secondRuntimeId,
     )?.runtimeUrl,
     null,
   );
@@ -302,55 +288,51 @@ test("任何路径都没有下载或安装入口", () => {
   }
 });
 
-test("状态如实：未实装的不许伪装成能用，也不给可点入口", () => {
-  const shipped = PLUGIN_ITEMS.filter((item) => item.status === "shipped");
-  const planned = PLUGIN_ITEMS.filter((item) => item.status === "spec-only");
-  assert.equal(shipped.length + planned.length, PLUGIN_ITEMS.length);
+test("可用性只由 runtime descriptor 或已核验编辑器入口算出", () => {
+  const rawData = JSON.parse(readFileSync("content/plugin-gallery.json", "utf8")) as {
+    items: Record<string, unknown>[];
+  };
+  for (const item of rawData.items) {
+    assert.equal(Object.hasOwn(item, "status"), false, "JSON 不得手写可用状态");
+    assert.equal(Object.hasOwn(item, "available"), false, "JSON 不得手写可用结论");
+    assert.equal(Object.hasOwn(item, "runtimeUrl"), false, "JSON 不得手写运行地址");
+    assert.equal(Object.hasOwn(item, "entryUrl"), false, "JSON 不得手写编辑器入口");
+  }
 
-  // 21 个非编辑类工具一个都还没实装。判据是**跑一次**平台的 pluginModules()：
-  // 它返回空数组，就是说这些工具在任何 app 上都没有入口。
-  assert.deepEqual(pluginModules(), []);
+  const oneRuntime = new Set(["unit-converter"]);
   for (const item of PLUGIN_ITEMS.filter((entry) => entry.kind === "standalone")) {
-    assert.equal(item.status, "spec-only", `${item.id} 没有入口却标成了已上线`);
-    assert.equal(item.adapter, undefined, `${item.id} 不该有适配器`);
-  }
-
-  // 13 个编辑类工具逐个拿自己的适配器 id 去注册表里查 routable。
-  // 只判「注册表源码里有这串字」是判不出真假的：一个适配器可以列在那里却不可路由
-  // （`office` 就是），那样的东西标成已上线就是骗人。
-  const registry = TRUSTED_EDITOR_REGISTRY as Record<
-    string,
-    { routable: boolean; routeType: string } | undefined
-  >;
-  assert.equal(registry.office?.routable, false, "反证失效：office 变成可路由了");
-  for (const item of PLUGIN_ITEMS.filter((entry) => entry.kind === "editor")) {
-    assert.equal(item.status, "shipped", `${item.id} 状态与注册表不符`);
-    assert.ok(item.adapter, `${item.id} 没有绑定适配器，无从核实`);
-    const entry = registry[item.adapter as string];
-    assert.ok(entry, `注册表里没有适配器 ${item.adapter}（${item.id}）`);
+    assert.equal(item.adapter, undefined, `${item.id} 不该有编辑器适配器`);
+    assert.equal(pluginIsAvailable(item, []), false, `${item.id} 不得脱离 plan 判可用`);
     assert.equal(
-      entry?.routable,
-      true,
-      `适配器 ${item.adapter} 不可路由，${item.id} 不能标已上线`,
+      pluginIsAvailable(item, oneRuntime),
+      item.id === "unit-converter",
+      `${item.id} 没有按 runtime descriptor 判定`,
     );
-    assert.notEqual(entry?.routeType, "none");
-  }
-  const adapters = PLUGIN_ITEMS.map((item) => item.adapter).filter(Boolean);
-  assert.equal(new Set(adapters).size, adapters.length, "两条目撞了同一个适配器");
-
-  // 每条状态都要给出可复核的依据，不能只写一个标签。
-  for (const item of PLUGIN_ITEMS) {
-    assert.ok(item.statusNote.length >= 30, `${item.id} 的状态没有依据`);
-    assert.ok(item.specPath.startsWith("docs/specs/oceanleo-plugins-v1/"));
   }
 
-  // 未实装的条目在详情页上不出现任何「打开 / 试用」按钮。
-  for (const item of planned) {
-    const html = render(<PluginGalleryDetail item={item} />);
-    for (const label of interactiveLabels(html)) {
-      assert.doesNotMatch(label, /打开|试用|开始使用|立即/);
+  const editors = PLUGIN_ITEMS.filter((entry) => entry.kind === "editor");
+  const adapters = editors.map((item) => item.adapter);
+  assert.equal(new Set(adapters).size, editors.length, "两条目撞了同一个适配器");
+  for (const item of editors) {
+    const access = editorAccessForPlugin(item);
+    assert.ok(access, `${item.id} 没有逐件接入结论`);
+    assert.equal(access.adapter, item.adapter);
+    assert.match(access.demoHref, /^\/works\/[a-z0-9-]+$/);
+    assert.ok(access.demoName.length >= 2, `${item.id} 没有真实演示素材名`);
+    assert.equal(pluginIsAvailable(item), isEditorEntrypointUrl(access.entryUrl));
+    if (access.entryUrl === null) {
+      assert.ok(access.unavailableReason.length >= 20, `${item.id} 没说清直达缺口`);
+      assert.ok(access.nextStep.length >= 20, `${item.id} 没给下一步`);
     }
-    assert.ok(html.includes("规格已定未实装"));
+  }
+  assert.deepEqual(
+    editors.filter((item) => pluginIsAvailable(item)).map((item) => item.id),
+    ["workflow-canvas"],
+  );
+
+  for (const item of PLUGIN_ITEMS) {
+    assert.ok(item.statusNote.length >= 30, `${item.id} 的能力依据不完整`);
+    assert.ok(item.specPath.startsWith("docs/specs/oceanleo-plugins-v1/"));
   }
 });
 
@@ -362,7 +344,7 @@ function publicFiles(): string[] {
     .filter((entry) => statSync(path.join("public", entry)).isFile());
 }
 
-test("public 只保留三张安全 cover，不含插件 HTML/JS/CSS", () => {
+test("public 只保留安全 cover，不含插件 HTML/JS/CSS", () => {
   // UC-1: docs/architecture/oceanleo-untrusted-content-isolation.md §8.1
   // 「界面上没有下载按钮」不等于「下不到」：运行字节必须完全移出 public。
   const files = publicFiles();
@@ -385,11 +367,9 @@ test("public 只保留三张安全 cover，不含插件 HTML/JS/CSS", () => {
     assert.equal(ids.has(stem), false, `public 下出现了以工具 id 命名的文件: ${file}`);
   }
 
-  const expectedCovers = [
-    "previews/tools/financial-calculator-01.cover.webp",
-    "previews/tools/search-query-builder-01.cover.webp",
-    "previews/tools/unit-converter-01.cover.webp",
-  ];
+  const expectedCovers = pluginManifest.items.map(
+    (item: { id: string }) => `previews/tools/${item.id}.cover.webp`,
+  );
   for (const cover of expectedCovers) {
     assert.ok(files.includes(cover), `缺真实 cover: ${cover}`);
     assert.ok(statSync(path.join("public", cover)).size > 0, `cover 是空文件: ${cover}`);
@@ -513,7 +493,6 @@ test("搜索与类别筛选真的会缩小结果", () => {
   assert.equal(filterPlugins().length, 34);
   assert.equal(filterPlugins({ kind: "editor" }).length, 13);
   assert.equal(filterPlugins({ kind: "standalone" }).length, 21);
-  assert.equal(filterPlugins({ status: "shipped" }).length, 13);
 
   const calc = filterPlugins({ category: "calc" });
   assert.equal(calc.length, 4);

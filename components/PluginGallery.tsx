@@ -10,27 +10,23 @@ import {
   PLUGIN_GALLERY_POLICY,
   PLUGIN_GALLERY_TITLE,
   PLUGIN_ITEMS,
-  STATUS_HINTS,
-  STATUS_LABELS,
   categoriesForKind,
   categoryLabel,
-  countByStatus,
   filterPlugins,
   pluginDetailHref,
+  pluginIsAvailable,
   type PluginEntry,
   type PluginKind,
-  type PluginStatus,
 } from "@/lib/plugin-gallery";
 
 // 工具能力列表。可搜、可按类别与使用方式筛，也可以只看**现在就能安全打开**的那几件。
 //
-// 卡片说的是「你能用它干什么」，不是技术名词；状态角标如实标注，
-// 未实装的条目**不给任何可点的使用入口**，避免把用户送去一个不存在的地方。
+// 卡片说的是「你能用它干什么」，不是技术名词；可用角标只来自实时入口结论，
+// 没有入口的条目会在详情里给真实素材或说清下一步，避免留下纯说明书。
 // 全页没有下载或安装入口，这是硬要求（见 lib/plugin-gallery.ts 顶部）。
 //
 // `runtimeIds` 是 manifest 与 F9 plan 侧车对账后的结论，由页面传进来：哪几件有严格
-// namespace-C 外链。它与 `status` 是两条独立事实——前者说展厅能不能安全打开，
-// 后者说平台 app 里有没有入口，混成一个会说谎。
+// namespace-C 外链。编辑器则只认数据层逐条核过的第一方入口白名单；JSON 不参与判定。
 
 const KIND_TABS: { key: PluginKind | "all"; label: string }[] = [
   { key: "all", label: "全部" },
@@ -38,24 +34,22 @@ const KIND_TABS: { key: PluginKind | "all"; label: string }[] = [
   { key: "editor", label: KIND_LABELS.editor },
 ];
 
-function StatusBadge({ status }: { status: PluginStatus }) {
+function AvailabilityBadge({ available }: { available: boolean }) {
   const tt = useUI();
-  const shipped = status === "shipped";
   return (
     <span
-      title={tt(STATUS_HINTS[status])}
       className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${
-        shipped
+        available
           ? "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200"
           : "bg-amber-50 text-amber-700 ring-1 ring-amber-200"
       }`}
     >
-      {tt(STATUS_LABELS[status])}
+      {available ? tt("现在可用") : tt("入口准备中")}
     </span>
   );
 }
 
-function PluginCard({ item, runnable }: { item: PluginEntry; runnable: boolean }) {
+function PluginCard({ item, available }: { item: PluginEntry; available: boolean }) {
   const tt = useUI();
   return (
     <Link
@@ -66,13 +60,7 @@ function PluginCard({ item, runnable }: { item: PluginEntry; runnable: boolean }
         <h3 className="text-base font-semibold text-zinc-900 group-hover:text-sky-700">
           {tt(item.name)}
         </h3>
-        {runnable ? (
-          <span className="shrink-0 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700 ring-1 ring-emerald-200">
-            {tt("可以使用")}
-          </span>
-        ) : (
-          <StatusBadge status={item.status} />
-        )}
+        <AvailabilityBadge available={available} />
       </div>
 
       <p className="mt-2 text-sm leading-6 text-zinc-600">{tt(item.summary)}</p>
@@ -94,7 +82,7 @@ function PluginCard({ item, runnable }: { item: PluginEntry; runnable: boolean }
           {tt(KIND_LABELS[item.kind])}
         </span>
         <span className="ml-auto text-sky-600 group-hover:underline">
-          {runnable ? tt("打开就能用") : tt("看它怎么用")}
+          {available ? tt("打开就能用") : tt("查看下一步")}
         </span>
       </div>
     </Link>
@@ -108,12 +96,18 @@ export function PluginGallery({ runtimeIds = [] }: { runtimeIds?: string[] }) {
   const [category, setCategory] = useState<string | "all">("all");
   const [onlyRunnable, setOnlyRunnable] = useState(false);
 
-  const runnable = useMemo(() => new Set(runtimeIds), [runtimeIds]);
+  const runtimeSet = useMemo(() => new Set(runtimeIds), [runtimeIds]);
+  const availableCount = useMemo(
+    () => PLUGIN_ITEMS.filter((item) => pluginIsAvailable(item, runtimeSet)).length,
+    [runtimeSet],
+  );
   const categories = useMemo(() => categoriesForKind(kind), [kind]);
   const list = useMemo(() => {
     const matched = filterPlugins({ text, kind, category });
-    return onlyRunnable ? matched.filter((item) => runnable.has(item.id)) : matched;
-  }, [text, kind, category, onlyRunnable, runnable]);
+    return onlyRunnable
+      ? matched.filter((item) => pluginIsAvailable(item, runtimeSet))
+      : matched;
+  }, [text, kind, category, onlyRunnable, runtimeSet]);
 
   function switchKind(next: PluginKind | "all") {
     setKind(next);
@@ -201,7 +195,7 @@ export function PluginGallery({ runtimeIds = [] }: { runtimeIds?: string[] }) {
           ))}
         </div>
 
-        {runnable.size > 0 && (
+        {availableCount > 0 && (
           <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-zinc-100 pt-3">
             <span className="shrink-0 text-sm font-semibold text-zinc-800">{tt("能不能用")}</span>
             <button
@@ -214,7 +208,7 @@ export function PluginGallery({ runtimeIds = [] }: { runtimeIds?: string[] }) {
             >
               {tt("只看现在可用的")}
               <span className={`ml-1 ${onlyRunnable ? "text-white/75" : "text-zinc-400"}`}>
-                {runnable.size}
+                {availableCount}
               </span>
             </button>
           </div>
@@ -222,18 +216,13 @@ export function PluginGallery({ runtimeIds = [] }: { runtimeIds?: string[] }) {
 
         <p className="mt-3 border-t border-zinc-100 pt-3 text-xs leading-6 text-zinc-500">
           {tt(
-            "共 {total} 件：{shipped} 件已上线，从「我的库」打开对应素材即进入；{planned} 件规格已定未实装，产品目标已经定稿但平台上还没有入口，列在这里是为了说清我们要做什么。",
+            "共 {total} 件：{available} 件现在有经过核验的使用入口；{pending} 件入口尚未接通，详情页会如实说明缺口与下一步。",
             {
               total: PLUGIN_ITEMS.length,
-              shipped: countByStatus("shipped"),
-              planned: countByStatus("spec-only"),
+              available: availableCount,
+              pending: PLUGIN_ITEMS.length - availableCount,
             },
           )}
-          {runnable.size > 0
-            ? tt("其中 {n} 件已有隔离的安全运行入口，点进去可以打开使用。", {
-                n: runnable.size,
-              })
-            : ""}
         </p>
       </section>
 
@@ -245,7 +234,11 @@ export function PluginGallery({ runtimeIds = [] }: { runtimeIds?: string[] }) {
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {list.map((item) => (
-              <PluginCard key={item.id} item={item} runnable={runnable.has(item.id)} />
+              <PluginCard
+                key={item.id}
+                item={item}
+                available={pluginIsAvailable(item, runtimeSet)}
+              />
             ))}
           </div>
         )}
