@@ -10,12 +10,76 @@
   var CY = 360;
   var RADIUS = 282;
   var TAU = Math.PI * 2;
+  var COUNTRY_GROUPS = [
+    ["斐济", 2], ["坦桑尼亚", 1], ["西撒哈拉", 1], ["加拿大", 30],
+    ["美国", 10], ["哈萨克斯坦", 1], ["乌兹别克斯坦", 1], ["巴布亚新几内亚", 4],
+    ["印度尼西亚", 13], ["阿根廷", 2], ["智利", 2], ["刚果（金）", 1],
+    ["索马里", 1], ["肯尼亚", 1], ["苏丹", 1], ["乍得", 1],
+    ["海地", 1], ["多米尼加共和国", 1], ["俄罗斯", 12], ["巴哈马", 3],
+    ["福克兰群岛", 1], ["挪威", 4], ["格陵兰", 1], ["法属南部领地", 1],
+    ["东帝汶", 1], ["南非", 1], ["莱索托", 1], ["墨西哥", 1],
+    ["乌拉圭", 1], ["巴西", 1], ["玻利维亚", 1], ["秘鲁", 1],
+    ["哥伦比亚", 1], ["巴拿马", 1], ["哥斯达黎加", 1], ["尼加拉瓜", 1],
+    ["洪都拉斯", 1], ["萨尔瓦多", 1], ["危地马拉", 1], ["伯利兹", 1],
+    ["委内瑞拉", 1], ["圭亚那", 1], ["苏里南", 1], ["法国", 3],
+    ["厄瓜多尔", 1], ["波多黎各", 1], ["牙买加", 1], ["古巴", 1],
+    ["津巴布韦", 1], ["博茨瓦纳", 1], ["纳米比亚", 1], ["塞内加尔", 1],
+    ["马里", 1], ["毛里塔尼亚", 1], ["贝宁", 1], ["尼日尔", 1],
+    ["尼日利亚", 1], ["喀麦隆", 1], ["多哥", 1], ["加纳", 1],
+    ["科特迪瓦", 1], ["几内亚", 1], ["几内亚比绍", 1], ["利比里亚", 1],
+    ["塞拉利昂", 1], ["布基纳法索", 1], ["中非共和国", 1], ["刚果（布）", 1],
+    ["加蓬", 1], ["赤道几内亚", 1], ["赞比亚", 1], ["马拉维", 1],
+    ["莫桑比克", 1], ["斯威士兰", 1], ["安哥拉", 2], ["布隆迪", 1],
+    ["以色列", 1], ["黎巴嫩", 1], ["马达加斯加", 1], ["巴勒斯坦领土", 1],
+    ["冈比亚", 1], ["突尼斯", 1], ["阿尔及利亚", 1], ["约旦", 1],
+    ["阿拉伯联合酋长国", 1], ["卡塔尔", 1], ["科威特", 1], ["伊拉克", 1],
+    ["阿曼", 2], ["瓦努阿图", 2], ["柬埔寨", 1], ["泰国", 1],
+    ["老挝", 1], ["缅甸", 1], ["越南", 1], ["朝鲜", 2],
+    ["韩国", 1], ["蒙古", 1], ["印度", 1], ["孟加拉国", 1],
+    ["不丹", 1], ["尼泊尔", 1], ["巴基斯坦", 1], ["阿富汗", 1],
+    ["塔吉克斯坦", 1], ["吉尔吉斯斯坦", 1], ["土库曼斯坦", 1], ["伊朗", 1],
+    ["叙利亚", 1], ["亚美尼亚", 1], ["瑞典", 1], ["白俄罗斯", 1],
+    ["乌克兰", 1], ["波兰", 1], ["奥地利", 1], ["匈牙利", 1],
+    ["摩尔多瓦", 1], ["罗马尼亚", 1], ["立陶宛", 1], ["拉脱维亚", 1],
+    ["爱沙尼亚", 1], ["德国", 1], ["保加利亚", 1], ["希腊", 2],
+    ["土耳其", 2], ["阿尔巴尼亚", 1], ["克罗地亚", 1], ["瑞士", 1],
+    ["卢森堡", 1], ["比利时", 1], ["荷兰", 1], ["葡萄牙", 1],
+    ["西班牙", 1], ["爱尔兰", 1], ["新喀里多尼亚", 1], ["所罗门群岛", 5],
+    ["新西兰", 2], ["澳大利亚", 2], ["斯里兰卡", 1], ["中国", 2],
+    ["台湾", 1], ["意大利", 3], ["丹麦", 2], ["英国", 2],
+    ["冰岛", 1], ["阿塞拜疆", 2], ["格鲁吉亚", 1], ["菲律宾", 7],
+    ["马来西亚", 2], ["文莱", 1], ["斯洛文尼亚", 1], ["芬兰", 1],
+    ["斯洛伐克", 1], ["捷克", 1], ["厄立特里亚", 1], ["日本", 3],
+    ["巴拉圭", 1], ["也门", 1], ["沙特阿拉伯", 1], ["南极洲", 8],
+    ["北塞浦路斯", 1], ["塞浦路斯", 1], ["摩洛哥", 1], ["埃及", 1],
+    ["利比亚", 1], ["埃塞俄比亚", 1], ["吉布提", 1], ["索马里兰", 1],
+    ["乌干达", 1], ["卢旺达", 1], ["波斯尼亚和黑塞哥维那", 1], ["北马其顿", 1],
+    ["塞尔维亚", 1], ["黑山", 1], ["科索沃", 1], ["特立尼达和多巴哥", 1],
+    ["南苏丹", 1]
+  ];
   var state = {
     centerLongitude: 18,
     centerLatitude: 16,
     destinations: [],
+    destinationNames: [],
     solar: E.solarPosition(new Date())
   };
+
+  var worldGeometry = E.worldGeometry();
+  var countryRegions = [];
+  var countryPolygonIndex = 0;
+  COUNTRY_GROUPS.forEach(function (group) {
+    for (var index = 0; index < group[1]; index++) {
+      countryRegions.push({
+        name: group[0],
+        polygon: worldGeometry.countries[countryPolygonIndex]
+      });
+      countryPolygonIndex += 1;
+    }
+  });
+  if (countryPolygonIndex !== worldGeometry.countries.length) {
+    throw new Error("离线国家名称与国界数据不一致");
+  }
 
   var svg = document.getElementById("world-globe");
   var landLayer = document.getElementById("land-layer");
@@ -56,6 +120,49 @@
     return ((value % TAU) + TAU) % TAU;
   }
 
+  function longitudeNear(value, reference) {
+    var longitude = value;
+    while (longitude - reference > 180) longitude -= 360;
+    while (longitude - reference < -180) longitude += 360;
+    return longitude;
+  }
+
+  function pointInRing(coordinate, ring) {
+    var longitude = coordinate[0];
+    var latitude = coordinate[1];
+    var inside = false;
+
+    for (var current = 0, previous = ring.length - 1; current < ring.length; previous = current++) {
+      var currentLongitude = longitudeNear(ring[current][0], longitude);
+      var previousLongitude = longitudeNear(ring[previous][0], longitude);
+      var currentLatitude = ring[current][1];
+      var previousLatitude = ring[previous][1];
+      var crossesLatitude = (currentLatitude > latitude) !== (previousLatitude > latitude);
+      if (crossesLatitude && longitude < (previousLongitude - currentLongitude) *
+          (latitude - currentLatitude) / (previousLatitude - currentLatitude) + currentLongitude) {
+        inside = !inside;
+      }
+    }
+    return inside;
+  }
+
+  function polygonContains(coordinate, polygon) {
+    if (!polygon || !polygon.length || !pointInRing(coordinate, polygon[0])) return false;
+    for (var hole = 1; hole < polygon.length; hole++) {
+      if (pointInRing(coordinate, polygon[hole])) return false;
+    }
+    return true;
+  }
+
+  function countryNameAt(coordinate) {
+    for (var index = 0; index < countryRegions.length; index++) {
+      if (polygonContains(coordinate, countryRegions[index].polygon)) {
+        return countryRegions[index].name;
+      }
+    }
+    return null;
+  }
+
   function pathData(points, closePath) {
     if (!points || points.length < 2) return "";
     var data = "M" + (CX + points[0][0]).toFixed(2) + " " + (CY + points[0][1]).toFixed(2);
@@ -88,11 +195,10 @@
   }
 
   function drawWorld() {
-    var world = E.worldGeometry();
     clear(landLayer);
     clear(borderLayer);
 
-    world.land.forEach(function (polygon) {
+    worldGeometry.land.forEach(function (polygon) {
       polygon.forEach(function (ring) {
         projectedSegments(ring).forEach(function (segment) {
           if (segment.length > 2) {
@@ -105,7 +211,7 @@
       });
     });
 
-    world.countries.forEach(function (polygon) {
+    worldGeometry.countries.forEach(function (polygon) {
       polygon.forEach(function (ring) {
         projectedSegments(ring).forEach(function (segment) {
           borderLayer.appendChild(svgNode("path", {
@@ -280,12 +386,22 @@
       number.textContent = String(destinationIndex + 1);
       markerLayer.appendChild(number);
 
+      var labelOnLeft = projected.x > RADIUS * 0.54;
+      var labelX = x + (labelOnLeft ? -15 : 15);
+      var name = svgNode("text", {
+        "class": "marker-name",
+        x: labelX.toFixed(2),
+        y: (y - 9).toFixed(2),
+        "text-anchor": labelOnLeft ? "end" : "start"
+      });
+      name.textContent = state.destinationNames[destinationIndex];
+      markerLayer.appendChild(name);
+
       if (destinationIndex > 0) {
-        var labelOnLeft = projected.x > RADIUS * 0.54;
         var time = svgNode("text", {
           "class": "marker-time",
-          x: (x + (labelOnLeft ? -13 : 13)).toFixed(2),
-          y: (y - 10).toFixed(2),
+          x: labelX.toFixed(2),
+          y: (y + 8).toFixed(2),
           "text-anchor": labelOnLeft ? "end" : "start"
         });
         time.textContent = "太阳时 " + E.formatSolarDifference(route.rows[destinationIndex].solarDifferenceHours);
@@ -341,9 +457,16 @@
       return;
     }
 
+    var destinationName = countryNameAt(coordinate);
+    if (!destinationName) {
+      status.textContent = "请点在一个国家内。";
+      return;
+    }
+
     state.destinations.push(coordinate);
+    state.destinationNames.push(destinationName);
     var route = E.routeSegments(state.destinations);
-    var message = "已添加第 " + state.destinations.length + " 个目的地。";
+    var message = "已添加" + destinationName + "，这是第 " + state.destinations.length + " 个目的地。";
     if (state.destinations.length > 1) {
       message += "相对首站太阳时 " +
         E.formatSolarDifference(route.rows[route.rows.length - 1].solarDifferenceHours) + "。";
@@ -447,6 +570,7 @@
   window.addEventListener("keydown", function (event) {
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "z" && state.destinations.length) {
       state.destinations.pop();
+      state.destinationNames.pop();
       status.textContent = "已撤回最后一个目的地。";
       event.preventDefault();
       render();
