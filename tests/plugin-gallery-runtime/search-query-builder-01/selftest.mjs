@@ -114,6 +114,61 @@ check("内核不读时钟（同样输入永远同样输出）", () => {
   assert.doesNotMatch(src, /new\s+Date|Date\.now/, "内核读了时钟，输出就不可复算了");
 });
 
+/* 规格 §3：降级说明必须贴着被改写的那一个词；§6 点名「只写在远处的说明列表」是做坏了。
+   所以这里不验说明列表，验的是**每一处改写都能定位到词**，且那句话里同时有
+   库名、字段真实名称与受影响的原词 —— 界面才有可能把它贴对地方。 */
+console.log("\n检索式构造自测 · 第三层：每一处改写都能定位到具体那一个词");
+
+check("性质五：凡有降级，必然有一个 piece 背着它，且带库名与两个字段真名", () => {
+  for (const d of E.DIALECT_IDS) {
+    const dialect = E.DIALECTS[d];
+    for (const field of Object.keys(E.FIELD_LABELS)) {
+      const r = E.compile([{ label: "块", terms: [{ text: "sample", field }] }], d);
+      if (dialect.supports.indexOf(field) >= 0) {
+        assert.equal(r.changed.length, 0, `${d}/${field} 支持却报了改写`);
+        continue;
+      }
+      assert.equal(r.changed.length, 1, `${d}/${field} 没有把降级记到词上`);
+      const piece = r.changed[0];
+      assert.equal(piece.text, "sample", "受影响的原词丢了");
+      assert.equal(piece.block, 0);
+      assert.equal(piece.term, 0);
+      const why = piece.changes.map((c) => c.why).join(" ");
+      assert.ok(why.includes(dialect.label), `没写数据库名：${why}`);
+      assert.ok(why.includes(E.FIELD_LABELS[field]), `没写原字段真名：${why}`);
+      assert.ok(why.includes(E.FIELD_LABELS[piece.used]), `没写降级后字段真名：${why}`);
+    }
+  }
+});
+
+check("性质五补：去掉截词也记在那一个词上，原词里的 * 还在 raw 上留着", () => {
+  const r = E.compile([{ label: "块", terms: [{ text: "quantum*" }] }], "arxiv");
+  assert.equal(r.changed.length, 1);
+  assert.equal(r.changed[0].raw, "quantum*");
+  assert.equal(r.changed[0].rendered, "abs:quantum");
+  assert.ok(r.changed[0].changes.some((c) => c.kind === "truncation"));
+});
+
+check("性质六：骨架拼起来逐字等于查询串，块与词都能对回原始下标", () => {
+  const blocks = [
+    { label: "人群", terms: [{ text: "aged" }, { text: "older adults" }] },
+    { label: "空的", terms: [] },
+    { label: "结局", terms: [{ text: "falls", field: "mesh" }] },
+  ];
+  for (const d of E.DIALECT_IDS) {
+    const r = E.compile(blocks, d);
+    let joined = "";
+    for (const token of r.tokens) joined += E.tokenText(token, r.pieces);
+    assert.equal(joined, r.query, `${d} 骨架与查询串不一致`);
+    assert.equal(r.groups.length, 2, "空块不进骨架");
+    assert.deepEqual(r.groups.map((g) => g.block), [0, 2], "块下标要对回用户那一份结构");
+    assert.deepEqual(r.empties.map((e) => e.label), ["空的"]);
+    for (const piece of r.pieces) {
+      assert.equal(blocks[piece.block].terms[piece.term].text, piece.raw);
+    }
+  }
+});
+
 /* 结构安全：用户的字不许跑进结构位。 */
 check("用户输入里的括号/引号被剔掉，编译结果仍然配平", () => {
   const q = E.compile([{ terms: [{ text: 'a) OR (b' }, { text: 'c" OR "d' }] }], "generic").query;

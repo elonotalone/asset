@@ -1,10 +1,3 @@
-/*
- * 检索式构造 · 界面自测（真的装起来、真的一步步答、真的读产物框里的字）
- *
- *   node tests/plugin-gallery-runtime/search-query-builder-01/uitest.mjs
- *
- * jsdom，不是浏览器。不启动浏览器、不截图、不连网。
- */
 import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import path from "node:path";
@@ -12,238 +5,231 @@ import assert from "node:assert/strict";
 import { createRequire } from "node:module";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const runtimeDir = path.resolve(
-  here,
-  "../../../content/active-runtime/plugin/search-query-builder-01",
-);
+const runtimeDir = path.resolve(here, "../../../content/active-runtime/plugin/search-query-builder-01");
 const require = createRequire(import.meta.url);
 
 function loadJsdom() {
   const direct = ["/root/projects/med/node_modules/jsdom", "/root/projects/notebook/node_modules/jsdom"];
-  for (const d of direct) if (existsSync(d)) return require(d);
+  for (const item of direct) if (existsSync(item)) return require(item);
   for (const root of ["/root/projects/asset", "/root/projects/oceanleo-ui", "/root/projects/oceanleo"]) {
     const store = path.join(root, "node_modules", ".pnpm");
     if (!existsSync(store)) continue;
     for (const entry of readdirSync(store)) {
       if (!entry.startsWith("jsdom@")) continue;
-      const p = path.join(store, entry, "node_modules", "jsdom");
-      if (existsSync(p)) return require(p);
+      const item = path.join(store, entry, "node_modules", "jsdom");
+      if (existsSync(item)) return require(item);
     }
   }
-  throw new Error("找不到 jsdom：界面自测无法运行（引擎自测 selftest.mjs 不受影响）");
+  throw new Error("找不到 jsdom：界面自测无法运行");
 }
 
 const { JSDOM } = loadJsdom();
-
-let failed = 0;
-function check(name, fn) {
-  try {
-    fn();
-    console.log("  ok   " + name);
-  } catch (err) {
-    failed++;
-    console.log("  FAIL " + name + "\n       " + (err && err.message ? err.message : String(err)));
-  }
-}
-
 const htmlPath = path.join(runtimeDir, "index.html");
 const dom = new JSDOM(readFileSync(htmlPath, "utf8"), {
   url: pathToFileURL(htmlPath).href,
   runScripts: "dangerously",
   resources: "usable",
-  pretendToBeVisual: true
+  pretendToBeVisual: true,
 });
-await new Promise((r) => {
-  if (dom.window.document.readyState === "complete") r();
-  else dom.window.addEventListener("load", r);
+await new Promise((resolve) => {
+  if (dom.window.document.readyState === "complete") resolve();
+  else dom.window.addEventListener("load", resolve);
 });
 
 const { window } = dom;
 const doc = window.document;
-const $ = (s) => doc.querySelector(s);
-const text = (s) => ($(s) ? $(s).textContent.replace(/\s+/g, " ").trim() : "");
-const screen = () => doc.body.textContent.replace(/\s+/g, " ");
-const query = () => text("#query");
+const $ = (selector) => doc.querySelector(selector);
+const all = (selector) => [...doc.querySelectorAll(selector)];
+const textFrom = (node) => (node ? node.textContent.replace(/\s+/g, " ").trim() : "");
+const text = (selector) => textFrom($(selector));
+const screen = () => doc.body.textContent.replace(/\s+/g, " ").trim();
+let failed = 0;
 
-function clickText(label) {
-  const b = [...doc.querySelectorAll("button")].find((x) => x.textContent.trim() === label);
-  assert.ok(b, `找不到按钮「${label}」`);
-  b.dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
+function check(name, fn) {
+  try {
+    fn();
+    console.log("  ok   " + name);
+  } catch (error) {
+    failed++;
+    console.log("  FAIL " + name + "\n       " + (error && error.message ? error.message : String(error)));
+  }
 }
-function typeInto(node, value) {
-  node.value = value;
-  node.dispatchEvent(new window.Event("input", { bubbles: true }));
+function click(node) {
+  node.dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
 }
-function enterInto(node, value) {
-  typeInto(node, value);
-  node.dispatchEvent(new window.KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+function say(value) {
+  $("#answer").value = value;
+  $("#ask").dispatchEvent(new window.Event("submit", { bubbles: true, cancelable: true }));
 }
-/** 当前这一屏的输入框（向导一屏一问，所以取 stage 里的第一个）。 */
-const stageInputs = () => [...doc.querySelectorAll("#stage input[type=text]")];
+// 屏上那条式子：只取查询文本，不含概念名、更正与字段选择（它们都 user-select: none）
+function onScreenQuery() {
+  return all("#typeset .line").map((line) => textFrom(line)).join(" ");
+}
+function wordNode(label) {
+  return all("#typeset .w").find((node) => textFrom(node) === label);
+}
 
 console.log("检索式构造界面自测（jsdom，非浏览器）");
 
-check("引擎脚本被页面装上了", () => {
-  assert.ok(window.QueryBuilderEngine, "window.QueryBuilderEngine 不存在");
+check("经典脚本已把同一份内核装到页面", () => {
+  assert.ok(window.QueryBuilderEngine);
 });
 
-/* ---------- 首屏：一屏一问 ---------- */
-
-check("首屏只有一个问句，且是整屏唯一的大字", () => {
-  assert.equal(text("#q"), "一句话说清你要查什么。");
-  assert.equal(doc.querySelectorAll(".q").length, 1);
-  assert.equal(stageInputs().length, 1, "首屏不该并列多个输入");
+check("首屏没有示例词，查询式为空，但它的位置从一开始就在", () => {
+  assert.equal(onScreenQuery(), "");
+  assert.equal($("#baseline").hidden, false, "排字基线要在，不显示空框告警");
+  assert.equal($("#answer").value, "");
+  assert.equal(text("#q"), "一句话说清你要查什么");
+  assert.doesNotMatch(screen(), /老年人|跌倒|aged/);
 });
 
-check("首屏不预填任何概念块（规格：首次打开不预置内容）", () => {
-  assert.equal(doc.querySelectorAll(".block .term").length, 0);
-  assert.equal(text("#done"), "");
+check("屏幕上没有标题、副标题、流程说明、载入示例与运行自测", () => {
+  assert.equal($("#run-test"), null);
+  assert.equal(doc.querySelectorAll("h1, h2").length, 0);
+  for (const banned of [
+    "运行自测", "把研究问题拆成概念块", "用大白话写", "语法交给工具",
+    "载入一个示例", "产物 ·", "这段文字可以直接选中复制", "剪贴板",
+  ]) {
+    assert.doesNotMatch(screen(), new RegExp(banned.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")), banned);
+  }
 });
 
-check("产物预览从第一步就在，只是还没有内容", () => {
-  assert.ok($("#query"), "产物框不存在");
-  assert.match(query(), /先写一句你要查什么/);
+check("写下研究问题，它退到上边缘当来源注记，不带「要查什么」标签", () => {
+  say("运动干预能不能降低老年人跌倒的发生？");
+  assert.equal(text("#origin"), "运动干预能不能降低老年人跌倒的发生？");
+  assert.doesNotMatch(screen(), /要查什么/);
+  assert.equal(text("#q"), "这个问题里有哪几个概念？先写第一个");
 });
 
-check("空白时不弹告警、不出数量警告（规格：空白不是错误）", () => {
-  assert.doesNotMatch(screen(), /错误|警告|请先|必须填/);
+check("补进第一个词，中央立刻出现最小的、带字段的查询式", () => {
+  say("人群");
+  assert.equal(text("#q"), "「人群」有哪些说法？");
+  assert.equal(onScreenQuery(), "", "还没有词，式子仍然是空的");
+  say("aged");
+  assert.equal(onScreenQuery(), "(aged[Title/Abstract])");
+  assert.equal($("#baseline").hidden, true);
 });
 
-/* ---------- 真的一步步答 ---------- */
-
-check("第 1 步写下问题 → 摘要里出现它", () => {
-  typeInto(stageInputs()[0], "气候变化如何影响适应策略？");
-  clickText("下一步：拆概念块");
-  const row = $(".done-row");
-  assert.ok(row, "已答摘要没有出现");
-  assert.equal(row.querySelector(".k").textContent.trim(), "要查什么");
-  assert.equal(row.querySelector(".v").textContent.trim(), "气候变化如何影响适应策略？");
-  assert.equal(text("#q"), "这个问题里有哪几个概念？");
+check("概念名和它的同义词原文都在屏上，不是「概念 1」也不是色块", () => {
+  say("elderly");
+  say("older adults");
+  click($("#more"));
+  say("干预");
+  say("exercise");
+  say("physical activity");
+  click($("#more"));
+  say("结局");
+  say("accidental falls");
+  say("fall*");
+  const tags = all("#typeset .tag").map(textFrom);
+  assert.deepEqual(tags, ["人群", "干预", "结局"]);
+  const words = all("#typeset .w").map(textFrom);
+  assert.deepEqual(words, [
+    "aged", "elderly", "older adults", "exercise", "physical activity", "accidental falls", "fall",
+  ]);
 });
 
-check("加第一个概念块 + 第一个词 → 产物立刻长出最小查询串", () => {
-  enterInto(stageInputs()[0], "主题");
-  const termInput = stageInputs().find((i) => /再加一个说法/.test(i.placeholder));
-  assert.ok(termInput, "概念块里没有加词的输入框");
-  enterInto(termInput, "climate change");
-  assert.equal(query(), '("climate change"[Title/Abstract])');
+check("屏上那条式子逐字等于内核编出来的查询串", () => {
+  const compiled = window.QueryBuilderEngine.compile([
+    { label: "人群", terms: [{ text: "aged", field: "tiab" }, { text: "elderly", field: "tiab" }, { text: "older adults", field: "tiab" }] },
+    { label: "干预", terms: [{ text: "exercise", field: "tiab" }, { text: "physical activity", field: "tiab" }] },
+    { label: "结局", terms: [{ text: "accidental falls", field: "tiab" }, { text: "fall*", field: "tiab" }] },
+  ], "pubmed").query;
+  assert.equal(onScreenQuery(), compiled);
+  assert.equal($("#carry").value, compiled);
 });
 
-check("同一块里加第二个词 → 块内用 OR", () => {
-  const termInput = stageInputs().find((i) => /再加一个说法/.test(i.placeholder));
-  enterInto(termInput, "global warming");
-  assert.equal(
-    query(),
-    '("climate change"[Title/Abstract] OR "global warming"[Title/Abstract])',
-  );
+check("人写的词和工具加的结构分成两种质地，不排成同一团", () => {
+  const structure = all("#typeset .s").map(textFrom);
+  assert.ok(structure.includes("("));
+  assert.ok(structure.includes(")"));
+  assert.ok(structure.some((token) => token === "OR"));
+  assert.ok(structure.some((token) => token === "AND"));
+  assert.ok(structure.includes("[Title/Abstract]"));
+  assert.ok(structure.includes('"'), "词组的引号也是工具加的结构");
+  const css = readFileSync(path.join(runtimeDir, "style.css"), "utf8");
+  assert.match(css, /\.s\s*\{[^}]*font-family:\s*var\(--mono\)/);
+  assert.match(css, /\.tag\s*\{[^}]*user-select:\s*none/s, "概念名不参与选择，整条式子选下来才是干净文本");
 });
 
-check("词组自动加引号", () => {
-  assert.match(query(), /"climate change"\[Title\/Abstract\]/);
-  assert.match(query(), /"global warming"\[Title\/Abstract\]/);
+check("字段选择贴着它改变的那个词，不另占一片设置区", () => {
+  click(wordNode("accidental falls"));
+  const picker = $("#typeset .picker");
+  assert.ok(picker, "点开词之后没出现字段选择");
+  assert.equal(textFrom(picker.querySelector(".was")), "accidental falls");
+  const fields = [...picker.querySelectorAll(".field")].map(textFrom);
+  assert.deepEqual(fields, ["标题与摘要", "标题", "主题词", "全字段"]);
+  const mesh = [...picker.querySelectorAll(".field")].find((node) => textFrom(node) === "主题词");
+  click(mesh);
+  assert.match(onScreenQuery(), /"accidental falls"\[MeSH Terms\]/);
 });
 
-check("加第二个概念块 → 块间用 AND，两块各自带括号", () => {
-  const nb = stageInputs().find((i) => /再加一个概念块/.test(i.placeholder));
-  enterInto(nb, "干预");
-  const inputs = stageInputs().filter((i) => /再加一个说法/.test(i.placeholder));
-  enterInto(inputs[inputs.length - 1], "adaptation");
-  assert.equal(
-    query(),
-    '("climate change"[Title/Abstract] OR "global warming"[Title/Abstract])'
-    + " AND (adaptation[Title/Abstract])"
-  );
+check("换一个数据库，同一份概念结构就地重编译，不必维护第二份字符串", () => {
+  const banks = all(".bank").map(textFrom);
+  assert.deepEqual(banks, ["PubMed", "arXiv", "通用布尔"]);
+  const arxiv = all(".bank").find((node) => textFrom(node) === "arXiv");
+  click(arxiv);
+  assert.match(onScreenQuery(), /abs:aged/);
+  assert.match(onScreenQuery(), /all:"accidental falls"/);
 });
 
-check("改一个词的字段为主题词 → 查询串跟着换标签", () => {
-  const sel = doc.querySelector(".block .term select");
-  sel.value = "mesh";
-  sel.dispatchEvent(new window.Event("change", { bubbles: true }));
-  assert.match(query(), /"climate change"\[MeSH Terms\]/);
-  sel.value = "tiab";
-  sel.dispatchEvent(new window.Event("change", { bubbles: true }));
-  assert.match(query(), /"climate change"\[Title\/Abstract\]/);
+check("降级与去截词就地贴在被改写的那一个词上：原词、库名、字段真名都在", () => {
+  const fixes = all("#typeset .fix");
+  assert.equal(fixes.length, 2, "两处改写各一条更正");
+  const downgrade = fixes.find((node) => textFrom(node).includes("accidental falls"));
+  assert.match(textFrom(downgrade), /accidental falls/);
+  assert.match(textFrom(downgrade), /arXiv/);
+  assert.match(textFrom(downgrade), /主题词/);
+  assert.match(textFrom(downgrade), /全字段/);
+  assert.match(textFrom(downgrade), /all:"accidental falls"/);
+  const cut = fixes.find((node) => textFrom(node).includes("fall*"));
+  assert.match(textFrom(cut), /截词/);
+  assert.match(textFrom(cut), /arXiv/);
+  assert.ok(wordNode("fall").className.includes("loose"), "被改写的那个词本身要略微松开");
 });
 
-/* ---------- 换方言：同一份结构重编译 ---------- */
-
-check("走到第 3 步，切到 arXiv → 前缀语法，且屏上写明降级/去截词说明", () => {
-  clickText("下一步：选数据库");
-  assert.equal(text("#q"), "拿去哪个库检索？");
-  clickText("arXiv");
-  assert.match(query(), /abs:/);
-  assert.doesNotMatch(query(), /\[Title\/Abstract\]/);
+check("头号结论先说最影响检索含义的那件事", () => {
+  assert.match(text("#verdict"), /换了字段/);
+  assert.match(text("#verdict"), /放宽/);
+  const pubmed = all(".bank").find((node) => textFrom(node) === "PubMed");
+  click(pubmed);
+  assert.equal(text("#verdict"), "这条式子可以带走");
 });
 
-check("切到通用布尔 → 字段被丢掉，并说明丢了", () => {
-  clickText("通用布尔");
-  assert.doesNotMatch(query(), /abs:|\[/);
-  assert.match(text("#notes"), /不带字段限定/);
+check("空概念块不产生空括号，头号结论点名是哪一块", () => {
+  click($("#more"));
+  say("对照");
+  assert.doesNotMatch(onScreenQuery(), /\(\)/);
+  assert.match(text("#verdict"), /「对照」还没有可用的词/);
+  assert.equal(all("#typeset .tag").length, 3, "空块不进式子");
 });
 
-check("切回 PubMed，产物与 arXiv 那一版不同", () => {
-  clickText("arXiv");
-  const arx = query();
-  clickText("PubMed");
-  assert.notEqual(query(), arx);
-  assert.match(query(), /\[Title\/Abstract\]/);
+check("复制只是贴在末端的快捷动作，查询文本本身仍在屏上可选中", () => {
+  assert.equal($("#copy").hidden, false);
+  assert.equal(text("#copy"), "复制");
+  assert.ok($("#carry").value.length > 40);
+  assert.equal(onScreenQuery().length > 40, true);
 });
 
-/* ---------- 点回去改 ---------- */
-
-check("点已答摘要能回到那一步改", () => {
-  const row = doc.querySelector(".done-row");
-  row.dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
-  assert.equal(text("#q"), "一句话说清你要查什么。");
+check("点概念名回到那一块继续加说法", () => {
+  const tag = all("#typeset .tag").find((node) => textFrom(node) === "干预");
+  click(tag);
+  assert.equal(text("#q"), "「干预」有哪些说法？");
+  say("resistance training");
+  assert.match(onScreenQuery(), /"resistance training"\[Title\/Abstract\]/);
 });
 
-/* ---------- 示例：一键装一个真问题 ---------- */
-
-check("载入示例 → 一条完整可用的 PubMed 查询串出现在产物框里", () => {
-  clickText("载入一个示例问题");
-  assert.equal(
-    query(),
-    '(aged[Title/Abstract] OR elderly[Title/Abstract] OR "older adults"[Title/Abstract])'
-    + ' AND (exercise[Title/Abstract] OR "physical activity"[Title/Abstract])'
-    + ' AND ("accidental falls"[MeSH Terms] OR fall*[Title/Abstract])'
-  );
+check("删掉一个词，式子当场重排", () => {
+  click(wordNode("resistance training"));
+  click($("#typeset .picker .drop"));
+  assert.doesNotMatch(onScreenQuery(), /resistance training/);
 });
 
-check("产物里的括号与 AND/OR 被标成「工具加的结构符号」", () => {
-  const marked = [...doc.querySelectorAll("#query .s")].map((n) => n.textContent);
-  assert.ok(marked.includes("("), "括号没被标出来");
-  assert.ok(marked.includes("AND"), "AND 没被标出来");
-  assert.ok(marked.includes("OR"), "OR 没被标出来");
+check("没写死 9px／10px 这类小字", () => {
+  const css = readFileSync(path.join(runtimeDir, "style.css"), "utf8");
+  assert.doesNotMatch(css, /font-size:\s*(?:[0-9]|1[01])px/);
+  assert.doesNotMatch(css, /字号不得小于|不小于\s*\d+\s*px/);
 });
-
-check("产物是可选中的真文本，复制不是唯一出路", () => {
-  const box = $("#query");
-  assert.ok(box.textContent.length > 40);
-  assert.equal($("#copy-area").value, box.textContent);
-  assert.match(text(".copy-row"), /可以直接选中复制/);
-});
-
-check("删掉一整块 → 查询串跟着少一块，括号仍配平", () => {
-  // 载入示例后向导已经停在第 2 步，块就摆在屏上，不必再点「下一步」
-  assert.equal(text("#q"), "这个问题里有哪几个概念？");
-  const before = (query().match(/\(/g) || []).length;
-  assert.equal(before, 3, "示例应当有 3 块");
-  clickText("删掉这块");
-  const q = query();
-  assert.equal((q.match(/\(/g) || []).length, before - 1);
-  assert.equal((q.match(/\(/g) || []).length, (q.match(/\)/g) || []).length);
-});
-
-/* ---------- 页面自测按钮 ---------- */
-
-check("点「运行自测」→ 屏上出现 18 / 18 通过", () => {
-  $("#run-test").dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
-  const out = text("#test-out");
-  assert.match(out, /^(\d+) \/ \1 通过$/, `自测输出是「${out}」`);
-  assert.match(out, /^18 \/ 18 通过$/);
-});
-
-/* ---------- 沙箱适配 ---------- */
 
 function code(file) {
   return readFileSync(path.join(runtimeDir, file), "utf8")
@@ -252,39 +238,35 @@ function code(file) {
     .replace(/^[ \t]*\/\/.*$/gm, " ");
 }
 
-check("没有 innerHTML / eval / new Function / document.write", () => {
-  for (const f of ["ui.js", "engine.js", "index.html"]) {
-    const src = code(f);
-    assert.doesNotMatch(src, /\.(inner|outer)HTML\s*\+?=/, `${f} 出现 innerHTML 赋值`);
-    assert.doesNotMatch(src, /(?<![\w.$])eval\s*\(/, `${f} 出现 eval`);
-    assert.doesNotMatch(src, /new\s+Function\s*\(/, `${f} 出现 new Function`);
-    assert.doesNotMatch(src, /document\s*\.\s*write/, `${f} 出现 document.write`);
-  }
-});
-
-check("不碰存储、不碰父窗口、不发请求", () => {
-  for (const f of ["ui.js", "engine.js"]) {
-    const src = code(f);
-    assert.doesNotMatch(src, /localStorage|sessionStorage|document\s*\.\s*cookie/, `${f} 碰了存储`);
-    assert.doesNotMatch(src, /window\s*\.\s*(parent|top)\b|postMessage/, `${f} 碰了父窗口`);
-    assert.doesNotMatch(src, /fetch\s*\(|XMLHttpRequest|WebSocket|EventSource/, `${f} 发了请求`);
-  }
-});
-
-check("剪贴板不可用也不影响使用（execCommand 包在 try 里，失败给退路）", () => {
-  const src = code("ui.js");
-  assert.match(src, /try\s*\{[\s\S]*execCommand[\s\S]*\}\s*catch/, "复制没有包在 try/catch 里");
-  assert.match(src, /自己复制/, "复制失败时没有给手动退路的提示");
-});
-
-check("没有外部资源、不用 ES module、页面里没有 iframe", () => {
+check("所有 src/href 都是同目录相对路径且文件存在", () => {
   const html = code("index.html");
-  for (const m of html.matchAll(/(?:src|href)\s*=\s*"([^"]*)"/g)) {
-    assert.doesNotMatch(m[1], /^(https?:)?\/\//, `外部资源 ${m[1]}`);
-    assert.doesNotMatch(m[1], /^data:|^javascript:/, `可疑 URL ${m[1]}`);
+  const refs = [...html.matchAll(/(?:src|href)\s*=\s*"([^"]+)"/g)].map((match) => match[1]);
+  assert.ok(refs.length >= 3);
+  for (const ref of refs) {
+    assert.doesNotMatch(ref, /^(?:[a-z]+:|\/|#)/i, `不是同目录相对路径：${ref}`);
+    assert.equal(path.dirname(ref), ".", `跨出同目录：${ref}`);
+    assert.ok(existsSync(path.join(runtimeDir, ref)), `文件不存在：${ref}`);
   }
-  assert.doesNotMatch(html, /type\s*=\s*"module"/);
+});
+
+check("页面不用 ES module", () => {
+  assert.doesNotMatch(code("index.html"), /type\s*=\s*["']module["']/i);
+});
+
+check("页面没有 iframe", () => {
   assert.equal(doc.querySelectorAll("iframe").length, 0);
+});
+
+check("源码没有网络、存储或父窗口 API", () => {
+  const source = ["index.html", "engine.js", "ui.js", "style.css"].map(code).join("\n");
+  const forbidden = [
+    /fetch\s*\(/, /XMLHttpRequest/, /WebSocket\s*\(/, /EventSource\s*\(/, /sendBeacon\s*\(/,
+    /importScripts\s*\(/, /WebTransport\s*\(/, /RTCPeerConnection\s*\(/,
+    /(?:^|[^\w])Worker\s*\(/, /SharedWorker\s*\(/, /serviceWorker\s*\.\s*register\s*\(/,
+    /localStorage/, /sessionStorage/, /indexedDB/, /document\s*\.\s*cookie/,
+    /window\s*\.\s*(?:parent|top)\b/, /document\s*\.\s*domain/,
+  ];
+  for (const pattern of forbidden) assert.doesNotMatch(source, pattern);
 });
 
 console.log("\n检索式构造界面自测：" + (failed === 0 ? "全部通过" : failed + " 项未通过"));

@@ -66,9 +66,14 @@
    * 一个词编译成一段。
    * 括号、引号这些结构符号从用户输入里剔掉 —— 用户打的是词，结构由工具加，
    * 让用户的字直接进结构位会把整条查询的括号配平弄坏。
+   *
+   * 返回的不只是那一段字符串，还有**这个词身上发生了什么**（changes）：
+   * 字段被降级、截词符被拿掉。规格 §3 要求降级说明贴着被改写的那一个词，
+   * 汇成一份远处的说明列表就等于让用户自己猜是哪个词变了（§6 点名这是做坏了）。
    */
-  function renderTerm(term, dialect, notes) {
-    var text = String((term && term.text) || "")
+  function renderPiece(term, dialect, notes) {
+    var raw = String((term && term.text) || "").trim();
+    var text = raw
       .replace(/[()\[\]"']/g, " ")
       .replace(/\s+/g, " ")
       .trim();
@@ -83,18 +88,26 @@
     if (!FIELD_LABELS[field]) field = "tiab";
 
     var used = field;
+    var changes = [];
     if (dialect.supports.indexOf(field) < 0) {
       used = (dialect.downgrade && dialect.downgrade[field]) || "all";
+      changes.push({
+        kind: "field",
+        why: dialect.label + " 没有「" + FIELD_LABELS[field] + "」这一路，改成「" +
+          FIELD_LABELS[used] + "」——命中范围放宽了"
+      });
       pushNote(notes,
         "「" + FIELD_LABELS[field] + "」" + dialect.label + " 不支持，已降级为「" +
         FIELD_LABELS[used] + "」。降级会放宽命中范围，复算时要记这一笔。");
     }
 
     if (truncated && !dialect.truncation) {
+      changes.push({ kind: "truncation", why: dialect.label + " 不支持截词，结尾的 * 去掉了" });
       pushNote(notes, dialect.label + " 不支持截词，「" + text + "*」的截词符已去掉。");
       truncated = false;
     }
     if (truncated && multiword && !dialect.truncationInQuotes) {
+      changes.push({ kind: "truncation", why: "词组要加引号，引号里不能截词，结尾的 * 去掉了" });
       pushNote(notes,
         "「" + text + "」是词组，必须加引号，而截词符不能写在引号里；已去掉截词符。");
       truncated = false;
@@ -102,9 +115,38 @@
 
     var body = multiword ? '"' + text + '"' : text + (truncated ? "*" : "");
     var tag = dialect.tags[used] || "";
-    if (dialect.style === "prefix") return tag + body;
-    if (dialect.style === "suffix") return body + tag;
-    return body;
+    var rendered = dialect.style === "prefix" ? tag + body
+      : dialect.style === "suffix" ? body + tag
+        : body;
+    return {
+      raw: raw,
+      text: text,
+      body: body,
+      tag: tag,
+      tagStyle: dialect.style,
+      field: field,
+      fieldLabel: FIELD_LABELS[field],
+      used: used,
+      usedLabel: FIELD_LABELS[used],
+      dialectLabel: dialect.label,
+      rendered: rendered,
+      changes: changes
+    };
+  }
+
+  function renderTerm(term, dialect, notes) {
+    var piece = renderPiece(term, dialect, notes || []);
+    return piece ? piece.rendered : null;
+  }
+
+  /* 查询串的骨架。界面靠它把「人写的词」和「工具加的结构」分开排，
+     并且把更正贴到具体那一个词上；拼起来必须逐字等于 query。 */
+  function tokenText(token, pieces) {
+    if (token.t === "term") return pieces[token.piece].rendered;
+    if (token.t === "open") return "(";
+    if (token.t === "close") return ")";
+    if (token.t === "and") return " AND ";
+    return " OR ";
   }
 
   /**
@@ -118,7 +160,11 @@
   function compile(blocks, dialectId) {
     var dialect = DIALECTS[dialectId] || DIALECTS.pubmed;
     var notes = [];
-    var parts = [];
+    var pieces = [];
+    var groups = [];
+    var tokens = [];
+    var empties = [];
+    var blockCount = 0;
     var termCount = 0;
 
     if (!Array.isArray(blocks)) blocks = [];
@@ -126,35 +172,61 @@
     for (var i = 0; i < blocks.length; i++) {
       var block = blocks[i] || {};
       var terms = Array.isArray(block.terms) ? block.terms : [];
-      var rendered = [];
+      var label = block.label || "";
+      var mine = [];
       for (var j = 0; j < terms.length; j++) {
-        var piece = renderTerm(terms[j], dialect, notes);
-        if (piece) rendered.push(piece);
+        var piece = renderPiece(terms[j], dialect, notes);
+        if (!piece) continue;
+        piece.block = i;
+        piece.term = j;
+        piece.blockLabel = label;
+        piece.index = pieces.length;
+        pieces.push(piece);
+        mine.push(piece);
       }
-      if (rendered.length === 0) {
-        if (terms.length > 0 || block.label) {
-          pushNote(notes, "概念块「" + (block.label || "第 " + (i + 1) + " 块") + "」还没有可用的词，这一块没有进查询串。");
+      if (mine.length === 0) {
+        if (terms.length > 0 || label) {
+          empties.push({ block: i, label: label });
+          pushNote(notes, "概念块「" + (label || "第 " + (i + 1) + " 块") + "」还没有可用的词，这一块没有进查询串。");
         }
         continue;
       }
-      termCount += rendered.length;
-      parts.push("(" + rendered.join(" OR ") + ")");
+      blockCount++;
+      termCount += mine.length;
+      if (tokens.length) tokens.push({ t: "and" });
+      var group = { block: i, label: label, from: tokens.length, pieces: mine };
+      tokens.push({ t: "open" });
+      for (var k = 0; k < mine.length; k++) {
+        if (k) tokens.push({ t: "or" });
+        tokens.push({ t: "term", piece: mine[k].index });
+      }
+      tokens.push({ t: "close" });
+      group.to = tokens.length;
+      groups.push(group);
     }
 
     if (dialect.dropsFields) {
       pushNote(notes, "通用布尔式不带字段限定，字段信息只留在左边的概念结构里。");
     }
-    if (parts.length > 1) {
+    if (blockCount > 1) {
       pushNote(notes, "块内用 OR、块间用 AND，每一块都套了显式括号 —— 不依赖各库默认的优先级。");
     }
+
+    var query = "";
+    for (var t = 0; t < tokens.length; t++) query += tokenText(tokens[t], pieces);
 
     return {
       dialect: dialect.id,
       dialectLabel: dialect.label,
       hint: dialect.hint,
-      query: parts.join(" AND "),
-      blockCount: parts.length,
+      query: query,
+      blockCount: blockCount,
       termCount: termCount,
+      pieces: pieces,
+      groups: groups,
+      tokens: tokens,
+      empties: empties,
+      changed: pieces.filter(function (p) { return p.changes.length > 0; }),
       notes: notes
     };
   }
@@ -356,6 +428,45 @@
       expect: "ok"
     },
     {
+      name: "更正记在具体那一个词上：arXiv 的主题词降级点名到 accidental falls",
+      run: function () {
+        var r = compile(DEMO.blocks, "arxiv");
+        var hit = r.changed.filter(function (p) {
+          return p.changes.some(function (c) { return c.kind === "field"; });
+        });
+        if (hit.length !== 1) return "点名了 " + hit.length + " 个词";
+        var only = hit[0];
+        return only.text + " / " + only.fieldLabel + " → " + only.usedLabel +
+          (/arXiv/.test(only.changes[0].why) ? " / 带库名" : " / 缺库名");
+      },
+      expect: "accidental falls / 主题词 → 全字段 / 带库名"
+    },
+    {
+      name: "去掉截词也记在那一个词上，不只汇进说明列表",
+      run: function () {
+        var r = compile(DEMO.blocks, "arxiv");
+        var hit = r.changed.filter(function (p) {
+          return p.changes.some(function (c) { return c.kind === "truncation"; });
+        });
+        return hit.length === 1 ? hit[0].text : hit.map(function (p) { return p.text; }).join(",");
+      },
+      expect: "fall"
+    },
+    {
+      name: "骨架拼起来逐字等于查询串",
+      run: function () {
+        var bad = [];
+        DIALECT_IDS.forEach(function (id) {
+          var r = compile(DEMO.blocks, id);
+          var joined = "";
+          r.tokens.forEach(function (token) { joined += tokenText(token, r.pieces); });
+          if (joined !== r.query) bad.push(id);
+        });
+        return bad.length ? bad.join(",") : "ok";
+      },
+      expect: "ok"
+    },
+    {
       name: "可追溯记录带上数据库与检索日期",
       run: function () {
         var line = provenance(compile([{ terms: [{ text: "aged" }] }], "pubmed"), "2026-08-13");
@@ -392,6 +503,8 @@
     provenance: provenance,
     countTerms: countTerms,
     renderTerm: renderTerm,
+    renderPiece: renderPiece,
+    tokenText: tokenText,
     CASES: CASES,
     runSelfTest: runSelfTest,
     DEMO: DEMO
