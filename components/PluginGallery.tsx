@@ -12,6 +12,7 @@ import {
   PLUGIN_ITEMS,
   categoriesForKind,
   categoryLabel,
+  filterAvailablePlugins,
   filterPlugins,
   pluginDetailHref,
   pluginIsAvailable,
@@ -98,15 +99,13 @@ export function PluginGallery({ runtimeIds = [] }: { runtimeIds?: string[] }) {
 
   const runtimeSet = useMemo(() => new Set(runtimeIds), [runtimeIds]);
   const availableCount = useMemo(
-    () => PLUGIN_ITEMS.filter((item) => pluginIsAvailable(item, runtimeSet)).length,
+    () => filterAvailablePlugins(PLUGIN_ITEMS, runtimeSet).length,
     [runtimeSet],
   );
   const categories = useMemo(() => categoriesForKind(kind), [kind]);
   const list = useMemo(() => {
     const matched = filterPlugins({ text, kind, category });
-    return onlyRunnable
-      ? matched.filter((item) => pluginIsAvailable(item, runtimeSet))
-      : matched;
+    return onlyRunnable ? filterAvailablePlugins(matched, runtimeSet) : matched;
   }, [text, kind, category, onlyRunnable, runtimeSet]);
 
   function switchKind(next: PluginKind | "all") {

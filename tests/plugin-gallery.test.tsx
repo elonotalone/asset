@@ -23,6 +23,7 @@ import {
   PLUGIN_GALLERY_POLICY,
   PLUGIN_ITEMS,
   editorAccessForPlugin,
+  filterAvailablePlugins,
   filterPlugins,
   findPlugin,
   isEditorEntrypointUrl,
@@ -397,6 +398,26 @@ test("34 格逐格都有可点入口或说清楚的下一步", () => {
   }
 });
 
+test("统计与只看可用筛选共用同一份入口判定", () => {
+  assert.deepEqual(
+    filterAvailablePlugins(PLUGIN_ITEMS, []).map((item) => item.id),
+    ["workflow-canvas"],
+  );
+  assert.deepEqual(
+    filterAvailablePlugins(PLUGIN_ITEMS, ["unit-converter"]).map(
+      (item) => item.id,
+    ),
+    ["unit-converter", "workflow-canvas"],
+  );
+
+  const noRuntimeHtml = render(<PluginGallery runtimeIds={[]} />);
+  const oneRuntimeHtml = render(
+    <PluginGallery runtimeIds={["unit-converter"]} />,
+  );
+  assert.match(noRuntimeHtml, /1 件现在有经过核验的使用入口；33 件入口尚未接通/);
+  assert.match(oneRuntimeHtml, /2 件现在有经过核验的使用入口；32 件入口尚未接通/);
+});
+
 /** `public/` 下的任何东西都能被直接 GET 到，不需要经过页面。 */
 function publicFiles(): string[] {
   if (!existsSync("public")) return [];
@@ -456,6 +477,8 @@ test("public 只保留安全 cover，不含插件 HTML/JS/CSS", () => {
 
 test("UC-1 源码锁死无 iframe、无同源 runtime 路由、无 fallback", () => {
   // UC-1: docs/architecture/oceanleo-untrusted-content-isolation.md §8.1
+  assert.equal(existsSync("app/plugin-gallery/runtime/[id]"), false);
+  assert.equal(existsSync("app/plugin-gallery/runtime/[...path]"), false);
   assert.equal(existsSync("app/plugin-gallery/runtime/[...path]/route.ts"), false);
   assert.equal(existsSync("app/plugin-gallery/runtime-registry.ts"), false);
 

@@ -321,6 +321,13 @@ export function pluginIsAvailable(
   return isEditorEntrypointUrl(access?.entryUrl);
 }
 
+export function filterAvailablePlugins(
+  items: readonly PluginEntry[],
+  runtimePluginIds: ReadonlySet<string> | readonly string[] = [],
+): PluginEntry[] {
+  return items.filter((item) => pluginIsAvailable(item, runtimePluginIds));
+}
+
 /* ------------------------------------------------------------------ *
  * 隔离域运行入口
  * ------------------------------------------------------------------ */
