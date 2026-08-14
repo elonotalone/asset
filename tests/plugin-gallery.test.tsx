@@ -86,9 +86,9 @@ const validPlan = {
   }),
 };
 
-test("34 件工具全部列得出，且每件都点得开", () => {
-  assert.equal(PLUGIN_ITEMS.length, 34);
-  assert.equal(PLUGIN_ITEMS.filter((item) => item.kind === "standalone").length, 21);
+test("35 件工具全部列得出，且每件都点得开", () => {
+  assert.equal(PLUGIN_ITEMS.length, 35);
+  assert.equal(PLUGIN_ITEMS.filter((item) => item.kind === "standalone").length, 22);
   assert.equal(PLUGIN_ITEMS.filter((item) => item.kind === "editor").length, 13);
 
   const ids = new Set<string>();
@@ -101,8 +101,8 @@ test("34 件工具全部列得出，且每件都点得开", () => {
   }
 });
 
-test("21 份独立工具规格保留，manifest runtime 与规格逐一对应", () => {
-  assert.equal(PLUGIN_ITEMS.filter((item) => item.kind === "standalone").length, 21);
+test("22 份独立工具规格保留，manifest runtime 与规格逐一对应", () => {
+  assert.equal(PLUGIN_ITEMS.filter((item) => item.kind === "standalone").length, 22);
   assert.equal(pluginManifest.schema, "oceanleo.active-runtime-manifest.v1");
   assert.ok(pluginManifest.items.length >= 3);
   assert.ok(pluginManifest.items.every((item: { kind: string }) => item.kind === "plugin"));
@@ -397,7 +397,7 @@ test("可用性只由 runtime descriptor 或已核验编辑器入口算出", () 
   }
 });
 
-test("34 格逐格都有可点入口或说清楚的下一步", () => {
+test("35 格逐格都有可点入口或说清楚的下一步", () => {
   const safeRuntimeUrl =
     "https://s-0123456789abcdef0123456789abcdef.oceanleo.app/embed";
   for (const item of PLUGIN_ITEMS) {
@@ -453,8 +453,8 @@ test("统计与只看可用筛选共用同一份入口判定", () => {
   const oneRuntimeHtml = render(
     <PluginGallery runtimeIds={["unit-converter"]} />,
   );
-  assert.match(noRuntimeHtml, /1 件现在有经过核验的使用入口；33 件入口尚未接通/);
-  assert.match(oneRuntimeHtml, /2 件现在有经过核验的使用入口；32 件入口尚未接通/);
+  assert.match(noRuntimeHtml, /1 件现在有经过核验的使用入口；34 件入口尚未接通/);
+  assert.match(oneRuntimeHtml, /2 件现在有经过核验的使用入口；33 件入口尚未接通/);
 });
 
 /** `public/` 下的任何东西都能被直接 GET 到，不需要经过页面。 */
@@ -613,9 +613,9 @@ test("用户可见的界面不出现内部概念名「插件」", () => {
 });
 
 test("搜索与类别筛选真的会缩小结果", () => {
-  assert.equal(filterPlugins().length, 34);
+  assert.equal(filterPlugins().length, 35);
   assert.equal(filterPlugins({ kind: "editor" }).length, 13);
-  assert.equal(filterPlugins({ kind: "standalone" }).length, 21);
+  assert.equal(filterPlugins({ kind: "standalone" }).length, 22);
 
   const calc = filterPlugins({ category: "calc" });
   assert.equal(calc.length, 4);

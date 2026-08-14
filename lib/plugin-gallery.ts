@@ -369,6 +369,7 @@ const FIRST_PARTY_PLUGIN_RUNTIME_IDS: ReadonlySet<string> = new Set([
   "three-statement-model-01",
   "unit-converter-01",
   "voiceover-script-01",
+  "world-map-01",
 ]);
 
 const FIRST_PARTY_PLUGIN_RUNTIME_URL =

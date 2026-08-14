@@ -7,17 +7,61 @@
     "reason": "这些是在 app 里打开来用的软件，没有可以存到硬盘、离线打开的文件。本板块只展示能力，不提供下载或安装。用户在这些工具里做出来的东西（表格、PDF、长图、网页）才是可下载的素材，落在「我的库」。"
   },
   "categories": [
-    { "id": "space", "label": "出行与空间", "kind": "standalone" },
-    { "id": "finance", "label": "财务与经营", "kind": "standalone" },
-    { "id": "calc", "label": "计算与换算", "kind": "standalone" },
-    { "id": "research", "label": "研究与检索", "kind": "standalone" },
-    { "id": "learning", "label": "学习与记忆", "kind": "standalone" },
-    { "id": "reasoning", "label": "梳理与推演", "kind": "standalone" },
-    { "id": "script", "label": "表达与脚本", "kind": "standalone" },
-    { "id": "visual-editor", "label": "图像与设计", "kind": "editor" },
-    { "id": "doc-editor", "label": "文档与表格", "kind": "editor" },
-    { "id": "media-editor", "label": "影音与三维", "kind": "editor" },
-    { "id": "source-editor", "label": "源码与流程", "kind": "editor" }
+    {
+      "id": "space",
+      "label": "出行与空间",
+      "kind": "standalone"
+    },
+    {
+      "id": "finance",
+      "label": "财务与经营",
+      "kind": "standalone"
+    },
+    {
+      "id": "calc",
+      "label": "计算与换算",
+      "kind": "standalone"
+    },
+    {
+      "id": "research",
+      "label": "研究与检索",
+      "kind": "standalone"
+    },
+    {
+      "id": "learning",
+      "label": "学习与记忆",
+      "kind": "standalone"
+    },
+    {
+      "id": "reasoning",
+      "label": "梳理与推演",
+      "kind": "standalone"
+    },
+    {
+      "id": "script",
+      "label": "表达与脚本",
+      "kind": "standalone"
+    },
+    {
+      "id": "visual-editor",
+      "label": "图像与设计",
+      "kind": "editor"
+    },
+    {
+      "id": "doc-editor",
+      "label": "文档与表格",
+      "kind": "editor"
+    },
+    {
+      "id": "media-editor",
+      "label": "影音与三维",
+      "kind": "editor"
+    },
+    {
+      "id": "source-editor",
+      "label": "源码与流程",
+      "kind": "editor"
+    }
   ],
   "items": [
     {
@@ -782,6 +826,28 @@
       "statusNote": "artifact 能力矩阵把 `workflow` 类素材绑到 `video-canvas` 适配器（工程格式 oceanleo.video-canvas.v1），注册表里可路由，走嵌入路由由 video 子站的 /canvas-board 承接。",
       "caution": "嵌入式编辑器按当前域名家族取子站地址；某个家族没有对应子站时，界面会如实说「暂未开放」。",
       "specPath": "docs/specs/oceanleo-plugins-v1/editors/workflow-canvas.md"
+    },
+    {
+      "id": "world-map",
+      "name": "世界地图",
+      "kind": "standalone",
+      "category": "space",
+      "summary": "把出发地和目的地放到一张有道路、城市名与国界的真地图上，立即回答两地在哪里、相隔多远。",
+      "does": [
+        "把邮件里的城市名对应到现实地理位置，订票前确认方向和量级",
+        "两地之间画出 geodesic 连线，并给出直线距离",
+        "两点边界框自动适配视野，不必再点“计算”或“适配视野”"
+      ],
+      "scenarios": [
+        "确认一次跨国或跨城市行程，旁边开着机票、酒店或会议邀请",
+        "只想知道两座城市的相对位置与大致距离，不需要驾车导航或航班搜索"
+      ],
+      "input": "输入出发城市与目的城市；首屏已有「北京 → 赫尔辛基」示例可直接替换。",
+      "output": "带完整城市名标记、连线与直线距离的地图视图。",
+      "firstOpen": "首屏直接是「北京 → 赫尔辛基」：两座城市的完整名字、连线和直线距离都已可读；光标落在出发城市输入框。",
+      "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
+      "statusNote": "底图由 Google Maps JavaScript API 绘制，需要网络；加载失败时地图位置变成一张说明卡，不会留空白或无限转圈。国内高德通道待运营者取得技术服务使用许可后接入。",
+      "specPath": "docs/specs/oceanleo-plugins-v1/plugins/world-map.md"
     }
   ]
 }

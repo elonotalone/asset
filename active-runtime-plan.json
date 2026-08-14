@@ -1,9 +1,9 @@
 {
   "schema": "oceanleo.active-runtime-plan.v1",
   "manifest": "active-runtime-manifest.json",
-  "manifestSha256": "0967be937dc1c5b938a2fb66fbe0c18983bc443fdf2b2a4375cdd37426e54b9d",
-  "itemCount": 30,
-  "totalBytes": 1430477,
+  "manifestSha256": "cadc51c16edc34e6f3d517ed3631c3fa3dedfa1cbb4acd8c6dbfad802b7f2172",
+  "itemCount": 31,
+  "totalBytes": 1444919,
   "items": [
     {
       "item": {
@@ -12,8 +12,8 @@
         "source": "content/active-runtime/plugin/financial-calculator-01",
         "entry": "index.html"
       },
-      "host": "s-91b4adf1d0e82821637b339bd1f41a01.oceanleo.app",
-      "entryUrl": "https://s-91b4adf1d0e82821637b339bd1f41a01.oceanleo.app/embed",
+      "host": "plugins.oceanleo.app",
+      "entryUrl": "https://plugins.oceanleo.app/financial-calculator-01/",
       "closureSha256": "8ea814bea793324b7a0857bfdb409283d41153a39b58ea566c60d21e3fa50936",
       "fileCount": 4,
       "totalBytes": 27903,
@@ -47,8 +47,8 @@
         "source": "content/active-runtime/plugin/search-query-builder-01",
         "entry": "index.html"
       },
-      "host": "s-73e75cd6217f184bf98083d73615efd5.oceanleo.app",
-      "entryUrl": "https://s-73e75cd6217f184bf98083d73615efd5.oceanleo.app/embed",
+      "host": "plugins.oceanleo.app",
+      "entryUrl": "https://plugins.oceanleo.app/search-query-builder-01/",
       "closureSha256": "d655745318402f67c82ef8aa4f4343036140681aa3d0d79f9ba39409f301de19",
       "fileCount": 4,
       "totalBytes": 32691,
@@ -82,8 +82,8 @@
         "source": "content/active-runtime/plugin/unit-converter-01",
         "entry": "index.html"
       },
-      "host": "s-68ba499289aad1e1b5aae2661303add6.oceanleo.app",
-      "entryUrl": "https://s-68ba499289aad1e1b5aae2661303add6.oceanleo.app/embed",
+      "host": "plugins.oceanleo.app",
+      "entryUrl": "https://plugins.oceanleo.app/unit-converter-01/",
       "closureSha256": "46b0d16ddf129299f837851f5f6f4e052b329d6c35e8987bea173c6901539959",
       "fileCount": 4,
       "totalBytes": 27963,
@@ -117,8 +117,8 @@
         "source": "content/active-runtime/plugin/annotatable-city-map-01",
         "entry": "index.html"
       },
-      "host": "s-5ccdd80f97f8f9a4acf06c462195bd67.oceanleo.app",
-      "entryUrl": "https://s-5ccdd80f97f8f9a4acf06c462195bd67.oceanleo.app/embed",
+      "host": "plugins.oceanleo.app",
+      "entryUrl": "https://plugins.oceanleo.app/annotatable-city-map-01/",
       "closureSha256": "a237cfb796e11d9c73abb1ac652f9dbb742fcca271a3cc058c757ed247f343f9",
       "fileCount": 4,
       "totalBytes": 139460,
@@ -152,8 +152,8 @@
         "source": "content/active-runtime/plugin/concept-knowledge-graph-01",
         "entry": "index.html"
       },
-      "host": "s-9a12aef7af3dbb5f1eb96f375ddc294f.oceanleo.app",
-      "entryUrl": "https://s-9a12aef7af3dbb5f1eb96f375ddc294f.oceanleo.app/embed",
+      "host": "plugins.oceanleo.app",
+      "entryUrl": "https://plugins.oceanleo.app/concept-knowledge-graph-01/",
       "closureSha256": "83cb38f667776827b3ebc2651db45ba5595967c708aedf299fc0425d173c4d41",
       "fileCount": 4,
       "totalBytes": 40942,
@@ -187,8 +187,8 @@
         "source": "content/active-runtime/plugin/contract-assembly-01",
         "entry": "index.html"
       },
-      "host": "s-423476f7ee39bfe24f2878a10c76c094.oceanleo.app",
-      "entryUrl": "https://s-423476f7ee39bfe24f2878a10c76c094.oceanleo.app/embed",
+      "host": "plugins.oceanleo.app",
+      "entryUrl": "https://plugins.oceanleo.app/contract-assembly-01/",
       "closureSha256": "565af26fb434ba04b79427023d86e66071037b1a434183b98906ddd4dd6cd6f0",
       "fileCount": 4,
       "totalBytes": 31782,
@@ -222,8 +222,8 @@
         "source": "content/active-runtime/plugin/dialogue-branch-script-01",
         "entry": "index.html"
       },
-      "host": "s-5c5e21a3b44c8766c3a188147d98d09d.oceanleo.app",
-      "entryUrl": "https://s-5c5e21a3b44c8766c3a188147d98d09d.oceanleo.app/embed",
+      "host": "plugins.oceanleo.app",
+      "entryUrl": "https://plugins.oceanleo.app/dialogue-branch-script-01/",
       "closureSha256": "603f5b6f6618885ca47b3a06f9ec1abcc7f04cdc0f8a1cca23586116cf38fc5e",
       "fileCount": 4,
       "totalBytes": 33000,
@@ -257,8 +257,8 @@
         "source": "content/active-runtime/plugin/executable-notebook-01",
         "entry": "index.html"
       },
-      "host": "s-3b040756bb61998c9bd096b55e5b7993.oceanleo.app",
-      "entryUrl": "https://s-3b040756bb61998c9bd096b55e5b7993.oceanleo.app/embed",
+      "host": "plugins.oceanleo.app",
+      "entryUrl": "https://plugins.oceanleo.app/executable-notebook-01/",
       "closureSha256": "75b169d58747651d9d1f5503c24b7ad4ae8aa7be66c9495690b235aa77768d1e",
       "fileCount": 4,
       "totalBytes": 39079,
@@ -292,8 +292,8 @@
         "source": "content/active-runtime/plugin/floorplan-annotation-01",
         "entry": "index.html"
       },
-      "host": "s-d6bb623f5321efcbeab2b5213d4cf9e6.oceanleo.app",
-      "entryUrl": "https://s-d6bb623f5321efcbeab2b5213d4cf9e6.oceanleo.app/embed",
+      "host": "plugins.oceanleo.app",
+      "entryUrl": "https://plugins.oceanleo.app/floorplan-annotation-01/",
       "closureSha256": "0f3a70f6ad711090e7e83cbc2e5f088a007cf0bd8e59dd022035f4c5f032bab5",
       "fileCount": 4,
       "totalBytes": 28622,
@@ -327,8 +327,8 @@
         "source": "content/active-runtime/plugin/formula-derivation-walkthrough-01",
         "entry": "index.html"
       },
-      "host": "s-e5fad48f1a200ecd2e53bfd1cae363c3.oceanleo.app",
-      "entryUrl": "https://s-e5fad48f1a200ecd2e53bfd1cae363c3.oceanleo.app/embed",
+      "host": "plugins.oceanleo.app",
+      "entryUrl": "https://plugins.oceanleo.app/formula-derivation-walkthrough-01/",
       "closureSha256": "c8825569fff41709f47f970001e7e9dea2dfca6f5a73349bc1335dfea99817d6",
       "fileCount": 4,
       "totalBytes": 35870,
@@ -362,8 +362,8 @@
         "source": "content/active-runtime/plugin/interactive-globe-01",
         "entry": "index.html"
       },
-      "host": "s-bacb99f342f1c4f54242ef3936bdd845.oceanleo.app",
-      "entryUrl": "https://s-bacb99f342f1c4f54242ef3936bdd845.oceanleo.app/embed",
+      "host": "plugins.oceanleo.app",
+      "entryUrl": "https://plugins.oceanleo.app/interactive-globe-01/",
       "closureSha256": "93829bfc9b95ac58a3eb9fd1a30262503a76545abb07fca96fe392ea4fbb13e8",
       "fileCount": 5,
       "totalBytes": 161379,
@@ -402,8 +402,8 @@
         "source": "content/active-runtime/plugin/ledger-register-01",
         "entry": "index.html"
       },
-      "host": "s-4addf9f5fe8642d0b82d1b729f6183ae.oceanleo.app",
-      "entryUrl": "https://s-4addf9f5fe8642d0b82d1b729f6183ae.oceanleo.app/embed",
+      "host": "plugins.oceanleo.app",
+      "entryUrl": "https://plugins.oceanleo.app/ledger-register-01/",
       "closureSha256": "50758c3012a45094eb5c1e8c2cb0c62c741027e0f179bffb1d539b6625e0f5f1",
       "fileCount": 4,
       "totalBytes": 40340,
@@ -437,8 +437,8 @@
         "source": "content/active-runtime/plugin/legal-calculator-01",
         "entry": "index.html"
       },
-      "host": "s-c19e4b73c06169d0f8c8a61a44e1b1d3.oceanleo.app",
-      "entryUrl": "https://s-c19e4b73c06169d0f8c8a61a44e1b1d3.oceanleo.app/embed",
+      "host": "plugins.oceanleo.app",
+      "entryUrl": "https://plugins.oceanleo.app/legal-calculator-01/",
       "closureSha256": "a8ad1f14d17579e6b53c0aab754c6304d1e65af78aa25b10be030f92f3f4b486",
       "fileCount": 4,
       "totalBytes": 30042,
@@ -472,8 +472,8 @@
         "source": "content/active-runtime/plugin/literature-matrix-01",
         "entry": "index.html"
       },
-      "host": "s-cbfb255868424910de12ec4eb65c4c88.oceanleo.app",
-      "entryUrl": "https://s-cbfb255868424910de12ec4eb65c4c88.oceanleo.app/embed",
+      "host": "plugins.oceanleo.app",
+      "entryUrl": "https://plugins.oceanleo.app/literature-matrix-01/",
       "closureSha256": "2436aa74397e398870724ff4bfbc1e809f674dd6e8807690c4eb30cae9bd7328",
       "fileCount": 4,
       "totalBytes": 20242,
@@ -507,8 +507,8 @@
         "source": "content/active-runtime/plugin/medical-calculator-01",
         "entry": "index.html"
       },
-      "host": "s-3bb7eb0f69cd400f4f596b9c73916967.oceanleo.app",
-      "entryUrl": "https://s-3bb7eb0f69cd400f4f596b9c73916967.oceanleo.app/embed",
+      "host": "plugins.oceanleo.app",
+      "entryUrl": "https://plugins.oceanleo.app/medical-calculator-01/",
       "closureSha256": "bb1af76e049ec1706a48c3e13e18b706054214a81881935ababcf2e22e3e53ab",
       "fileCount": 5,
       "totalBytes": 24109,
@@ -547,8 +547,8 @@
         "source": "content/active-runtime/plugin/metrics-dashboard-01",
         "entry": "index.html"
       },
-      "host": "s-88b0d04936b04c47ed0d8a7aeb9fcd8d.oceanleo.app",
-      "entryUrl": "https://s-88b0d04936b04c47ed0d8a7aeb9fcd8d.oceanleo.app/embed",
+      "host": "plugins.oceanleo.app",
+      "entryUrl": "https://plugins.oceanleo.app/metrics-dashboard-01/",
       "closureSha256": "080b78c4957b733694c31184e645c6bc3e32b07cef672586859b2f9bb644c579",
       "fileCount": 4,
       "totalBytes": 28199,
@@ -582,8 +582,8 @@
         "source": "content/active-runtime/plugin/relationship-graph-01",
         "entry": "index.html"
       },
-      "host": "s-bdc3ee224040c4e17d77592a99918a7e.oceanleo.app",
-      "entryUrl": "https://s-bdc3ee224040c4e17d77592a99918a7e.oceanleo.app/embed",
+      "host": "plugins.oceanleo.app",
+      "entryUrl": "https://plugins.oceanleo.app/relationship-graph-01/",
       "closureSha256": "629e15be9fa1fad42dcef08b5839667292b1158351c8ccb5fdcf80b5d4b12104",
       "fileCount": 4,
       "totalBytes": 36516,
@@ -617,8 +617,8 @@
         "source": "content/active-runtime/plugin/self-test-quiz-01",
         "entry": "index.html"
       },
-      "host": "s-f41cd444981ec8c689cabe838b8eff4c.oceanleo.app",
-      "entryUrl": "https://s-f41cd444981ec8c689cabe838b8eff4c.oceanleo.app/embed",
+      "host": "plugins.oceanleo.app",
+      "entryUrl": "https://plugins.oceanleo.app/self-test-quiz-01/",
       "closureSha256": "94d79eaefa8c3fffa5e5bccc93c8416fb88c0c5913675f8c9f25ccab62fce758",
       "fileCount": 4,
       "totalBytes": 34124,
@@ -652,8 +652,8 @@
         "source": "content/active-runtime/plugin/spaced-repetition-scheduler-01",
         "entry": "index.html"
       },
-      "host": "s-f1bbaa0648bf5f8d694c127d7b3fe9cd.oceanleo.app",
-      "entryUrl": "https://s-f1bbaa0648bf5f8d694c127d7b3fe9cd.oceanleo.app/embed",
+      "host": "plugins.oceanleo.app",
+      "entryUrl": "https://plugins.oceanleo.app/spaced-repetition-scheduler-01/",
       "closureSha256": "4e602c94aedb5d8e0b3f9b80fd1f85ac7d07a81130097e931dcfe93505480e6d",
       "fileCount": 4,
       "totalBytes": 23274,
@@ -687,8 +687,8 @@
         "source": "content/active-runtime/plugin/three-statement-model-01",
         "entry": "index.html"
       },
-      "host": "s-ed87a89a8d4c7411fe4e78935cad69e6.oceanleo.app",
-      "entryUrl": "https://s-ed87a89a8d4c7411fe4e78935cad69e6.oceanleo.app/embed",
+      "host": "plugins.oceanleo.app",
+      "entryUrl": "https://plugins.oceanleo.app/three-statement-model-01/",
       "closureSha256": "588ab6093657b420564869ac0b6fb2d4baf9d7522a176e3ae88b115b653956d3",
       "fileCount": 4,
       "totalBytes": 39749,
@@ -722,8 +722,8 @@
         "source": "content/active-runtime/plugin/voiceover-script-01",
         "entry": "index.html"
       },
-      "host": "s-07b4ce4c5934f6e40c55eaaa0082be98.oceanleo.app",
-      "entryUrl": "https://s-07b4ce4c5934f6e40c55eaaa0082be98.oceanleo.app/embed",
+      "host": "plugins.oceanleo.app",
+      "entryUrl": "https://plugins.oceanleo.app/voiceover-script-01/",
       "closureSha256": "c41b33b362bf351f805c3b11279f46e767430777953d55800b0402a05d9ea8c5",
       "fileCount": 4,
       "totalBytes": 30132,
@@ -747,6 +747,41 @@
           "path": "ui.js",
           "sha256": "16d3b383a2bf6bd733d1a2cea7ca0e0533c046d9e8afae1db3a0c09793a6b03b",
           "bytes": 8702
+        }
+      ]
+    },
+    {
+      "item": {
+        "id": "world-map-01",
+        "kind": "plugin",
+        "source": "content/active-runtime/plugin/world-map-01",
+        "entry": "index.html"
+      },
+      "host": "plugins.oceanleo.app",
+      "entryUrl": "https://plugins.oceanleo.app/world-map-01/",
+      "closureSha256": "f7cd5197366d5213bf1daa70d2c76e9ec06ad21fd71f451b91df7c9f14a56d58",
+      "fileCount": 4,
+      "totalBytes": 14442,
+      "files": [
+        {
+          "path": "engine.js",
+          "sha256": "d2ec0f038200ba52126bfb15f9a3b273a3451668c6882f55c4355dfb0aef2c12",
+          "bytes": 3505
+        },
+        {
+          "path": "index.html",
+          "sha256": "9f090aef91404bc20e84d893db4223c10deb6a928960f64c736f7ef81bcf52f6",
+          "bytes": 1418
+        },
+        {
+          "path": "style.css",
+          "sha256": "1982aebad4e392c08e393e4dd6efd630572b5bdffa31642b3bc62a7163ee3d1f",
+          "bytes": 3077
+        },
+        {
+          "path": "ui.js",
+          "sha256": "e09b08db6c939311a2760dc8a210883b0ba2f2276e484849fcf020f6150ff50d",
+          "bytes": 6442
         }
       ]
     },
