@@ -3,7 +3,7 @@
   "manifest": "active-runtime-manifest.json",
   "manifestSha256": "cadc51c16edc34e6f3d517ed3631c3fa3dedfa1cbb4acd8c6dbfad802b7f2172",
   "itemCount": 31,
-  "totalBytes": 1444919,
+  "totalBytes": 1438644,
   "items": [
     {
       "item": {
@@ -14,9 +14,9 @@
       },
       "host": "plugins.oceanleo.app",
       "entryUrl": "https://plugins.oceanleo.app/financial-calculator-01/",
-      "closureSha256": "8ea814bea793324b7a0857bfdb409283d41153a39b58ea566c60d21e3fa50936",
+      "closureSha256": "cae8a6a6f9f4cc3e1c7bb908e5c9bbec7f4a8927f6fa437cc3d00af0c941bd3e",
       "fileCount": 4,
-      "totalBytes": 27903,
+      "totalBytes": 37165,
       "files": [
         {
           "path": "engine.js",
@@ -25,18 +25,18 @@
         },
         {
           "path": "index.html",
-          "sha256": "3f7375f360fa3c04fa417c98603986497ebafe3e1c49d9dfd58b3831d42af5f5",
-          "bytes": 3535
+          "sha256": "cf07e2fdbb93518576bf926ab891cc4fb656aff2e2a2ebdf90ae4ba6ae8b64d1",
+          "bytes": 2746
         },
         {
           "path": "style.css",
-          "sha256": "184dbbffed2488b695e985289f70f75dd00070ae5ebc35da6dcd73154db53993",
-          "bytes": 6068
+          "sha256": "fc9f23022d3fd56d5e872bb1302b5c68b18332e7b2f5feccbe43613e662aab38",
+          "bytes": 5333
         },
         {
           "path": "ui.js",
-          "sha256": "af67506bfe8266ed35b8c83d6cd65dee14c890d3b5dd076ea811a624a80482b2",
-          "bytes": 6798
+          "sha256": "5890820f2adee25d19486d8c10b2d52be5c862d9f3fa1cd8e26291ece308d792",
+          "bytes": 17584
         }
       ]
     },
@@ -49,29 +49,29 @@
       },
       "host": "plugins.oceanleo.app",
       "entryUrl": "https://plugins.oceanleo.app/search-query-builder-01/",
-      "closureSha256": "d655745318402f67c82ef8aa4f4343036140681aa3d0d79f9ba39409f301de19",
+      "closureSha256": "203e8f6e3a67a7fa9abbe2d1443dfd846b8dda2bfe17cca8e5f68eb6837a8fef",
       "fileCount": 4,
-      "totalBytes": 32691,
+      "totalBytes": 34270,
       "files": [
         {
           "path": "engine.js",
-          "sha256": "7ba28a6f1d70729123c0625a3232de0542472fb1256bdc0daa69bd7324ea58ab",
-          "bytes": 13535
+          "sha256": "b5061d9ef4efc4563fb3c4745736c438cde14b99b719bb89aa8ee694d3d6fe0e",
+          "bytes": 17829
         },
         {
           "path": "index.html",
-          "sha256": "7f370d07080479aa6fb6e7534d61fdcb4052d9c2890f260d11eccd260787c3a5",
-          "bytes": 2022
+          "sha256": "2d5a384bb0c976cc10c5415dcf7d632de5c73068b90e09b52d38fc707da12d6b",
+          "bytes": 1366
         },
         {
           "path": "style.css",
-          "sha256": "f960825cb1578cd923798d61dc48911a61214f623f3cc4c3b3ce22959b3255a1",
-          "bytes": 6372
+          "sha256": "6b5c8004f420cc8bb8f24f2698a0f21d701cf2450008eb77e650499ab418440d",
+          "bytes": 5227
         },
         {
           "path": "ui.js",
-          "sha256": "ddb9c161f63174dce679a697881dd44bc8b88cf60775ca516ce055dec3229654",
-          "bytes": 10762
+          "sha256": "eeb210347b3597d807fc569fbc8995516d5b986b1329a2ff11638f65bfc9361f",
+          "bytes": 9848
         }
       ]
     },
@@ -84,29 +84,29 @@
       },
       "host": "plugins.oceanleo.app",
       "entryUrl": "https://plugins.oceanleo.app/unit-converter-01/",
-      "closureSha256": "46b0d16ddf129299f837851f5f6f4e052b329d6c35e8987bea173c6901539959",
+      "closureSha256": "e770b14f6228cfc456286b60d1f36063dc413ff4424c2a355418c5afd3936088",
       "fileCount": 4,
-      "totalBytes": 27963,
+      "totalBytes": 21766,
       "files": [
         {
           "path": "engine.js",
-          "sha256": "c14eb2f34201e294232ad3a85c6aa0552143251b974903f48feffa11080f824f",
-          "bytes": 15239
+          "sha256": "95e81115db6347d916e4a4403ef177d94416e1fd2737261f10a1ff8c33b360cd",
+          "bytes": 11686
         },
         {
           "path": "index.html",
-          "sha256": "79ddd96ceb3bee88f6dd32f65e6ddb3c44c696a11a4e9bce6eafff8491cdc7f0",
-          "bytes": 2136
+          "sha256": "a79523735aa6ed7d6e77904642bdbba8e4b5c3fbf7c8f138289981776f05113c",
+          "bytes": 1680
         },
         {
           "path": "style.css",
-          "sha256": "e935c2babf597cd6e24c128a6bfcb2cef849d03beae55d205af91402b12747cf",
-          "bytes": 5306
+          "sha256": "3ca8cf10d2a8bdff49ea279d3758f42116cb9da9e43eed63d55a5d5c6ce78bb3",
+          "bytes": 4302
         },
         {
           "path": "ui.js",
-          "sha256": "046a0483588478ecfb65006b77024412ca52fad0ac7969bdc247c426c743801d",
-          "bytes": 5282
+          "sha256": "c33d595d2745ff9258eda3c2725b68113ed0a7fc0d53bba5e67dd5077b594df0",
+          "bytes": 4098
         }
       ]
     },
@@ -119,29 +119,29 @@
       },
       "host": "plugins.oceanleo.app",
       "entryUrl": "https://plugins.oceanleo.app/annotatable-city-map-01/",
-      "closureSha256": "a237cfb796e11d9c73abb1ac652f9dbb742fcca271a3cc058c757ed247f343f9",
+      "closureSha256": "d467d167d0e46cd8fbc97a6d07bcf2de6f081db568b8753cf9116c2f71fa1b8c",
       "fileCount": 4,
-      "totalBytes": 139460,
+      "totalBytes": 40772,
       "files": [
         {
           "path": "engine.js",
-          "sha256": "f32b32300f3f8b3a7353eaa48d6016900c56d31af645055c4abd40ebd6904920",
-          "bytes": 118828
+          "sha256": "e913350cbf53b1e18fe5cd5d8b6b7f63917e4721976ab33c1b54aa03b4dde982",
+          "bytes": 18681
         },
         {
           "path": "index.html",
-          "sha256": "49b5aeaa34c94578c21a797349245670c9bc6285e0ca9e1ee93a1253d978c7af",
-          "bytes": 4710
+          "sha256": "d3df3c50209d5a1fd9d184f11b1e39d5a8a1b8ee18d54d922d201100d3caaae0",
+          "bytes": 1268
         },
         {
           "path": "style.css",
-          "sha256": "3b6fc9cc9758414130fb21ae833ecae99b4739c6fd8906d5856830c962c53bba",
-          "bytes": 7293
+          "sha256": "083af332b7fdec130543c5b3cb2121feb77ff03506b48c87cfb34c2a26447c47",
+          "bytes": 4161
         },
         {
           "path": "ui.js",
-          "sha256": "48def1d231369303eeff2704663b6f35e6717cca57e42653911b1512d552f7c0",
-          "bytes": 8629
+          "sha256": "df19aa5fc3dc96d56d79a7f1966404af1182ce53855ae3a35ccf7fa300f00b90",
+          "bytes": 16662
         }
       ]
     },
@@ -189,9 +189,9 @@
       },
       "host": "plugins.oceanleo.app",
       "entryUrl": "https://plugins.oceanleo.app/contract-assembly-01/",
-      "closureSha256": "565af26fb434ba04b79427023d86e66071037b1a434183b98906ddd4dd6cd6f0",
+      "closureSha256": "f016ea8cfbbacc91bf7d0b0f4bc82f618562b6b343961348b2befc05843a17cf",
       "fileCount": 4,
-      "totalBytes": 31782,
+      "totalBytes": 33815,
       "files": [
         {
           "path": "engine.js",
@@ -200,18 +200,18 @@
         },
         {
           "path": "index.html",
-          "sha256": "2764453c1a32cce834a3007380248ba9b9653c42b9d3ebd719efcc4154e0bfb1",
-          "bytes": 2408
+          "sha256": "71a3973c7318a838dad54a6be3aaf745dc5d01393b67a211e38acf945cc8bfd7",
+          "bytes": 568
         },
         {
           "path": "style.css",
-          "sha256": "89181d07c62f2ca15e8788ed97f5bf0098861cce176a10f9e4462e4c2540949e",
-          "bytes": 5719
+          "sha256": "d7580ce9cbb4f45dfaa8ed034cbfbcf5d978e3486cbe570b020b5aa66cf862ca",
+          "bytes": 4978
         },
         {
           "path": "ui.js",
-          "sha256": "94b97b619219cf390f49332b538964001d3974debcb65908f19df1b82d1d2bb6",
-          "bytes": 9473
+          "sha256": "0b651e8f169e9bea382a7b033db6c4372a55eda716bb108fdb8fe2999319c3b6",
+          "bytes": 14087
         }
       ]
     },
@@ -224,9 +224,9 @@
       },
       "host": "plugins.oceanleo.app",
       "entryUrl": "https://plugins.oceanleo.app/dialogue-branch-script-01/",
-      "closureSha256": "603f5b6f6618885ca47b3a06f9ec1abcc7f04cdc0f8a1cca23586116cf38fc5e",
+      "closureSha256": "3d9563913cc4cd37f3e7210606801ac990ccf671bc7d6991d6685eabe0cb67dd",
       "fileCount": 4,
-      "totalBytes": 33000,
+      "totalBytes": 30979,
       "files": [
         {
           "path": "engine.js",
@@ -235,18 +235,18 @@
         },
         {
           "path": "index.html",
-          "sha256": "072add73c109c0c1a3490b02e19b6a51726aae604f9fde6cef7456718f9b16ce",
-          "bytes": 3329
+          "sha256": "7c4e40e88532d1cd18a91b3fa599635d5217897b3112ab07faaf6392d4294124",
+          "bytes": 480
         },
         {
           "path": "style.css",
-          "sha256": "e08395b75c86ec3696bfc242a83dd92be66e8f71729638300c76f0393aaebbc7",
-          "bytes": 4936
+          "sha256": "82bbb6313ad8a9cc67b9d9dc9079d6b2fe2aa9a49d6bc3c0253f061d88f0b22f",
+          "bytes": 4907
         },
         {
           "path": "ui.js",
-          "sha256": "3b3faec45431eba18067afc029b81b6e483844ec109214167b86594445965565",
-          "bytes": 13646
+          "sha256": "20bacb2e1382cb88925c4b12dc26719c2cf4a1c27fb07add4f0cd496c0b38a20",
+          "bytes": 14503
         }
       ]
     },
@@ -259,29 +259,29 @@
       },
       "host": "plugins.oceanleo.app",
       "entryUrl": "https://plugins.oceanleo.app/executable-notebook-01/",
-      "closureSha256": "75b169d58747651d9d1f5503c24b7ad4ae8aa7be66c9495690b235aa77768d1e",
+      "closureSha256": "bb4d58bc6b84c2b022e154e32ab3b4d9c9b45e36cb48ef4bb4104a26f480d72c",
       "fileCount": 4,
-      "totalBytes": 39079,
+      "totalBytes": 41586,
       "files": [
         {
           "path": "engine.js",
-          "sha256": "384fe194183016fb8affa44f47a41301faf314bcf61676f4827d552be5adf4e2",
-          "bytes": 18622
+          "sha256": "10755132ae7a9ba9cf5d2a265bf48aeebbf23c322c91bff13f588e56b428113a",
+          "bytes": 21447
         },
         {
           "path": "index.html",
-          "sha256": "89479d98a5cf9c0f49db5819437cb9c2123063c17396505c3cbd3c0d6b83e948",
-          "bytes": 4705
+          "sha256": "9be45d4e895ce03177c96b85e7d0a9c7360129f2d0b18dca7fde09fae40ea34d",
+          "bytes": 1194
         },
         {
           "path": "style.css",
-          "sha256": "b8d3122ba0d5799dd158b36fc59dfdf94d3e471c81ba5f5e88d62fdd32031371",
-          "bytes": 7578
+          "sha256": "bb78679b754c2465dcb635bf2bcc33e70f35af79e52fdfa38d1fa70a36c4116c",
+          "bytes": 5038
         },
         {
           "path": "ui.js",
-          "sha256": "9eb41081ba7fb992b1d03356f4ce13ce92e937f46f6a24d46f7b3b20358053c9",
-          "bytes": 8174
+          "sha256": "9206e0f11fefd64af4604e1102c8dad5925fb6b7c0b9f0c4ba31c71cbbae148f",
+          "bytes": 13907
         }
       ]
     },
@@ -294,29 +294,29 @@
       },
       "host": "plugins.oceanleo.app",
       "entryUrl": "https://plugins.oceanleo.app/floorplan-annotation-01/",
-      "closureSha256": "0f3a70f6ad711090e7e83cbc2e5f088a007cf0bd8e59dd022035f4c5f032bab5",
+      "closureSha256": "4946836014c8796f70feab64dc69dd60cb931e40b6b6ce60462236db756fb73d",
       "fileCount": 4,
-      "totalBytes": 28622,
+      "totalBytes": 56840,
       "files": [
         {
           "path": "engine.js",
-          "sha256": "08dc335d5a4c05d979ff3d1c3b11a13a90a2c8afbfe18d7c8109c98203f99bac",
-          "bytes": 7575
+          "sha256": "6de96d2b79005a841f56a100f13a71fdabef1e684b002e4fd3b6121936678de2",
+          "bytes": 16083
         },
         {
           "path": "index.html",
-          "sha256": "82b7584cd3b3d27345f8b3ef8bc8437f38f1f3325d4454439d3229bf5f7227c8",
-          "bytes": 5957
+          "sha256": "57f2428f41d188bfdc07d23be5ccbe6167f8d88c81657f0364d4bfbd18205a3f",
+          "bytes": 967
         },
         {
           "path": "style.css",
-          "sha256": "7598f4404f69c41e7a5b71a320ee2f53c398ed8a84ae3aa07b1e26b31854e135",
-          "bytes": 5954
+          "sha256": "e675ad89ba9a6470670d61dfb03f14ea0090542aa7ea334cfc7aac467e00d0d9",
+          "bytes": 4332
         },
         {
           "path": "ui.js",
-          "sha256": "f9739b39c7b2b430f8e58da0cc0ec147c412a732411128b25ce5573f482b3216",
-          "bytes": 9136
+          "sha256": "69a79d67216727533e9592530579d7594b00d2bfd80bc4994b668ab11334b74e",
+          "bytes": 35458
         }
       ]
     },
@@ -329,29 +329,29 @@
       },
       "host": "plugins.oceanleo.app",
       "entryUrl": "https://plugins.oceanleo.app/formula-derivation-walkthrough-01/",
-      "closureSha256": "c8825569fff41709f47f970001e7e9dea2dfca6f5a73349bc1335dfea99817d6",
+      "closureSha256": "c6a96b883af870086781340e73aa7d45e0b72e725b906e488bebef7d3710f891",
       "fileCount": 4,
-      "totalBytes": 35870,
+      "totalBytes": 46027,
       "files": [
         {
           "path": "engine.js",
-          "sha256": "93069c826189ff709efa8e274038318d48ca3dc3781aaa31af4022cd8038fd1d",
-          "bytes": 18321
+          "sha256": "50cd298eecaee1b8c05b70c29f446c5f8399f642e7abb66a125d6fd82c318dc7",
+          "bytes": 20723
         },
         {
           "path": "index.html",
-          "sha256": "0f4f5b9403c733725c001ee09cceaa40199a5dc0f400fab02ab1bc933b605b23",
-          "bytes": 5893
+          "sha256": "7d76f37c1849e7cd6f5e463acfa4e73fa74d03481d38e433dd244358d54a01db",
+          "bytes": 679
         },
         {
           "path": "style.css",
-          "sha256": "47ec1d3a388b75064eabee358311cef6271eb9c3caa3384d57f3f969240acc67",
-          "bytes": 6794
+          "sha256": "393952408b257497b85e6d755ae3c8170896780fdf91105963b3f824345bc63d",
+          "bytes": 4260
         },
         {
           "path": "ui.js",
-          "sha256": "f29ba28ca980d477a130daf75c1330694e2a9dbfae1a686d10fb78bcb43fe7f8",
-          "bytes": 4862
+          "sha256": "eeacfa11eeb126462e03faef490ae72b19950800f02bba54a95134ca9c40c797",
+          "bytes": 20365
         }
       ]
     },
@@ -404,29 +404,29 @@
       },
       "host": "plugins.oceanleo.app",
       "entryUrl": "https://plugins.oceanleo.app/ledger-register-01/",
-      "closureSha256": "50758c3012a45094eb5c1e8c2cb0c62c741027e0f179bffb1d539b6625e0f5f1",
+      "closureSha256": "fcb3b63655b8203ba35b5564f6767e21992e363b9d440b436b14e9eb2d3c7b62",
       "fileCount": 4,
-      "totalBytes": 40340,
+      "totalBytes": 40308,
       "files": [
         {
           "path": "engine.js",
-          "sha256": "7de9cc8e92f5fb6f3c5a9741856c9cbe60512631ff6588089878be2188baef43",
-          "bytes": 11021
+          "sha256": "665e29f46e47acc22342beca03f9e0756938ee7955716d9a46a4543453d57c59",
+          "bytes": 14362
         },
         {
           "path": "index.html",
-          "sha256": "9073968a1bb9c53d5735155ac4795a2d6b7318ac0da7bbc1d07f8b2b101c95b3",
-          "bytes": 2355
+          "sha256": "004a31ce3cd0d7c57a20fc29095d1f9ae3e4e317721097ab0bbc735c9dc73786",
+          "bytes": 1477
         },
         {
           "path": "style.css",
-          "sha256": "e6a317fc3a8e12f0ad67c00ab2e2a37afbd266f52873582cc50cc7e0d3dafb8f",
-          "bytes": 5352
+          "sha256": "0fae6d4be9736c9f4b6ebdda2bdb132ff3318461cd31e49270d0a2db333a639d",
+          "bytes": 6145
         },
         {
           "path": "ui.js",
-          "sha256": "a9f30b7de5b65fa56094f6cc36505aec2f4e721a9ce2931906f8011bc0b145f3",
-          "bytes": 21612
+          "sha256": "da20b039469687df97bbedd469c79c63f5296f4e1fd0380a21890c6442af6768",
+          "bytes": 18324
         }
       ]
     },
@@ -439,29 +439,29 @@
       },
       "host": "plugins.oceanleo.app",
       "entryUrl": "https://plugins.oceanleo.app/legal-calculator-01/",
-      "closureSha256": "a8ad1f14d17579e6b53c0aab754c6304d1e65af78aa25b10be030f92f3f4b486",
+      "closureSha256": "cd38540b66780d0c0139c4db917457225e336516a601c99945ecd7337263bea0",
       "fileCount": 4,
-      "totalBytes": 30042,
+      "totalBytes": 28851,
       "files": [
         {
           "path": "engine.js",
-          "sha256": "cdacbf8bb1b6b0adf9a7da7e030c035031eb59076f2ec25f26ab1cdc760d5d24",
-          "bytes": 7482
+          "sha256": "c482b6cbed38a12796fd889f22c8475e159b8c9bd83b595fbcbe42d6ee610600",
+          "bytes": 6926
         },
         {
           "path": "index.html",
-          "sha256": "6638180372cf0c855dd510ccb28e598e7f0671bb901b2d1daf528bd48df6fc87",
-          "bytes": 9151
+          "sha256": "09205ffbe6e34342f08553c206325c439bea2848074d6566843f5d3d9addedf5",
+          "bytes": 6188
         },
         {
           "path": "style.css",
-          "sha256": "6c5b0b446e5d9dde8b2f3e88cda72cf751b69bff01ea16345137f46d879c21d3",
-          "bytes": 4882
+          "sha256": "2f7fca523370e39687a63603ba999a47947090c0b701fb5ebef6a1a2d07c49bd",
+          "bytes": 6077
         },
         {
           "path": "ui.js",
-          "sha256": "7c877bcd9b9ea4a3ff35fa4c2774efe1c0b1881bd3d7de7b918f3e85428d84f5",
-          "bytes": 8527
+          "sha256": "3cbd9f047f1010f92a55c9f9d615233744241d68accd57b94778243dee892795",
+          "bytes": 9660
         }
       ]
     },
@@ -474,29 +474,29 @@
       },
       "host": "plugins.oceanleo.app",
       "entryUrl": "https://plugins.oceanleo.app/literature-matrix-01/",
-      "closureSha256": "2436aa74397e398870724ff4bfbc1e809f674dd6e8807690c4eb30cae9bd7328",
+      "closureSha256": "8440db2b687411043d7369544206ac4485ef4cb772437af35afbb604be5d625e",
       "fileCount": 4,
-      "totalBytes": 20242,
+      "totalBytes": 28968,
       "files": [
         {
           "path": "engine.js",
-          "sha256": "bff8e1e0f2798a3de47c881fdbe7c7893da125b78a99e4bb10253d1eacc05911",
-          "bytes": 8162
+          "sha256": "39480de3c6821c49052fad50f1514aa620da25cfbef82abef0a114db7f977b0f",
+          "bytes": 12200
         },
         {
           "path": "index.html",
-          "sha256": "e3181970d800330637812fe7659f5deef0f4147c22267ca0724e644081cb1ea0",
-          "bytes": 2114
+          "sha256": "000e38ad754d25ee5926cd748a1ed0c695a3909332ed3b429932bbdd808d4ab5",
+          "bytes": 1000
         },
         {
           "path": "style.css",
-          "sha256": "28ac5077f165fc0afe82e59f134e99469eb39023a1556f14c9f3ace8723a042f",
-          "bytes": 4562
+          "sha256": "93bb3fa80370ef1b7e319ed8d781c1db5650906916a5aaab20626073f6f84e23",
+          "bytes": 4917
         },
         {
           "path": "ui.js",
-          "sha256": "c4b96a829acf4d69ec68e904fe3033f06d8912802c0fbcd544aea686fb170389",
-          "bytes": 5404
+          "sha256": "ae0f801a166aca667f5903a2b15086c093bfb12fb07a0c65ce94668068377202",
+          "bytes": 10851
         }
       ]
     },
@@ -549,29 +549,29 @@
       },
       "host": "plugins.oceanleo.app",
       "entryUrl": "https://plugins.oceanleo.app/metrics-dashboard-01/",
-      "closureSha256": "080b78c4957b733694c31184e645c6bc3e32b07cef672586859b2f9bb644c579",
+      "closureSha256": "2aa84388a98d467421145d5daf4deb8a956748e9b4071139174b8a9a9b7476e4",
       "fileCount": 4,
-      "totalBytes": 28199,
+      "totalBytes": 40570,
       "files": [
         {
           "path": "engine.js",
-          "sha256": "ed5540ee473f695aaa58577f74eedffeeed4905b3c2f1776d21f179b776d920d",
-          "bytes": 8309
+          "sha256": "4d3c6e7c987676c5d6d1e1b41ff811dfeb8ebc5a2c8a79cd96fee589375cf4b6",
+          "bytes": 17374
         },
         {
           "path": "index.html",
-          "sha256": "19d9ce330b2ee99bbc0d2187dccd4a279e324914f71917fd0e41db1251cbba7c",
-          "bytes": 3633
+          "sha256": "f55656e4eee7145d205087d9d60ea8cd8bbfce14b97607cf78dbcb477cb2af76",
+          "bytes": 764
         },
         {
           "path": "style.css",
-          "sha256": "80aac1d86d6724ada1c82285d76bc6d771cc4eb84924efa0636b3ddff16dea19",
-          "bytes": 5772
+          "sha256": "afebe5c7c86fba2aa79e30a3b695747e7e1615c3ea5670334759f52fb3fc774e",
+          "bytes": 7464
         },
         {
           "path": "ui.js",
-          "sha256": "9a3e3fb1bf0395014f27edbd23c271b3876588cf4040f834c7e89e68775f4778",
-          "bytes": 10485
+          "sha256": "61b3d4f11d8cdb56ec1bb99ed49ab3e76a6833a7b6b67e0626bc3912c26c75a7",
+          "bytes": 14968
         }
       ]
     },
@@ -584,29 +584,29 @@
       },
       "host": "plugins.oceanleo.app",
       "entryUrl": "https://plugins.oceanleo.app/relationship-graph-01/",
-      "closureSha256": "629e15be9fa1fad42dcef08b5839667292b1158351c8ccb5fdcf80b5d4b12104",
+      "closureSha256": "663c7417e2fd8af06a30717d8faba280c875b930dbb4c927d950ba7861851298",
       "fileCount": 4,
-      "totalBytes": 36516,
+      "totalBytes": 46795,
       "files": [
         {
           "path": "engine.js",
-          "sha256": "0689d6c49a4c61006435b33e639ae0764cca1289b13b709081b784d6b0436def",
-          "bytes": 16231
+          "sha256": "49c2c8933e4943789067e242026cc35333472c7c83e8e48c3664a6c04f808567",
+          "bytes": 27841
         },
         {
           "path": "index.html",
-          "sha256": "a5a5f001e822d7fc1c2a22be96e0f9523ce28f29b8b874e125b05308bd24082c",
-          "bytes": 4022
+          "sha256": "e5039601d9d7249da3ee5f7990af36da40e55288fea990c729439bf40a5e9d4a",
+          "bytes": 1625
         },
         {
           "path": "style.css",
-          "sha256": "0b725e68229d8b018ce7f0e9c6092b358a6da3cc1d0ac1e31245039923b8650f",
-          "bytes": 5704
+          "sha256": "5e7bb24bb36ea67bb9e83f4de6d18f1f351797b22271988d814167a8a38c8377",
+          "bytes": 3049
         },
         {
           "path": "ui.js",
-          "sha256": "2324372e39bf15564e44469970a7b1feb012533a06363ddb86b6a192d5b9fb48",
-          "bytes": 10559
+          "sha256": "1d014dc272b2d16a5d6c2903d31a67fd59186b3cf0c43b07300756d3209d3547",
+          "bytes": 14280
         }
       ]
     },
@@ -619,9 +619,9 @@
       },
       "host": "plugins.oceanleo.app",
       "entryUrl": "https://plugins.oceanleo.app/self-test-quiz-01/",
-      "closureSha256": "94d79eaefa8c3fffa5e5bccc93c8416fb88c0c5913675f8c9f25ccab62fce758",
+      "closureSha256": "660257f485a37619c539d138e61176b874894e05e964fd9c6942f8a2bfff1f16",
       "fileCount": 4,
-      "totalBytes": 34124,
+      "totalBytes": 46629,
       "files": [
         {
           "path": "engine.js",
@@ -630,18 +630,18 @@
         },
         {
           "path": "index.html",
-          "sha256": "144bbe722956097cc9faf35598b2b83edf475dd7f452f5dc0f0c03a233306dc1",
-          "bytes": 4911
+          "sha256": "976beeb42011f46e5588cc90c49e3d4f4e5ba7a257088414da9b40fc9dd442f4",
+          "bytes": 2034
         },
         {
           "path": "style.css",
-          "sha256": "5457fa5f087532cb392fff833805b906063ce1b5f896242edf85bcc2f5bae361",
-          "bytes": 5995
+          "sha256": "8ef65e9b9d3c073dbe1f22852e8bdef01e78de55ba6f03080dfc98c75394aecf",
+          "bytes": 6558
         },
         {
           "path": "ui.js",
-          "sha256": "b1800ea66aa982277f0302bc7e5cb18aa004def95dcb90f038f042e024f43fd4",
-          "bytes": 10080
+          "sha256": "c7d31acd6bb5e5569f5fbf5b4d687942b38a2508a10aba2b6677c98a528e2f66",
+          "bytes": 24899
         }
       ]
     },
@@ -654,9 +654,9 @@
       },
       "host": "plugins.oceanleo.app",
       "entryUrl": "https://plugins.oceanleo.app/spaced-repetition-scheduler-01/",
-      "closureSha256": "4e602c94aedb5d8e0b3f9b80fd1f85ac7d07a81130097e931dcfe93505480e6d",
+      "closureSha256": "0363d933fb0139ef2507befb6fa4eae120d8878ce442fd2ddda8e5abfa40df05",
       "fileCount": 4,
-      "totalBytes": 23274,
+      "totalBytes": 19457,
       "files": [
         {
           "path": "engine.js",
@@ -665,18 +665,18 @@
         },
         {
           "path": "index.html",
-          "sha256": "74df14b2fa468f461fe214bd1405aec4732f397a694ab6f2901c95c05768207b",
-          "bytes": 3797
+          "sha256": "a89c775498fedc52e90546270e15a1208d973574158bb50065eca93caf83fadf",
+          "bytes": 1224
         },
         {
           "path": "style.css",
-          "sha256": "41f5c87d69ad8219cf0470e56b31048d5dcd3985810630b916ac120b18c266cf",
-          "bytes": 5584
+          "sha256": "457fdc364bbe18d635bf86f22821f47c6246e8450f49659073deb15a3cdf3400",
+          "bytes": 4267
         },
         {
           "path": "ui.js",
-          "sha256": "be02782dcc36d9b13ba96a572ffaca1741754cf6c36ef0c5453b69d07b8fe838",
-          "bytes": 6319
+          "sha256": "ac14508e2b205f1307b17f30d9dece7dd1150e4f8c04652f578ead5faa64fb5c",
+          "bytes": 6392
         }
       ]
     },
@@ -689,9 +689,9 @@
       },
       "host": "plugins.oceanleo.app",
       "entryUrl": "https://plugins.oceanleo.app/three-statement-model-01/",
-      "closureSha256": "588ab6093657b420564869ac0b6fb2d4baf9d7522a176e3ae88b115b653956d3",
+      "closureSha256": "f0beed8272fff16170c1c2e50a99803670c8e431dbdfa875c329e7a3d984b1ad",
       "fileCount": 4,
-      "totalBytes": 39749,
+      "totalBytes": 50408,
       "files": [
         {
           "path": "engine.js",
@@ -700,18 +700,18 @@
         },
         {
           "path": "index.html",
-          "sha256": "c54bec7de0a8ee1bcb826ea0d5649158ff0c99b51d3b1f3a1ba5f7490cce91cb",
-          "bytes": 5249
+          "sha256": "34810e4f8e5ac79ee9d2b4eb08e8347afa70bc9e631261017b6f5d586e2f2ad2",
+          "bytes": 12689
         },
         {
           "path": "style.css",
-          "sha256": "2530039a3e5e30cfb07f75dfd9b3c6c6f89daa5a7992b567cb723781e9cefd22",
-          "bytes": 5203
+          "sha256": "df6e0c977324560de82eafc05c2ed0c126ac2b2ddf27d4c808dcc346cdcd1c58",
+          "bytes": 5131
         },
         {
           "path": "ui.js",
-          "sha256": "84704b12c4452b832077f77b02d1a3025ae72b76aac0dac663af075002d12186",
-          "bytes": 12723
+          "sha256": "acca3d16ce7601859dbde5c3168f714261ad54885050f70f86f6d95a0dbe989e",
+          "bytes": 16014
         }
       ]
     },
@@ -724,29 +724,29 @@
       },
       "host": "plugins.oceanleo.app",
       "entryUrl": "https://plugins.oceanleo.app/voiceover-script-01/",
-      "closureSha256": "c41b33b362bf351f805c3b11279f46e767430777953d55800b0402a05d9ea8c5",
+      "closureSha256": "78716aa1994ab7aa1195b7542e36c7c8157e7683624fef87b0b435bd102fe989",
       "fileCount": 4,
-      "totalBytes": 30132,
+      "totalBytes": 27507,
       "files": [
         {
           "path": "engine.js",
-          "sha256": "acb3b2bbb344a27951f06978912b17f7c4f8c7c3949339bf03b13d7a2f446761",
-          "bytes": 11166
+          "sha256": "c8fae6e0673a167d1f88368e923d8b3720e26144e1b590daab861a02277b0cf1",
+          "bytes": 9517
         },
         {
           "path": "index.html",
-          "sha256": "64af380531fd872bb588080f4ecbcd69abe1c21c67b75d4a65619d4b3e742a1b",
-          "bytes": 4946
+          "sha256": "3add7374496b679b1d0a5b19bffb56f7c7bcff3efe3da7f1d6b0fb4fa2bd000c",
+          "bytes": 429
         },
         {
           "path": "style.css",
-          "sha256": "d56a5574d12cbb1e1e22579571f5a7370a59a8fb97f2d3cb6dd2aaca39fc3c53",
-          "bytes": 5318
+          "sha256": "4d32cda6f74de4141f31c0dc3e05c16c1d80e917de29bce40d0b4f380cbdd790",
+          "bytes": 5199
         },
         {
           "path": "ui.js",
-          "sha256": "16d3b383a2bf6bd733d1a2cea7ca0e0533c046d9e8afae1db3a0c09793a6b03b",
-          "bytes": 8702
+          "sha256": "418200637730dc2a9994071a08f09fb9336e2eb61c8ad9ddb16191dfc9b80060",
+          "bytes": 12362
         }
       ]
     },
