@@ -1,5 +1,140 @@
 [
   {
+    "id": "deck-html-editorial-office-01",
+    "artifactType": "deck",
+    "deliveryFamily": "html",
+    "title": "灯还亮着：120 个工位，一天里有多久是空的",
+    "styleId": "editorial",
+    "summary": "120 个工位，工作日占用中位只有 41 个。一份用杂志内页语汇写的内部说明：先给结论，再用一天的占用曲线、三种到岗方式的账和四张同一栋楼的照片把差额讲清楚——省下来的钱在表的前两行，代价在后两行。",
+    "cover": "/works/deck/deck-html-editorial-office-01.cover.webp",
+    "view": {
+      "kind": "deck",
+      "src": "/works/deck/src/deck-html-editorial-office-01/deck.json",
+      "source": "/works/deck/src/deck-html-editorial-office-01/deck.json",
+      "pages": [
+        "/works/deck/pages/deck-html-editorial-office-01/01.webp",
+        "/works/deck/pages/deck-html-editorial-office-01/02.webp",
+        "/works/deck/pages/deck-html-editorial-office-01/03.webp",
+        "/works/deck/pages/deck-html-editorial-office-01/04.webp",
+        "/works/deck/pages/deck-html-editorial-office-01/05.webp",
+        "/works/deck/pages/deck-html-editorial-office-01/06.webp",
+        "/works/deck/pages/deck-html-editorial-office-01/07.webp",
+        "/works/deck/pages/deck-html-editorial-office-01/08.webp",
+        "/works/deck/pages/deck-html-editorial-office-01/09.webp",
+        "/works/deck/pages/deck-html-editorial-office-01/10.webp",
+        "/works/deck/pages/deck-html-editorial-office-01/11.webp",
+        "/works/deck/pages/deck-html-editorial-office-01/12.webp"
+      ],
+      "aspect": 1.7778
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "3 张场景照片取自 OceanLeo 图池的 Pexels 来源（usage_scope=component-only，仅作复合成品内的像素成分）",
+        "licenseCode": "PEXELS",
+        "licenseUrl": "https://www.pexels.com/license/"
+      },
+      {
+        "text": "4 张场景照片取自 OceanLeo 图池的 Pixabay 来源（usage_scope=component-only，仅作复合成品内的像素成分）",
+        "licenseCode": "PIXABAY",
+        "licenseUrl": "https://pixabay.com/service/license/"
+      },
+      {
+        "text": "正文、数据与结论均为 OceanLeo 第一方原创示例，不对应任何真实公司",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "workflow": {
+      "id": "deck/html/editorial",
+      "name": "网页版 PPT · 杂志编辑",
+      "docs": {
+        "base": "docs/workflows/material-workflows/base/deck.md",
+        "scene": "docs/design-guides/deck/html/_INDEX.md",
+        "style": "docs/design-guides/deck/editorial.md",
+        "productGuide": "docs/design-guides/deck/html/_PRODUCT-DOC.md"
+      }
+    },
+    "readings": {
+      "deliveryFamily": "html",
+      "style": "editorial",
+      "scene": "sc-review",
+      "writer": "oceanleo-ui deck-html-package.ts",
+      "writerVersion": "0.213.1",
+      "finalHtmlByteSize": 737567,
+      "finalHtmlSha256": "f0fc1b626a966c486571f92d94574eaf0207abc15a6df066f07d353b29709583",
+      "slideCount": 12,
+      "theme": {
+        "surface": "FAFAF8",
+        "surfaceColors": [
+          "FAFAF8"
+        ],
+        "fontMajor": "Noto Serif CJK SC",
+        "fontMinor": "Noto Sans CJK SC",
+        "fontEastAsian": "Noto Serif SC",
+        "usedFontFamilies": [
+          "Noto Sans CJK SC",
+          "Noto Serif CJK SC",
+          "Noto Serif SC"
+        ],
+        "paletteColors": [
+          "0F172A",
+          "1F6FEB",
+          "475569",
+          "C47323",
+          "E5E7EB",
+          "F8FAFC",
+          "FAFAF8"
+        ]
+      },
+      "inlineImageReferenceCount": 7,
+      "inlineImageEmbeddedCount": 7,
+      "inlineImagePayloadBytes": 520632,
+      "remoteDependencyCount": 0,
+      "externalScriptCount": 0,
+      "forbiddenRuntimeApiCount": 0,
+      "navigationPaths": {
+        "keyboard": {
+          "previous": true,
+          "next": true
+        },
+        "click": {
+          "previous": true,
+          "next": true,
+          "stageHalves": true
+        },
+        "touch": {
+          "previous": true,
+          "next": true,
+          "pointerEvents": true
+        }
+      },
+      "pageSemanticsConsistent": true,
+      "photoPool": {
+        "source": "scripts/material-infra/deck-supply/pool.json",
+        "poolScene": "company-intro",
+        "photoCount": 7,
+        "tiers": {
+          "half": 2,
+          "grid": 5
+        },
+        "upscaled": 0,
+        "fullBleedExceptions": 0,
+        "note": "deck 第二件真走图池的成品，与 deck-neon-launch-01 是同一轮的两条链各一件。component-only 的照片只作为自包含 HTML 内的像素流，asset 仓不落任何独立照片文件。"
+      },
+      "htmlNotInPublic": "按 docs/design-guides/deck/html/_INDEX.md 的交付边界，可执行 HTML 不进 public/;asset 只放结构稿与静态预览。HTML 字节的 sha256 与体积记在本 readings 里，可由 deck.json 复现。",
+      "coverOrigin": "rendered-from-same-ir-via-deck-pptx",
+      "coverRenderPath": "同一份 oceanleo.deck.v1 结构稿喂给 deck-pptx（同 packId editorial-paper）→ soffice → pdftoppm → sharp webp",
+      "pagePreviewOrigin": "rendered-from-same-ir-via-deck-pptx",
+      "pagePreviewNote": "网页版写出器自己的像素要靠浏览器才能截，本波禁止浏览器验证，所以逐页预览由同一份结构稿经 deck-pptx 渲出。两条链共用同一个 packId 与 theme，版式与内容逐页一致；网页版真实字节的读数以 finalHtmlSha256 为准。",
+      "previewSourcePptxSha256": "8ecb0e385768fed7ea4f61c72b0187270b34061ac07ad8e7864a4b4c6d2a08ab",
+      "coverWidth": 1281,
+      "coverHeight": 720,
+      "coverByteSize": 12346,
+      "pagePreviewCount": 12
+    }
+  },
+  {
     "id": "deck-html-nocturne-01",
     "artifactType": "deck",
     "deliveryFamily": "html",

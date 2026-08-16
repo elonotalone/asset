@@ -1,0 +1,362 @@
+{
+ "schema": "oceanleo.deck.v1",
+ "version": 1,
+ "title": "首发那一夜：10,412 次点击，第七天还剩 620 个人",
+ "packId": "cyber-neon",
+ "sequenceId": "compact-pitch",
+ "theme": {
+  "accent": "7A5CFF",
+  "accent2": "22D3EE",
+  "accent3": "F471B5",
+  "fontMajor": "Noto Sans CJK SC",
+  "fontMinor": "Noto Sans CJK SC"
+ },
+ "master": {
+  "footerText": "首发复盘 · 2026-03 · 示例材料",
+  "showPageNumber": true,
+  "creditsBar": true
+ },
+ "assets": [
+  {
+   "id": "b14d3351-7411-4c09-a987-32cfd7aef566",
+   "sha256": "c81d8972b5c57e15431a3d4e6fc215cda773c13a363375a0205b267da30e4263",
+   "mediaType": "image/webp",
+   "byteSize": 114240,
+   "width": 1280,
+   "height": 850,
+   "licenseCode": "PIXABAY"
+  },
+  {
+   "id": "55ee8840-a86d-41b0-85b8-7d5333180832",
+   "sha256": "7728c0e5c953b6473b0a9199cfc98a9282675e473a0a60adca0be0565476f84c",
+   "mediaType": "image/webp",
+   "byteSize": 21992,
+   "width": 1040,
+   "height": 1300,
+   "licenseCode": "PEXELS"
+  },
+  {
+   "id": "cfd6d0b4-85a3-4dc0-abbe-cce82897b169",
+   "sha256": "fe3feef68d00ba589e0194c8d390f068ee28e2fc8f509cc7a2c8ebb557302df7",
+   "mediaType": "image/webp",
+   "byteSize": 116318,
+   "width": 1280,
+   "height": 853,
+   "licenseCode": "PIXABAY"
+  },
+  {
+   "id": "953d7576-24d6-4fb7-b645-839b0fc79771",
+   "sha256": "401bdd508ad6089f516c121f67f00eb1fb65390292483eb46cd01040687be50a",
+   "mediaType": "image/webp",
+   "byteSize": 110750,
+   "width": 1280,
+   "height": 853,
+   "licenseCode": "PIXABAY"
+  },
+  {
+   "id": "6968396d-d9b4-4e60-a92c-ef5c4d08d93e",
+   "sha256": "f9cba18b635ef300ec4284214e484f1de2ef865feb1f2db7ec6a03e6f8d972b2",
+   "mediaType": "image/webp",
+   "byteSize": 49352,
+   "width": 1280,
+   "height": 853,
+   "licenseCode": "PIXABAY"
+  },
+  {
+   "id": "67057e52-7cf5-45bd-ae19-8322f8ff215a",
+   "sha256": "29cc3fffbcdd633cae7656b167069f7da7edf60ca9fe848ddade03cf2c670c23",
+   "mediaType": "image/webp",
+   "byteSize": 95912,
+   "width": 1280,
+   "height": 853,
+   "licenseCode": "PIXABAY"
+  },
+  {
+   "id": "a6ede869-390c-4d77-84d0-adc0c61abd71",
+   "sha256": "559b0046f396f3d1a185df53c71d5d79ef9f5c610acea6c97c641bc91eb4b9d5",
+   "mediaType": "image/webp",
+   "byteSize": 86194,
+   "width": 1280,
+   "height": 829,
+   "licenseCode": "PIXABAY"
+  }
+ ],
+ "slides": [
+  {
+   "layout": "title",
+   "title": "首发那一夜",
+   "subtitle": "10,412 次点击，第七天还剩 620 个人 · 一次上线的逐步复盘",
+   "note": "开场只说一句：今晚要回答的不是「成不成功」，是「人在哪一步走掉的」。"
+  },
+  {
+   "layout": "section",
+   "title": "结论先说",
+   "body": "最大的一跌不在产品里。从看见到打开商店页，走掉了七成八——那一步我们既没设计过，也没量过。"
+  },
+  {
+   "layout": "kpi-row",
+   "title": "四个数",
+   "kpis": [
+    {
+     "value": "10,412",
+     "label": "看见并点了一下"
+    },
+    {
+     "value": "2,180",
+     "label": "装完并打开"
+    },
+    {
+     "value": "1,109",
+     "label": "完成注册"
+    },
+    {
+     "value": "620",
+     "label": "第七天还在"
+    }
+   ],
+   "note": "口径：统计窗口为上线后 168 小时，同一设备去重，不含内部账号。"
+  },
+  {
+   "layout": "chart-focus",
+   "title": "五步之间，人是怎么少的",
+   "chart": {
+    "chartType": "bar",
+    "categories": [
+     "看见",
+     "商店页",
+     "安装",
+     "注册",
+     "第七天"
+    ],
+    "series": [
+     {
+      "name": "剩下的人",
+      "values": [
+       10412,
+       2290,
+       2180,
+       1109,
+       620
+      ]
+     }
+    ],
+    "axisLabel": "人数",
+    "showDataLabels": true
+   },
+   "note": "看见 → 商店页那一段掉得最狠，而它是我们唯一没做过设计的一段。"
+  },
+  {
+   "layout": "image-grid",
+   "title": "用户走过的四个屏",
+   "body": "这四张不是我们的截图，是这四步各自发生的场景。把它们并排放，是为了让人看清：前两步根本不在我们的产品里。",
+   "images": [
+    {
+     "assetId": "b14d3351-7411-4c09-a987-32cfd7aef566",
+     "alt": "手机上的社交信息流，内容一条接一条向下滚动",
+     "fit": "cover",
+     "caption": "第一步：信息流里两秒钟"
+    },
+    {
+     "assetId": "55ee8840-a86d-41b0-85b8-7d5333180832",
+     "alt": "平铺摆放的手机与配件，屏幕朝上",
+     "fit": "cover",
+     "caption": "第二步：商店页——七成八在这里走掉"
+    },
+    {
+     "assetId": "cfd6d0b4-85a3-4dc0-abbe-cce82897b169",
+     "alt": "手持手机正在操作屏幕",
+     "fit": "cover",
+     "caption": "第三步：装完的第一分钟"
+    },
+    {
+     "assetId": "953d7576-24d6-4fb7-b645-839b0fc79771",
+     "alt": "笔记本屏幕上的网页界面",
+     "fit": "cover",
+     "caption": "第四步：第二天从网页回来"
+    }
+   ]
+  },
+  {
+   "layout": "bullets",
+   "title": "为什么是那一步",
+   "bullets": [
+    "商店页的首屏截图，是三个月前为另一个版本做的。",
+    "标题里写的是功能名，不是用户要解决的事。",
+    "加载中位 4.1 秒——在信息流跳出来的人，不会等。"
+   ],
+   "note": "三条都不是猜的：第一条查了资源提交记录，第二条对比了搜索词，第三条是端上埋点。"
+  },
+  {
+   "layout": "image-left",
+   "title": "那一屏长什么样",
+   "body": "商店页是这次唯一一处「用户已经想看了，我们却没准备好」的地方。它不属于产品，所以没人认领；不属于市场，所以没人量。",
+   "images": [
+    {
+     "assetId": "6968396d-d9b4-4e60-a92c-ef5c4d08d93e",
+     "alt": "桌面上的手机与笔记本，屏幕显示应用界面",
+     "fit": "cover",
+     "caption": "无人认领的一屏：它既不在产品的看板上，也不在投放的看板上"
+    }
+   ],
+   "note": "这一页的作用是让人记住这个位置，不是评价它好不好看。"
+  },
+  {
+   "layout": "comparison",
+   "title": "改一版，和不改",
+   "left": [
+    "旧版：功能名做标题，三个月前的截图",
+    "商店页停留中位 6 秒"
+   ],
+   "right": [
+    "新版：用一句用户原话做标题，截图当天重拍",
+    "商店页停留中位 14 秒"
+   ],
+   "note": "只改了标题与首屏两张图，没动产品。新版是上线第 4 天开始的，样本 3,100。"
+  },
+  {
+   "layout": "chart-with-notes",
+   "title": "分渠道看，差别更大",
+   "chart": {
+    "chartType": "line",
+    "categories": [
+     "第1天",
+     "第2天",
+     "第3天",
+     "第4天",
+     "第5天",
+     "第6天",
+     "第7天"
+    ],
+    "series": [
+     {
+      "name": "信息流来的人",
+      "values": [
+       100,
+       41,
+       28,
+       21,
+       17,
+       15,
+       14
+      ]
+     },
+     {
+      "name": "搜索来的人",
+      "values": [
+       100,
+       72,
+       63,
+       58,
+       55,
+       53,
+       52
+      ]
+     }
+    ],
+    "axisLabel": "留存（以首日为 100）"
+   },
+   "note": "搜索来的人第七天还剩一半，信息流来的只剩七分之一。买量之前先看这张图：同样的钱买来的不是同样的人。"
+  },
+  {
+   "layout": "image-right",
+   "title": "第七天还在的那 620 个人",
+   "body": "他们有一个共同点：第一天就完成了一次真正的使用，而不是只是逛了一圈。这一条在四个渠道里都成立。",
+   "images": [
+    {
+     "assetId": "67057e52-7cf5-45bd-ae19-8322f8ff215a",
+     "alt": "桌前的人正在使用电脑与手机工作",
+     "fit": "cover",
+     "caption": "留下来的人，第一天就把这件事用完了一遍"
+    }
+   ],
+   "note": "所以下一版要做的不是引导教程，是把第一次成功的路径缩短。"
+  },
+  {
+   "layout": "timeline",
+   "title": "那一夜发生了什么",
+   "milestones": [
+    {
+     "at": "20:00",
+     "label": "推文发出",
+     "detail": "前 30 分钟点击占全天的四成"
+    },
+    {
+     "at": "20:40",
+     "label": "商店页排队",
+     "detail": "加载中位从 2.2 秒升到 4.1 秒"
+    },
+    {
+     "at": "22:15",
+     "label": "临时换了首屏截图",
+     "detail": "换图后一小时转化回到 24%"
+    },
+    {
+     "at": "次日 09:00",
+     "label": "搜索流量接管",
+     "detail": "从这里开始，留存曲线换了一条"
+    }
+   ]
+  },
+  {
+   "layout": "mixed-triptych",
+   "title": "明天改哪两件",
+   "images": [
+    {
+     "assetId": "a6ede869-390c-4d77-84d0-adc0c61abd71",
+     "alt": "手中的智能手机，屏幕亮着",
+     "fit": "cover"
+    }
+   ],
+   "chart": {
+    "chartType": "bar",
+    "categories": [
+     "商店页首屏",
+     "首次成功路径"
+    ],
+    "series": [
+     {
+      "name": "预计能追回的人",
+      "values": [
+       1420,
+       380
+      ]
+     }
+    ],
+    "showDataLabels": true
+   },
+   "bullets": [
+    "商店页首屏与标题：本周内重做，归属写进产品看板。",
+    "第一次成功的路径：砍掉注册前的两步，下个版本。"
+   ],
+   "note": "预计值按本次实测的分段转化推的，不是目标值。"
+  },
+  {
+   "layout": "quote",
+   "title": "",
+   "quote": {
+    "text": "我不是不想用，我是没搞清楚它是干什么的就退出去了。",
+    "attribution": "第 4 天回访，信息流渠道用户"
+   },
+   "note": "这一页按 neon 的纪律不放照片：一句话在暗底上已经够响。"
+  }
+ ],
+ "attribution": {
+  "entries": [
+   {
+    "text": "6 张场景照片取自 OceanLeo 图池的 Pixabay 来源（usage_scope=component-only，仅作复合成品内的像素成分）",
+    "licenseCode": "PIXABAY",
+    "licenseUrl": "https://pixabay.com/service/license/"
+   },
+   {
+    "text": "1 张场景照片取自 OceanLeo 图池的 Pexels 来源（usage_scope=component-only，仅作复合成品内的像素成分）",
+    "licenseCode": "PEXELS",
+    "licenseUrl": "https://www.pexels.com/license/"
+   },
+   {
+    "text": "正文、数据与结论均为 OceanLeo 第一方原创示例，不对应任何真实产品",
+    "licenseCode": "CC0-1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+   }
+  ]
+ }
+}
