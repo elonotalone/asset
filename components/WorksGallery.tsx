@@ -180,7 +180,7 @@ function FamilySections({ group }: { group: WorksGroup }) {
   );
 }
 
-interface WorkflowTally {
+export interface WorkflowTally {
   id: string;
   name: string;
   count: number;
@@ -189,7 +189,7 @@ interface WorkflowTally {
 }
 
 /** 页面上有哪些产线、各产了几件、还有多少件没有归属。按首次出现的顺序排，不重排。 */
-function tallyWorkflows(groups: WorksGroup[]): { withWorkflow: number; rows: WorkflowTally[] } {
+export function tallyWorkflows(groups: WorksGroup[]): { withWorkflow: number; rows: WorkflowTally[] } {
   const rows = new Map<string, WorkflowTally>();
   let withWorkflow = 0;
   for (const group of groups) {

@@ -553,7 +553,12 @@ export function parseWorkflow(
   };
 }
 
-function parseEntry(raw: unknown, file: string, problems: string[]): WorkEntry | null {
+/**
+ * 一条片段 → 一件成品。`null` 表示这一条整条不上架；`problems` 里剩下的原因
+ * 属于「条目活着但少了一格」（今天只有 `workflow` 那一格）。导出是为了让测试
+ * 能拿真片段验「一格坏了不该带走整条」，页面侧仍只走 `readCatalog`。
+ */
+export function parseEntry(raw: unknown, file: string, problems: string[]): WorkEntry | null {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
     problems.push("不是对象");
     return null;
