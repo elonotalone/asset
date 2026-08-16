@@ -56,7 +56,7 @@
         "generator": "docs/work-logs/2026-08/material-workflow-visible/signals/W1-workshop/build-openaccess-index.py（文档仓）",
         "writer": "assemblers/web/projectors.mjs + tree/deterministic-zip.mjs",
         "deterministic": "同一份入参独立重跑两次，zip 与本条 sha256 三者逐字节相同（52359d549d7c…）；改名之后再从 site.json 重跑一次，出来的 zip 与已上架的那一份逐字节相同（cmp 无差异）",
-        "note": "与存量三件不同：那三件走 site-config.mjs 从 site.json 编译，这一件直接手写 code-project 正文调 site-zip。两条线的权威结构稿都落在 /works/website/<id>/site.json —— 装载器只认这个路径，schema 不同不影响；site.json 的 media[].path 指 _src/media/，所以从发布出来的这一份就能原地重建"
+        "note": "与存量三件不同：那三件走 site-config.mjs 从 site.json 编译，这一件直接手写 code-project 正文调 site-zip。两条线的权威结构稿都落在 /works/website/<id>/site.json —— 装载器只认这个路径，schema 不同不影响；site.json 的 media[].path 指 _src/media/，所以从发布出来的这一份就能原地重建；它与 generator 写出的那一份（原 _src/site-input.json）除这 12 行 path 前缀外逐字相同（diff 24 行，全在 path 上），重跑 generator 之后照这 12 处改前缀即可"
       },
       "entryCount": 17,
       "htmlCount": 1,
