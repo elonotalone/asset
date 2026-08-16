@@ -1,5 +1,122 @@
 [
   {
+    "id": "xhs-photo-press-02",
+    "artifactType": "composite_image",
+    "title": "专门跑一趟只为看一栋楼，值得吗",
+    "styleId": "xhs-photo-press",
+    "summary": "城市漫游封面：一张仰角实拍的建筑立面铺满整幅，三行深色主标题压在照片上部那块亮而平的天空上，一道短停顿线之下写一行落款。选图先量过——那块要放字的地方平均亮度 204、起伏 σ20，所以字用近黑而不是白；字底下没有垫任何色块，版面除照片外不引入新颜色。与同风格第 01 件的差别在文字块的位置与行数（那件是底部两行白字，这件是顶部三行深字），不是换张照片换句文案。",
+    "cover": "/works/composite_image/xhs-photo-press-02.cover.webp",
+    "view": {
+      "kind": "design-document",
+      "src": "/works/composite_image/xhs-photo-press-02.json",
+      "assets": {
+        "bg": "/works/composite_image/xhs-photo-press-02.bg.webp"
+      },
+      "download": "/works/composite_image/xhs-photo-press-02.full.webp",
+      "aspect": 0.75
+    },
+    "downloadable": true,
+    "workflow": {
+      "id": "composite_image/xhs/xhs-photo-press",
+      "name": "小红书封面 · 照片直压",
+      "docs": {
+        "base": "docs/workflows/material-workflows/base/composite_image.md",
+        "scene": "docs/design-guides/composite_image/xhs/_INDEX.md",
+        "style": "docs/design-guides/composite_image/xhs/xhs-photo-press.md",
+        "productGuide": "docs/design-guides/composite_image/xhs/_PRODUCT-DOC.md"
+      }
+    },
+    "attribution": [
+      {
+        "text": "背景照片：Pexels 素材库（平台 platform_assets all-pexels-37927678，原图 975×1300 未裁切未修改，仅作本复合件的组成部分使用）",
+        "licenseCode": "PEXELS",
+        "licenseUrl": "https://www.pexels.com/license/"
+      },
+      {
+        "text": "版面、文字与配色：OceanLeo 第一方原创",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "canvas": "1242x1656",
+      "axes": {
+        "style": "xhs-photo-press",
+        "hook": "question",
+        "topic": "shop-visit",
+        "composition": "fullbleed"
+      },
+      "producedBy": {
+        "step1": "project-json --in <正文>.json --out xhs-photo-press-02.json（信封 oceanleo.design-document.v1）",
+        "step2": "design-doc-raster --in <raster>.json --out out/（bg + full + cover 三件像素）",
+        "note": "两步都走注册工具，本件没有一次性脚本参与。"
+      },
+      "receipt": {
+        "envelope": "oceanleo.design-document.v1",
+        "bodyShape": "scene",
+        "entrypoint": "design-document.json",
+        "sourceBytes": 2725,
+        "canonicalByteSize": 1910,
+        "indentOverheadBytes": 815,
+        "declaredAssets": [
+          {
+            "assetId": "bg",
+            "path": "xhs-photo-press-02.bg.webp",
+            "sha256": "fe108fba19bcfb050cc573aea9f181bbf6a39b9693ecad551678a0fa2ff1622c",
+            "byteSize": 53918
+          }
+        ],
+        "declaredAssetCount": 1,
+        "attributionCount": 3,
+        "metrics": {
+          "elementCount": 4,
+          "elementTypeCount": 3,
+          "textElementCount": 2,
+          "paletteColorCount": 3,
+          "distinctZCount": 4,
+          "assetCount": 1,
+          "titleLength": 23,
+          "attributionCount": 3
+        },
+        "license": {
+          "usage_scope": "component-only",
+          "license_family": "PEXELS",
+          "supply_tier": "platform-pool"
+        }
+      },
+      "raster": {
+        "tool": "design-doc-raster",
+        "drawn": {
+          "text": 2,
+          "image": 1,
+          "placeholder": 0,
+          "shape": 0,
+          "lines": 1
+        },
+        "font": "Noto Sans CJK SC（第 2 张脸，落墨 3475 像素）",
+        "fullByteSize": 110716,
+        "coverByteSize": 47880,
+        "coverSize": "621x828",
+        "legibility": {
+          "previewWidth": 180,
+          "titlePx": 116,
+          "titlePxAtPreview": 16.8,
+          "titleContrast": 11.18,
+          "minTextPxAtPreview": 4.6,
+          "minContrast": 11.18,
+          "blockFingerprint": "image@0,0,1,1 | line@0.1,0.4,0.1,0 | text@0.1,0.1,0.7,0.3 | text@0.1,0.5,0.6,0"
+        }
+      },
+      "selfCheck": {
+        "photoPick": "选图时按风格文档 §3「有没有一块安静区」逐张量的：候选 5 张里这一张的标题落点 L204/σ20（第二名 L201/σ21 但整幅起伏更大，其余三张 σ 43–58）。量的是照片本身，不是成品。",
+        "textPlacement": "标题落点实测背衬 #bcd0db、落款落点 #d1d5dc，都在亮档，所以两处都取近黑 #16181A —— 风格文档 §4「亮照片配深字」。",
+        "photoScale": "原图 975×1300 与画布 1242×1656 同为 3:4，cover 无裁切，绘制时放大 1.274 倍；闭包里存的是未经处理的原件，没有落一份放大过的字节。",
+        "vs01": "与 01 件的版块指纹对照：01 是 text@0.1,0.7,0.8,0.2（底部两行白字），本件是 text@0.1,0.1,0.7,0.3（顶部三行深字）——风格文档 §8 要求的「位置与行数都变」两条都满足。",
+        "catalogGate": "本件 elementCount=4、源字节 2725 B，低于 design-document 载体契约 §8.1/§8.2 的入库线（元素 ≥ 20、源字节 ≥ 16384 B）。这不是本件的疏漏：小红书封面按场景文档只有标题与落款两层，凑到 20 个元素就是契约 §6 F2 点名的「凑数元素」。同族已上架的 3 件同样在线下（4/8/4 个元素）。处置见 base/composite_image.md §6.3，等操作员裁。"
+      }
+    }
+  },
+  {
     "id": "xhs-photo-press-01",
     "artifactType": "composite_image",
     "title": "城里 5 家坐到打烊的咖啡馆",
