@@ -75,6 +75,22 @@ function realEntry(file: string, index = 0): Record<string, unknown> {
   return parsed[index] as Record<string, unknown>;
 }
 
+/**
+ * 真片段里第一条**没有**这一格的条目 —— 存量对照组只能这么取，不能按下标。
+ *
+ * 下标取法在 2026-08-16 真的假红过一次：新件按合同要求**排在片段最前**，
+ * 而新件按同一份合同**必须带 `workflow`**，于是「第 0 条 = 存量」这个取样前提
+ * 被产线自己的纪律推翻了，跟产物对不对没关系。取不到对照组时这里**判红**，
+ * 不是静默跳过：存量条目真的一条不剩时，这条用例要证的事已经不存在，得换真夹具。
+ */
+function realEntryWithout(file: string, cell: string): Record<string, unknown> {
+  const parsed = JSON.parse(readFileSync(`content/works/${file}`, "utf8")) as Record<string, unknown>[];
+  assert.ok(Array.isArray(parsed), `${file} 不是数组`);
+  const hit = parsed.find((entry) => !(cell in entry));
+  assert.ok(hit, `${file} 里已经没有一条不带 \`${cell}\` 的存量条目 —— 对照组没了，这条用例得换夹具，不许改判据`);
+  return hit;
+}
+
 function parse(raw: unknown, file: string) {
   const problems: string[] = [];
   return { entry: worksModule.parseEntry(raw, file, problems), problems };
@@ -115,7 +131,7 @@ test("没这一格：69 件存量照常上架，卡片退回 styleId", () => {
   assert.equal(worksModule.parseWorkflow(undefined, "composite_image", problems), undefined);
   assert.deepEqual(problems, [], "缺这一格是对照组，不是问题");
 
-  const raw = realEntry("composite_image.xhs.json");
+  const raw = realEntryWithout("composite_image.xhs.json", "workflow");
   assert.equal("workflow" in raw, false, "存量片段本来就没有这一格");
   const { entry, problems: why } = parse(raw, "composite_image.xhs.json");
   assert.ok(entry);
