@@ -151,7 +151,9 @@ export const VIEW_KINDS: Readonly<Record<ViewKind, ViewKindSpec>> = {
   },
   workflow: {
     mode: "canvas",
-    label: "工作流",
+    // 同上：查看方式说的是「站内怎么打开」，详情页它与「工作流」一行并排，
+    // 两行同名会让人以为在说同一件事。
+    label: "流程图",
     src: "结构化流程 .json（nodes/edges）",
     extras: [],
     note: "站内按 nodes/edges 画流程图；节点缺坐标时按层序自动排。",
@@ -230,7 +232,10 @@ export const ARTIFACT_TYPE_LABELS: Readonly<Record<ArtifactType, string>> = {
   vector_image: "矢量图",
   model_3d: "三维模型",
   audio: "音频",
-  workflow: "工作流",
+  // `artifactType` 字符串仍是 `workflow`，只有显示名改了：这一格装的是流程图
+  // （传送带 / 分诊 / 状态机 / 多源汇一）。页面上的「工作流」一词留给
+  // `WorkWorkflow` 那一格——「这一件出自哪条产线」，同一页两个意思会看废。
+  workflow: "流程图工程",
   single_file_image: "图片",
   video: "视频",
 };
