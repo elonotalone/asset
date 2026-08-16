@@ -47,7 +47,8 @@
         "tofuBoxes": 0,
         "imagesLossless": "2/2",
         "cjkFaceDeclared": "Noto Sans CJK SC",
-        "cjkFaceEmbedded": "NotoSansCJKjp（转换容器只认字体合集的第 0 面，与本件无关）",
+        "cjkFaceEmbedded": "NotoSansCJKjp（转换容器只认字体合集的第 0 面）",
+      "cjkFaceImpact": "本件 380 个唯一汉字里 152 个在 SC/JP 两面下映到不同字形，正文里出现 625 次；码点、图、表、顺序全对，丢的只是字形。成因在转换镜像，不在这份 docx。",
         "report": "docs/work-logs/2026-08/material-workflow-visible/signals/W6-workshop/pdf-fidelity-metric-review-02.json"
       },
       "license": {
