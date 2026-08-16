@@ -1,5 +1,57 @@
 [
   {
+    "id": "grid-two-source-recon-01",
+    "artifactType": "grid",
+    "title": "双源对账模板 · 平台流水 ↔ 银行入账（2026 年 6 月）",
+    "styleId": "two-source-recon",
+    "summary": "素材是这张表本身：结论页先给平不平，明细页两源并置逐笔相减，口径页写清为什么可以不平。合计、不平笔数、差额占比、勾稽自校验全是公式，换掉明细就自己跟着变；里面那 24 笔只是够看懂用法的演示量。",
+    "cover": "/works/grid/grid-two-source-recon-01.cover.webp",
+    "view": {
+      "kind": "grid",
+      "src": "/works/grid/grid-two-source-recon-01.xlsx",
+      "download": "/works/grid/grid-two-source-recon-01.xlsx"
+    },
+    "downloadable": true,
+    "workflow": {
+      "id": "grid/two-source-recon",
+      "name": "表格 · 双源勾稽",
+      "docs": {
+        "base": "docs/workflows/material-workflows/base/grid.md",
+        "style": "docs/design-guides/grid/two-source-recon.md",
+        "productGuide": "docs/design-guides/grid/_PRODUCT-DOC.md"
+      }
+    },
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创模板。表内 24 笔流水、单号与机构均为演示虚构，公式与勾稽结构可原样套用到真实数据。",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "byteSize": 12763,
+      "sha256": "7b24011a81569208c11d345dea5c8bbdab358ead78163ee41fee897274eaa502",
+      "partCount": 13,
+      "sheetCount": 3,
+      "pictureCount": 0,
+      "chartPartCount": 0,
+      "formulaCells": 42,
+      "cachedValues": 42,
+      "formulaShare": "15.9%（42/264，载体下限 5%）",
+      "functionsUsed": "ABS COUNTIF IF IFERROR ROUND SUM SUMIF（全部在 22 个白名单内）",
+      "freeze": "逐笔明细首行冻结",
+      "autoFilter": "逐笔明细 A1:G26",
+      "selfCheck": "结论页「勾稽自校验」= IF(ROUND(合计差额,2)=ROUND(逐笔差额之和,2),\"平\",\"不平\")，当前读数「平」",
+      "reconTotals": "平台 484,741.50 / 银行 471,679.90 / 差额 13,061.60 / 不平 3 笔",
+      "openCheck": "容器 soffice --convert-to pdf 转出 8 页，合计与自校验的缓存值在 PDF 文本层里逐字回读",
+      "license": {
+        "usage_scope": "first-party",
+        "license_family": "CC0",
+        "supply_tier": "original"
+      }
+    }
+  },
+  {
     "id": "pack-capacity-model-01",
     "artifactType": "grid",
     "title": "离线素材包容量测算（三情景）",
