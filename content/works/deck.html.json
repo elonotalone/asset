@@ -131,14 +131,19 @@
       "htmlOnShelfEntry": "index.html",
       "htmlOnShelfZipByteSize": 535905,
       "htmlOnShelfZipSha256": "7dd2923126188461d3a3b2e7e5103e8e941e4c3254b3d23faf5bc815144133f2",
-      "coverOrigin": "rendered-from-its-own-final-html-bytes",
-      "pagePreviewOrigin": "rendered-from-its-own-final-html-bytes",
       "previewRenderer": "scripts/material-infra/assemblers/web/deck-html-package.mjs renderDeckHtmlPagePreviews",
       "previewRenderedFromSha256": "f0fc1b626a966c486571f92d94574eaf0207abc15a6df066f07d353b29709583",
       "previewBrowserUsed": false,
       "previewNote": "逐页预览与封面由本件自己的最终 HTML 字节离线画出:几何、颜色、字号、字体栈、文字、内嵌照片、图表 SVG 全部取自它的行内 style 与节点,画笔不认识 layout 也不认识风格包。每一页按「它是当前页」来画(运行时 show(i) 就是这么做的)。不起浏览器。",
       "coverSha256": "c7247016204ffb99ef147942d9cf3ddd87a697b1d2c7f2f9a8dc98a94c8ee9d5",
-      "previewFontFacesRegistered": "Noto Serif CJK SC, Noto Serif CJK SC, Noto Sans CJK SC, Noto Sans CJK SC"
+      "previewFontFacesRegistered": "Noto Serif CJK SC, Noto Serif CJK SC, Noto Sans CJK SC, Noto Sans CJK SC",
+      "coverOrigin": "rendered-from-its-own-final-html-bytes",
+      "pagePreviewOrigin": "rendered-from-its-own-final-html-bytes",
+      "previewTextLinesMeasured": 95,
+      "previewTextLinesInkClipped": 7,
+      "previewTextLinesFullyHidden": 1,
+      "previewCharactersNotFullyVisible": 171,
+      "previewClipNote": "被裁掉的字不是预览画错,是本体自己就这样:定高文本盒 overflow:hidden,行数或字号超出盒高的那几行在浏览器里同样看不到。谁改盒高见 E3-signals S3-4。"
     }
   },
   {
@@ -195,8 +200,6 @@
       "htmlOnShelfEntry": "index.html",
       "htmlOnShelfZipByteSize": 1455266,
       "htmlOnShelfZipSha256": "facfbba267713354380f32e8b20d8bf10aa8a2b3c4b375b40ba36085d6906f34",
-      "coverOrigin": "rendered-from-its-own-final-html-bytes",
-      "pagePreviewOrigin": "rendered-from-its-own-final-html-bytes",
       "previewRenderer": "scripts/material-infra/assemblers/web/deck-html-package.mjs renderDeckHtmlPagePreviews",
       "previewRenderedFromSha256": "852738ceab5a974d7d504278cc37cd5f28fe44a48c33620126b7c501449ab14b",
       "previewBrowserUsed": false,
@@ -208,7 +211,14 @@
       "coverSha256": "6dd5fad1ae9b177587ac702730b9fe4833a11e3909c34f0064bacc08451de8e8",
       "previewFontFacesRegistered": "Noto Serif CJK SC, Noto Serif CJK SC, Noto Sans CJK SC, Noto Sans CJK SC",
       "previewFontFamiliesUnavailable": "Noto Sans SC×28, Orbitron×8",
-      "previewFontFallbackNote": "这几支字面本机没装,按 CSS 字体栈的语义落到栈里下一支可用的族(通用 sans-serif → Noto Sans CJK SC);装不到这几支的浏览器也是这么落的。"
+      "previewFontFallbackNote": "这几支字面本机没装,按 CSS 字体栈的语义落到栈里下一支可用的族(通用 sans-serif → Noto Sans CJK SC);装不到这几支的浏览器也是这么落的。",
+      "coverOrigin": "rendered-from-its-own-final-html-bytes",
+      "pagePreviewOrigin": "rendered-from-its-own-final-html-bytes",
+      "previewTextLinesMeasured": 32,
+      "previewTextLinesInkClipped": 5,
+      "previewTextLinesFullyHidden": 0,
+      "previewCharactersNotFullyVisible": 57,
+      "previewClipNote": "被裁掉的字不是预览画错,是本体自己就这样:定高文本盒 overflow:hidden,行数或字号超出盒高的那几行在浏览器里同样看不到。谁改盒高见 E3-signals S3-4。"
     }
   },
   {
@@ -267,8 +277,6 @@
       "htmlOnShelfEntry": "index.html",
       "htmlOnShelfZipByteSize": 6728,
       "htmlOnShelfZipSha256": "b299a211ebf01f74b67f79be75563aecca250da7673541ba4fd3c7c73a1030a8",
-      "coverOrigin": "rendered-from-its-own-final-html-bytes",
-      "pagePreviewOrigin": "rendered-from-its-own-final-html-bytes",
       "previewRenderer": "scripts/material-infra/assemblers/web/deck-html-package.mjs renderDeckHtmlPagePreviews",
       "previewRenderedFromSha256": "66abbd67e34bbc85049f671f9fd45309603f05ddd47e1c514f280b87d54d2d0c",
       "previewBrowserUsed": false,
@@ -278,7 +286,14 @@
       "coverHeight": 720,
       "coverByteSize": 16834,
       "coverSha256": "0657506d1c1cbcd6fd0630a54d3772535f7be64ac169dc388b42e4e7bff163c8",
-      "previewFontFacesRegistered": "Noto Serif CJK SC, Noto Serif CJK SC, Noto Sans CJK SC, Noto Sans CJK SC"
+      "previewFontFacesRegistered": "Noto Serif CJK SC, Noto Serif CJK SC, Noto Sans CJK SC, Noto Sans CJK SC",
+      "coverOrigin": "rendered-from-its-own-final-html-bytes",
+      "pagePreviewOrigin": "rendered-from-its-own-final-html-bytes",
+      "previewTextLinesMeasured": 134,
+      "previewTextLinesInkClipped": 3,
+      "previewTextLinesFullyHidden": 2,
+      "previewCharactersNotFullyVisible": 50,
+      "previewClipNote": "被裁掉的字不是预览画错,是本体自己就这样:定高文本盒 overflow:hidden,行数或字号超出盒高的那几行在浏览器里同样看不到。谁改盒高见 E3-signals S3-4。"
     }
   },
   {
@@ -336,8 +351,6 @@
       "htmlOnShelfEntry": "index.html",
       "htmlOnShelfZipByteSize": 74423,
       "htmlOnShelfZipSha256": "718b1e151ff5259dcab7b514c89ec9b34d92c8b122229c803c606628c3388ad0",
-      "coverOrigin": "rendered-from-its-own-final-html-bytes",
-      "pagePreviewOrigin": "rendered-from-its-own-final-html-bytes",
       "previewRenderer": "scripts/material-infra/assemblers/web/deck-html-package.mjs renderDeckHtmlPagePreviews",
       "previewRenderedFromSha256": "82ec18836cd3f787d2c5d59a54742c96557e2325f9312e1986dc28de166c1047",
       "previewBrowserUsed": false,
@@ -349,7 +362,14 @@
       "coverSha256": "69beed6c5764c1167798c2888dc087af601e3074d361e9f0e0f36887f169115f",
       "previewFontFacesRegistered": "Noto Serif CJK SC, Noto Serif CJK SC, Noto Sans CJK SC, Noto Sans CJK SC",
       "previewFontFamiliesUnavailable": "Noto Sans SC×59, Space Grotesk×15",
-      "previewFontFallbackNote": "这几支字面本机没装,按 CSS 字体栈的语义落到栈里下一支可用的族(通用 sans-serif → Noto Sans CJK SC);装不到这几支的浏览器也是这么落的。"
+      "previewFontFallbackNote": "这几支字面本机没装,按 CSS 字体栈的语义落到栈里下一支可用的族(通用 sans-serif → Noto Sans CJK SC);装不到这几支的浏览器也是这么落的。",
+      "coverOrigin": "rendered-from-its-own-final-html-bytes",
+      "pagePreviewOrigin": "rendered-from-its-own-final-html-bytes",
+      "previewTextLinesMeasured": 87,
+      "previewTextLinesInkClipped": 19,
+      "previewTextLinesFullyHidden": 6,
+      "previewCharactersNotFullyVisible": 255,
+      "previewClipNote": "被裁掉的字不是预览画错,是本体自己就这样:定高文本盒 overflow:hidden,行数或字号超出盒高的那几行在浏览器里同样看不到。谁改盒高见 E3-signals S3-4。"
     }
   }
 ]
