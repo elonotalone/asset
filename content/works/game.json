@@ -1,5 +1,66 @@
 [
   {
+    "id": "one-shot-route-02",
+    "artifactType": "game",
+    "title": "一次点火",
+    "styleId": "one-shot-route",
+    "workflow": {
+      "id": "game/one-shot-route",
+      "name": "游戏 · 一次成行(入口件 + 一包外部贴图的闭包)",
+      "docs": {
+        "base": "docs/workflows/material-workflows/base/game.md",
+        "style": "docs/design-guides/game/one-shot-route.md",
+        "productGuide": "docs/design-guides/game/_PRODUCT-DOC.md"
+      }
+    },
+    "summary": "看清陨石带和燃料,一次把整条航线画完,然后点火——出发之后不接受任何输入。补给收齐、燃料够、进站,才算这一趟成了。三张固定盘面,每张都事先证过有走得通的线。画面用的是 Kenney「Simple Space」这一整套 CC0 贴图,不是几何色块。",
+    "cover": "/works/game/one-shot-route-02.cover.png",
+    "view": {
+      "kind": "game",
+      "src": "/works/game/one-shot-route-02.game.json",
+      "download": "/works/game/one-shot-route-02.game.json",
+      "aspect": 1.43
+    },
+    "downloadable": true,
+    "attribution": [
+      {
+        "text": "贴图 8 件:'Simple Space' by Kenney (kenney.nl)——同一套里取的 ship / station / meteor ×2 / star ×2 / effect / icon,原样随件不改",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      },
+      {
+        "text": "玩法、盘面与代码:OceanLeo (OCEANLEO-AIGEN)",
+        "licenseCode": "OCEANLEO-AIGEN",
+        "licenseUrl": "https://oceanleo.com/licenses/oceanleo-aigen"
+      }
+    ],
+    "readings": {
+      "entryCount": 10,
+      "hasEntrypoint": true,
+      "entrypoint": "one-shot-route-02.game.json",
+      "assetCount": 8,
+      "assetBytes": 9082,
+      "totalUncompressedBytes": 23475,
+      "entrypointByteSize": 14160,
+      "closureShape": "project-with-media",
+      "playSourceByteSize": 13038,
+      "coverByteSize": 49932,
+      "coverNonBlankRatio": 0.111841,
+      "coverColorCount": 1650,
+      "boardCount": 3,
+      "shortestLegalRouteSteps": [
+        14,
+        22,
+        24
+      ],
+      "fuelBudget": [
+        18,
+        25,
+        26
+      ]
+    }
+  },
+  {
     "id": "one-breath-reflex-01",
     "artifactType": "game",
     "title": "潮汐门",
