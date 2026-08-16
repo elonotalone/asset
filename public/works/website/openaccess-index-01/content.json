@@ -1,0 +1,382 @@
+{
+  "schema": "oceanleo.site-content/v1",
+  "title": "开放获取藏品索引 · 大都会博物馆美国厅 CC0 首批",
+  "summary": "首批 80 件里,57 件的标题逐字相同 —— 纯文字目录挑不出任何一件。这份索引把同一批 12 件按类别、按可用尺寸、按同名件三个轴各铺一遍,每一格只给认得出它所需的最少信息,剩下的交给图。",
+  "tags": [
+    "public-domain",
+    "open-access",
+    "archive-index",
+    "cc0"
+  ],
+  "entry": "index",
+  "seo": {
+    "description": "大都会博物馆美国厅 CC0 开放获取藏品的索引:12 件逐件登记像素、字节、许可三键与馆藏编号,同一批按类别、按可用尺寸、按同名件三个轴各铺一遍。",
+    "keywords": [
+      "公共领域",
+      "CC0",
+      "开放获取",
+      "藏品索引",
+      "可商用图片",
+      "大都会博物馆"
+    ]
+  },
+  "layout": {
+    "navPosition": "top",
+    "firstScreen": "statement",
+    "bodyFlow": "grid",
+    "gridColumns": 3,
+    "palette": {
+      "ink": "#1c1b18",
+      "ink-soft": "#6b6a62",
+      "paper": "#fbfaf7",
+      "paper-alt": "#f1efe9",
+      "rule": "#e3e0d7",
+      "accent": "#7a5c2e"
+    }
+  },
+  "pages": [
+    {
+      "id": "axis-kind",
+      "heading": "第一遍 · 按器物类别",
+      "intro": "同一批 12 件,先按它是什么东西铺一遍。每一格只给认得出它所需的最少信息:馆藏编号、作者、像素与字节、许可三键。**它长什么样由图回答** —— 这一批里有 57 件的名字一模一样,文字目录在这里是不够用的。",
+      "sections": [
+        {
+          "id": "kind-134",
+          "kind": "entry",
+          "heading": "北家宅退居室的建筑构件 · 室内与构件 · #134",
+          "copy": "馆藏编号 134 · United Society of Believers in Christ's Second Appearing (Shakers)\n\n图像 1963×1573 像素、165,202 字节 webp。够 1920 投影满屏;直印只到明信片尺寸。\n\n底色实测 #907254(有色底(非影棚白));主体占画面 48%,主体占画面三到五成,方形版位可直接裁。\n\n许可:CC0 —— usage_scope=standalone / license_family=public-domain / supply_tier=byte-portable,零署名义务。",
+          "alt": "馆方藏品照片:Architectural elements from a Retiring Room in the North Family Dwelling(馆藏编号 134),有色底(非影棚白),主体占画面约 48%",
+          "contentRefs": [
+            "met-134"
+          ]
+        },
+        {
+          "id": "kind-39",
+          "kind": "entry",
+          "heading": "诺里奇石器厂广告单 · 印刷品 · #39",
+          "copy": "馆藏编号 39 · The Metropolitan Museum of Art\n\n图像 1650×2048 像素、341,240 字节 webp。够 1920 投影满屏;直印只到明信片尺寸。\n\n底色实测 #f8f8f8(近白影棚底);主体占画面 44%,主体占画面三到五成,方形版位可直接裁。\n\n许可:CC0 —— usage_scope=standalone / license_family=public-domain / supply_tier=byte-portable,零署名义务。",
+          "alt": "馆方藏品照片:Advertisement for Norwich Stone Ware Factory(馆藏编号 39),近白影棚底,主体占画面约 44%",
+          "contentRefs": [
+            "met-39"
+          ]
+        },
+        {
+          "id": "kind-34",
+          "kind": "entry",
+          "heading": "橡实钟 · 计时器 · #34",
+          "copy": "馆藏编号 34 · Forestville Manufacturing Company\n\n图像 1605×2048 像素、112,952 字节 webp。够 1920 投影满屏;直印只到明信片尺寸。\n\n底色实测 #e8e8e8(近白影棚底);主体占画面 38%,主体占画面三到五成,方形版位可直接裁。\n\n许可:CC0 —— usage_scope=standalone / license_family=public-domain / supply_tier=byte-portable,零署名义务。",
+          "alt": "馆方藏品照片:Acorn Clock(馆藏编号 34),近白影棚底,主体占画面约 38%",
+          "contentRefs": [
+            "met-34"
+          ]
+        },
+        {
+          "id": "kind-140",
+          "kind": "entry",
+          "heading": "阿尔冈灯 · 灯具 · #140",
+          "copy": "馆藏编号 140 · Messenger Company\n\n图像 2048×1606 像素、138,522 字节 webp。够 1920 投影满屏;直印只到明信片尺寸。\n\n底色实测 #7a7881(深灰影棚底);主体占画面 54%,主体几乎占满画面,裁进方形版位会切到边缘。\n\n许可:CC0 —— usage_scope=standalone / license_family=public-domain / supply_tier=byte-portable,零署名义务。",
+          "alt": "馆方藏品照片:Argand Lamp(馆藏编号 140),深灰影棚底,主体占画面约 54%",
+          "contentRefs": [
+            "met-140"
+          ]
+        },
+        {
+          "id": "kind-41",
+          "kind": "entry",
+          "heading": "麦酒杯 · 玻璃器 · #41",
+          "copy": "馆藏编号 41 · Union Glass Company\n\n图像 1709×2048 像素、414,898 字节 webp。够 1920 投影满屏;直印只到明信片尺寸。\n\n底色实测 #888888(深灰影棚底);主体占画面 21%,主体只占画面一两成,不裁的话在小图里几乎看不见。\n\n许可:CC0 —— usage_scope=standalone / license_family=public-domain / supply_tier=byte-portable,零署名义务。",
+          "alt": "馆方藏品照片:Ale Glass(馆藏编号 41),深灰影棚底,主体占画面约 21%",
+          "contentRefs": [
+            "met-41"
+          ]
+        },
+        {
+          "id": "kind-126",
+          "kind": "entry",
+          "heading": "苹果摆件 · 陶瓷摆件 · #126",
+          "copy": "馆藏编号 126 · The Metropolitan Museum of Art\n\n图像 1589×2048 像素、324,474 字节 webp。够 1920 投影满屏;直印只到明信片尺寸。\n\n底色实测 #e4e4e4(近白影棚底);主体占画面 39%,主体占画面三到五成,方形版位可直接裁。\n\n许可:CC0 —— usage_scope=standalone / license_family=public-domain / supply_tier=byte-portable,零署名义务。",
+          "alt": "馆方藏品照片:Figure of an Apple(馆藏编号 126),近白影棚底,主体占画面约 39%",
+          "contentRefs": [
+            "met-126"
+          ]
+        },
+        {
+          "id": "kind-143",
+          "kind": "entry",
+          "heading": "三足扶手椅 · 坐具 · #143",
+          "copy": "馆藏编号 143 · The Metropolitan Museum of Art\n\n图像 1072×1508 像素、63,580 字节 webp。连 1920 投影都铺不满,只够做小图。\n\n底色实测 #e7e7e7(近白影棚底);主体占画面 42%,主体占画面三到五成,方形版位可直接裁。\n\n许可:CC0 —— usage_scope=standalone / license_family=public-domain / supply_tier=byte-portable,零署名义务。",
+          "alt": "馆方藏品照片:Three-legged Armchair(馆藏编号 143),近白影棚底,主体占画面约 42%",
+          "contentRefs": [
+            "met-143"
+          ]
+        },
+        {
+          "id": "kind-123",
+          "kind": "entry",
+          "heading": "壁炉柴架 · 壁炉柴架 · #123",
+          "copy": "馆藏编号 123 · Richard Wittingham\n\n图像 1925×1626 像素、376,544 字节 webp。够 1920 投影满屏;直印只到明信片尺寸。\n\n底色实测 #acacac(中灰影棚底);主体占画面 21%,主体只占画面一两成,不裁的话在小图里几乎看不见。\n\n许可:CC0 —— usage_scope=standalone / license_family=public-domain / supply_tier=byte-portable,零署名义务。",
+          "alt": "馆方藏品照片:Andiron(馆藏编号 123),中灰影棚底,主体占画面约 21%",
+          "contentRefs": [
+            "met-123"
+          ]
+        },
+        {
+          "id": "kind-69",
+          "kind": "entry",
+          "heading": "壁炉柴架 · 壁炉柴架 · #69",
+          "copy": "馆藏编号 69 · The Metropolitan Museum of Art\n\n图像 2048×1475 像素、338,850 字节 webp。够 1920 投影满屏;直印只到明信片尺寸。\n\n底色实测 #cfcfcf(浅灰影棚底);主体占画面 10%,主体只占画面一两成,不裁的话在小图里几乎看不见。\n\n许可:CC0 —— usage_scope=standalone / license_family=public-domain / supply_tier=byte-portable,零署名义务。",
+          "alt": "馆方藏品照片:Andiron(馆藏编号 69),浅灰影棚底,主体占画面约 10%",
+          "contentRefs": [
+            "met-69"
+          ]
+        },
+        {
+          "id": "kind-79",
+          "kind": "entry",
+          "heading": "壁炉柴架 · 壁炉柴架 · #79",
+          "copy": "馆藏编号 79 · The Metropolitan Museum of Art\n\n图像 2048×1700 像素、288,002 字节 webp。够 1920 投影满屏;直印只到明信片尺寸。\n\n底色实测 #b5b5b5(中灰影棚底);主体占画面 23%,主体只占画面一两成,不裁的话在小图里几乎看不见。\n\n许可:CC0 —— usage_scope=standalone / license_family=public-domain / supply_tier=byte-portable,零署名义务。",
+          "alt": "馆方藏品照片:Andiron(馆藏编号 79),中灰影棚底,主体占画面约 23%",
+          "contentRefs": [
+            "met-79"
+          ]
+        },
+        {
+          "id": "kind-111",
+          "kind": "entry",
+          "heading": "壁炉柴架 · 壁炉柴架 · #111",
+          "copy": "馆藏编号 111 · James Davis\n\n图像 2048×1631 像素、153,472 字节 webp。够 1920 投影满屏;直印只到明信片尺寸。\n\n底色实测 #b1b1b1(中灰影棚底);主体占画面 67%,主体几乎占满画面,裁进方形版位会切到边缘。\n\n许可:CC0 —— usage_scope=standalone / license_family=public-domain / supply_tier=byte-portable,零署名义务。",
+          "alt": "馆方藏品照片:Andiron(馆藏编号 111),中灰影棚底,主体占画面约 67%",
+          "contentRefs": [
+            "met-111"
+          ]
+        },
+        {
+          "id": "kind-74",
+          "kind": "entry",
+          "heading": "壁炉柴架 · 壁炉柴架 · #74",
+          "copy": "馆藏编号 74 · The Metropolitan Museum of Art\n\n图像 2048×1552 像素、137,634 字节 webp。够 1920 投影满屏;直印只到明信片尺寸。\n\n底色实测 #d8d8d8(浅灰影棚底);主体占画面 13%,主体只占画面一两成,不裁的话在小图里几乎看不见。\n\n许可:CC0 —— usage_scope=standalone / license_family=public-domain / supply_tier=byte-portable,零署名义务。",
+          "alt": "馆方藏品照片:Andiron(馆藏编号 74),浅灰影棚底,主体占画面约 13%",
+          "contentRefs": [
+            "met-74"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "axis-size",
+      "heading": "第二遍 · 按能用在哪里",
+      "intro": "同一批 12 件,换一个轴再铺一遍:按长边像素从大到小。这一遍不是筛选器,是第二份平铺目录 —— 关掉脚本它照样从头到尾都在。\n\n先说结论:**这 12 件没有一件够 A4 300dpi 直印**,长边最大的也只有 2048 像素。要拿去印刷的,回大都会官网按馆藏编号取原始文件;要做投影或网页的,包里这一份直接够用。",
+      "sections": [
+        {
+          "id": "size-34",
+          "kind": "entry",
+          "heading": "2048 px · 橡实钟 · #34",
+          "copy": "长边 2048 像素。够 1920 投影满屏;直印只到明信片尺寸。\n\n这一栏只回答一件事:拿去做什么尺寸不会糊。要挑哪一件,回上一栏看图。",
+          "alt": "馆方藏品照片:Acorn Clock(馆藏编号 34),近白影棚底,主体占画面约 38%",
+          "contentRefs": [
+            "met-34"
+          ]
+        },
+        {
+          "id": "size-39",
+          "kind": "entry",
+          "heading": "2048 px · 诺里奇石器厂广告单 · #39",
+          "copy": "长边 2048 像素。够 1920 投影满屏;直印只到明信片尺寸。\n\n这一栏只回答一件事:拿去做什么尺寸不会糊。要挑哪一件,回上一栏看图。",
+          "alt": "馆方藏品照片:Advertisement for Norwich Stone Ware Factory(馆藏编号 39),近白影棚底,主体占画面约 44%",
+          "contentRefs": [
+            "met-39"
+          ]
+        },
+        {
+          "id": "size-41",
+          "kind": "entry",
+          "heading": "2048 px · 麦酒杯 · #41",
+          "copy": "长边 2048 像素。够 1920 投影满屏;直印只到明信片尺寸。\n\n这一栏只回答一件事:拿去做什么尺寸不会糊。要挑哪一件,回上一栏看图。",
+          "alt": "馆方藏品照片:Ale Glass(馆藏编号 41),深灰影棚底,主体占画面约 21%",
+          "contentRefs": [
+            "met-41"
+          ]
+        },
+        {
+          "id": "size-140",
+          "kind": "entry",
+          "heading": "2048 px · 阿尔冈灯 · #140",
+          "copy": "长边 2048 像素。够 1920 投影满屏;直印只到明信片尺寸。\n\n这一栏只回答一件事:拿去做什么尺寸不会糊。要挑哪一件,回上一栏看图。",
+          "alt": "馆方藏品照片:Argand Lamp(馆藏编号 140),深灰影棚底,主体占画面约 54%",
+          "contentRefs": [
+            "met-140"
+          ]
+        },
+        {
+          "id": "size-126",
+          "kind": "entry",
+          "heading": "2048 px · 苹果摆件 · #126",
+          "copy": "长边 2048 像素。够 1920 投影满屏;直印只到明信片尺寸。\n\n这一栏只回答一件事:拿去做什么尺寸不会糊。要挑哪一件,回上一栏看图。",
+          "alt": "馆方藏品照片:Figure of an Apple(馆藏编号 126),近白影棚底,主体占画面约 39%",
+          "contentRefs": [
+            "met-126"
+          ]
+        },
+        {
+          "id": "size-69",
+          "kind": "entry",
+          "heading": "2048 px · 壁炉柴架 · #69",
+          "copy": "长边 2048 像素。够 1920 投影满屏;直印只到明信片尺寸。\n\n这一栏只回答一件事:拿去做什么尺寸不会糊。要挑哪一件,回上一栏看图。",
+          "alt": "馆方藏品照片:Andiron(馆藏编号 69),浅灰影棚底,主体占画面约 10%",
+          "contentRefs": [
+            "met-69"
+          ]
+        },
+        {
+          "id": "size-79",
+          "kind": "entry",
+          "heading": "2048 px · 壁炉柴架 · #79",
+          "copy": "长边 2048 像素。够 1920 投影满屏;直印只到明信片尺寸。\n\n这一栏只回答一件事:拿去做什么尺寸不会糊。要挑哪一件,回上一栏看图。",
+          "alt": "馆方藏品照片:Andiron(馆藏编号 79),中灰影棚底,主体占画面约 23%",
+          "contentRefs": [
+            "met-79"
+          ]
+        },
+        {
+          "id": "size-111",
+          "kind": "entry",
+          "heading": "2048 px · 壁炉柴架 · #111",
+          "copy": "长边 2048 像素。够 1920 投影满屏;直印只到明信片尺寸。\n\n这一栏只回答一件事:拿去做什么尺寸不会糊。要挑哪一件,回上一栏看图。",
+          "alt": "馆方藏品照片:Andiron(馆藏编号 111),中灰影棚底,主体占画面约 67%",
+          "contentRefs": [
+            "met-111"
+          ]
+        },
+        {
+          "id": "size-74",
+          "kind": "entry",
+          "heading": "2048 px · 壁炉柴架 · #74",
+          "copy": "长边 2048 像素。够 1920 投影满屏;直印只到明信片尺寸。\n\n这一栏只回答一件事:拿去做什么尺寸不会糊。要挑哪一件,回上一栏看图。",
+          "alt": "馆方藏品照片:Andiron(馆藏编号 74),浅灰影棚底,主体占画面约 13%",
+          "contentRefs": [
+            "met-74"
+          ]
+        },
+        {
+          "id": "size-134",
+          "kind": "entry",
+          "heading": "1963 px · 北家宅退居室的建筑构件 · #134",
+          "copy": "长边 1963 像素。够 1920 投影满屏;直印只到明信片尺寸。\n\n这一栏只回答一件事:拿去做什么尺寸不会糊。要挑哪一件,回上一栏看图。",
+          "alt": "馆方藏品照片:Architectural elements from a Retiring Room in the North Family Dwelling(馆藏编号 134),有色底(非影棚白),主体占画面约 48%",
+          "contentRefs": [
+            "met-134"
+          ]
+        },
+        {
+          "id": "size-123",
+          "kind": "entry",
+          "heading": "1925 px · 壁炉柴架 · #123",
+          "copy": "长边 1925 像素。够 1920 投影满屏;直印只到明信片尺寸。\n\n这一栏只回答一件事:拿去做什么尺寸不会糊。要挑哪一件,回上一栏看图。",
+          "alt": "馆方藏品照片:Andiron(馆藏编号 123),中灰影棚底,主体占画面约 21%",
+          "contentRefs": [
+            "met-123"
+          ]
+        },
+        {
+          "id": "size-143",
+          "kind": "entry",
+          "heading": "1508 px · 三足扶手椅 · #143",
+          "copy": "长边 1508 像素。连 1920 投影都铺不满,只够做小图。\n\n这一栏只回答一件事:拿去做什么尺寸不会糊。要挑哪一件,回上一栏看图。",
+          "alt": "馆方藏品照片:Three-legged Armchair(馆藏编号 143),近白影棚底,主体占画面约 42%",
+          "contentRefs": [
+            "met-143"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "axis-samename",
+      "heading": "第三遍 · 五件都叫「Andiron」,差在哪",
+      "intro": "首批 80 件里有 **57 件的标题逐字相同**,都叫 Andiron(壁炉柴架);80 件一共只有 17 个不同的标题。也就是说,**纯文字目录里这 57 行长得一模一样**,谁都挑不出自己要的那一件。\n\n这一遍从 57 件里取 5 件铺开。文字只给可核对的差异 —— 作者、幅面比、主体占幅、底色;它们到底长什么样,看图。**这就是这一页非有图不可的地方。**",
+      "sections": [
+        {
+          "id": "same-123",
+          "kind": "entry",
+          "heading": "Andiron · #123 · Richard Wittingham",
+          "copy": "幅面 1925×1626(比 1.18),底色实测 #acacac(中灰影棚底)。\n\n主体占画面 21%,包围盒占宽 100%、占高 88%。主体只占画面一两成,不裁的话在小图里几乎看不见。\n\n376,544 字节。这五件的登记信息里唯一逐件不同的是作者与幅面 —— 要按外形挑,只能看图。",
+          "alt": "馆方藏品照片:Andiron(馆藏编号 123),中灰影棚底,主体占画面约 21%",
+          "contentRefs": [
+            "met-123"
+          ]
+        },
+        {
+          "id": "same-69",
+          "kind": "entry",
+          "heading": "Andiron · #69 · 作者未著录",
+          "copy": "幅面 2048×1475(比 1.39),底色实测 #cfcfcf(浅灰影棚底)。\n\n主体占画面 10%,包围盒占宽 87%、占高 100%。主体只占画面一两成,不裁的话在小图里几乎看不见。\n\n338,850 字节。这五件的登记信息里唯一逐件不同的是作者与幅面 —— 要按外形挑,只能看图。",
+          "alt": "馆方藏品照片:Andiron(馆藏编号 69),浅灰影棚底,主体占画面约 10%",
+          "contentRefs": [
+            "met-69"
+          ]
+        },
+        {
+          "id": "same-79",
+          "kind": "entry",
+          "heading": "Andiron · #79 · 作者未著录",
+          "copy": "幅面 2048×1700(比 1.2),底色实测 #b5b5b5(中灰影棚底)。\n\n主体占画面 23%,包围盒占宽 100%、占高 95%。主体只占画面一两成,不裁的话在小图里几乎看不见。\n\n288,002 字节。这五件的登记信息里唯一逐件不同的是作者与幅面 —— 要按外形挑,只能看图。",
+          "alt": "馆方藏品照片:Andiron(馆藏编号 79),中灰影棚底,主体占画面约 23%",
+          "contentRefs": [
+            "met-79"
+          ]
+        },
+        {
+          "id": "same-111",
+          "kind": "entry",
+          "heading": "Andiron · #111 · James Davis",
+          "copy": "幅面 2048×1631(比 1.26),底色实测 #b1b1b1(中灰影棚底)。\n\n主体占画面 67%,包围盒占宽 100%、占高 100%。主体几乎占满画面,裁进方形版位会切到边缘。\n\n153,472 字节。这五件的登记信息里唯一逐件不同的是作者与幅面 —— 要按外形挑,只能看图。",
+          "alt": "馆方藏品照片:Andiron(馆藏编号 111),中灰影棚底,主体占画面约 67%",
+          "contentRefs": [
+            "met-111"
+          ]
+        },
+        {
+          "id": "same-74",
+          "kind": "entry",
+          "heading": "Andiron · #74 · 作者未著录",
+          "copy": "幅面 2048×1552(比 1.32),底色实测 #d8d8d8(浅灰影棚底)。\n\n主体占画面 13%,包围盒占宽 83%、占高 95%。主体只占画面一两成,不裁的话在小图里几乎看不见。\n\n137,634 字节。这五件的登记信息里唯一逐件不同的是作者与幅面 —— 要按外形挑,只能看图。",
+          "alt": "馆方藏品照片:Andiron(馆藏编号 74),浅灰影棚底,主体占画面约 13%",
+          "contentRefs": [
+            "met-74"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "axis-terms",
+      "heading": "取用条件与上游",
+      "intro": "这一节没有图,因为它回答的是一个文字问题。",
+      "sections": [
+        {
+          "id": "terms-license",
+          "kind": "note",
+          "heading": "许可:零义务",
+          "copy": "本批 12 件在素材库里的三键逐件相同:usage_scope=standalone(可独立取走)、license_family=public-domain(义务档为零)、supply_tier=byte-portable(字节可随件走)。对应的许可代码是 CC0 1.0,attribution_required 为 false。\n\n**判定看这三键,不看许可名字。** 也就是说:可以商用、可以改、不必署名。本包仍然附了一份 ATTRIBUTION.txt,那是礼节,不是义务。"
+        },
+        {
+          "id": "terms-upstream",
+          "kind": "note",
+          "heading": "上游:按馆藏编号回原站",
+          "copy": "每一件的馆藏编号就是大都会博物馆藏品页的编号,地址形如 https://www.metmuseum.org/art/collection/search/<编号>。要更大的原始文件、要展签上的完整著录(年代、尺寸、材质、入藏年份),从那里取。\n\n本索引不复制馆方的著录文字,只登记「这一件在我们这里有多大、能用在哪里、许可是什么」。"
+        },
+        {
+          "id": "terms-scope",
+          "kind": "note",
+          "heading": "这一版铺了多少",
+          "copy": "首批入库 80 件,本页铺出 12 件,其余 68 件按同一格式续铺。**没有铺完的部分如实写在这里,不写「持续更新中」** —— 你要判断的是这批东西够不够你用,而不是我们有多勤快。"
+        },
+        {
+          "id": "terms-howto",
+          "kind": "note",
+          "heading": "怎么拿走",
+          "copy": "整包下载后解压,图片在 assets/ 目录里,文件名就是 met-<馆藏编号>.webp。index.html 用浏览器直接打开即可,不需要服务器、不需要联网 —— 包里没有任何外链脚本与外链样式。"
+        }
+      ]
+    }
+  ],
+  "dependencies": []
+}

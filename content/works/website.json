@@ -1,5 +1,125 @@
 [
   {
+    "id": "openaccess-index-01",
+    "artifactType": "website",
+    "title": "开放获取藏品索引 · 大都会博物馆美国厅 CC0 首批",
+    "styleId": "open-index",
+    "summary": "首批 80 件里，57 件的标题逐字相同（都叫 Andiron），80 件一共只有 17 个不同标题——纯文字目录在这里挑不出任何一件。这份索引把同一批 12 件按器物类别、按可用尺寸、按同名件三个轴各铺一遍，每一格只给认得出它所需的最少信息：馆藏编号、作者、像素与字节、许可三键，剩下的交给图。12 张原图真进闭包（2,855,370 字节，占包内 97.9%），29 处引用，零外链。",
+    "cover": "/works/website/openaccess-index-01.cover.webp",
+    "view": {
+      "kind": "website",
+      "src": "/works/website/openaccess-index-01/content.json",
+      "source": "/works/website/openaccess-index-01/content.json",
+      "download": "/works/website/openaccess-index-01-source.zip",
+      "aspect": 1.6
+    },
+    "downloadable": true,
+    "workflow": {
+      "id": "website/open-index",
+      "name": "网站 · 开放索引",
+      "docs": {
+        "base": "docs/workflows/material-workflows/base/website.md",
+        "style": "docs/design-guides/website/open-index.md",
+        "productGuide": "docs/design-guides/website/_PRODUCT-DOC.md"
+      }
+    },
+    "attribution": [
+      {
+        "text": "The American Wing collection images — The Metropolitan Museum of Art, Open Access, CC0 1.0（公共领域，无署名义务；本条为礼节性致谢）",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      },
+      {
+        "text": "索引编排与全部读数：OceanLeo (OCEANLEO-AIGEN)",
+        "licenseCode": "OCEANLEO-AIGEN",
+        "licenseUrl": "https://oceanleo.com/licenses/oceanleo-aigen"
+      }
+    ],
+    "readings": {
+      "purpose": {
+        "who": "要给课件、展板、小册子找一张不惹版权麻烦的图的人：教师、小出版社编辑、做展陈的人。他坐在电脑前，手边开着自己那份要交的东西",
+        "problem": "这批 80 件里 57 件的标题逐字相同，纯文字目录的 57 行长得一模一样；而他还必须当场确认「能不能商用、要不要署名、够不够印」",
+        "wantVisitorToDo": "看着图挑出那一件，按馆藏编号回大都会官网取原始文件，或直接下载本包里的这一份",
+        "successMetric": "他挑走一件而没有回头问「这几个 Andiron 到底哪个是哪个」"
+      },
+      "axes": {
+        "purpose": "content-hub",
+        "industry": "government",
+        "structure": "card-index",
+        "layoutFamily": "minimal",
+        "style": "open-index"
+      },
+      "authoringSource": {
+        "schema": "code-project（website-source@1）",
+        "tool": "scripts/material-infra/assemblers/tools/site-zip.mjs",
+        "input": "/works/website/openaccess-index-01/_src/site-input.json",
+        "generator": "docs/work-logs/2026-08/material-workflow-visible/signals/W1-workshop/build-openaccess-index.py（文档仓）",
+        "writer": "assemblers/web/projectors.mjs + tree/deterministic-zip.mjs",
+        "deterministic": "同一份入参独立重跑两次，zip 与本条 sha256 三者逐字节相同（52359d549d7c…）",
+        "note": "与存量三件不同：那三件走 site-config.mjs 从 site.json 编译，这一件直接手写 code-project 正文调 site-zip"
+      },
+      "entryCount": 17,
+      "htmlCount": 1,
+      "assetCount": 12,
+      "companionCount": 0,
+      "totalUncompressedBytes": 2917566,
+      "hasIndexHtml": true,
+      "innerEntrypoint": "index.html",
+      "closureShape": "source-zip",
+      "zipByteSize": 2871951,
+      "zipSha256": "52359d549d7cd61b6df9401ff819c2131727a90c15af229785f14bd6a5932e30",
+      "pageCount": 4,
+      "sectionCount": 33,
+      "bodyCharCount": 5597,
+      "imageCount": 29,
+      "distinctImageFiles": 12,
+      "imageBytesInClosure": 2855370,
+      "imageByteShareOfClosure": 0.979,
+      "externalRefs": 0,
+      "emptyAltCount": 0,
+      "paragraphsReadableWithoutJs": 97,
+      "paragraphsMissingWithoutJs": 0,
+      "noJsCheck": "把 content.json 里每一段正文与每一条标题整段逐字（HTML 转义后）到 index.html 里比对，33 个区块 0 缺失；app.js 只写导航项与「本页共 N 个区块」，不产正文",
+      "upstreamBatch": {
+        "source": "platform_assets · type=image / category='The American Wing'",
+        "batchCount": 80,
+        "distinctTitles": 17,
+        "largestTitleCollision": "Andiron × 57",
+        "indexedHere": 12
+      },
+      "printFitness": "12 件长边最大 2048 像素，没有一件够 A4 300dpi（需 3508）；11 件够 1920 投影，met-143（1508）不够。这条读数是本站三个轴之一的依据",
+      "license": {
+        "usage_scope": "standalone",
+        "license_family": "public-domain",
+        "supply_tier": "byte-portable",
+        "attributionRequired": false,
+        "note": "判定看三键不看许可名字；CC0 零义务，包内 ATTRIBUTION.txt 是礼节不是义务"
+      },
+      "layout": {
+        "source": "input",
+        "navPosition": "top",
+        "firstScreen": "statement",
+        "bodyFlow": "grid",
+        "gridColumns": 3,
+        "measureCh": 62,
+        "blockCount": 33,
+        "mainBlockCount": 4,
+        "fingerprint": "9118554fc7778bdf",
+        "documentHeight": 7775,
+        "derivedFrom": "writer-layout-model",
+        "palette": {
+          "ink": "#1c1b18",
+          "ink-soft": "#6b6a62",
+          "paper": "#fbfaf7",
+          "paper-alt": "#f1efe9",
+          "rule": "#e3e0d7",
+          "accent": "#7a5c2e"
+        },
+        "paletteDerivedFrom": "body.theme 六槽逐个显式给出（open-index 要求近乎无彩、强调色只标当前维度）"
+      }
+    }
+  },
+  {
     "id": "law-intake-01",
     "artifactType": "website",
     "title": "劳动仲裁受理台 · 衡明劳动法律师事务所获客落地页",
@@ -42,7 +162,16 @@
         "compiler": "scripts/material-infra/assemblers/web/site-config.mjs",
         "deterministic": "从 site.json 重编译得到的 zip 与本条的 zip 逐字节相同（sha256 83c9aa7be92e…）",
         "sectionCount": 8,
-        "sectionTypes": ["contact", "faq", "timeline", "cases", "pricing", "about", "cta", "footer"]
+        "sectionTypes": [
+          "contact",
+          "faq",
+          "timeline",
+          "cases",
+          "pricing",
+          "about",
+          "cta",
+          "footer"
+        ]
       },
       "entryCount": 6,
       "htmlCount": 1,
@@ -143,7 +272,15 @@
         "compiler": "scripts/material-infra/assemblers/web/site-config.mjs",
         "deterministic": "从 site.json 重编译得到的 zip 与本条的 zip 逐字节相同（sha256 f8fcfadcbbe5…）",
         "sectionCount": 7,
-        "sectionTypes": ["hero", "menu", "pricing", "team", "faq", "contact", "footer"]
+        "sectionTypes": [
+          "hero",
+          "menu",
+          "pricing",
+          "team",
+          "faq",
+          "contact",
+          "footer"
+        ]
       },
       "entryCount": 8,
       "htmlCount": 1,
@@ -244,7 +381,17 @@
         "compiler": "scripts/material-infra/assemblers/web/site-config.mjs",
         "deterministic": "从 site.json 重编译得到的 zip 与本条的 zip 逐字节相同（sha256 9b6a57878b21…）",
         "sectionCount": 9,
-        "sectionTypes": ["hero", "about", "about", "about", "cases", "stats", "faq", "cta", "footer"]
+        "sectionTypes": [
+          "hero",
+          "about",
+          "about",
+          "about",
+          "cases",
+          "stats",
+          "faq",
+          "cta",
+          "footer"
+        ]
       },
       "entryCount": 8,
       "htmlCount": 1,
