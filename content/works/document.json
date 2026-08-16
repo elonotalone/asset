@@ -1,5 +1,63 @@
 [
   {
+    "id": "document-metric-review-02",
+    "artifactType": "document",
+    "title": "城市公共图书馆到馆与外借效能专项评审（2026 年上半年）",
+    "styleId": "metric-review",
+    "summary": "六张真表加两张趋势图，每个议题固定「一句结论—一段口径—一片数据」。这一件同时是「docx 能不能无损转 PDF」的实测样本：图、表、字、顺序转出来都在，字面会掉成日文字形。",
+    "cover": "/works/document/document-metric-review-02.cover.webp",
+    "view": {
+      "kind": "document",
+      "src": "/works/document/document-metric-review-02.docx",
+      "download": "/works/document/document-metric-review-02.docx"
+    },
+    "downloadable": true,
+    "workflow": {
+      "id": "document/metric-review",
+      "name": "文档 · 数据评审体",
+      "docs": {
+        "base": "docs/workflows/material-workflows/base/document.md",
+        "style": "docs/design-guides/document/metric-review.md",
+        "productGuide": "docs/design-guides/document/_PRODUCT-DOC.md"
+      }
+    },
+    "attribution": [
+      {
+        "text": "OceanLeo 第一方原创示例文档，馆名、口径与数据均为演示虚构；两张趋势图为本件自产位图。",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "byteSize": 64672,
+      "sha256": "f3484c4934f2800a7c3f7d0e63e25eba7994f5b8cf6382134f1a64924c674996",
+      "partCount": 13,
+      "sectionCount": 37,
+      "pictureCount": 2,
+      "chartPartCount": 0,
+      "tableCount": 6,
+      "tableRowCount": 41,
+      "tableCellCount": 205,
+      "pdfFidelity": {
+        "route": "soffice --headless --convert-to pdf:writer_pdf_Export（UseLosslessCompression=true）",
+        "renderedPageCount": 4,
+        "declaredPageCount": 3,
+        "declaredPageCountNote": "收据 layout.pageCount 是写出器版面模型的声明值，不是渲染实测；对外只引用 renderedPageCount。",
+        "textRoundTrip": "2305/2305 字符，声明文本 100% 回读",
+        "tofuBoxes": 0,
+        "imagesLossless": "2/2",
+        "cjkFaceDeclared": "Noto Sans CJK SC",
+        "cjkFaceEmbedded": "NotoSansCJKjp（转换容器只认字体合集的第 0 面，与本件无关）",
+        "report": "docs/work-logs/2026-08/material-workflow-visible/signals/W6-workshop/pdf-fidelity-metric-review-02.json"
+      },
+      "license": {
+        "usage_scope": "first-party",
+        "license_family": "CC0",
+        "supply_tier": "original"
+      }
+    }
+  },
+  {
     "id": "document-regulation-01",
     "artifactType": "document",
     "title": "远程与混合办公设备借用管理办法（试行）",

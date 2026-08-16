@@ -1,0 +1,23 @@
+{
+  "tool": "cover-frame",
+  "version": 1,
+  "meta": {
+    "title": "城市公共图书馆到馆与外借效能专项评审（2026 年上半年）",
+    "usage_scope": "first-party",
+    "license_family": "CC0",
+    "supply_tier": "original"
+  },
+  "media": [
+    {
+      "id": "artifact",
+      "path": "../document-metric-review-02.docx"
+    }
+  ],
+  "body": {
+    "sourceFormat": "docx"
+  },
+  "options": {
+    "dpi": 130,
+    "maxEdge": 1000
+  }
+}
