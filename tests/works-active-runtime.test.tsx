@@ -167,6 +167,7 @@ test("UC-1：WorksViewer 源码锁死无 iframe、srcdoc 与同站 runtime fallb
 });
 
 test("F9 sidecar 与 fragment 逐件对账，缺失或歪 URL 单件 fail-closed", () => {
+  // UC-1: docs/architecture/oceanleo-untrusted-content-isolation.md §8.1
   const manifest = readManifest();
   const parser = (worksModule as unknown as {
     activeRuntimeUrlsFrom?: (
@@ -291,6 +292,7 @@ test("WorkflowViewer 严格消费八角色 theme，三件 SVG 不再同皮", () 
 });
 
 test("十件 SSR 都有 cover、说明、合法外开与安全下载/源码入口", () => {
+  // UC-1: docs/architecture/oceanleo-untrusted-content-isolation.md §8.1
   const catalog = worksModule.loadWorks();
   RUNTIME_IDS.forEach((id, index) => {
     const work = catalog.works.find((candidate) => candidate.id === id);
@@ -329,6 +331,7 @@ test("十件 SSR 都有 cover、说明、合法外开与安全下载/源码入�
 });
 
 test("查看器对缺失或畸形 runtime 只显示不可用，不回退 asset 路径", () => {
+  // UC-1: docs/architecture/oceanleo-untrusted-content-isolation.md §8.1
   const work = worksModule.loadWorks().works.find((candidate) => candidate.id === GAME_IDS[0]);
   assert.ok(work);
   for (const runtime of [
