@@ -18,6 +18,7 @@ const GAME_IDS = [
   "echo-recall-01",
   "paper-deduction-01",
   "one-shot-route-01",
+  "one-shot-route-02",
   "quiet-consequence-01",
 ] as const;
 const WEBSITE_IDS = [
@@ -83,7 +84,7 @@ function validPlan(items: ActiveRuntimeManifestItem[]) {
   };
 }
 
-test("UC-1：九件运行字节移出 public，安全源与 F9 manifest 留下", () => {
+test("UC-1：十件运行字节移出 public，安全源与 F9 manifest 留下", () => {
   // UC-1: docs/architecture/oceanleo-untrusted-content-isolation.md §8.1
   const publicFiles = recursiveFiles("public");
   assert.ok(publicFiles.length > 0, "public 读空会让检查假绿");
@@ -108,7 +109,7 @@ test("UC-1：九件运行字节移出 public，安全源与 F9 manifest 留下",
 
   const manifest = readManifest();
   assert.equal(manifest.schema, "oceanleo.active-runtime-manifest.v1");
-  assert.equal(manifest.items.length, 9);
+  assert.equal(manifest.items.length, 10);
   assert.deepEqual(
     new Set(manifest.items.map((item) => item.id)),
     new Set(RUNTIME_IDS),
@@ -177,7 +178,7 @@ test("F9 sidecar 与 fragment 逐件对账，缺失或歪 URL 单件 fail-closed
 
   const plan = validPlan(manifest.items);
   const urls = parser?.(manifest, plan);
-  assert.equal(urls?.size, 9);
+  assert.equal(urls?.size, 10);
   for (const item of plan.items) {
     assert.equal(urls?.get(item.item.id), item.entryUrl);
   }
@@ -193,7 +194,7 @@ test("F9 sidecar 与 fragment 逐件对账，缺失或歪 URL 单件 fail-closed
     const malformed = structuredClone(plan);
     malformed.items[0].entryUrl = rejected;
     assert.equal(parser?.(manifest, malformed).has(manifest.items[0].id), false, rejected);
-    assert.equal(parser?.(manifest, malformed).size, 8, "坏一件不应误关其余八件");
+    assert.equal(parser?.(manifest, malformed).size, 9, "坏一件不应误关其余九件");
   }
 });
 
@@ -289,7 +290,7 @@ test("WorkflowViewer 严格消费八角色 theme，三件 SVG 不再同皮", () 
   assert.doesNotMatch(fallback, /evil\.invalid|position:fixed/i);
 });
 
-test("九件 SSR 都有 cover、说明、合法外开与安全下载/源码入口", () => {
+test("十件 SSR 都有 cover、说明、合法外开与安全下载/源码入口", () => {
   const catalog = worksModule.loadWorks();
   RUNTIME_IDS.forEach((id, index) => {
     const work = catalog.works.find((candidate) => candidate.id === id);
