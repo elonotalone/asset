@@ -6,7 +6,7 @@
     "styleId": "one-shot-route",
     "workflow": {
       "id": "game/one-shot-route",
-      "name": "游戏 · 一次成行(入口件 + 一包外部贴图的闭包)",
+      "name": "游戏 · 一次通关路线",
       "docs": {
         "base": "docs/workflows/material-workflows/base/game.md",
         "style": "docs/design-guides/game/one-shot-route.md",
