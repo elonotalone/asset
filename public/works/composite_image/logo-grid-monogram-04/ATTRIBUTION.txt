@@ -1,0 +1,6 @@
+# 署名与许可 —— 岚埠仓储 · 模数切分字组标志
+
+- OceanLeo 第一方原创标志设计(模数切分字组)
+  许可:CC0(https://creativecommons.org/publicdomain/zero/1.0/)
+- OceanLeo 程序化生成
+  许可:OCEANLEO-AIGEN(https://oceanleo.com/licenses/aigen)
