@@ -1,5 +1,131 @@
 [
   {
+    "id": "resume-engineering-01",
+    "artifactType": "composite_image",
+    "title": "系统与证据风格简历 · 后端与基础设施工程师",
+    "styleId": "resume-engineering",
+    "summary": "白底分区块的工程师简历：技能矩阵紧接身份区，两个项目单元逐条给出系统、规模、我的决定与结果。全页没有一条分隔线，也没有一根技能条——分区只靠区间空隙、区标题字重与类别名的主色。这是操作员那条「去掉简历里面的横线」在成品上的样子。",
+    "cover": "/works/composite_image/resume-engineering-01.cover.webp",
+    "view": {
+      "kind": "design-document",
+      "src": "/works/composite_image/resume-engineering-01.json",
+      "assets": {
+        "portrait": "/works/composite_image/resume-engineering-01.portrait.webp",
+        "icon-stack": "/works/composite_image/resume-engineering-01.icon-stack.webp",
+        "icon-database": "/works/composite_image/resume-engineering-01.icon-database.webp",
+        "icon-briefcase": "/works/composite_image/resume-engineering-01.icon-briefcase.webp",
+        "icon-folder": "/works/composite_image/resume-engineering-01.icon-folder.webp"
+      }
+    },
+    "downloadable": true,
+    "workflow": {
+      "id": "composite_image/resume/resume-engineering",
+      "name": "简历 · 工程师",
+      "docs": {
+        "base": "docs/workflows/material-workflows/base/composite_image.md",
+        "scene": "docs/design-guides/composite_image/resume/_INDEX.md",
+        "style": "docs/design-guides/composite_image/resume/resume-engineering.md",
+        "productGuide": "docs/design-guides/composite_image/resume/_PRODUCT-DOC.md"
+      }
+    },
+    "attribution": [
+      {
+        "text": "证件照:Pexels,取自平台素材库 platform_assets(category=ph-business,pexels-37299139,头肩裁切)",
+        "licenseCode": "PEXELS",
+        "licenseUrl": "https://www.pexels.com/license/",
+        "assetId": "portrait"
+      },
+      {
+        "text": "小节图标:Tabler Icons(MIT),取自平台素材库 platform_assets(category=icon)",
+        "licenseCode": "MIT",
+        "licenseUrl": "https://opensource.org/licenses/MIT",
+        "assetId": "icon-stack"
+      },
+      {
+        "text": "小节图标:Tabler Icons(MIT),取自平台素材库 platform_assets(category=icon)",
+        "licenseCode": "MIT",
+        "licenseUrl": "https://opensource.org/licenses/MIT",
+        "assetId": "icon-database"
+      },
+      {
+        "text": "小节图标:Tabler Icons(MIT),取自平台素材库 platform_assets(category=icon)",
+        "licenseCode": "MIT",
+        "licenseUrl": "https://opensource.org/licenses/MIT",
+        "assetId": "icon-briefcase"
+      },
+      {
+        "text": "小节图标:Tabler Icons(MIT),取自平台素材库 platform_assets(category=icon)",
+        "licenseCode": "MIT",
+        "licenseUrl": "https://opensource.org/licenses/MIT",
+        "assetId": "icon-folder"
+      },
+      {
+        "text": "证件照:Pexels,取自平台素材库 platform_assets(category=ph-business,pexels-37299139,头肩裁切)",
+        "licenseCode": "PEXELS",
+        "licenseUrl": "https://www.pexels.com/license/"
+      },
+      {
+        "text": "小节图标:Tabler Icons(MIT),取自平台素材库 platform_assets(category=icon)",
+        "licenseCode": "MIT",
+        "licenseUrl": "https://opensource.org/licenses/MIT"
+      }
+    ],
+    "readings": {
+      "envelope": "oceanleo.design-document.v1",
+      "bodyShape": "scene",
+      "entrypoint": "design-document.json",
+      "sourceBytes": 18864,
+      "canonicalByteSize": 12628,
+      "indentOverheadBytes": 6236,
+      "declaredAssets": [
+        {
+          "assetId": "portrait",
+          "path": "resume-engineering-01.portrait.webp",
+          "sha256": "1debea01e029dd7f3b725d41caf022d27740d6e21e271af3ae132c7df1e72c5e",
+          "byteSize": 13158
+        },
+        {
+          "assetId": "icon-stack",
+          "path": "resume-engineering-01.icon-stack.webp",
+          "sha256": "d94b981008c6a3a55fa36e45bed1c6dd62c1fcdf3f8c892ac6b80b745d51906c",
+          "byteSize": 2762
+        },
+        {
+          "assetId": "icon-database",
+          "path": "resume-engineering-01.icon-database.webp",
+          "sha256": "5ae5d8ff7ea121906b2b0a0f7294579c04786d945599df61065fcae00e6661d0",
+          "byteSize": 3000
+        },
+        {
+          "assetId": "icon-briefcase",
+          "path": "resume-engineering-01.icon-briefcase.webp",
+          "sha256": "22d43d2962bba222c415a3e97bea81d8ee30639c0a32829f1e2b09a56805688c",
+          "byteSize": 2666
+        },
+        {
+          "assetId": "icon-folder",
+          "path": "resume-engineering-01.icon-folder.webp",
+          "sha256": "7b6f47bad93d7e1c711ba8f24a6c2dc057649beccc1ff332d924849bc9f372ce",
+          "byteSize": 1848
+        }
+      ],
+      "declaredAssetCount": 5,
+      "attributionCount": 7,
+      "metrics": {
+        "elementCount": 44,
+        "elementTypeCount": 3,
+        "textElementCount": 38,
+        "paletteColorCount": 4,
+        "distinctZCount": 44,
+        "assetCount": 5,
+        "titleLength": 22,
+        "attributionCount": 7
+      },
+      "workflowProduction": null,
+      "license": null
+    }
+  },
+  {
     "id": "resume-clinical-01",
     "artifactType": "composite_image",
     "title": "资质先行风格简历 · 三甲医院 ICU 重症护理",
