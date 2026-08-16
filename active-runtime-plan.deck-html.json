@@ -1,10 +1,30 @@
 {
   "schema": "oceanleo.active-runtime-plan.v1",
   "manifest": "active-runtime-manifest.deck-html.json",
-  "manifestSha256": "551d1bdc9ddec564f4c0b5ecc51967f482d2fb24fe150464b17b9ef7fe50baae",
-  "itemCount": 3,
-  "totalBytes": 2172933,
+  "manifestSha256": "0c6b33b75aa5ce3917687c3b655b3e8750686e2b669eefea93d18f77d21bfae9",
+  "itemCount": 4,
+  "totalBytes": 2910500,
   "items": [
+    {
+      "item": {
+        "id": "deck-html-editorial-office-01",
+        "kind": "website",
+        "source": "content/active-runtime/website/deck-html-editorial-office-01",
+        "entry": "index.html"
+      },
+      "host": "s-e7d14092d25c0979463fa6a3f7871797.oceanleo.app",
+      "entryUrl": "https://s-e7d14092d25c0979463fa6a3f7871797.oceanleo.app/embed",
+      "closureSha256": "0c73dcc2ccc90ed21c6583d575c977fa4bbb6b261e54c92cdd2ca7649970732b",
+      "fileCount": 1,
+      "totalBytes": 737567,
+      "files": [
+        {
+          "path": "index.html",
+          "sha256": "f0fc1b626a966c486571f92d94574eaf0207abc15a6df066f07d353b29709583",
+          "bytes": 737567
+        }
+      ]
+    },
     {
       "item": {
         "id": "deck-html-nocturne-01",
