@@ -23,6 +23,7 @@ import {
   type WorkProduction,
   type WorkSheet,
   type WorkView,
+  type WorkWorkflow,
 } from "@/components/WorksKinds";
 
 export * from "@/components/WorksKinds";
@@ -33,6 +34,11 @@ export interface WorkProblem {
   /** 片段里的下标或 id，整份文件的问题时为 null。 */
   at: string | null;
   reason: string;
+  /**
+   * 丢掉的是整条还是条目里的一格。缺省按整条读（本字段之前的全部调用都是整条）。
+   * `cell` 的条目**仍然上架**，只是少了那一格 —— 构建日志里两者不能说成同一句话。
+   */
+  dropped?: "entry" | "cell";
 }
 
 export interface WorksTypeGroup {
@@ -478,6 +484,75 @@ function parseProduction(v: unknown): WorkProduction | undefined {
   };
 }
 
+/** 文档仓里的一份 markdown 的仓内相对路径。站内地址、URL、越界路径一律不算。 */
+const WORKFLOW_DOC_PATH = /^docs\/[A-Za-z0-9._/-]+\.md$/;
+/** `<artifact_type>[/<scene>]/<styleId>`：首段是 14 类之一，另有一到两段。 */
+const WORKFLOW_ID_TAIL = /^[a-z0-9][a-z0-9._-]*$/;
+
+function workflowDocPath(v: unknown): string | null {
+  if (!nonEmptyString(v) || v.includes("..") || !WORKFLOW_DOC_PATH.test(v)) return null;
+  return v;
+}
+
+/**
+ * 「这一件出自哪条产线」（合同 §3.2）。**坏了只丢这一格，条目照常上架** ——
+ * 66 件存量本来就没有这一格，把它当成条目的必要条件会把整个作品页清空。
+ *
+ * 严到能挡住写错的路径与对不上号的品类，松到不会把合法片段判错：字段名与形状
+ * 逐字照合同，多出来的键忽略不计。首段必须与 `artifactType` 一致 —— 一件表格
+ * 挂着 `deck/...` 的工作流是数据错，不是显示问题，摆出来只会误导操作员。
+ */
+export function parseWorkflow(
+  v: unknown,
+  artifactType: ArtifactType,
+  problems: string[],
+): WorkWorkflow | undefined {
+  if (v === undefined) return undefined;
+  if (!isRecord(v)) {
+    problems.push("workflow 不是对象，这一格丢掉");
+    return undefined;
+  }
+  const segments = nonEmptyString(v.id) ? v.id.split("/") : [];
+  if (
+    segments.length < 2 ||
+    segments.length > 3 ||
+    !segments.slice(1).every((s) => WORKFLOW_ID_TAIL.test(s))
+  ) {
+    problems.push(`workflow.id 不是 <artifact_type>[/<scene>]/<styleId>：${JSON.stringify(v.id)}`);
+    return undefined;
+  }
+  if (segments[0] !== artifactType) {
+    problems.push(`workflow.id 的品类 ${segments[0]} 与本条的 ${artifactType} 对不上`);
+    return undefined;
+  }
+  if (!nonEmptyString(v.name)) {
+    problems.push("workflow.name 缺失（没有名字的产线在页面上等于没有）");
+    return undefined;
+  }
+  if (!isRecord(v.docs)) {
+    problems.push("workflow.docs 缺失或不是对象");
+    return undefined;
+  }
+  const base = workflowDocPath(v.docs.base);
+  const style = workflowDocPath(v.docs.style);
+  const productGuide = workflowDocPath(v.docs.productGuide);
+  if (!base || !style || !productGuide) {
+    problems.push("workflow.docs 的 base/style/productGuide 必须都是 docs/… 下的 .md 仓内路径");
+    return undefined;
+  }
+  // scene 这一层可缺（无场景的品类没有它）；给了就必须是同样形状的路径。
+  const scene = v.docs.scene === undefined ? null : workflowDocPath(v.docs.scene);
+  if (v.docs.scene !== undefined && !scene) {
+    problems.push(`workflow.docs.scene 不是 docs/… 下的 .md：${JSON.stringify(v.docs.scene)}`);
+    return undefined;
+  }
+  return {
+    id: v.id as string,
+    name: v.name,
+    docs: { base, ...(scene ? { scene } : {}), style, productGuide },
+  };
+}
+
 function parseEntry(raw: unknown, file: string, problems: string[]): WorkEntry | null {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
     problems.push("不是对象");
@@ -558,6 +633,7 @@ function parseEntry(raw: unknown, file: string, problems: string[]): WorkEntry |
     ...(deliveryFamily ? { deliveryFamily } : {}),
     title: e.title,
     styleId: nonEmptyString(e.styleId) ? e.styleId : "",
+    workflow: parseWorkflow(e.workflow, e.artifactType, problems),
     summary: nonEmptyString(e.summary) ? e.summary : "",
     cover: e.cover as string,
     view,
@@ -620,6 +696,11 @@ function readCatalog(): WorksCatalog {
         return;
       }
       seen.set(entry.id, file);
+      // 条目活下来时 why[] 里剩下的是「丢了一格」的原因（今天只有 workflow 那一格）。
+      // 不收进来的话，写错的产线归属会悄无声息地不显示，谁都不会发现。
+      for (const reason of why) {
+        problems.push({ file, at, reason, dropped: "cell" });
+      }
       const runtime = runtimeUrlForWork(entry, runtimeUrls);
       if (runtime) entry.view.runtime = runtime;
       works.push(entry);
@@ -651,8 +732,9 @@ export function loadWorks(): WorksCatalog {
   if (!cached) {
     cached = readCatalog();
     for (const p of cached.problems) {
+      const what = p.dropped === "cell" ? "少一格" : "跳过";
       console.warn(
-        `[works] 跳过 ${p.file}${p.at ? ` 的 ${p.at}` : ""}：${p.reason}`,
+        `[works] ${what} ${p.file}${p.at ? ` 的 ${p.at}` : ""}：${p.reason}`,
       );
     }
   }

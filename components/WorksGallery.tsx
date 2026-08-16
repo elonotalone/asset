@@ -83,7 +83,15 @@ function WorkCard({ work }: { work: WorkEntry }) {
       <div className="flex min-w-0 flex-col gap-0.5 px-3 py-2">
         <span className="truncate text-sm font-medium text-zinc-800">{work.title}</span>
         {work.summary && <span className="line-clamp-2 text-xs text-zinc-500">{work.summary}</span>}
-        {work.styleId && <span className="truncate text-[11px] text-zinc-400">{work.styleId}</span>}
+        {/* 这一行回答「这是哪条产线做的」。挂了工作流的显示产线中文名并染色，
+            没挂的退回 styleId 灰字 —— 两者一眼分得开，才看得出哪些件还没有归属。 */}
+        {work.workflow ? (
+          <span className="truncate text-[11px] text-sky-700" title={work.workflow.id}>
+            {tt(work.workflow.name)}
+          </span>
+        ) : work.styleId ? (
+          <span className="truncate text-[11px] text-zinc-400">{work.styleId}</span>
+        ) : null}
       </div>
     </Link>
   );
@@ -172,8 +180,93 @@ function FamilySections({ group }: { group: WorksGroup }) {
   );
 }
 
+interface WorkflowTally {
+  id: string;
+  name: string;
+  count: number;
+  /** 跳回这条产线所属的那一格。 */
+  type: ArtifactType;
+}
+
+/** 页面上有哪些产线、各产了几件、还有多少件没有归属。按首次出现的顺序排，不重排。 */
+function tallyWorkflows(groups: WorksGroup[]): { withWorkflow: number; rows: WorkflowTally[] } {
+  const rows = new Map<string, WorkflowTally>();
+  let withWorkflow = 0;
+  for (const group of groups) {
+    for (const work of group.works) {
+      if (!work.workflow) continue;
+      withWorkflow += 1;
+      const row = rows.get(work.workflow.id);
+      if (row) row.count += 1;
+      else {
+        rows.set(work.workflow.id, {
+          id: work.workflow.id,
+          name: work.workflow.name,
+          count: 1,
+          type: work.artifactType,
+        });
+      }
+    }
+  }
+  return { withWorkflow, rows: [...rows.values()] };
+}
+
+/**
+ * 产线清单。这是操作员改产线、删产线的入口：他要先看见「平台一共有哪些产线、
+ * 每条做出来是什么效果」，才谈得上给反馈。所以名字、id、件数三样都摆出来，
+ * 还没归属的件数也照实说 —— 藏起来会让人以为产线已经全覆盖了。
+ */
+function WorkflowRoster({ rows, total, withWorkflow }: {
+  rows: WorkflowTally[];
+  total: number;
+  withWorkflow: number;
+}) {
+  const tt = useUI();
+  const legacy = total - withWorkflow;
+  return (
+    <section className="mb-6 rounded-xl border border-zinc-200 bg-zinc-50/60 px-4 py-3">
+      <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+        <h2 className="text-sm font-semibold text-zinc-800">{tt("产线（工作流）")}</h2>
+        <p className="text-xs text-zinc-500">
+          {tt("共 {total} 件，其中 {n} 件已挂到工作流，{k} 件是历史存量。", {
+            total,
+            n: withWorkflow,
+            k: legacy,
+          })}
+        </p>
+      </div>
+      {rows.length === 0 ? (
+        <p className="mt-2 text-xs text-zinc-500">
+          {tt("还没有任何一件成品挂上工作流；上面这些都是本波之前的存量。")}
+        </p>
+      ) : (
+        <ul className="mt-2.5 flex flex-wrap gap-1.5">
+          {rows.map((row) => (
+            <li key={row.id}>
+              <a
+                href={`#${row.type}`}
+                className="flex items-baseline gap-1.5 rounded-lg border border-sky-200 bg-white px-2.5 py-1.5 transition hover:border-sky-400"
+              >
+                <span className="text-xs font-medium text-sky-800">{tt(row.name)}</span>
+                <span className="font-mono text-[10px] text-zinc-400">{row.id}</span>
+                <span className="text-[11px] text-zinc-500">{tt("{n} 件", { n: row.count })}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+      <p className="mt-2 text-[11px] leading-5 text-zinc-400">
+        {tt(
+          "一条产线 = 基础架构文档 + 风格设计文档 + 产品文档设计指南。点开任意一件成品，右栏「工作流」一行列出它这三份文档在文档仓里的路径。",
+        )}
+      </p>
+    </section>
+  );
+}
+
 export function WorksGallery({ groups, total }: { groups: WorksGroup[]; total: number }) {
   const tt = useUI();
+  const { withWorkflow, rows } = useMemo(() => tallyWorkflows(groups), [groups]);
 
   return (
     <div className="mx-auto w-full max-w-6xl px-5 py-6">
@@ -186,12 +279,27 @@ export function WorksGallery({ groups, total }: { groups: WorksGroup[]; total: n
         </p>
       </header>
 
+      {/* 插件（含编辑器）自己有一整套陈列页，在这里再摆一遍只会把同一批东西说成两批。
+          所以这里只留一个去处，不重复陈列。 */}
+      <Link
+        href="/plugin-gallery"
+        className="mb-6 flex flex-wrap items-baseline gap-x-2 gap-y-1 rounded-xl border border-zinc-200 bg-white px-4 py-2.5 transition hover:border-zinc-400"
+      >
+        <span className="text-sm font-medium text-zinc-800">{tt("插件与编辑器")}</span>
+        <span className="text-xs text-zinc-500">
+          {tt("不在这一页陈列，它们有自己的成品页。")}
+        </span>
+        <span className="text-xs text-sky-700">{tt("去插件成品页 →")}</span>
+      </Link>
+
       {total === 0 ? (
         <div className="rounded-xl border border-dashed border-zinc-300 px-6 py-16 text-center">
           <p className="text-sm text-zinc-500">{tt("成品还在产线上，这里很快就会有东西。")}</p>
         </div>
       ) : (
         <>
+          <WorkflowRoster rows={rows} total={total} withWorkflow={withWorkflow} />
+
           <nav className="mb-6 flex flex-wrap gap-1.5">
             {groups.map((g) => (
               <a

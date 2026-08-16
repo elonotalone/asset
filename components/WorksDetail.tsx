@@ -9,8 +9,10 @@ import {
   familiesFor,
   familyAnchor,
   familyOf,
+  workflowDocRows,
   type ExtractedContent,
   type WorkEntry,
+  type WorkWorkflow,
 } from "@/components/WorksKinds";
 import { WorksViewer, type WorkPayload } from "@/components/WorksViewer";
 
@@ -22,6 +24,35 @@ function readingRows(readings: Record<string, unknown> | undefined): [string, st
   return Object.entries(readings)
     .filter(([, v]) => v !== null && v !== undefined && typeof v !== "object")
     .map(([k, v]) => [k, String(v)] as [string, string]);
+}
+
+/**
+ * 这条产线的三到四份文档摆在哪里。
+ *
+ * **故意不是链接。** 这些文档在文档仓（`/opt/cursor-workspaces/oceandino`）里，
+ * 不在本站的 public 下，做成 `<a href>` 点开必然 404。给路径文本，是为了能直接
+ * 拿去打开文件 —— 一个点了没反应的链接比一段可复制的路径更糟。
+ */
+function WorkflowDocs({ workflow }: { workflow: WorkWorkflow }) {
+  const tt = useUI();
+  return (
+    <section className="mt-4 rounded-lg border border-zinc-200 bg-zinc-50/70 px-3 py-2.5">
+      <h2 className="text-xs font-semibold tracking-wide text-zinc-500">
+        {tt("这条产线的文档")}
+      </h2>
+      <dl className="mt-1.5 space-y-1.5">
+        {workflowDocRows(workflow).map(([label, path]) => (
+          <div key={label}>
+            <dt className="text-[11px] text-zinc-400">{tt(label)}</dt>
+            <dd className="break-all font-mono text-[10px] leading-4 text-zinc-600">{path}</dd>
+          </div>
+        ))}
+      </dl>
+      <p className="mt-2 text-[11px] leading-5 text-zinc-400">
+        {tt("这几份文档在文档仓里，不在本站，所以只给路径、不做成链接。")}
+      </p>
+    </section>
+  );
 }
 
 export function WorksDetail({
@@ -95,7 +126,20 @@ export function WorksDetail({
                 <dd className="text-zinc-700">{work.styleId}</dd>
               </>
             ) : null}
+            {work.workflow ? (
+              <>
+                <dt className="text-zinc-400">{tt("工作流")}</dt>
+                <dd className="text-zinc-700">
+                  {tt(work.workflow.name)}
+                  <span className="mt-0.5 block break-all font-mono text-[10px] text-zinc-400">
+                    {work.workflow.id}
+                  </span>
+                </dd>
+              </>
+            ) : null}
           </dl>
+
+          {work.workflow ? <WorkflowDocs workflow={work.workflow} /> : null}
 
           {href ? (
             <a

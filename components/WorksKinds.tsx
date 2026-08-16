@@ -351,13 +351,26 @@ export function deckDeliveryFamilyFrom(
   return declared ?? fromFile;
 }
 
-/** 一件成品属于哪一族：先看 `styleId` 前缀，再看 `id` 前缀，最后看它来自哪份片段。 */
+/**
+ * 一件成品属于哪一族：有 `workflow.id` 的按它的场景段判，其余先看 `styleId` 前缀，
+ * 再看 `id` 前缀，最后看它来自哪份片段。
+ *
+ * deck 不走工作流那条：它的族由受控字段 `deliveryFamily` 与片段文件名对账得出，
+ * 两者冲突时失败关闭，比 id 里的一个字符串更硬。
+ *
+ * 工作流优先只对**带这一格的新件**生效：存量一件都没有这一格，族归属分毫不动。
+ */
 export function familyOf(work: WorkEntry): MaterialFamily {
   const families = familiesFor(work.artifactType);
   if (!families) return OTHER_FAMILY;
   if (work.artifactType === "deck") {
     const family = deckDeliveryFamilyFrom(work.deliveryFamily, work.sourceFile);
     return families.find((candidate) => candidate.id === family) ?? OTHER_FAMILY;
+  }
+  const scene = workflowSceneOf(work.workflow);
+  if (scene) {
+    const hit = families.find((f) => f.id === scene);
+    if (hit) return hit;
   }
   for (const key of [work.styleId, work.id]) {
     if (!key) continue;
@@ -465,6 +478,52 @@ export interface WorkProduction {
   notice: string;
 }
 
+/**
+ * 一条工作流的三到四份文档。路径是**文档仓**（`/opt/cursor-workspaces/oceandino`）里的
+ * 仓内相对路径，不是本站可 GET 的地址 —— 界面上只能照实摆出路径文本，做成链接必然 404。
+ *
+ * `scene` 只有分场景的品类才有（小红书封面 / LOGO / 名片 / 简历 这一层），没有就不给这一格。
+ */
+export interface WorkWorkflowDocs {
+  /** 怎样才算能交付、能上架、能打开。一个品类一份。 */
+  base: string;
+  /** 这个场景本来长什么样、信息密度该多大。无场景的品类没有这一层。 */
+  scene?: string;
+  /** 这一种风格的主张与取舍。 */
+  style: string;
+  /** 怎么写一份具体产品的设计文档：模板与提问清单，不是任何具体产品的设计文档。 */
+  productGuide: string;
+}
+
+/**
+ * 「这一件是哪条产线做的」。字段名由派工合同 §3.2 钉死，站上不许改写、不许补全。
+ *
+ * **只有本波新产的成品有这一格。** 历史存量一件都不补 —— 带与不带的分开摆着，
+ * 就是操作员用来判断「哪几条产线已经成形、哪些件还没有归属」的对照组，不是数据缺陷。
+ */
+export interface WorkWorkflow {
+  /** `<artifact_type>[/<scene>]/<styleId>`，逐字沿用风格文档文件名。 */
+  id: string;
+  /** 中文名，列表卡片与详情页直接上屏。 */
+  name: string;
+  docs: WorkWorkflowDocs;
+}
+
+/** 工作流 id 里的场景段（三段式才有）。判族与显示都用它，别各自再切一遍字符串。 */
+export function workflowSceneOf(workflow: Pick<WorkWorkflow, "id"> | undefined): string | null {
+  const segments = workflow?.id.split("/") ?? [];
+  return segments.length === 3 ? segments[1] : null;
+}
+
+/** 详情页要摆出来的文档路径，按人读顺序；缺的那一层不占位。 */
+export function workflowDocRows(workflow: WorkWorkflow): [string, string][] {
+  const rows: [string, string][] = [["基础架构", workflow.docs.base]];
+  if (workflow.docs.scene) rows.push(["场景", workflow.docs.scene]);
+  rows.push(["风格设计", workflow.docs.style]);
+  rows.push(["产品文档指南", workflow.docs.productGuide]);
+  return rows;
+}
+
 export interface WorkEntry {
   id: string;
   artifactType: ArtifactType;
@@ -473,6 +532,8 @@ export interface WorkEntry {
   title: string;
   /** 对应 `docs/design-guides/<artifact_type>/<styleId>.md` 那份版面指导。 */
   styleId: string;
+  /** 这一件出自哪条工作流；本波之前的存量没有这一格。 */
+  workflow?: WorkWorkflow;
   summary: string;
   /** 真封面图（站内绝对路径）。指不到文件的条目会被跳过。 */
   cover: string;
