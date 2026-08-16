@@ -18,7 +18,7 @@
     "downloadable": true,
     "workflow": {
       "id": "composite_image/xhs/xhs-photo-press",
-      "name": "小红书封面 · 照片直压",
+      "name": "小红书封面 · 照片压字",
       "docs": {
         "base": "docs/workflows/material-workflows/base/composite_image.md",
         "scene": "docs/design-guides/composite_image/xhs/_INDEX.md",
