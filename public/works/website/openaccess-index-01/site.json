@@ -396,7 +396,7 @@
     {
       "id": "met-34",
       "fileName": "met-34.webp",
-      "path": "media/met-34.webp",
+      "path": "_src/media/met-34.webp",
       "mediaType": "image/webp",
       "byteSize": 112952,
       "licenseCode": "CC0",
@@ -408,7 +408,7 @@
     {
       "id": "met-39",
       "fileName": "met-39.webp",
-      "path": "media/met-39.webp",
+      "path": "_src/media/met-39.webp",
       "mediaType": "image/webp",
       "byteSize": 341240,
       "licenseCode": "CC0",
@@ -420,7 +420,7 @@
     {
       "id": "met-41",
       "fileName": "met-41.webp",
-      "path": "media/met-41.webp",
+      "path": "_src/media/met-41.webp",
       "mediaType": "image/webp",
       "byteSize": 414898,
       "licenseCode": "CC0",
@@ -432,7 +432,7 @@
     {
       "id": "met-134",
       "fileName": "met-134.webp",
-      "path": "media/met-134.webp",
+      "path": "_src/media/met-134.webp",
       "mediaType": "image/webp",
       "byteSize": 165202,
       "licenseCode": "CC0",
@@ -444,7 +444,7 @@
     {
       "id": "met-140",
       "fileName": "met-140.webp",
-      "path": "media/met-140.webp",
+      "path": "_src/media/met-140.webp",
       "mediaType": "image/webp",
       "byteSize": 138522,
       "licenseCode": "CC0",
@@ -456,7 +456,7 @@
     {
       "id": "met-126",
       "fileName": "met-126.webp",
-      "path": "media/met-126.webp",
+      "path": "_src/media/met-126.webp",
       "mediaType": "image/webp",
       "byteSize": 324474,
       "licenseCode": "CC0",
@@ -468,7 +468,7 @@
     {
       "id": "met-143",
       "fileName": "met-143.webp",
-      "path": "media/met-143.webp",
+      "path": "_src/media/met-143.webp",
       "mediaType": "image/webp",
       "byteSize": 63580,
       "licenseCode": "CC0",
@@ -480,7 +480,7 @@
     {
       "id": "met-123",
       "fileName": "met-123.webp",
-      "path": "media/met-123.webp",
+      "path": "_src/media/met-123.webp",
       "mediaType": "image/webp",
       "byteSize": 376544,
       "licenseCode": "CC0",
@@ -492,7 +492,7 @@
     {
       "id": "met-69",
       "fileName": "met-69.webp",
-      "path": "media/met-69.webp",
+      "path": "_src/media/met-69.webp",
       "mediaType": "image/webp",
       "byteSize": 338850,
       "licenseCode": "CC0",
@@ -504,7 +504,7 @@
     {
       "id": "met-79",
       "fileName": "met-79.webp",
-      "path": "media/met-79.webp",
+      "path": "_src/media/met-79.webp",
       "mediaType": "image/webp",
       "byteSize": 288002,
       "licenseCode": "CC0",
@@ -516,7 +516,7 @@
     {
       "id": "met-111",
       "fileName": "met-111.webp",
-      "path": "media/met-111.webp",
+      "path": "_src/media/met-111.webp",
       "mediaType": "image/webp",
       "byteSize": 153472,
       "licenseCode": "CC0",
@@ -528,7 +528,7 @@
     {
       "id": "met-74",
       "fileName": "met-74.webp",
-      "path": "media/met-74.webp",
+      "path": "_src/media/met-74.webp",
       "mediaType": "image/webp",
       "byteSize": 137634,
       "licenseCode": "CC0",

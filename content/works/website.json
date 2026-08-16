@@ -8,8 +8,8 @@
     "cover": "/works/website/openaccess-index-01.cover.webp",
     "view": {
       "kind": "website",
-      "src": "/works/website/openaccess-index-01/content.json",
-      "source": "/works/website/openaccess-index-01/content.json",
+      "src": "/works/website/openaccess-index-01/site.json",
+      "source": "/works/website/openaccess-index-01/site.json",
       "download": "/works/website/openaccess-index-01-source.zip",
       "aspect": 1.6
     },
@@ -52,11 +52,11 @@
       "authoringSource": {
         "schema": "code-project（website-source@1）",
         "tool": "scripts/material-infra/assemblers/tools/site-zip.mjs",
-        "input": "/works/website/openaccess-index-01/_src/site-input.json",
+        "input": "/works/website/openaccess-index-01/site.json",
         "generator": "docs/work-logs/2026-08/material-workflow-visible/signals/W1-workshop/build-openaccess-index.py（文档仓）",
         "writer": "assemblers/web/projectors.mjs + tree/deterministic-zip.mjs",
-        "deterministic": "同一份入参独立重跑两次，zip 与本条 sha256 三者逐字节相同（52359d549d7c…）",
-        "note": "与存量三件不同：那三件走 site-config.mjs 从 site.json 编译，这一件直接手写 code-project 正文调 site-zip"
+        "deterministic": "同一份入参独立重跑两次，zip 与本条 sha256 三者逐字节相同（52359d549d7c…）；改名之后再从 site.json 重跑一次，出来的 zip 与已上架的那一份逐字节相同（cmp 无差异）",
+        "note": "与存量三件不同：那三件走 site-config.mjs 从 site.json 编译，这一件直接手写 code-project 正文调 site-zip。两条线的权威结构稿都落在 /works/website/<id>/site.json —— 装载器只认这个路径，schema 不同不影响；site.json 的 media[].path 指 _src/media/，所以从发布出来的这一份就能原地重建"
       },
       "entryCount": 17,
       "htmlCount": 1,
@@ -79,7 +79,7 @@
       "emptyAltCount": 0,
       "paragraphsReadableWithoutJs": 97,
       "paragraphsMissingWithoutJs": 0,
-      "noJsCheck": "把 content.json 里每一段正文与每一条标题整段逐字（HTML 转义后）到 index.html 里比对，33 个区块 0 缺失；app.js 只写导航项与「本页共 N 个区块」，不产正文",
+      "noJsCheck": "把包内 content.json 里每一段正文与每一条标题整段逐字（HTML 转义后）到 index.html 里比对，33 个区块 0 缺失；app.js 只写导航项与「本页共 N 个区块」，不产正文",
       "upstreamBatch": {
         "source": "platform_assets · type=image / category='The American Wing'",
         "batchCount": 80,
