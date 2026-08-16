@@ -1,9 +1,9 @@
 {
   "schema": "oceanleo.active-runtime-plan.v1",
   "manifest": "active-runtime-manifest.json",
-  "manifestSha256": "cadc51c16edc34e6f3d517ed3631c3fa3dedfa1cbb4acd8c6dbfad802b7f2172",
-  "itemCount": 31,
-  "totalBytes": 1438644,
+  "manifestSha256": "eca5a420b4d5b8d69b9e7963a1c43adc6737254795c0d1579c4e4de5d1ca0cde",
+  "itemCount": 32,
+  "totalBytes": 1460997,
   "items": [
     {
       "item": {
@@ -842,6 +842,71 @@
           "path": "index.html",
           "sha256": "52a9f65df3bde4a312bd1de7320f228934278d49b1852087542d6b6625b5c673",
           "bytes": 20353
+        }
+      ]
+    },
+    {
+      "item": {
+        "id": "one-shot-route-02",
+        "kind": "game",
+        "source": "content/active-runtime/game/one-shot-route-02",
+        "entry": "index.html"
+      },
+      "host": "s-69aa2ae8747da8e72041d1fd0f885f36.oceanleo.app",
+      "entryUrl": "https://s-69aa2ae8747da8e72041d1fd0f885f36.oceanleo.app/embed",
+      "closureSha256": "379e14c5e788e0e656c2a494954bdf960ebaa97ead61e44a2309824d8c0cea81",
+      "fileCount": 10,
+      "totalBytes": 22353,
+      "files": [
+        {
+          "path": "ATTRIBUTION.txt",
+          "sha256": "90f28565643822bcda3c6355f1f5e985c2c63ee5023345986eed8e3b02ad1e9c",
+          "bytes": 233
+        },
+        {
+          "path": "index.html",
+          "sha256": "dbfe7ccc950d58de4ceddf50cead350774c7c62be9f8738b7619dcacaac8796b",
+          "bytes": 13038
+        },
+        {
+          "path": "one-shot-route-02.assets/burst.png",
+          "sha256": "85de5a2a7dea3dfcc2b391b6dac1393a77a5b44ffca0f30e187eec3fcd35eaee",
+          "bytes": 1812
+        },
+        {
+          "path": "one-shot-route-02.assets/rock-big.png",
+          "sha256": "9ccffc49ccfef51af5a0a71c2e30a4a10b1b4e14600b8a5eaa1cab61e50c37cc",
+          "bytes": 1147
+        },
+        {
+          "path": "one-shot-route-02.assets/rock-small.png",
+          "sha256": "9439918bd4bf619f2646a95f5168ceb065ea18e6ca43cd45f83834e129fee41f",
+          "bytes": 762
+        },
+        {
+          "path": "one-shot-route-02.assets/ship.png",
+          "sha256": "e4bc4109948b85534541805a61c4698a659490c8292a1555a2124176c778ef40",
+          "bytes": 1068
+        },
+        {
+          "path": "one-shot-route-02.assets/star-tiny.png",
+          "sha256": "6b2324446cbca758289d8dcd60a79be91f661518c9fcf51add352c08eb373fc6",
+          "bytes": 294
+        },
+        {
+          "path": "one-shot-route-02.assets/star.png",
+          "sha256": "bd7559de78a8b693dcd08d700f63a08c89d469831f868940ff1bb23cf1d83953",
+          "bytes": 707
+        },
+        {
+          "path": "one-shot-route-02.assets/station.png",
+          "sha256": "05a74c82d5642881e9de3ddc4a5082fd9f6325f69941afd96c9d3d4f6a994f83",
+          "bytes": 2458
+        },
+        {
+          "path": "one-shot-route-02.assets/warn.png",
+          "sha256": "bc3d8b1f4ee0a9bcddea9b6651fef9278e6fa190f9fbd2b13d40ab3f4b66f966",
+          "bytes": 834
         }
       ]
     },

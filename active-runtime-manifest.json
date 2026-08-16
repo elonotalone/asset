@@ -152,6 +152,12 @@
       "entry": "index.html"
     },
     {
+      "id": "one-shot-route-02",
+      "kind": "game",
+      "source": "content/active-runtime/game/one-shot-route-02",
+      "entry": "index.html"
+    },
+    {
       "id": "paper-deduction-01",
       "kind": "game",
       "source": "content/active-runtime/game/paper-deduction-01",
