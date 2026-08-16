@@ -105,9 +105,18 @@ check("页面不出现自测、口径栏、图例或额外来源面板", () => {
   assert.doesNotMatch(htmlSource, /运行自测|口径|图例|来源[:：]/);
 });
 
-check("高德未来通道没有半截代码或安全密钥", () => {
+check("高德走 JS API Key + 同主机封闭代理，安全密钥不得进包", () => {
+  assert.match(uiSource, /618a2bbb935d8235b46916839fb985ee/);
+  assert.match(uiSource, /https:\/\/webapi\.amap\.com\/maps\?v=2\.0/);
+  assert.match(
+    uiSource,
+    /serviceHost:\s*AMAP_SERVICE_HOST|AMAP_SERVICE_HOST = "https:\/\/plugins\.oceanleo\.app\/_AMapService"/,
+  );
   const runtimeSource = uiSource + "\n" + htmlSource;
-  assert.doesNotMatch(runtimeSource, /amap|高德|jscode|webapi\.amap/i);
+  assert.doesNotMatch(runtimeSource, /securityJsCode/);
+  assert.doesNotMatch(runtimeSource, /jscode\s*[:=]/);
+  assert.doesNotMatch(runtimeSource, /53fd24d2269497b990fa72c1b69bc471/);
+  assert.doesNotMatch(runtimeSource, /c6b466a0a6f10256167958583c0eacb5/);
 });
 
 /*

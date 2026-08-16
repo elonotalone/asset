@@ -1,12 +1,18 @@
-/* 世界地图 · Google SDK、地理编码和 DOM 界面层。 */
+/* 世界地图 · Google / 高德 SDK、地理编码和 DOM 界面层。
+ * 高德安全密钥不得出现在本文件。JS API 2.0 走
+ * https://plugins.oceanleo.app/_AMapService （Caddy 封闭代理）。
+ */
 (function () {
   "use strict";
 
   var GOOGLE_MAPS_KEY = "AIzaSyCajy9E2uExVxnKABBXutnEmit0pWGRN9E";
+  var AMAP_KEY = "618a2bbb935d8235b46916839fb985ee";
+  var AMAP_SERVICE_HOST = "https://plugins.oceanleo.app/_AMapService";
   var LOAD_TIMEOUT_MS = 12000;
   var E = window.WorldMapEngine;
   var map = null;
   var geocoder = null;
+  var backend = null;
   var markers = [];
   var labels = [];
   var route = null;
@@ -42,19 +48,48 @@
     loadingScript = null;
   }
 
-  function loadGoogleMaps() {
+  function startMaps() {
     clearTimeout(loadTimer);
     removeSdkScript();
     els.loadFailure.hidden = true;
     els.map.classList.remove("is-unavailable");
     setText(els.summary, "正在打开地图…");
-
-    if (window.google && window.google.maps) {
-      initializeMap();
+    setInputsDisabled(true);
+    if (window.AMap) {
+      initializeAmap();
       return;
     }
+    if (window.google && window.google.maps) {
+      initializeGoogle();
+      return;
+    }
+    loadAmap();
+  }
 
-    window.__worldMapReady = initializeMap;
+  function loadAmap() {
+    window._AMapSecurityConfig = { serviceHost: AMAP_SERVICE_HOST };
+    loadingScript = document.createElement("script");
+    loadingScript.async = true;
+    loadingScript.src = "https://webapi.amap.com/maps?v=2.0&key=" + encodeURIComponent(AMAP_KEY);
+    loadingScript.onload = function () {
+      if (window.AMap) initializeAmap();
+      else loadGoogleMaps();
+    };
+    loadingScript.onerror = loadGoogleMaps;
+    document.head.appendChild(loadingScript);
+    loadTimer = window.setTimeout(function () {
+      if (!window.AMap) loadGoogleMaps();
+    }, LOAD_TIMEOUT_MS);
+  }
+
+  function loadGoogleMaps() {
+    clearTimeout(loadTimer);
+    removeSdkScript();
+    if (window.google && window.google.maps) {
+      initializeGoogle();
+      return;
+    }
+    window.__worldMapReady = initializeGoogle;
     window.gm_authFailure = showFailure;
     loadingScript = document.createElement("script");
     loadingScript.async = true;
@@ -66,12 +101,37 @@
     loadTimer = window.setTimeout(showFailure, LOAD_TIMEOUT_MS);
   }
 
-  function initializeMap() {
+  function initializeAmap() {
+    clearTimeout(loadTimer);
+    if (!window.AMap) {
+      loadGoogleMaps();
+      return;
+    }
+    backend = "amap";
+    els.loadFailure.hidden = true;
+    els.map.classList.remove("is-unavailable");
+    setInputsDisabled(false);
+    map = new AMap.Map(els.map, {
+      zoom: 3,
+      center: [70, 50],
+      viewMode: "2D",
+      dragEnable: true,
+      zoomEnable: true,
+      doubleClickZoom: true
+    });
+    AMap.plugin(["AMap.Geocoder"], function () {
+      geocoder = new AMap.Geocoder({ city: "全国" });
+      renderJourney();
+    });
+  }
+
+  function initializeGoogle() {
     clearTimeout(loadTimer);
     if (!window.google || !window.google.maps) {
       showFailure();
       return;
     }
+    backend = "google";
     els.loadFailure.hidden = true;
     els.map.classList.remove("is-unavailable");
     setInputsDisabled(false);
@@ -89,15 +149,20 @@
   }
 
   function clearMapObjects() {
-    markers.forEach(function (marker) { marker.setMap(null); });
-    labels.forEach(function (label) { label.close(); });
+    if (backend === "amap") {
+      markers.forEach(function (marker) { marker.setMap(null); });
+      if (route) route.setMap(null);
+    } else {
+      markers.forEach(function (marker) { marker.setMap(null); });
+      labels.forEach(function (label) { label.close(); });
+      if (route) route.setMap(null);
+    }
     markers = [];
     labels = [];
-    if (route) route.setMap(null);
     route = null;
   }
 
-  function addPlace(place) {
+  function addPlaceGoogle(place) {
     var marker = new google.maps.Marker({
       map: map,
       position: { lat: place.lat, lng: place.lng },
@@ -113,19 +178,17 @@
     labels.push(label);
   }
 
-  function renderJourney() {
-    if (!map) return;
-    clearMapObjects();
-    addPlace(places.from);
-    addPlace(places.to);
-    route = new google.maps.Polyline({
+  function addPlaceAmap(place) {
+    var marker = new AMap.Marker({
       map: map,
-      path: [places.from, places.to],
-      geodesic: true,
-      strokeColor: "#1769aa",
-      strokeOpacity: 0.9,
-      strokeWeight: 4
+      position: [place.lng, place.lat],
+      title: place.name,
+      label: { content: place.name, direction: "top" }
     });
+    markers.push(marker);
+  }
+
+  function fitJourney() {
     var center = E.midpoint(places.from, places.to);
     var zoom = E.suggestedZoom(
       places.from,
@@ -134,8 +197,44 @@
       els.map.clientHeight,
       72
     );
-    map.setCenter(center);
-    map.setZoom(zoom);
+    if (backend === "amap") {
+      map.setZoomAndCenter(zoom, [center.lng, center.lat]);
+    } else {
+      map.setCenter(center);
+      map.setZoom(zoom);
+    }
+  }
+
+  function renderJourney() {
+    if (!map || !backend) return;
+    clearMapObjects();
+    if (backend === "amap") {
+      addPlaceAmap(places.from);
+      addPlaceAmap(places.to);
+      route = new AMap.Polyline({
+        map: map,
+        path: [
+          [places.from.lng, places.from.lat],
+          [places.to.lng, places.to.lat]
+        ],
+        strokeColor: "#1769aa",
+        strokeOpacity: 0.9,
+        strokeWeight: 4,
+        geodesic: true
+      });
+    } else {
+      addPlaceGoogle(places.from);
+      addPlaceGoogle(places.to);
+      route = new google.maps.Polyline({
+        map: map,
+        path: [places.from, places.to],
+        geodesic: true,
+        strokeColor: "#1769aa",
+        strokeOpacity: 0.9,
+        strokeWeight: 4
+      });
+    }
+    fitJourney();
     setText(
       els.summary,
       places.from.name + " ↔ " + places.to.name + " · " +
@@ -149,6 +248,24 @@
     if (Array.from(query).length < 2) {
       setText(messageNode, "请写至少两个字的城市名");
       return Promise.reject(new Error("short-query"));
+    }
+    if (backend === "amap") {
+      return new Promise(function (resolve, reject) {
+        geocoder.getLocation(query, function (status, result) {
+          var item = result && result.geocodes && result.geocodes[0];
+          var loc = item && item.location;
+          if (status !== "complete" || !loc) {
+            setText(messageNode, "没找到这个地方，请换成城市全名再试");
+            reject(new Error("place-not-found"));
+            return;
+          }
+          resolve({
+            name: item.formattedAddress || query,
+            lat: loc.lat,
+            lng: loc.lng
+          });
+        });
+      });
     }
     return new Promise(function (resolve, reject) {
       geocoder.geocode({ address: query }, function (results, status) {
@@ -201,9 +318,9 @@
     els.retry = document.getElementById("retry-map");
     els.submit = els.form.querySelector("button[type=submit]");
     els.form.addEventListener("submit", submitJourney);
-    els.retry.addEventListener("click", loadGoogleMaps);
+    els.retry.addEventListener("click", startMaps);
     setInputsDisabled(true);
-    loadGoogleMaps();
+    startMaps();
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mount);
