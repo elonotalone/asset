@@ -1377,10 +1377,11 @@ export interface ShelfArtifact {
  * 2026-08-07 查实那是**答错了问题**：那份名单钉的是 `ADVANCED_FEATURE_PACKS`，
  * 即哪些能力被打包成了高级功能包——一个产品与计费的划分，不是「有没有编辑器」。
  * 代价是 16 种类型里有 10 种（网站、复合图片、矢量图、文档、幻灯片、视频、音频、
- * 3D 模型、工作流、游戏）明明编辑器已存在且可路由，却被一律告知
+ * 3D 模型、流程图工程、游戏）明明编辑器已存在且可路由，却被一律告知
  * 「这一类还没有已发布的编辑器」，一颗编辑按钮都不出。
  * `[实测 2026-08-07]` 这 10 类在架共 3,443 件 —— 网站 49、文档 2,052、
- * 复合图片 352、幻灯片 277、矢量图 240、3D 模型 218、工作流 161、音频 91、游戏 3。
+ * 复合图片 352、幻灯片 277、矢量图 240、3D 模型 218、
+ * 流程图工程（`artifact_type` = `workflow`）161、音频 91、游戏 3。
  *
  * 换成共享包推导之后，原表那句「不在表里就不画按钮」的纪律**一个字都没放松**：
  * 现在仍然只在编辑器真的到得了时才画，只是「到得了」这件事改由适配器注册表回答，
@@ -1390,7 +1391,15 @@ export function artifactTypeHasEditor(artifactType: string): boolean {
   return artifactTypeHasRoutableEditor(artifactType);
 }
 
-/** 成品库 16 种 `artifact_type` 的中文名。与 `TYPE_LABELS`（原料库）**不是**一套。 */
+/**
+ * 成品库 16 种 `artifact_type` 的中文名。与 `TYPE_LABELS`（原料库）**不是**一套。
+ *
+ * `workflow` 这一类的显示名是「流程图工程」而不是「工作流」（裁定 9 / 裁定 17）。
+ * 站上「工作流」一词已经被另一件东西占了：它指**产线**——某件成品是由哪一条
+ * 「基础架构文档 + 风格设计文档 + 产品文档指南」做出来的。同一个站上两个意思
+ * 会让人第一眼分不清，而这 161 件本来就是流程图（传送带 / 分诊 / 状态机 / 多源汇一）。
+ * **`artifactType` 字符串仍是 `workflow`**，改的只有这里的显示名，数据一个字没动。
+ */
 export const SHELF_ARTIFACT_TYPE_LABELS: Record<string, string> = {
   document: "文档",
   grid: "表格",
@@ -1402,7 +1411,7 @@ export const SHELF_ARTIFACT_TYPE_LABELS: Record<string, string> = {
   vector_image: "矢量图片",
   chart: "图表",
   model_3d: "3D 模型",
-  workflow: "工作流",
+  workflow: "流程图工程",
   audio: "音频",
   video: "视频",
   game: "游戏",
