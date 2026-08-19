@@ -3,24 +3,22 @@
 import Link from "next/link";
 import { useUI } from "@oceanleo/ui/i18n";
 import {
-  KIND_HINTS,
-  KIND_LABELS,
+  OPEN_HINT,
   PLUGIN_GALLERY_POLICY,
   PLUGIN_GALLERY_TITLE,
   categoryLabel,
   editorAccessForPlugin,
   isEditorEntrypointUrl,
-  isPluginRuntimeUrl,
   type PluginEditorAccess,
   type PluginEntry,
 } from "@/lib/plugin-gallery";
-import { PluginGalleryRunner } from "@/components/PluginGalleryRunner";
 
-// 一件工具的说明页。有实物的先显示真实 cover；F9 plan 侧车给出严格 `.app` 地址后，
-// 再显示新窗口“打开使用”。没有合法地址就明确暂不可用，不在 asset 页面内运行代码。
+// 一件编辑器的说明页。只有逐条核验过的第一方产品页才显示新窗口“打开使用”；
+// 其余的如实说明为什么暂时不能匿名直达，并给出从「我的库」进入的下一步。
 //
-// 这一页同样没有下载或安装入口：工具是打开就用的东西，不是能存到硬盘的素材。
-// 没有实物的条目连「打开」都不给，给了就是把用户送去一个不存在的地方。
+// 这一页没有下载或安装入口：编辑器是打开就用的东西，不是能存到硬盘的素材。
+// 这一格也不再有任何在隔离域里跑的运行字节——22 件独立小工具已于 2026-08-19 下架，
+// 所以这里没有 iframe、没有 `oceanleo.app` 入口、没有本站运行 fallback。
 
 function Section({
   title,
@@ -121,23 +119,10 @@ function EditorAccessPanel({
   );
 }
 
-export function PluginGalleryDetail({
-  item,
-  previewPath = null,
-  runtimeUrl = null,
-}: {
-  item: PluginEntry;
-  /** manifest 中有对应实例时给真实 cover；它本身不可执行，可以安全留在 public。 */
-  previewPath?: string | null;
-  /** 只来自 F9 plan 侧车；缺失或歪地址时必须保持 null。 */
-  runtimeUrl?: string | null;
-}) {
+export function PluginGalleryDetail({ item }: { item: PluginEntry }) {
   const tt = useUI();
-  const runnable = isPluginRuntimeUrl(runtimeUrl);
   const editorAccess = editorAccessForPlugin(item);
-  const editorRunnable = isEditorEntrypointUrl(editorAccess?.entryUrl);
-  const available = runnable || editorRunnable;
-  const hasPreview = previewPath !== null;
+  const available = isEditorEntrypointUrl(editorAccess?.entryUrl);
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6">
@@ -169,20 +154,12 @@ export function PluginGalleryDetail({
             {tt(categoryLabel(item.category))}
           </span>
           <span className="rounded-full bg-white/15 px-3 py-1">
-            {tt(KIND_LABELS[item.kind])}
+            {tt("打开一件素材来用")}
           </span>
         </div>
       </header>
 
       <div className="mt-4 grid gap-4">
-        {hasPreview ? (
-          <PluginGalleryRunner
-            item={item}
-            previewPath={previewPath}
-            runtimeUrl={runtimeUrl}
-          />
-        ) : null}
-
         {editorAccess ? (
           <EditorAccessPanel access={editorAccess} />
         ) : null}
@@ -216,7 +193,7 @@ export function PluginGalleryDetail({
 
         <Section title="在哪儿能用">
           <p>{tt(item.where)}</p>
-          <p className="mt-2 text-xs text-zinc-500">{tt(KIND_HINTS[item.kind])}</p>
+          <p className="mt-2 text-xs text-zinc-500">{tt(OPEN_HINT)}</p>
         </Section>
 
         {item.caution ? (
@@ -231,21 +208,13 @@ export function PluginGalleryDetail({
                 : "bg-amber-50 text-amber-700 ring-1 ring-amber-200"
             }`}
           >
-            {runnable
-              ? tt("能用：点击上方的「打开使用」进入")
-              : editorRunnable
-                ? tt("能用：已有经过核验的编辑器入口")
-                : hasPreview
-                ? tt("暂不可用：安全运行地址尚未生成")
-                : tt("暂不可用：入口尚未接通")}
+            {available
+              ? tt("能用：已有经过核验的编辑器入口")
+              : tt("暂不可用：入口尚未接通")}
           </p>
-          {/* 安全运行入口与平台入口是两件事：能从展厅打开，不等于 app 里已经有它的入口。
+          {/* 编辑器入口与平台入口是两件事：能从这一页打开，不等于 app 里已经有它的入口。
               两句都说，才不会把「能试」说成「已上线」。 */}
-          {runnable ? (
-            <p className="mt-2">
-              {tt("它会在隔离的安全站点中打开，不用登录，也不会读取本站登录状态。")}
-            </p>
-          ) : editorRunnable ? (
+          {available ? (
             <p className="mt-2">
               {tt("它会在经过核验的第一方编辑器中打开，不与其他运行入口混用。")}
             </p>
@@ -254,13 +223,9 @@ export function PluginGalleryDetail({
               <p className="mt-2">{tt(editorAccess.unavailableReason)}</p>
               <p className="mt-2">{tt(editorAccess.nextStep)}</p>
             </>
-          ) : hasPreview ? (
-            <p className="mt-2">
-              {tt("可以先看实际界面；安全地址准备好之前，不会回退到本站运行。")}
-            </p>
           ) : (
             <p className="mt-2">
-              {tt("安全运行地址生成后，这一页会自动显示「打开使用」；在此之前不会回退到本站运行。")}
+              {tt("经过核验的入口出现后，这一页会自动显示「打开使用」；在此之前不会回退到本站运行。")}
             </p>
           )}
           <p className="mt-2 text-xs leading-6 text-zinc-500">

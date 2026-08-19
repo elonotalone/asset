@@ -4,36 +4,26 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useUI } from "@oceanleo/ui/i18n";
 import {
-  KIND_HINTS,
-  KIND_LABELS,
+  PLUGIN_CATEGORIES,
   PLUGIN_GALLERY_INTRO,
   PLUGIN_GALLERY_POLICY,
+  PLUGIN_GALLERY_SCOPE_NOTE,
   PLUGIN_GALLERY_TITLE,
   PLUGIN_ITEMS,
-  categoriesForKind,
   categoryLabel,
   filterAvailablePlugins,
   filterPlugins,
   pluginDetailHref,
   pluginIsAvailable,
   type PluginEntry,
-  type PluginKind,
 } from "@/lib/plugin-gallery";
 
-// 工具能力列表。可搜、可按类别与使用方式筛，也可以只看**现在就能安全打开**的那几件。
+// 平台能干的活。可搜、可按类别筛，也可以只看**现在就能直接打开**的那几件。
 //
-// 卡片说的是「你能用它干什么」，不是技术名词；可用角标只来自实时入口结论，
-// 没有入口的条目会在详情里给真实素材或说清下一步，避免留下纯说明书。
+// 卡片说的是「你能用它干什么」，不是技术名词；可用角标只来自数据层逐条核过的
+// 第一方编辑器入口白名单，JSON 不参与判定。没有入口的条目会在详情里给真实素材
+// 或说清下一步，避免留下纯说明书。
 // 全页没有下载或安装入口，这是硬要求（见 lib/plugin-gallery.ts 顶部）。
-//
-// `runtimeIds` 是 manifest 与 F9 plan 侧车对账后的结论，由页面传进来：哪几件有严格
-// namespace-C 外链。编辑器则只认数据层逐条核过的第一方入口白名单；JSON 不参与判定。
-
-const KIND_TABS: { key: PluginKind | "all"; label: string }[] = [
-  { key: "all", label: "全部" },
-  { key: "standalone", label: KIND_LABELS.standalone },
-  { key: "editor", label: KIND_LABELS.editor },
-];
 
 function AvailabilityBadge({ available }: { available: boolean }) {
   const tt = useUI();
@@ -79,9 +69,6 @@ function PluginCard({ item, available }: { item: PluginEntry; available: boolean
         <span className="rounded-full bg-zinc-100 px-2 py-0.5">
           {tt(categoryLabel(item.category))}
         </span>
-        <span className="rounded-full bg-zinc-100 px-2 py-0.5">
-          {tt(KIND_LABELS[item.kind])}
-        </span>
         <span className="ml-auto text-sky-600 group-hover:underline">
           {available ? tt("打开就能用") : tt("查看下一步")}
         </span>
@@ -90,29 +77,20 @@ function PluginCard({ item, available }: { item: PluginEntry; available: boolean
   );
 }
 
-export function PluginGallery({ runtimeIds = [] }: { runtimeIds?: string[] }) {
+export function PluginGallery() {
   const tt = useUI();
   const [text, setText] = useState("");
-  const [kind, setKind] = useState<PluginKind | "all">("all");
   const [category, setCategory] = useState<string | "all">("all");
   const [onlyRunnable, setOnlyRunnable] = useState(false);
 
-  const runtimeSet = useMemo(() => new Set(runtimeIds), [runtimeIds]);
   const availableCount = useMemo(
-    () => filterAvailablePlugins(PLUGIN_ITEMS, runtimeSet).length,
-    [runtimeSet],
+    () => filterAvailablePlugins(PLUGIN_ITEMS).length,
+    [],
   );
-  const categories = useMemo(() => categoriesForKind(kind), [kind]);
   const list = useMemo(() => {
-    const matched = filterPlugins({ text, kind, category });
-    return onlyRunnable ? filterAvailablePlugins(matched, runtimeSet) : matched;
-  }, [text, kind, category, onlyRunnable, runtimeSet]);
-
-  function switchKind(next: PluginKind | "all") {
-    setKind(next);
-    // 类别是按使用方式分开的两组，换组时旧的选择必然失效。
-    setCategory("all");
-  }
+    const matched = filterPlugins({ text, category });
+    return onlyRunnable ? filterAvailablePlugins(matched) : matched;
+  }, [text, category, onlyRunnable]);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
@@ -123,6 +101,9 @@ export function PluginGallery({ runtimeIds = [] }: { runtimeIds?: string[] }) {
         <p className="mx-auto mt-3 max-w-3xl text-sm leading-7 text-white/90 sm:text-base">
           {tt(PLUGIN_GALLERY_INTRO)}
         </p>
+        <p className="mx-auto mt-4 max-w-3xl text-xs leading-6 text-white/85 sm:text-sm">
+          {tt(PLUGIN_GALLERY_SCOPE_NOTE)}
+        </p>
         <p className="mx-auto mt-4 max-w-3xl rounded-2xl bg-white/15 px-4 py-3 text-xs leading-6 text-white/90 sm:text-sm">
           {tt(PLUGIN_GALLERY_POLICY.reason)}
         </p>
@@ -131,27 +112,8 @@ export function PluginGallery({ runtimeIds = [] }: { runtimeIds?: string[] }) {
       <section className="mt-6 rounded-2xl bg-white p-5 shadow-sm">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
           <span className="shrink-0 text-sm font-semibold text-zinc-800">
-            {tt("怎么用")}
+            {tt("找一件来用")}
           </span>
-          <div className="flex flex-wrap gap-2">
-            {KIND_TABS.map((tab) => (
-              <button
-                key={tab.key}
-                type="button"
-                title={
-                  tab.key === "all" ? undefined : tt(KIND_HINTS[tab.key])
-                }
-                onClick={() => switchKind(tab.key)}
-                className={`rounded-full px-4 py-1.5 text-sm transition ${
-                  kind === tab.key
-                    ? "bg-sky-500 text-white shadow-sm"
-                    : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
-                }`}
-              >
-                {tt(tab.label)}
-              </button>
-            ))}
-          </div>
           <div className="ml-auto w-full sm:w-72">
             <input
               value={text}
@@ -178,7 +140,7 @@ export function PluginGallery({ runtimeIds = [] }: { runtimeIds?: string[] }) {
           >
             {tt("全部")}
           </button>
-          {categories.map((entry) => (
+          {PLUGIN_CATEGORIES.map((entry) => (
             <button
               key={entry.id}
               type="button"
@@ -215,7 +177,7 @@ export function PluginGallery({ runtimeIds = [] }: { runtimeIds?: string[] }) {
 
         <p className="mt-3 border-t border-zinc-100 pt-3 text-xs leading-6 text-zinc-500">
           {tt(
-            "共 {total} 件：{available} 件现在有经过核验的使用入口；{pending} 件入口尚未接通，详情页会如实说明缺口与下一步。",
+            "共 {total} 件，全部是编辑器：{available} 件现在有经过核验的使用入口；{pending} 件入口尚未接通，详情页会如实说明缺口与下一步。",
             {
               total: PLUGIN_ITEMS.length,
               available: availableCount,
@@ -228,7 +190,7 @@ export function PluginGallery({ runtimeIds = [] }: { runtimeIds?: string[] }) {
       <section className="mt-6">
         {list.length === 0 ? (
           <p className="rounded-2xl bg-white p-10 text-center text-sm text-zinc-500 shadow-sm">
-            {tt("没有匹配的工具。换个说法试试，比如「算账」「排路线」「改 PPT」。")}
+            {tt("没有匹配的。换个说法试试，比如「改 PPT」「剪视频」「调表格」。")}
           </p>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -236,7 +198,7 @@ export function PluginGallery({ runtimeIds = [] }: { runtimeIds?: string[] }) {
               <PluginCard
                 key={item.id}
                 item={item}
-                available={pluginIsAvailable(item, runtimeSet)}
+                available={pluginIsAvailable(item)}
               />
             ))}
           </div>

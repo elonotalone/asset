@@ -1,34 +1,34 @@
-// 工具能力板块的数据层。
+// 「平台能干的活」板块的数据层。
 //
-// 数据来自 oceandino 仓 `docs/specs/oceanleo-plugins-v1/` 的 34 份产品目标，
+// 数据来自 oceandino 仓 `docs/specs/oceanleo-plugins-v1/editors/` 的产品目标，
 // 整理结果落在 `content/plugin-gallery.json`。
 //
-// 两条产品前提，改这里之前先读一遍：
+// 三条产品前提，改这里之前先读一遍：
 //
-// ① **可看不可下。** 这些不是可下载的成品，是用户在 app 里打开来用的软件。
+// ① **这一格只有编辑器。** 2026-08-19 起，22 件独立小工具（地图、台账、话术分支、
+//    关系图……）整体下架：办公追求简洁与明确，不做一人公司养不起的花架子。
+//    每一件留下来的东西都得先有一份用户自己的素材，工具围着那份素材转。
+//    新增条目前先问一句：一个人在办公时会为它付钱吗。
+//
+// ② **可看不可下。** 这些不是可下载的成品，是用户在 app 里打开来用的软件。
 //    判据是一句话：能不能存到硬盘、离线打开。能，那是素材，归货架；不能，归这里。
 //    所以这份数据里**不存在**任何下载地址、安装包、版本号或体积字段，
 //    界面上也不许长出「下载 / 安装 / 获取」这类按钮。
 //
-// ② **「插件」是内部概念名，不给用户看。** 界面一律用这件工具自己的中文名
-//    （地图、台账、换算器……）。板块本身对外叫「工具能力」，路由沿用内部名
-//    `/plugin-gallery`，与 `/plugins`（阿里云市场 MCP 连接器目录）是两格不同的东西。
+// ③ **「插件」是内部概念名，不给用户看。** 界面一律用这件工具自己的中文名
+//    （文档编辑器、表格编辑器……）。路由沿用内部名 `/plugin-gallery`，
+//    与 `/plugins`（阿里云市场 MCP 连接器目录）是两格不同的东西。
 
 import raw from "@/content/plugin-gallery.json";
-
-/** 非编辑类：空手进入，自身即体验。编辑类：先有一件素材，工具围着它转。 */
-export type PluginKind = "standalone" | "editor";
 
 export interface PluginCategory {
   id: string;
   label: string;
-  kind: PluginKind;
 }
 
 export interface PluginEntry {
   id: string;
   name: string;
-  kind: PluginKind;
   category: string;
   summary: string;
   does: string[];
@@ -38,12 +38,11 @@ export interface PluginEntry {
   firstOpen: string;
   where: string;
   /**
-   * 编辑类工具在平台受信任编辑器注册表里的适配器 id。
+   * 这件工具在平台受信任编辑器注册表里的适配器 id。
    *
-   * 它只说明平台能让一件兼容素材进入对应工作台，不说明画廊已经有匿名直达 URL。
-   * 非编辑类工具没有适配器；它们的可用性只由 runtime plan 决定。
+   * 它只说明平台能让一件兼容素材进入对应工作台，不说明这一格已经有匿名直达 URL。
    */
-  adapter?: string;
+  adapter: string;
   /** 规格或能力的可复核代码依据；它本身不决定“现在能不能打开”。 */
   statusNote: string;
   caution?: string;
@@ -61,10 +60,14 @@ const data = raw as unknown as {
   items: PluginEntry[];
 };
 
-export const PLUGIN_GALLERY_TITLE = "工具能力";
+export const PLUGIN_GALLERY_TITLE = "平台能干的活";
 
 export const PLUGIN_GALLERY_INTRO =
-  "OceanLeo 自己的工具：在 app 里打开就能用，不需要下载，也没有要装的东西。用它们做出来的表格、文档、图和网页才是可以带走的素材，会落进「我的库」。";
+  "这里是平台自己能干的活，不是小工具集市：把「我的库」里的一份文档、表格、演示稿、图片、视频、音频、模型或网站打开，接着改，存成新版本。没有要下载的东西，也没有要装的东西。";
+
+/** 用户可见的开场白之外，还要说清这一格为什么变小了。 */
+export const PLUGIN_GALLERY_SCOPE_NOTE =
+  "2026-08-19 起，地图、台账、话术分支、关系图这类独立小工具已经整体下架——办公要的是简洁明确，不是玩具多。留下的每一件都得先有你自己的一份素材。";
 
 export const PLUGIN_GALLERY_POLICY: PluginGalleryPolicy = data.policy;
 
@@ -72,24 +75,11 @@ export const PLUGIN_CATEGORIES: readonly PluginCategory[] = data.categories;
 
 export const PLUGIN_ITEMS: readonly PluginEntry[] = data.items;
 
-export const KIND_LABELS: Record<PluginKind, string> = {
-  standalone: "空手就能用",
-  editor: "打开一件素材来用",
-};
-
-export const KIND_HINTS: Record<PluginKind, string> = {
-  standalone: "不需要先有素材，点开就能开始。",
-  editor: "先看一件真实兼容素材；有直达入口就从这里打开，没有时按页面给出的步骤从「我的库」进入。",
-};
+export const OPEN_HINT =
+  "先看一件真实兼容素材；有直达入口就从这里打开，没有时按页面给出的步骤从「我的库」进入。";
 
 export function categoryLabel(id: string): string {
   return PLUGIN_CATEGORIES.find((category) => category.id === id)?.label || id;
-}
-
-export function categoriesForKind(kind: PluginKind | "all"): PluginCategory[] {
-  return PLUGIN_CATEGORIES.filter(
-    (category) => kind === "all" || category.kind === kind,
-  );
 }
 
 export function findPlugin(id: string): PluginEntry | null {
@@ -100,7 +90,6 @@ export interface PluginQuery {
   /** 自由文本，命中名称、一句话、能干什么、场景与类别名。 */
   text?: string;
   category?: string | "all";
-  kind?: PluginKind | "all";
 }
 
 function haystack(item: PluginEntry): string {
@@ -112,7 +101,6 @@ function haystack(item: PluginEntry): string {
     item.output,
     item.where,
     categoryLabel(item.category),
-    KIND_LABELS[item.kind],
     ...item.does,
     ...item.scenarios,
   ]
@@ -123,11 +111,9 @@ function haystack(item: PluginEntry): string {
 export function filterPlugins({
   text = "",
   category = "all",
-  kind = "all",
 }: PluginQuery = {}): PluginEntry[] {
   const needle = text.trim().toLowerCase();
   return PLUGIN_ITEMS.filter((item) => {
-    if (kind !== "all" && item.kind !== kind) return false;
     if (category !== "all" && item.category !== category) return false;
     if (!needle) return true;
     return haystack(item).includes(needle);
@@ -302,82 +288,30 @@ const EDITOR_ACCESS: Readonly<Record<string, PluginEditorAccess>> = Object.freez
 export function editorAccessForPlugin(
   item: PluginEntry,
 ): PluginEditorAccess | null {
-  if (item.kind !== "editor" || !item.adapter) return null;
   const access = EDITOR_ACCESS[item.id];
   return access?.adapter === item.adapter ? access : null;
 }
 
-export function pluginIsAvailable(
-  item: PluginEntry,
-  runtimePluginIds: ReadonlySet<string> | readonly string[] = [],
-): boolean {
-  if (item.kind === "standalone") {
-    const ids = runtimePluginIds instanceof Set
-      ? runtimePluginIds
-      : new Set(runtimePluginIds);
-    return ids.has(item.id);
-  }
+export function pluginIsAvailable(item: PluginEntry): boolean {
   const access = editorAccessForPlugin(item);
   return isEditorEntrypointUrl(access?.entryUrl);
 }
 
 export function filterAvailablePlugins(
   items: readonly PluginEntry[],
-  runtimePluginIds: ReadonlySet<string> | readonly string[] = [],
 ): PluginEntry[] {
-  return items.filter((item) => pluginIsAvailable(item, runtimePluginIds));
+  return items.filter((item) => pluginIsAvailable(item));
 }
 
 /* ------------------------------------------------------------------ *
- * 隔离域运行入口
- * ------------------------------------------------------------------ */
-
-/**
- * UC-1: docs/architecture/oceanleo-untrusted-content-isolation.md §8.1
+ * 已经拆掉的东西
+ * ------------------------------------------------------------------ *
  *
- * F9 命名空间 C 的完整入口文法。直接对原始字符串做全串匹配，因而相对地址、
- * userinfo、端口、query、fragment、近似域名和额外路径都会被拒绝。这里没有任何
- * `oceanleo.com` 或相对 URL fallback；缺 plan 侧车时页面只能显示“暂不可用”。
+ * UC-1/UC-3: docs/architecture/oceanleo-untrusted-content-isolation.md §8.1、§8.3
+ *
+ * 22 件独立小工具下架之后，这一格再没有任何在隔离域里跑第一方运行字节的条目，
+ * 所以 `isPluginRuntimeUrl()`、`s-<hash>.oceanleo.app/embed` 与
+ * `plugins.oceanleo.app/<id>/` 两条入口文法、以及它们背后的 id 白名单一起删掉了。
+ * 这不是放宽：连接收端都没有了。要再长出隔离域入口，必须重新写一个全串匹配的
+ * 校验器并配一组反例断言，绝不允许从主机名后缀推断信任。
  */
-const SANDBOX_PLUGIN_RUNTIME_URL =
-  /^https:\/\/s-[0-9a-f]{32}\.oceanleo\.app\/embed$/;
-
-/**
- * UC-3: docs/architecture/oceanleo-untrusted-content-isolation.md §8.3
- * 命名空间 D 只信任 active-runtime-manifest.json 中 kind === "plugin" 的现有 id；
- * 信任绝不能从 plugins.oceanleo.app 主机名后缀或任意目录名格式推断。
- */
-const FIRST_PARTY_PLUGIN_RUNTIME_IDS: ReadonlySet<string> = new Set([
-  "annotatable-city-map-01",
-  "concept-knowledge-graph-01",
-  "contract-assembly-01",
-  "dialogue-branch-script-01",
-  "executable-notebook-01",
-  "financial-calculator-01",
-  "floorplan-annotation-01",
-  "formula-derivation-walkthrough-01",
-  "interactive-globe-01",
-  "ledger-register-01",
-  "legal-calculator-01",
-  "literature-matrix-01",
-  "medical-calculator-01",
-  "metrics-dashboard-01",
-  "relationship-graph-01",
-  "search-query-builder-01",
-  "self-test-quiz-01",
-  "spaced-repetition-scheduler-01",
-  "three-statement-model-01",
-  "unit-converter-01",
-  "voiceover-script-01",
-  "world-map-01",
-]);
-
-const FIRST_PARTY_PLUGIN_RUNTIME_URL =
-  /^https:\/\/plugins\.oceanleo\.app\/([^/]+)\/$/;
-
-export function isPluginRuntimeUrl(value: unknown): value is string {
-  if (typeof value !== "string") return false;
-  if (SANDBOX_PLUGIN_RUNTIME_URL.test(value)) return true;
-  const match = FIRST_PARTY_PLUGIN_RUNTIME_URL.exec(value);
-  return match !== null && FIRST_PARTY_PLUGIN_RUNTIME_IDS.has(match[1]);
-}

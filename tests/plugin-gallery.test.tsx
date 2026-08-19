@@ -1,11 +1,5 @@
 import assert from "node:assert/strict";
-import {
-  existsSync,
-  lstatSync,
-  readFileSync,
-  readdirSync,
-  statSync,
-} from "node:fs";
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import path from "node:path";
 import test from "node:test";
 import { renderToStaticMarkup } from "react-dom/server";
@@ -14,8 +8,7 @@ import { I18nProvider } from "@oceanleo/ui/i18n/provider.js";
 
 import { PluginGallery } from "@/components/PluginGallery";
 import { PluginGalleryDetail } from "@/components/PluginGalleryDetail";
-import { PluginGalleryRunner } from "@/components/PluginGalleryRunner";
-import { pluginRuntimeDescriptorsFrom } from "@/app/plugin-gallery/runtime-plan";
+import * as galleryModule from "@/lib/plugin-gallery";
 import {
   FORBIDDEN_ACTION_LABELS,
   FORBIDDEN_LINK_PATTERNS,
@@ -27,10 +20,57 @@ import {
   filterPlugins,
   findPlugin,
   isEditorEntrypointUrl,
-  isPluginRuntimeUrl,
   pluginDetailHref,
   pluginIsAvailable,
 } from "@/lib/plugin-gallery";
+
+/**
+ * 2026-08-19：22 件独立小工具整体下架，这一格只剩编辑器。
+ *
+ * 这份自测的第一职责因此换了个方向：以前证「22 件都在、都点得开」，现在证
+ * **它们一件不剩**——数据、字节、封面、隔离域入口与源码分支都没了。判据来自
+ * 操作员：办公追求简洁明确，独立小工具全部下架，编辑器全部留下。
+ */
+const RETIRED_IDS = [
+  "annotatable-city-map",
+  "interactive-globe",
+  "floorplan-annotation",
+  "ledger-register",
+  "three-statement-model",
+  "metrics-dashboard",
+  "financial-calculator",
+  "medical-calculator",
+  "legal-calculator",
+  "unit-converter",
+  "literature-matrix",
+  "search-query-builder",
+  "concept-knowledge-graph",
+  "self-test-quiz",
+  "spaced-repetition-scheduler",
+  "formula-derivation-walkthrough",
+  "relationship-graph",
+  "executable-notebook",
+  "contract-assembly",
+  "dialogue-branch-script",
+  "voiceover-script",
+  "world-map",
+] as const;
+
+const KEPT_IDS = [
+  "image-editor",
+  "design-canvas",
+  "chart-editor",
+  "richdoc-editor",
+  "grid-editor",
+  "deck-editor",
+  "pdf-editor",
+  "video-timeline",
+  "audio-editor",
+  "model-3d-editor",
+  "website-editor",
+  "game-editor",
+  "workflow-canvas",
+] as const;
 
 function render(node: React.ReactElement): string {
   return renderToStaticMarkup(
@@ -57,39 +97,14 @@ const listHtml = render(<PluginGallery />);
 const detailHtml = PLUGIN_ITEMS.map((item) =>
   render(<PluginGalleryDetail item={item} />),
 );
-const pluginManifest = JSON.parse(
-  readFileSync("content/active-runtime/manifest.plugin.json", "utf8"),
-);
-const runtimeHostById: Record<string, string> = Object.fromEntries(
-  pluginManifest.items.map((item: Record<string, unknown>, index: number) => [
-    String(item.id),
-    `s-${(index + 1).toString(16).padStart(32, "0")}.oceanleo.app`,
-  ]),
-);
-const validPlan = {
-  schema: "oceanleo.active-runtime-plan.v1",
-  manifest: "active-runtime-manifest.json",
-  manifestSha256: "a".repeat(64),
-  itemCount: pluginManifest.items.length,
-  totalBytes: pluginManifest.items.length,
-  items: pluginManifest.items.map((item: Record<string, unknown>) => {
-    const host = runtimeHostById[String(item.id)];
-    return {
-      item,
-      host,
-      entryUrl: `https://${host}/embed`,
-      closureSha256: "b".repeat(64),
-      fileCount: 1,
-      totalBytes: 1,
-      files: [{ path: "index.html", sha256: "c".repeat(64), bytes: 1 }],
-    };
-  }),
-};
 
-test("35 件工具全部列得出，且每件都点得开", () => {
-  assert.equal(PLUGIN_ITEMS.length, 35);
-  assert.equal(PLUGIN_ITEMS.filter((item) => item.kind === "standalone").length, 22);
-  assert.equal(PLUGIN_ITEMS.filter((item) => item.kind === "editor").length, 13);
+test("13 件全部是编辑器，逐件列得出", () => {
+  assert.equal(PLUGIN_ITEMS.length, 13);
+  assert.deepEqual(
+    PLUGIN_ITEMS.map((item) => item.id),
+    [...KEPT_IDS],
+    "保留清单变了；改它之前先改 docs/specs/oceanleo-plugins-v1/01-classification.md",
+  );
 
   const ids = new Set<string>();
   for (const item of PLUGIN_ITEMS) {
@@ -98,125 +113,119 @@ test("35 件工具全部列得出，且每件都点得开", () => {
     assert.equal(findPlugin(item.id)?.id, item.id);
     assert.match(listHtml, new RegExp(`href="/plugin-gallery/${item.id}"`));
     assert.ok(listHtml.includes(item.name), `列表缺卡片: ${item.name}`);
+    // 编辑器的定义就是「先有一件素材」：每一件都必须有适配器与逐件接入结论。
+    assert.ok(item.adapter, `${item.id} 没有适配器，它就不是编辑器`);
+    assert.ok(editorAccessForPlugin(item), `${item.id} 没有逐件接入结论`);
   }
 });
 
-test("22 份独立工具规格保留，manifest runtime 与规格逐一对应", () => {
-  assert.equal(PLUGIN_ITEMS.filter((item) => item.kind === "standalone").length, 22);
-  assert.equal(pluginManifest.schema, "oceanleo.active-runtime-manifest.v1");
-  assert.ok(pluginManifest.items.length >= 3);
-  assert.ok(pluginManifest.items.every((item: { kind: string }) => item.kind === "plugin"));
-
-  const descriptors = pluginRuntimeDescriptorsFrom(pluginManifest, validPlan);
-  assert.deepEqual(
-    descriptors.map(({ pluginId, runtimeId }) => ({ pluginId, runtimeId })),
-    pluginManifest.items.map((item: { id: string }) => ({
-      pluginId: item.id.replace(/-\d+$/, ""),
-      runtimeId: item.id,
-    })),
-  );
-  assert.ok(descriptors.every((descriptor) => isPluginRuntimeUrl(descriptor.runtimeUrl)));
-  assert.ok(
-    pluginRuntimeDescriptorsFrom(pluginManifest, null).every(
-      (descriptor) => descriptor.runtimeUrl === null,
-    ),
-    "缺 plan 侧车时必须保留 cover 但关闭运行入口",
-  );
-  const tamperedPlan = structuredClone(validPlan);
-  tamperedPlan.items[0].entryUrl += "?unexpected=1";
-  const tamperedDescriptors = pluginRuntimeDescriptorsFrom(pluginManifest, tamperedPlan);
-  const firstRuntimeId = String(pluginManifest.items[0].id);
-  assert.equal(
-    tamperedDescriptors.find(
-      (descriptor) => descriptor.runtimeId === firstRuntimeId,
-    )?.runtimeUrl,
-    null,
-  );
-  assert.ok(
-    tamperedDescriptors
-      .filter((descriptor) => descriptor.runtimeId !== firstRuntimeId)
-      .every((descriptor) => isPluginRuntimeUrl(descriptor.runtimeUrl)),
-  );
-  const escapedPlan = structuredClone(validPlan);
-  escapedPlan.items[1].files[0].path = "../index.html";
-  const secondRuntimeId = String(pluginManifest.items[1].id);
-  assert.equal(
-    pluginRuntimeDescriptorsFrom(pluginManifest, escapedPlan).find(
-      (descriptor) => descriptor.runtimeId === secondRuntimeId,
-    )?.runtimeUrl,
-    null,
-  );
-
-  for (const item of pluginManifest.items as { source: string }[]) {
-    // 代码文件是封闭集合；NOTICE 只装上游数据的许可与署名，可有可无但不得是别的名字。
-    const entries = readdirSync(item.source).sort();
-    assert.deepEqual(
-      entries.filter((name) => name !== "NOTICE"),
-      ["engine.js", "index.html", "style.css", "ui.js"],
+test("22 件独立小工具在数据层一件不剩", () => {
+  for (const id of RETIRED_IDS) {
+    assert.equal(findPlugin(id), null, `${id} 还在数据里`);
+    assert.equal(
+      listHtml.includes(`/plugin-gallery/${id}`),
+      false,
+      `${id} 还在列表里留着链接`,
     );
-    for (const file of entries) {
-      assert.equal(lstatSync(path.join(item.source, file)).isSymbolicLink(), false);
-      assert.equal(lstatSync(path.join(item.source, file)).isFile(), true);
-    }
+    assert.equal(
+      filterPlugins({ text: id }).length,
+      0,
+      `${id} 还能被搜出来`,
+    );
+  }
+
+  const rawJson = readFileSync("content/plugin-gallery.json", "utf8");
+  assert.equal(
+    rawJson.includes("standalone"),
+    false,
+    "JSON 里还留着 standalone 这一类",
+  );
+  for (const id of RETIRED_IDS) {
+    assert.equal(rawJson.includes(id), false, `JSON 里还留着 ${id}`);
+  }
+
+  // 类别表也得跟着缩：出行与空间、财务与经营这些只服务独立小工具的类别不该留着。
+  assert.equal(PLUGIN_CATEGORIES.length, 4);
+  assert.deepEqual(
+    PLUGIN_CATEGORIES.map((category) => category.id),
+    ["visual-editor", "doc-editor", "media-editor", "source-editor"],
+  );
+  for (const category of PLUGIN_CATEGORIES) {
+    assert.ok(
+      PLUGIN_ITEMS.some((item) => item.category === category.id),
+      `${category.id} 是空类别`,
+    );
   }
 });
 
-test("UC-1 runtime URL 只接受精确 namespace-C /embed", () => {
+test("22 件的运行字节、自测与封面在磁盘上一件不剩", () => {
+  assert.equal(existsSync("content/active-runtime/plugin"), false);
+  assert.equal(existsSync("tests/plugin-gallery-runtime"), false);
+  assert.equal(existsSync("public/previews/tools"), false);
+  // manifest 只登记那 22 个目录，目录没了它就是一份指向空处的名册。
+  assert.equal(existsSync("content/active-runtime/manifest.plugin.json"), false);
+
+  // 游戏与网站的运行物不是这一波的对象，必须原样还在——否则就是误删。
+  assert.equal(existsSync("content/active-runtime/game"), true);
+  assert.equal(existsSync("content/active-runtime/website"), true);
+  assert.equal(existsSync("content/active-runtime/manifest.game-website.json"), true);
+});
+
+test("隔离域运行入口连接收端都拆干净了", () => {
   // UC-1: docs/architecture/oceanleo-untrusted-content-isolation.md §8.1
-  const valid =
-    "https://s-0123456789abcdef0123456789abcdef.oceanleo.app/embed";
-  assert.equal(isPluginRuntimeUrl(valid), true);
-  for (const rejected of [
-    "/plugin-gallery/runtime/unit-converter-01/index.html",
-    "http://s-0123456789abcdef0123456789abcdef.oceanleo.app/embed",
-    "https://oceanleo.app/embed",
-    "https://s-0123456789abcdef0123456789abcdef.oceanleo.com/embed",
-    "https://s-0123456789abcdef0123456789abcdef.oceanleo.app.evil.com/embed",
-    "https://user@s-0123456789abcdef0123456789abcdef.oceanleo.app/embed",
-    "https://s-0123456789abcdef0123456789abcdef.oceanleo.app:443/embed",
-    "https://s-0123456789abcdef0123456789abcdef.oceanleo.app/embed?x=1",
-    "https://s-0123456789abcdef0123456789abcdef.oceanleo.app/embed#x",
-    "https://s-0123456789abcdef0123456789abcdef.oceanleo.app/embed/",
-    "https://s-0123456789ABCDEF0123456789ABCDEF.oceanleo.app/embed",
+  // UC-3: 同文档 §8.3
+  // 没有条目要在隔离域里跑，就不该留着一个能被重新接上的入口判定。
+  assert.equal(existsSync("app/plugin-gallery/runtime-plan.ts"), false);
+  assert.equal(existsSync("components/PluginGalleryRunner.tsx"), false);
+  assert.equal(existsSync("app/plugin-gallery/runtime"), false);
+  assert.equal(existsSync("app/plugin-gallery/runtime-registry.ts"), false);
+
+  // 判据是模块导出，不是注释：注释里写「已经拆了 oceanleo.app 入口」是交代，
+  // 导出一个还能被重新接上的判定才是问题。
+  const exported = galleryModule as unknown as Record<string, unknown>;
+  for (const gone of [
+    "isPluginRuntimeUrl",
+    "pluginRuntimeDescriptors",
+    "runtimeForPlugin",
+    "runtimePluginIds",
+    "PluginKind",
+    "KIND_LABELS",
+    "KIND_HINTS",
+    "categoriesForKind",
   ]) {
-    assert.equal(isPluginRuntimeUrl(rejected), false, rejected);
+    assert.equal(exported[gone], undefined, `${gone} 还导出着`);
   }
-});
 
-test("UC-3 runtime URL 只接受插件 id 精确白名单或 namespace-C", () => {
-  // UC-3: docs/architecture/oceanleo-untrusted-content-isolation.md §8.3
-  // 信任只能来自硬编码白名单，绝不能从主机名后缀推断。
-  assert.equal(
-    isPluginRuntimeUrl(
-      "https://plugins.oceanleo.app/annotatable-city-map-01/",
-    ),
-    true,
-  );
-  assert.equal(
-    isPluginRuntimeUrl(
-      "https://s-0123456789abcdef0123456789abcdef.oceanleo.app/embed",
-    ),
-    true,
-  );
-
-  for (const rejected of [
-    "http://plugins.oceanleo.app/annotatable-city-map-01/",
-    "https://plugins.oceanleo.app:443/annotatable-city-map-01/",
-    "https://user@plugins.oceanleo.app/annotatable-city-map-01/",
-    "https://plugins.oceanleo.app/annotatable-city-map-01/?x=1",
-    "https://plugins.oceanleo.app/annotatable-city-map-01/#x",
-    "https://plugins.oceanleo.app/ANNOTATABLE-CITY-MAP-01/",
-    "https://PLUGINS.oceanleo.app/annotatable-city-map-01/",
-    "https://plugins.oceanleo.app.evil.com/annotatable-city-map-01/",
-    "https://plugins.oceanleo.com/annotatable-city-map-01/",
-    "https://plugins.oceanleo.app/annotatable-city-map-01",
-    "https://plugins.oceanleo.app/annotatable-city-map-01/index.html",
-    "https://plugins.oceanleo.app/not-a-real-plugin-99/",
-    "https://other.oceanleo.app/annotatable-city-map-01/",
-    "https://s-0123456789ABCDEF0123456789ABCDEF.oceanleo.app/embed",
-    "https://s-0123456789abcdef0123456789abcdef0.oceanleo.app/embed",
+  for (const name of [
+    "lib/plugin-gallery.ts",
+    "components/PluginGalleryDetail.tsx",
+    "components/PluginGallery.tsx",
   ]) {
-    assert.equal(isPluginRuntimeUrl(rejected), false, rejected);
+    const source = readFileSync(name, "utf8");
+    assert.doesNotMatch(source, /<iframe\b|srcdoc=|sandbox=/i, name);
+    assert.doesNotMatch(
+      source,
+      /NEXT_PUBLIC_PLUGIN_SANDBOX_ORIGIN|pluginRuntimeSrc|pluginSandboxOrigin/,
+      name,
+    );
+    // 反斜杠点只可能出现在正则字面量里，散文里写不出来。
+    assert.doesNotMatch(source, /oceanleo\\\.app/, name);
+    assert.doesNotMatch(source, /\[0-9a-f\]\{32\}/, name);
+  }
+
+  // 渲染结果里一个指向隔离域的**可点地址**都不该出现。正文里说明「用户生成的网站
+  // 只在 oceanleo.app 隔离域运行」是交代事实，不是入口。
+  for (const html of [listHtml, ...detailHtml]) {
+    assert.doesNotMatch(html, /<iframe\b|srcdoc=/i);
+    for (const attr of [
+      ...html.matchAll(/(?:href|src|action|formaction)="([^"]*)"/gi),
+    ]) {
+      assert.doesNotMatch(
+        attr[1],
+        /oceanleo\.app/i,
+        `出现了指向隔离域的可点地址: ${attr[1]}`,
+      );
+    }
   }
 });
 
@@ -236,39 +245,10 @@ test("UC-3 编辑器入口只接受逐条核验的第一方产品页", () => {
     "https://website.oceanleo.com/embed/site-editor",
     "https://design.oceanleo.com/embed/editor",
     "https://s-0123456789abcdef0123456789abcdef.oceanleo.app/embed",
+    "https://plugins.oceanleo.app/unit-converter-01/",
   ]) {
     assert.equal(isEditorEntrypointUrl(rejected), false, rejected);
   }
-});
-
-test("详情只给真实 cover 与安全新窗口入口，歪 URL 时 fail-closed", () => {
-  // UC-1: docs/architecture/oceanleo-untrusted-content-isolation.md §8.1
-  const item = findPlugin("unit-converter");
-  assert.ok(item);
-  const valid =
-    "https://s-0123456789abcdef0123456789abcdef.oceanleo.app/embed";
-  const preview = "/previews/tools/unit-converter-01.cover.webp";
-  const openHtml = render(
-    <PluginGalleryRunner item={item} previewPath={preview} runtimeUrl={valid} />,
-  );
-  assert.match(openHtml, new RegExp(`src="${preview}"`));
-  assert.match(openHtml, new RegExp(`href="${valid}"`));
-  assert.match(openHtml, /target="_blank"/);
-  assert.match(openHtml, /rel="noopener noreferrer"/);
-  assert.match(openHtml, />打开使用<\/a>/);
-  assert.doesNotMatch(openHtml, /<iframe\b|srcdoc=/i);
-  assert.doesNotMatch(openHtml, /\bdownload(?:=|\s|>)/i);
-
-  const closedHtml = render(
-    <PluginGalleryRunner
-      item={item}
-      previewPath={preview}
-      runtimeUrl="/plugin-gallery/runtime/unit-converter-01/index.html"
-    />,
-  );
-  assert.match(closedHtml, /暂不可用/);
-  assert.doesNotMatch(closedHtml, /<a\b|<iframe\b/i);
-  assert.doesNotMatch(closedHtml, /\/plugin-gallery\/runtime\//);
 });
 
 test("卡片与详情有实质内容，不是一行标题", () => {
@@ -349,7 +329,7 @@ test("任何路径都没有下载或安装入口", () => {
   }
 });
 
-test("可用性只由 runtime descriptor 或已核验编辑器入口算出", () => {
+test("可用性只由已核验的编辑器入口算出", () => {
   const rawData = JSON.parse(readFileSync("content/plugin-gallery.json", "utf8")) as {
     items: Record<string, unknown>[];
   };
@@ -360,21 +340,9 @@ test("可用性只由 runtime descriptor 或已核验编辑器入口算出", () 
     assert.equal(Object.hasOwn(item, "entryUrl"), false, "JSON 不得手写编辑器入口");
   }
 
-  const oneRuntime = new Set(["unit-converter"]);
-  for (const item of PLUGIN_ITEMS.filter((entry) => entry.kind === "standalone")) {
-    assert.equal(item.adapter, undefined, `${item.id} 不该有编辑器适配器`);
-    assert.equal(pluginIsAvailable(item, []), false, `${item.id} 不得脱离 plan 判可用`);
-    assert.equal(
-      pluginIsAvailable(item, oneRuntime),
-      item.id === "unit-converter",
-      `${item.id} 没有按 runtime descriptor 判定`,
-    );
-  }
-
-  const editors = PLUGIN_ITEMS.filter((entry) => entry.kind === "editor");
-  const adapters = editors.map((item) => item.adapter);
-  assert.equal(new Set(adapters).size, editors.length, "两条目撞了同一个适配器");
-  for (const item of editors) {
+  const adapters = PLUGIN_ITEMS.map((item) => item.adapter);
+  assert.equal(new Set(adapters).size, PLUGIN_ITEMS.length, "两条目撞了同一个适配器");
+  for (const item of PLUGIN_ITEMS) {
     const access = editorAccessForPlugin(item);
     assert.ok(access, `${item.id} 没有逐件接入结论`);
     assert.equal(access.adapter, item.adapter);
@@ -387,42 +355,23 @@ test("可用性只由 runtime descriptor 或已核验编辑器入口算出", () 
     }
   }
   assert.deepEqual(
-    editors.filter((item) => pluginIsAvailable(item)).map((item) => item.id),
+    filterAvailablePlugins(PLUGIN_ITEMS).map((item) => item.id),
     ["workflow-canvas"],
   );
 
   for (const item of PLUGIN_ITEMS) {
     assert.ok(item.statusNote.length >= 30, `${item.id} 的能力依据不完整`);
     assert.ok(item.specPath.startsWith("docs/specs/oceanleo-plugins-v1/"));
+    // 22 件的设计文档已随它们一起下架，保留的必须全指到 editors/。
+    assert.match(item.specPath, /^docs\/specs\/oceanleo-plugins-v1\/editors\//);
   }
 });
 
-test("UC-1,UC-3 35 格逐格都有可点入口或说清楚的下一步", () => {
-  // UC-1: docs/architecture/oceanleo-untrusted-content-isolation.md §8.1
-  // UC-3: 同文档 §8.3 —— 入口只能是逐条核验过的运行地址；没有核验过的入口时
-  // 页面必须如实说明缺口，绝不允许退回本站地址或任意 oceanleo.app 主机。
-  const safeRuntimeUrl =
-    "https://s-0123456789abcdef0123456789abcdef.oceanleo.app/embed";
+test("UC-3 13 格逐格都有可点入口或说清楚的下一步", () => {
+  // UC-3: docs/architecture/oceanleo-untrusted-content-isolation.md §8.3
+  // 入口只能是逐条核验过的第一方产品页；没有核验过的入口时页面必须如实说明缺口，
+  // 绝不允许退回本站地址或任意 oceanleo.app 主机。
   for (const item of PLUGIN_ITEMS) {
-    if (item.kind === "standalone") {
-      const pendingHtml = render(<PluginGalleryDetail item={item} />);
-      assert.ok(
-        pendingHtml.includes("安全运行地址生成后") &&
-          pendingHtml.includes("不会回退到本站运行"),
-        `${item.id} 缺运行地址时没有说清下一步`,
-      );
-      const runnableHtml = render(
-        <PluginGalleryDetail
-          item={item}
-          previewPath={`/previews/tools/${item.id}-01.cover.webp`}
-          runtimeUrl={safeRuntimeUrl}
-        />,
-      );
-      assert.match(runnableHtml, new RegExp(`href="${safeRuntimeUrl}"`));
-      assert.match(runnableHtml, />打开使用<\/a>/);
-      continue;
-    }
-
     const access = editorAccessForPlugin(item);
     assert.ok(access, `${item.id} 没有编辑器接入结论`);
     const html = render(<PluginGalleryDetail item={item} />);
@@ -442,22 +391,21 @@ test("UC-1,UC-3 35 格逐格都有可点入口或说清楚的下一步", () => {
 
 test("统计与只看可用筛选共用同一份入口判定", () => {
   assert.deepEqual(
-    filterAvailablePlugins(PLUGIN_ITEMS, []).map((item) => item.id),
+    filterAvailablePlugins(PLUGIN_ITEMS).map((item) => item.id),
     ["workflow-canvas"],
   );
-  assert.deepEqual(
-    filterAvailablePlugins(PLUGIN_ITEMS, ["unit-converter"]).map(
-      (item) => item.id,
-    ),
-    ["unit-converter", "workflow-canvas"],
-  );
+  assert.match(listHtml, /共 13 件，全部是编辑器/);
+  assert.match(listHtml, /1 件现在有经过核验的使用入口；12 件入口尚未接通/);
+});
 
-  const noRuntimeHtml = render(<PluginGallery runtimeIds={[]} />);
-  const oneRuntimeHtml = render(
-    <PluginGallery runtimeIds={["unit-converter"]} />,
+test("开场白说清这里是平台能干的活，不是小工具集市", () => {
+  assert.ok(listHtml.includes("不是小工具集市"), "开场白没说清这一格是什么");
+  assert.ok(
+    listHtml.includes("独立小工具已经整体下架"),
+    "没有如实交代 22 件去哪了",
   );
-  assert.match(noRuntimeHtml, /1 件现在有经过核验的使用入口；34 件入口尚未接通/);
-  assert.match(oneRuntimeHtml, /2 件现在有经过核验的使用入口；33 件入口尚未接通/);
+  // 「工具能力」这种行话不该再出现在标题上。
+  assert.ok(listHtml.includes("平台能干的活"));
 });
 
 /** `public/` 下的任何东西都能被直接 GET 到，不需要经过页面。 */
@@ -468,7 +416,7 @@ function publicFiles(): string[] {
     .filter((entry) => statSync(path.join("public", entry)).isFile());
 }
 
-test("public 只保留安全 cover，不含插件 HTML/JS/CSS", () => {
+test("public 里没有一件下架工具的残留", () => {
   // UC-1: docs/architecture/oceanleo-untrusted-content-isolation.md §8.1
   // 「界面上没有下载按钮」不等于「下不到」：运行字节必须完全移出 public。
   const files = publicFiles();
@@ -478,8 +426,13 @@ test("public 只保留安全 cover，不含插件 HTML/JS/CSS", () => {
     false,
     "旧同源 runtime 路径仍有可公开文件",
   );
+  assert.equal(
+    files.some((file) => file.startsWith("previews/tools/")),
+    false,
+    "封面还在 public 里",
+  );
 
-  const ids = new Set(PLUGIN_ITEMS.map((item) => item.id));
+  const ids = new Set<string>(PLUGIN_ITEMS.map((item) => item.id));
   for (const file of files) {
     const name = path.basename(file).toLowerCase();
     assert.doesNotMatch(
@@ -489,26 +442,13 @@ test("public 只保留安全 cover，不含插件 HTML/JS/CSS", () => {
     );
     const stem = name.replace(/\.[^.]+$/, "");
     assert.equal(ids.has(stem), false, `public 下出现了以工具 id 命名的文件: ${file}`);
-  }
-
-  // 封面必须是这件工具真实界面的样子，做法是 jsdom 取真实文本再按同一版面画出来。
-  // world-map-01 的主体是 Google Maps 的底图画布：离线取不到真实底图，画一张像地图
-  // 的图就是这条断言本来要挡住的示意图。所以它暂时没有封面，详情页会如实显示
-  // 「预览暂不可用」；要补真封面需要运营者批准一次浏览器截图。
-  const COVERLESS_BY_DESIGN = new Set(["world-map-01"]);
-  const expectedCovers = pluginManifest.items
-    .filter((item: { id: string }) => !COVERLESS_BY_DESIGN.has(item.id))
-    .map((item: { id: string }) => `previews/tools/${item.id}.cover.webp`);
-  for (const cover of expectedCovers) {
-    assert.ok(files.includes(cover), `缺真实 cover: ${cover}`);
-    assert.ok(statSync(path.join("public", cover)).size > 0, `cover 是空文件: ${cover}`);
-  }
-  for (const runtimeId of Object.keys(runtimeHostById)) {
-    const executable = files.filter(
-      (file) =>
-        file.includes(runtimeId) && /\.(?:html?|m?js|cjs|css)$/i.test(file),
-    );
-    assert.deepEqual(executable, [], `${runtimeId} 的运行字节仍在 public`);
+    for (const retired of RETIRED_IDS) {
+      assert.equal(
+        file.toLowerCase().includes(retired),
+        false,
+        `public 下还留着下架工具的文件: ${file}`,
+      );
+    }
   }
 
   // 数据本身也不许被静态托管：它在仓库根的 content/ 下，构建期 import 进包，
@@ -522,31 +462,7 @@ test("public 只保留安全 cover，不含插件 HTML/JS/CSS", () => {
   );
 });
 
-test("UC-1 源码锁死无 iframe、无同源 runtime 路由、无 fallback", () => {
-  // UC-1: docs/architecture/oceanleo-untrusted-content-isolation.md §8.1
-  assert.equal(existsSync("app/plugin-gallery/runtime/[id]"), false);
-  assert.equal(existsSync("app/plugin-gallery/runtime/[...path]"), false);
-  assert.equal(existsSync("app/plugin-gallery/runtime/[...path]/route.ts"), false);
-  assert.equal(existsSync("app/plugin-gallery/runtime-registry.ts"), false);
-
-  const runner = readFileSync("components/PluginGalleryRunner.tsx", "utf8");
-  assert.doesNotMatch(runner, /<iframe\b|srcdoc=|sandbox=/i);
-  assert.match(runner, /target="_blank"/);
-  assert.match(runner, /rel="noopener noreferrer"/);
-
-  const dataLayer = readFileSync("lib/plugin-gallery.ts", "utf8");
-  assert.doesNotMatch(
-    dataLayer,
-    /NEXT_PUBLIC_PLUGIN_SANDBOX_ORIGIN|pluginRuntimeSrc|pluginSandboxOrigin/,
-  );
-  assert.doesNotMatch(dataLayer, /return\s+origin\s*\?/);
-  assert.match(
-    dataLayer,
-    /\^https:\\\/\\\/s-\[0-9a-f\]\{32\}\\\.oceanleo\\\.app\\\/embed\$/,
-  );
-});
-
-// 上面两条量的是组件渲染结果与磁盘。真正发给用户的是**整页**：站点外壳、左栏、
+// 上面几条量的是组件渲染结果与磁盘。真正发给用户的是**整页**：站点外壳、左栏、
 // 共享包的组件都在里面，我这两个组件只是其中一块。所以还要对着一个真在跑的
 // 服务器把每条 URL 走一遍。这是非浏览器的 HTTP 检查，不是浏览器验证。
 //
@@ -591,6 +507,17 @@ test("真正发出去的整页上也没有下载入口", async (t) => {
   }
 });
 
+test("下架的 22 条详情地址真的 404 了", async (t) => {
+  if (!servedBaseUrl) {
+    t.skip("没给 PLUGIN_GALLERY_BASE_URL");
+    return;
+  }
+  for (const id of RETIRED_IDS) {
+    const response = await fetch(`${servedBaseUrl}${pluginDetailHref(id)}`);
+    assert.equal(response.status, 404, `${id} 的详情页还打得开`);
+  }
+});
+
 test("猜路径也 GET 不到这一格的数据", async (t) => {
   if (!servedBaseUrl) {
     t.skip("没给 PLUGIN_GALLERY_BASE_URL");
@@ -604,6 +531,7 @@ test("猜路径也 GET 不到这一格的数据", async (t) => {
     "/plugin-gallery/plugin-gallery.json",
     "/plugin-gallery/image-editor.json",
     "/plugin-gallery/image-editor.zip",
+    "/previews/tools/unit-converter-01.cover.webp",
   ]) {
     const response = await fetch(`${servedBaseUrl}${urlPath}`);
     assert.notEqual(response.status, 200, `${urlPath} 居然 GET 得到`);
@@ -621,25 +549,28 @@ test("用户可见的界面不出现内部概念名「插件」", () => {
 });
 
 test("搜索与类别筛选真的会缩小结果", () => {
-  assert.equal(filterPlugins().length, 35);
-  assert.equal(filterPlugins({ kind: "editor" }).length, 13);
-  assert.equal(filterPlugins({ kind: "standalone" }).length, 22);
+  assert.equal(filterPlugins().length, 13);
 
-  const calc = filterPlugins({ category: "calc" });
-  assert.equal(calc.length, 4);
-  assert.ok(calc.every((item) => item.category === "calc"));
-
-  const ledger = filterPlugins({ text: "台账" }).map((item) => item.id);
-  assert.ok(ledger.includes("ledger-register"));
-  // 表格编辑器也命中，因为它明说了「不会被套成台账」——这正是用户搜这个词时
-  // 需要看到的区分，不是误命中。命中面必须比全集小。
-  assert.ok(ledger.length < PLUGIN_ITEMS.length);
-  // 搜「你想干的事」而不是工具名，也要搜得到。
-  assert.ok(
-    filterPlugins({ text: "月供" }).some((item) => item.id === "financial-calculator"),
+  const doc = filterPlugins({ category: "doc-editor" });
+  assert.equal(doc.length, 4);
+  assert.ok(doc.every((item) => item.category === "doc-editor"));
+  assert.equal(
+    PLUGIN_CATEGORIES.reduce(
+      (total, category) => total + filterPlugins({ category: category.id }).length,
+      0,
+    ),
+    13,
+    "每件只能落在一个类别里",
   );
+
+  // 搜「你想干的事」而不是工具名，也要搜得到。
   assert.ok(
     filterPlugins({ text: "字幕" }).some((item) => item.id === "video-timeline"),
   );
+  assert.ok(
+    filterPlugins({ text: "台账" }).some((item) => item.id === "grid-editor"),
+    "表格编辑器明说了「不会被套成台账」，搜台账应当落到它身上",
+  );
+  assert.ok(filterPlugins({ text: "台账" }).length < PLUGIN_ITEMS.length);
   assert.equal(filterPlugins({ text: "这个词不该命中任何工具" }).length, 0);
 });

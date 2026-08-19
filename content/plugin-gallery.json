@@ -1,526 +1,34 @@
 {
   "schema": "oceanleo.plugin-gallery.v1",
   "source": "docs/specs/oceanleo-plugins-v1（oceandino 仓）",
-  "compiledAt": "2026-08-13",
+  "compiledAt": "2026-08-19",
+  "note": "2026-08-19：22 件独立小工具整体下架，只留编辑器。判据见 docs/specs/oceanleo-plugins-v1/00-charter.md。",
   "policy": {
     "downloadable": false,
     "reason": "这些是在 app 里打开来用的软件，没有可以存到硬盘、离线打开的文件。本板块只展示能力，不提供下载或安装。用户在这些工具里做出来的东西（表格、PDF、长图、网页）才是可下载的素材，落在「我的库」。"
   },
   "categories": [
     {
-      "id": "space",
-      "label": "出行与空间",
-      "kind": "standalone"
-    },
-    {
-      "id": "finance",
-      "label": "财务与经营",
-      "kind": "standalone"
-    },
-    {
-      "id": "calc",
-      "label": "计算与换算",
-      "kind": "standalone"
-    },
-    {
-      "id": "research",
-      "label": "研究与检索",
-      "kind": "standalone"
-    },
-    {
-      "id": "learning",
-      "label": "学习与记忆",
-      "kind": "standalone"
-    },
-    {
-      "id": "reasoning",
-      "label": "梳理与推演",
-      "kind": "standalone"
-    },
-    {
-      "id": "script",
-      "label": "表达与脚本",
-      "kind": "standalone"
-    },
-    {
       "id": "visual-editor",
-      "label": "图像与设计",
-      "kind": "editor"
+      "label": "图像与设计"
     },
     {
       "id": "doc-editor",
-      "label": "文档与表格",
-      "kind": "editor"
+      "label": "文档与表格"
     },
     {
       "id": "media-editor",
-      "label": "影音与三维",
-      "kind": "editor"
+      "label": "影音与三维"
     },
     {
       "id": "source-editor",
-      "label": "源码与流程",
-      "kind": "editor"
+      "label": "源码与流程"
     }
   ],
   "items": [
     {
-      "id": "annotatable-city-map",
-      "name": "地图",
-      "kind": "standalone",
-      "category": "space",
-      "summary": "把手上的一串地址按真实比例摆开，看清它们的相对位置和跑完要多远。",
-      "does": [
-        "点下地点并写上名字，名字就留在图上，不用回头对编号",
-        "按顺序连成路线，读出分段直线距离与总长"
-      ],
-      "scenarios": [
-        "拿到三天景点清单，想知道第二天是不是绕路",
-        "六家候选餐厅里，找出同一街区的三家",
-        "徒步计划要同时看见出发点、补给点与撤退点"
-      ],
-      "input": "不需要任何素材，空手进入。可以从零个地点开始。",
-      "output": "带地点、路线与量算结果的地图，导出物落进「我的库」。",
-      "firstOpen": "整个右侧先出现全球底图，海洋、陆地、海岸、国界与经纬网清楚可辨，旁边有图例、比例与来源署名；提示「在图上点一下，落下第一个地点」。",
-      "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
-      "specPath": "docs/specs/oceanleo-plugins-v1/plugins/city-map.md"
-    },
-    {
-      "id": "interactive-globe",
-      "name": "地球仪",
-      "kind": "standalone",
-      "category": "space",
-      "summary": "转动一颗真球，看目的地在地球上的位置、跨洋航线怎么走、当地此刻是白天还是黑夜。",
-      "does": [
-        "把多个目的地连成大圆弧，看平面地图上弯曲的航线在球面上是否顺直",
-        "看见当前的昼夜分界落在哪里",
-        "按经度理解大致的太阳时差，并且明确告诉你它不等于行政时区"
-      ],
-      "scenarios": [
-        "计划「北京 → 赫尔辛基 → 雷克雅未克 → 北京」这样的跨洲行程",
-        "出发前想理解目的地与出发地的昼夜和时差关系"
-      ],
-      "input": "不需要任何素材，零个目的地也能打开。",
-      "output": "带目的地与大圆航线的球面视图，导出物落进「我的库」。",
-      "firstOpen": "右侧已经是一颗可转动的地球：陆地、海洋、国界、经纬网与当前昼夜分界清楚可见；提示「拖动地球；点一个国家，把它加进这次行程」。",
-      "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
-      "specPath": "docs/specs/oceanleo-plugins-v1/plugins/interactive-globe.md"
-    },
-    {
-      "id": "floorplan-annotation",
-      "name": "户型标注",
-      "kind": "standalone",
-      "category": "space",
-      "summary": "按真实尺寸画墙、门、窗，随手读出每个房间和整套空间的面积与尺寸。",
-      "does": [
-        "沿网格拉一条线就是一面墙，松手即显示实际长度",
-        "围合出房间后立刻读到面积，共享墙不会被重复计算"
-      ],
-      "scenarios": [
-        "毛坯房想判断主卧放下 1.8 米床后还有没有走道",
-        "办公空间想用工位数反推需要多大面积",
-        "民宿改造想比较改隔断前后的套内面积"
-      ],
-      "input": "不需要任何素材，从一张空白米制底纸开始。",
-      "output": "可打印的平面图与面积、尺寸清单，导出物落进「我的库」。",
-      "firstOpen": "右侧先出现米制底纸：浅灰网格、原点、比例尺与北针都已可见，但一面墙也没有替你画；提示「沿网格拖一条线，画出第一面墙」。",
-      "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
-      "specPath": "docs/specs/oceanleo-plugins-v1/plugins/floorplan.md"
-    },
-    {
-      "id": "ledger-register",
-      "name": "台账",
-      "kind": "standalone",
-      "category": "finance",
-      "summary": "一卷账从上往下记：记一笔，合计、余额和当前读数立刻跟着动。",
-      "does": [
-        "一卷账从上往下记，录入行就是下一行，最新一笔和当前读数始终在眼前",
-        "从某一笔追到余额为什么变成现在这个数"
-      ],
-      "scenarios": [
-        "记账 app 给完科目建议后，立刻记下第一笔收支",
-        "出差回来按日期登记机票、住宿与餐饮，交给财务",
-        "小店追踪库存进出或应收款"
-      ],
-      "input": "不需要任何素材，空表进入。",
-      "output": "自己的账目表，可导出成 Excel 落进「我的库」。",
-      "firstOpen": "一张带列名、没有任何示例记录的空表，底部合计如实显示 0.00；可以直接点第一行录入日期，不用先新建文件或删掉别人留下的例子。",
-      "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
-      "specPath": "docs/specs/oceanleo-plugins-v1/plugins/ledger.md"
-    },
-    {
-      "id": "three-statement-model",
-      "name": "三表模型",
-      "kind": "standalone",
-      "category": "finance",
-      "summary": "改一个假设，三张表一起走一遍，看现金在哪一年不够。",
-      "does": [
-        "收入、毛利、账期、资本开支的旋钮长在它驱动的那一行上，改完立刻走一遍三张表",
-        "每个结果都能追回是哪个假设算出来的"
-      ],
-      "scenarios": [
-        "商业计划书缺一份自洽的三年财务预测",
-        "把应收周转从 45 天改到 75 天，直接看现金流与债务怎么变"
-      ],
-      "input": "不需要任何素材；首屏用通用假设起步，不装入任何真实公司数据。",
-      "output": "三张联动财务表与敏感性结果，可导出落进「我的库」。",
-      "firstOpen": "给出一组可修改的通用假设和由它们算出的三表；改动第一个与自己不符的假设后，三张表、检查结果与敏感性结果一起变化。",
-      "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
-      "specPath": "docs/specs/oceanleo-plugins-v1/plugins/three-statement-model.md"
-    },
-    {
-      "id": "metrics-dashboard",
-      "name": "看板",
-      "kind": "standalone",
-      "category": "finance",
-      "summary": "把几个指标放到同一条时间轴上，看它们怎么一起转向。",
-      "does": [
-        "每个指标一条轨道，实际走势和目标参照用同一把尺子，名字写在轨道上",
-        "几条轨道共用一条时间轴，转向发生在同一周就看得出来"
-      ],
-      "scenarios": [
-        "城市对比看完文字结论，还想只看房价收入比、把范围拉到十年",
-        "经营周会要把多个季度指标与目标放在同一屏比较"
-      ],
-      "input": "不需要任何素材；可以带入所在 app 已有的数据、粘贴自己的数据，或手工建第一个指标。",
-      "output": "一屏可复算的指标视图，可导出落进「我的库」。",
-      "firstOpen": "先说明筛选区、指标区与图形区各自的作用，指标显示「数据缺失」而不是伪造的零，并给出显眼的「从哪儿取数」入口。",
-      "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
-      "specPath": "docs/specs/oceanleo-plugins-v1/plugins/metrics-dashboard.md"
-    },
-    {
-      "id": "financial-calculator",
-      "name": "金融计算器",
-      "kind": "standalone",
-      "category": "calc",
-      "summary": "把一笔贷款画成从本金走到清零的轨迹，改一个假设就读出两个方案差多少。",
-      "does": [
-        "拖期限卡扣，原方案留成对比线，结论当场写出月供多付多少、总利息少付多少",
-        "游标落在曲线上，就地给出那一期的还款、利息、本金与余额"
-      ],
-      "scenarios": [
-        "买房能力测算给出总价上限后，还想比较不同贷款年限",
-        "手上一组现金流，想知道值不值得投"
-      ],
-      "input": "不需要任何素材；首屏是一档可修改的出厂参数，不冒充你的数据。",
-      "output": "可复核的计算结果与逐期明细，可导出落进「我的库」。",
-      "firstOpen": "直接展示一个可修改的房贷测算档位（本金 1 000 000 元、年利率 4.20%、360 期、等额本息），并说明这是公式的出厂参数。",
-      "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
-      "caution": "提供计算与教学，不提供投资建议。",
-      "specPath": "docs/specs/oceanleo-plugins-v1/plugins/financial-calculator.md"
-    },
-    {
-      "id": "medical-calculator",
-      "name": "医疗计算器",
-      "kind": "standalone",
-      "category": "calc",
-      "summary": "把身高体重年龄性别与化验值换成 BMI、体表面积、肾小球滤过率等常用指标，一次只答一个，公式与适用范围点开就能查。",
-      "does": [
-        "填入身高体重先得到 BMI 与体表面积，其余结果等各自需要的化验值",
-        "在 mg/dL 与 µmol/L 之间换算后复核同一个结果",
-        "参数没填齐就不出数，不用出厂示例假装已经判断了你的健康"
-      ],
-      "scenarios": [
-        "体检报告只给肌酐与参考区间，想理解对应怎样的 eGFR",
-        "教学时要把公式、单位与分段一起讲清楚"
-      ],
-      "input": "不需要任何素材；个体参数首屏全部为空。",
-      "output": "带公式名、单位与参考分段的计算结果，可导出落进「我的库」。",
-      "firstOpen": "个体参数全空，但能算什么、各项需要哪些输入、用什么单位、分段怎么读以及免责声明都已可见。",
-      "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
-      "caution": "用于教学与计算辅助，不用于诊断或处方；分段与公式会随指南变化。",
-      "specPath": "docs/specs/oceanleo-plugins-v1/plugins/medical-calculator.md"
-    },
-    {
-      "id": "legal-calculator",
-      "name": "法律计算器",
-      "kind": "standalone",
-      "category": "calc",
-      "summary": "按公开口径把你填的事实走成一条链，看清哪一道门槛改变了金额。",
-      "does": [
-        "填月工资、当地月平均工资和工龄，链尾给出采用基数、补偿月数与估算金额",
-        "门槛触发时就地写明白：3 倍工资封顶会同时把补偿月数压到 12 个月"
-      ],
-      "scenarios": [
-        "被裁员，面对「干几年赔几个月」「三倍封顶」「零头不算」等互相冲突的说法",
-        "起诉前想先估一下受理费"
-      ],
-      "input": "不需要任何素材；个案参数首屏保持空白。",
-      "output": "带法源与生效日期的分段计算结果，可导出落进「我的库」。",
-      "firstOpen": "个案参数空白，但计算项目、公开规则说明、法条锚与免责声明已经可见；填入自己的事实后才出现个案数字。",
-      "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
-      "caution": "用于计算与释法示例，不构成法律意见或裁判结论；法律与数值会变。",
-      "specPath": "docs/specs/oceanleo-plugins-v1/plugins/legal-calculator.md"
-    },
-    {
-      "id": "unit-converter",
-      "name": "换算器",
-      "kind": "standalone",
-      "category": "calc",
-      "summary": "把手里的陌生单位和你习惯的单位摆成一对，改任意一端，另一端立刻跟着变。",
-      "does": [
-        "左右各挑一个单位，改哪一端都行，另一端原位换算，不新增结果行",
-        "桥上直接写这一对是精确定义还是近似换算，血糖会写出「葡萄糖」"
-      ],
-      "scenarios": [
-        "国外体检报告写 100 mg/dL，而你习惯 mmol/L",
-        "旅行时比较公斤与磅、毫升与液量盎司",
-        "工程上快速复核温度、压强或数据量"
-      ],
-      "input": "不需要任何素材；首屏是一组可直接改的出厂换算，不是空框。",
-      "output": "换算结果与因子说明，可导出落进「我的库」。",
-      "firstOpen": "没有上下文时从 1 m 起步，同时显示厘米、毫米、英寸与英尺；在血糖场景则直接展示 mg/dL 与 mmol/L。第一个动作只是把数改成自己的。",
-      "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
-      "specPath": "docs/specs/oceanleo-plugins-v1/plugins/unit-converter.md"
-    },
-    {
-      "id": "literature-matrix",
-      "name": "文献矩阵",
-      "kind": "standalone",
-      "category": "research",
-      "summary": "把一批检索结果摊成一张能横着比的证据表：逐条判定进出，最终纳入多少一直摆在最上面。",
-      "does": [
-        "同一个维度横着看，逐条判定纳入、排除还是待定",
-        "待定不会被算成已纳入，所以合计不会对着你喊「对不上」"
-      ],
-      "scenarios": [
-        "手上几百条题录，要回答「最初找到多少、为何排除、最终纳入哪些」",
-        "多篇 PDF 需要一张横向比对的工作台"
-      ],
-      "input": "不需要任何素材；从零条题录开始，通常第一个动作是整批粘贴导入。",
-      "output": "证据抽取表与筛选流程计数，可导出落进「我的库」。",
-      "firstOpen": "一张零条题录的抽取表，顶部计数全为零，突出「粘贴题录」入口；表头说明能比较哪些信息，但不预置任何示例论文。",
-      "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
-      "specPath": "docs/specs/oceanleo-plugins-v1/plugins/literature-matrix.md"
-    },
-    {
-      "id": "search-query-builder",
-      "name": "检索式构造",
-      "kind": "standalone",
-      "category": "research",
-      "summary": "把一句研究问题排成一条能直接贴进数据库的查询串，换库时哪个词被改写了就写在那个词下面。",
-      "does": [
-        "读得懂自己拼出来的那条式子，而不是只拿到一串括号",
-        "换检索库时，被改写或降级的那个词就地标出来"
-      ],
-      "scenarios": [
-        "要解释一篇综述的文献从哪里来，手上却只有零散提问记录",
-        "同一个课题要在几个数据库里都查一遍"
-      ],
-      "input": "不需要任何素材；从一句「你要查什么」开始。",
-      "output": "可复制的查询串与可复算的检索策略，可导出落进「我的库」。",
-      "firstOpen": "顶部问「一句话说清你要查什么」，概念区提示加入第一个概念块，编译区暂时空着；写下第一个词就能看见最小查询结果，不会先弹一堆数量告警。",
-      "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
-      "specPath": "docs/specs/oceanleo-plugins-v1/plugins/search-query-builder.md"
-    },
-    {
-      "id": "concept-knowledge-graph",
-      "name": "概念图谱",
-      "kind": "standalone",
-      "category": "learning",
-      "summary": "把一门知识拆成概念和先修关系，看清哪些现在能学、哪些被前置知识锁着、哪些该复习了。",
-      "does": [
-        "把「楞次定律要先会磁通量」这种链条直接画出来",
-        "分层排出学习顺序，并指出互相循环的先修关系",
-        "按掌握度衰减提示哪些该回头复习，而不是把整条后继链清零"
-      ],
-      "scenarios": [
-        "教师拿到线性大纲，却要安排分层作业",
-        "学习者列了一堆知识点，不知道先学什么、卡在哪"
-      ],
-      "input": "不需要任何素材；画布从零个概念开始。",
-      "output": "带先修关系、层次与掌握状态的知识图，可导出落进「我的库」。",
-      "firstOpen": "空画布中央提示「先写下你要弄懂的第一个概念」，状态栏显示尚未分层；第一个概念没有前驱，自然处在可学位置。",
-      "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
-      "specPath": "docs/specs/oceanleo-plugins-v1/plugins/concept-graph.md"
-    },
-    {
-      "id": "self-test-quiz",
-      "name": "自测卷",
-      "kind": "standalone",
-      "category": "learning",
-      "summary": "自己出一题，当场作答，立刻知道对错和错在哪。",
-      "does": [
-        "写下题干就长出该题型要填的空，填空、连线、排序都不用你自己敲格式",
-        "判分直接贴回你刚点的那个选项、刚写的那个空上，不给成绩报告"
-      ],
-      "scenarios": [
-        "读完函数与导数一章，不知道自己漏在哪里",
-        "备考前想拿自己整理的题目练一轮"
-      ],
-      "input": "不需要任何素材；也可以在当前 app 有正文时选「从本页内容出题」。",
-      "output": "自测结果与错题清单，可导出落进「我的库」。",
-      "firstOpen": "从零道题开始，提示「出第一道题」；判分设置可见，但不塞示例题，一道题也可以开始作答。",
-      "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
-      "specPath": "docs/specs/oceanleo-plugins-v1/plugins/self-test-quiz.md"
-    },
-    {
-      "id": "spaced-repetition-scheduler",
-      "name": "间隔排程",
-      "kind": "standalone",
-      "category": "learning",
-      "summary": "只给你今天该复习的那一张卡：看一眼、诚实评一下、知道下次什么时候再见。",
-      "does": [
-        "屏幕中央永远只有一张卡，走三步：正面、揭开答案、评价这次回忆",
-        "评价用「忘记了／想起来很费劲／有点犹豫／一下就想起」，不是 0–5 打分"
-      ],
-      "scenarios": [
-        "刚弄懂 40 个易混词，担心几天后忘掉",
-        "长期备考需要一套自动排期的复习节奏"
-      ],
-      "input": "不需要任何素材；零张卡是正常起点，不会用示例卡污染你的记忆记录。",
-      "output": "自己的卡片与排程记录，可导出落进「我的库」。",
-      "firstOpen": "队列显示「今天没有要复习的卡片」，入口提示「加第一张卡」；算法摘要与未来日期轴已经可见。",
-      "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
-      "specPath": "docs/specs/oceanleo-plugins-v1/plugins/spaced-repetition.md"
-    },
-    {
-      "id": "formula-derivation-walkthrough",
-      "name": "公式展开",
-      "kind": "standalone",
-      "category": "learning",
-      "summary": "沿着每一个等号往下核，找出自己漏在平方、代入还是最后一次乘法。",
-      "does": [
-        "推导由原式自己长出来：代入、每个因子、逐次乘、近似，每行都是完整等式",
-        "每行右边写着能核对的依据名，改数、改单位、改近似位数都不用提交"
-      ],
-      "scenarios": [
-        "讲自由落体位移，想说明 ½ 是从哪来的",
-        "学生想看改变初速度后哪一项变、哪一项不变"
-      ],
-      "input": "不需要任何素材；左侧从空符号表开始。",
-      "output": "可读、可改、可追溯的推导过程，可导出落进「我的库」。",
-      "firstOpen": "左侧提示「先把这个公式里出现的量列出来」，右侧提示「还没有推导步骤」；加入第一个量就能写第一步。",
-      "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
-      "specPath": "docs/specs/oceanleo-plugins-v1/plugins/formula-walkthrough.md"
-    },
-    {
-      "id": "relationship-graph",
-      "name": "关系图",
-      "kind": "standalone",
-      "category": "reasoning",
-      "summary": "把一堆人和机构摆成一张网，问「他们通过谁连上」。",
-      "does": [
-        "填进去的名字就写在节点上，不用回头对编号",
-        "选两个人，把连接他们的那条路径高亮出来"
-      ],
-      "scenarios": [
-        "律师面对多段婚姻、子女、代位继承与赡养关系的长篇笔录",
-        "多家公司、人物与事件互相交叉，需要一张全景"
-      ],
-      "input": "不需要任何素材；空画布中央直接问「谁 — 什么关系 — 和谁」。",
-      "output": "关系图与结构读数，可导出落进「我的库」。",
-      "firstOpen": "一次输入就得到两个节点与第一条边，不用先建一堆孤立节点，也不会看到预置人物或公司。",
-      "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
-      "caution": "帮你发现值得追问的结构，不替你断定关系的法律或事实含义。",
-      "specPath": "docs/specs/oceanleo-plugins-v1/plugins/relationship-graph.md"
-    },
-    {
-      "id": "executable-notebook",
-      "name": "可执行笔记",
-      "kind": "standalone",
-      "category": "reasoning",
-      "summary": "一份会算的文稿：可以反复改的量和由它们算出来的结论写在同一篇里。",
-      "does": [
-        "改一个数，被它影响的那几行当场亮一下",
-        "出错时错误钉在出错的那一格上，不是丢一条堆栈给你"
-      ],
-      "scenarios": [
-        "写「换办公室值不值」，结论同时取决于面积、租金、人数、通勤与租期",
-        "老板把人数从 20 改成 30，要立刻看到三年总成本的变化"
-      ],
-      "input": "不需要任何素材；第一屏是一份真正的空笔记。",
-      "output": "带参数与依赖关系的可复算文稿，可导出落进「我的库」。",
-      "firstOpen": "参数区提示「先加一个可以改的量」，文稿区允许先写一段文字；底部从「0 个参数 · 0 个格子 · 0 条依赖」开始。",
-      "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
-      "specPath": "docs/specs/oceanleo-plugins-v1/plugins/executable-notebook.md"
-    },
-    {
-      "id": "contract-assembly",
-      "name": "合同装配",
-      "kind": "standalone",
-      "category": "reasoning",
-      "summary": "一句一句把合同拼出来，缺的那项、打架的那两条，就写在正文旁边。",
-      "does": [
-        "从「这是一笔什么交易」开始，条款一条条落进正文，变量就是句子里的空位",
-        "漏填和冲突指到正文里那一句上，不用回头翻条款库"
-      ],
-      "scenarios": [
-        "与外包方签框架协议，初稿看着完整却不知道漏了什么",
-        "发现诉讼管辖与仲裁同时出现，或知识产权归属整类缺席"
-      ],
-      "input": "不需要任何素材；第一屏先问「这是一笔什么交易」。",
-      "output": "装配好的合同文本与检查结果，可导出落进「我的库」。",
-      "firstOpen": "下方按类目折叠展示条款库，右侧是一张空白预览页；状态显示已选 0 条、待填 0 项，首次打开不预勾任何条款。",
-      "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
-      "caution": "帮你组织与检查合同，不替代律师意见。",
-      "specPath": "docs/specs/oceanleo-plugins-v1/plugins/contract-assembly.md"
-    },
-    {
-      "id": "dialogue-branch-script",
-      "name": "话术分支",
-      "kind": "standalone",
-      "category": "script",
-      "summary": "一句话说出去，对方可能怎么接——每条接法都写成完整台词，走不通的那句会被点名。",
-      "does": [
-        "写下开场，在当前这句下面补出对方的回应和你的下一句",
-        "断掉的岔路会被点名，不用自己顺着树找"
-      ],
-      "scenarios": [
-        "面试答案是平铺的，担心被追问",
-        "销售或客服写好了主话术，不确定常见推托是否都有应对"
-      ],
-      "input": "不需要任何素材；空画布中央提示「开场第一句你会怎么说」。",
-      "output": "对话分支图与覆盖检查结果，可导出落进「我的库」。",
-      "firstOpen": "覆盖情况尚未计算，也不会先出现一片告警；写下开场白后继续回答「对方可能怎么回」，逐步长出第一组分支。",
-      "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
-      "specPath": "docs/specs/oceanleo-plugins-v1/plugins/dialogue-branch.md"
-    },
-    {
-      "id": "voiceover-script",
-      "name": "口播脚本",
-      "kind": "standalone",
-      "category": "script",
-      "summary": "把要念的话写成一条能对着镜头读的稿子，每段讲到第几秒、还剩多久，就在字的旁边。",
-      "does": [
-        "填一个目标时长，之后只管写，语速与计数都不用碰",
-        "每段的累计时刻与剩余时长贴在那段字旁边"
-      ],
-      "scenarios": [
-        "一版复利文案要压进 90 秒竖屏视频，想知道删哪段最有效",
-        "脚本、提词稿和剪辑时间线不想各算一套"
-      ],
-      "input": "不需要任何素材；第一屏先填目标时长。",
-      "output": "带时间轴与字幕时间码的口播脚本，可导出落进「我的库」。",
-      "firstOpen": "语速从约 216 字/分钟的普通中文口播参考值起步；填入 90 秒后时间轴显示 0:00 到 1:30，给出约 324 字预算，段落区等你写第一段。",
-      "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "statusNote": "平台的插件登记表 `oceanleo-ui/src/shell/plugin-module.ts` 里 `pluginModules()` 返回空数组，源码注释写明「平台上一件插件都没有，这是预期状态」。所以它今天在任何 app 上都没有按键。",
-      "specPath": "docs/specs/oceanleo-plugins-v1/plugins/voiceover-script.md"
-    },
-    {
       "id": "image-editor",
       "name": "图片编辑器",
-      "kind": "editor",
       "adapter": "image",
       "category": "visual-editor",
       "summary": "打开库里的一张位图，裁切、调色、加字、加形状或签名，存成同一素材的新版本。",
@@ -542,7 +50,6 @@
     {
       "id": "design-canvas",
       "name": "设计画布",
-      "kind": "editor",
       "adapter": "design-canvas",
       "category": "visual-editor",
       "summary": "打开库里的设计稿或矢量图，逐个元素改形状、文字、图片、图层与配色，再导出成品。",
@@ -565,7 +72,6 @@
     {
       "id": "chart-editor",
       "name": "图表编辑器",
-      "kind": "editor",
       "adapter": "chart-editor@1",
       "category": "visual-editor",
       "summary": "打开一张已有图表，改数据、类型、系列、坐标轴、图例与标注，再导出图片、矢量或结构化结果。",
@@ -588,7 +94,6 @@
     {
       "id": "richdoc-editor",
       "name": "文档编辑器",
-      "kind": "editor",
       "adapter": "richdoc",
       "category": "doc-editor",
       "summary": "打开一份已有文档，像用 Word 一样改标题层级、段落、表格和插图，再存新版本或导出 DOCX。",
@@ -610,7 +115,6 @@
     {
       "id": "grid-editor",
       "name": "表格编辑器",
-      "kind": "editor",
       "adapter": "grid",
       "category": "doc-editor",
       "summary": "打开自己的 xlsx 或 csv，改数据、格式、公式、行列、排序与筛选，再导出表格文件。",
@@ -632,7 +136,6 @@
     {
       "id": "deck-editor",
       "name": "PPT 编辑器",
-      "kind": "editor",
       "adapter": "deck",
       "category": "doc-editor",
       "summary": "打开已有演示文稿，逐页调版式、文字、图片、图表、连线与动效，再导出新的 PPTX。",
@@ -654,7 +157,6 @@
     {
       "id": "pdf-editor",
       "name": "PDF 标注",
-      "kind": "editor",
       "adapter": "pdf",
       "category": "doc-editor",
       "summary": "打开已有 PDF，翻页阅读、高亮、批注、旋转、调页序、抽页或合并别的 PDF。",
@@ -676,7 +178,6 @@
     {
       "id": "video-timeline",
       "name": "视频剪辑",
-      "kind": "editor",
       "adapter": "video-timeline",
       "category": "media-editor",
       "summary": "把已有视频铺在时间线上，裁切、排序、加转场、字幕和音轨，再渲出新成片。",
@@ -698,7 +199,6 @@
     {
       "id": "audio-editor",
       "name": "音频编辑器",
-      "kind": "editor",
       "adapter": "audio",
       "category": "media-editor",
       "summary": "打开已有音频，看着波形裁剪、调音量、做淡入淡出、变速或均衡，再存新版本。",
@@ -720,7 +220,6 @@
     {
       "id": "model-3d-editor",
       "name": "3D 编辑器",
-      "kind": "editor",
       "adapter": "threed",
       "category": "media-editor",
       "summary": "打开已有模型，摆镜头、调灯光、改材质、选动画、加标注，再导出模型或定妆截图。",
@@ -743,7 +242,6 @@
     {
       "id": "website-editor",
       "name": "网站编辑器",
-      "kind": "editor",
       "adapter": "website",
       "category": "source-editor",
       "summary": "打开一个已有网站，在真实运行的页面上改文案、样式、结构与图片，预览交互并保存健康版本或导出源码。",
@@ -766,7 +264,6 @@
     {
       "id": "game-editor",
       "name": "游戏编辑器",
-      "kind": "editor",
       "adapter": "game",
       "category": "source-editor",
       "summary": "打开已有游戏源码，说出想改的玩法、试玩新版本、继续调整，满意了再存版本。",
@@ -789,7 +286,6 @@
     {
       "id": "workflow-canvas",
       "name": "工作流画布",
-      "kind": "editor",
       "adapter": "video-canvas",
       "category": "source-editor",
       "summary": "打开一份已有工作流，在节点图上加节点、连端口、调参数、跑一遍并查看输出。",
@@ -808,28 +304,6 @@
       "statusNote": "artifact 能力矩阵把 `workflow` 类素材绑到 `video-canvas` 适配器（工程格式 oceanleo.video-canvas.v1），注册表里可路由，走嵌入路由由 video 子站的 /canvas-board 承接。",
       "caution": "嵌入式编辑器按当前域名家族取子站地址；某个家族没有对应子站时，界面会如实说「暂未开放」。",
       "specPath": "docs/specs/oceanleo-plugins-v1/editors/workflow-canvas.md"
-    },
-    {
-      "id": "world-map",
-      "name": "世界地图",
-      "kind": "standalone",
-      "category": "space",
-      "summary": "把出发地和目的地放到一张有道路、城市名与国界的真地图上，立即回答两地在哪里、相隔多远。",
-      "does": [
-        "把邮件里的城市名对应到现实地理位置，订票前确认方向和量级",
-        "两地之间画出 geodesic 连线，并给出直线距离",
-        "两点边界框自动适配视野，不必再点“计算”或“适配视野”"
-      ],
-      "scenarios": [
-        "确认一次跨国或跨城市行程，旁边开着机票、酒店或会议邀请",
-        "只想知道两座城市的相对位置与大致距离，不需要驾车导航或航班搜索"
-      ],
-      "input": "输入出发城市与目的城市；首屏已有「北京 → 赫尔辛基」示例可直接替换。",
-      "output": "带完整城市名标记、连线与直线距离的地图视图。",
-      "firstOpen": "首屏直接是「北京 → 赫尔辛基」：两座城市的完整名字、连线和直线距离都已可读；光标落在出发城市输入框。",
-      "where": "由这件工具自己列出它出现在哪些 app；目前一个 app 都没有挂载。",
-      "statusNote": "底图由 Google Maps JavaScript API 绘制，需要网络；加载失败时地图位置变成一张说明卡，不会留空白或无限转圈。国内高德通道待运营者取得技术服务使用许可后接入。",
-      "specPath": "docs/specs/oceanleo-plugins-v1/plugins/world-map.md"
     }
   ]
 }
