@@ -15,12 +15,15 @@ import type { Lang } from "./template-i18n";
 import type { Industry, SubCategory, TemplateMeta } from "./template-taxonomy";
 import { hashStr } from "./hash";
 import {
+  DENSITY_TOKENS,
   FONT_STACK,
+  RADIUS_TOKENS,
   SHAPE_SECTION_BLUEPRINTS,
   SKIN_SIGNATURE,
   dnaFor,
   mainPageKey,
   mainSectionKind,
+  paletteByKey,
   type PageKey,
   type SectionKind,
   type TemplateDNA,
@@ -28,11 +31,14 @@ import {
 import {
   COPY_TONES,
   SHAPES,
+  SKINS,
   shape as shapeByKey,
   shapeFloor,
   templateAxesFor,
   type CopyToneKey,
   type ShapeKey,
+  type Skin,
+  type SkinKey,
   type TemplateAxesMetadata,
 } from "./template-skins";
 import { MIRROR_PUBLIC_DIR, SITE_IMAGE_DIR, sitePhotoPath } from "./template-photo-local";
@@ -254,7 +260,9 @@ function skinTokensFor(t: Theme, surfaces: SkinSurfaces): SkinTokensOut {
     h2: t.densityTokens.h2,
     lineHeight: t.density === "compact" ? 1.5 : t.density === "airy" ? 1.8 : 1.65,
     headingFont: t.fontStack,
-    bodyFont: FONT_STACK.sans,
+    // 正文字族：只有以阅读为主张的 serif 装才把正文也换成 serif，其余装的正文保持
+    // 中性无衬线（几何字族做大标题好看，做正文伤可读性）。
+    bodyFont: t.font === "serif" ? FONT_STACK.serif : FONT_STACK.sans,
     pageBg: surfaces.pageBg,
     surface: surfaces.surface,
     navBg: surfaces.navBg,
@@ -263,6 +271,280 @@ function skinTokensFor(t: Theme, surfaces: SkinSurfaces): SkinTokensOut {
     sub: surfaces.sub,
     primary: t.primary,
   };
+}
+
+// ————————————————————————————————————————————————————————————
+// 装的令牌与装的样式表：五条轴真正落到产物字节
+// ————————————————————————————————————————————————————————————
+
+/** 产物里那份「只属于这一套装」的样式表。运行时样式表 500 个模板共用，这一份不共用。 */
+export const SKIN_CSS_PATH = "assets/skin.css";
+
+/** 字体栈只放行字族名、空格、逗号、单引号与连字符；`}`、`url(`、`<` 一概进不来。 */
+function cssFontStack(s: string): string {
+  const v = String(s).trim();
+  return /^[A-Za-z0-9\s,'\-]+$/.test(v) ? v : "";
+}
+
+/** `data-skin` / `data-fx` 这类属性值只放行小写标识符。 */
+function cssIdent(s: string): string {
+  const v = String(s).trim();
+  return /^[a-z][a-z0-9-]*$/.test(v) ? v : "";
+}
+
+/** 生成的 CSS 绝不允许自己关掉 `<style>`（内联预览会把这份表塞进 style 块）。 */
+function safeCss(css: string): string {
+  return css.replace(/<\/(style|script)/gi, "\\3c /$1");
+}
+
+function tokenDecl(name: string, value: string): string {
+  const v = cssToken(value);
+  return v ? `--${name}:${v};` : "";
+}
+
+/** 标题字号：档位值当上限，配一个随档位收紧的下限与视口斜率，小屏不至于炸行。 */
+function fluid(min: string, vw: string, max: string): string {
+  const cap = cssToken(max);
+  return cap ? `clamp(${min},${vw},${cap})` : "";
+}
+
+/**
+ * 一套装的全部 CSS 变量。
+ *
+ * 这是「换装换的是产物字节」的核心证据：圆角四档、疏密四档、两个真字体栈、明暗六个面
+ * 全部写在这里，`assets/styles.css` 里的每一条规则都读它们。之前只有 `--radius/--ink/--sub`
+ * 三个变量进产物，于是十套装的按钮、图片、栅格、标题字号在产物里必然同值。
+ */
+function skinRootCss(t: Theme): string {
+  const surfaces = skinSurfacesFor(t);
+  const k = skinTokensFor(t, surfaces);
+  const decls = [
+    tokenDecl("primary", k.primary),
+    tokenDecl("page-bg", k.pageBg),
+    tokenDecl("surface", k.surface),
+    tokenDecl("nav-bg", k.navBg),
+    tokenDecl("border", k.border),
+    tokenDecl("ink", k.ink),
+    tokenDecl("sub", k.sub),
+    tokenDecl("radius", k.radiusCard),
+    tokenDecl("radius-btn", k.radiusBtn),
+    tokenDecl("radius-img", k.radiusImg),
+    tokenDecl("radius-pill", k.radiusPill),
+    tokenDecl("space", k.sectionSpace),
+    tokenDecl("gap", k.gap),
+    `--h1:${fluid("1.9rem", "4.6vw", k.h1)};`,
+    `--h2:${fluid("1.35rem", "2.9vw", k.h2)};`,
+    `--line-height:${k.lineHeight};`,
+    `--heading-font:${cssFontStack(k.headingFont)};`,
+    `--body-font:${cssFontStack(k.bodyFont)};`,
+  ];
+  return `:root{${decls.join("")}}`;
+}
+
+/**
+ * 装饰效果（`fx` 轴）。
+ *
+ * 这条轴此前在发射器里出现 0 次 —— `structure.theme.accentFx` 一个字节都没进产物。
+ * 这里按当前装的 fx 只发它自己要用的那几条规则（不夹带整套特效库），运行时按
+ * `site.json` 的 `skin.fx` 在 hero / cta / 页头背后插一层 `.leo-decor` 容器承载它们。
+ * asset 自己的 HTML 引擎那份 `template-effects.ts` 打的是另一套 DOM，故不能直接搬。
+ */
+function fxCss(t: Theme): string {
+  const a = cssToken(t.primary);
+  const b = cssToken(t.accent);
+  const c = cssToken(t.gradTo);
+  const soft = cssToken(t.soft);
+  switch (t.accentFx) {
+    case "aurora":
+      return `.leo-aurora{position:absolute;inset:0;filter:blur(10px)}
+.leo-aurora::before,.leo-aurora::after{content:"";position:absolute;inset:-40%;background:radial-gradient(40% 55% at 25% 30%,${a}66,transparent 60%),radial-gradient(45% 60% at 75% 35%,${c}59,transparent 62%),radial-gradient(50% 55% at 55% 78%,${b}4d,transparent 60%);animation:leoAurora 18s ease-in-out infinite;mix-blend-mode:screen}
+.leo-aurora::after{animation-duration:26s;animation-direction:reverse;opacity:.7}
+@keyframes leoAurora{0%,100%{transform:translate3d(0,0,0) rotate(0deg) scale(1)}33%{transform:translate3d(3%,-4%,0) rotate(6deg) scale(1.08)}66%{transform:translate3d(-4%,3%,0) rotate(-5deg) scale(1.04)}}`;
+    case "blobs":
+      return `.leo-blob{position:absolute;width:340px;height:340px;top:-70px;right:-40px;filter:blur(26px);opacity:.45;background:${a};animation:leoBlobMorph 16s ease-in-out infinite,leoFloat 18s ease-in-out infinite}
+.leo-blob-2{width:260px;height:260px;top:auto;right:auto;bottom:-60px;left:-30px;background:${c};animation-delay:-6s}
+.leo-blob-3{width:190px;height:190px;top:38%;right:22%;background:${b};animation-delay:-10s}
+@keyframes leoBlobMorph{0%,100%{border-radius:42% 58% 63% 37%/45% 42% 58% 55%}50%{border-radius:58% 42% 38% 62%/58% 55% 45% 42%}}
+@keyframes leoFloat{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(12px,-18px) scale(1.06)}66%{transform:translate(-10px,14px) scale(.94)}}`;
+    case "stripes":
+      return `.leo-stripes{position:absolute;inset:0;opacity:.14;background:repeating-linear-gradient(45deg,${a} 0 18px,transparent 18px 40px);animation:leoStripes 3s linear infinite;mask-image:linear-gradient(180deg,#000,transparent 85%)}
+@keyframes leoStripes{from{background-position:0 0}to{background-position:57px 0}}`;
+    case "neon-grid":
+      return `.leo-neon-grid{position:absolute;inset:0;background-image:linear-gradient(${a}2e 1px,transparent 1px),linear-gradient(90deg,${a}2e 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse 90% 80% at 50% 30%,#000 10%,transparent 78%);animation:leoGridPan 20s linear infinite}
+@keyframes leoGridPan{from{background-position:0 0}to{background-position:44px 44px}}
+.leo-neon-halo{position:absolute;top:-80px;right:6%;width:340px;height:340px;border-radius:9999px;background:radial-gradient(circle,${a}55,transparent 70%);filter:blur(60px)}
+h1,h2{text-shadow:0 0 6px ${a}77,0 0 22px ${a}44}
+.card{box-shadow:0 0 0 1px ${a}33,0 0 26px ${a}1f}`;
+    case "spotlight":
+      return `.leo-spotlight{position:absolute;inset:0;background:radial-gradient(circle 60% at 50% 0%,${a}2b,transparent 60%)}
+.leo-spotbeam{position:absolute;left:50%;top:0;width:70%;height:100%;transform:translateX(-50%);background:linear-gradient(180deg,${b}1f,transparent 70%)}`;
+    case "waves":
+      return `.leo-wave{position:absolute;bottom:0;left:0;right:0;height:80px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120'%3E%3Cpath fill='${encodeURIComponent(soft || "#eef2f7")}' d='M0,64 C300,120 500,0 600,48 C700,96 900,32 1200,64 L1200,120 L0,120 Z'/%3E%3C/svg%3E") center bottom/cover no-repeat;animation:leoWave 8s ease-in-out infinite alternate}
+@keyframes leoWave{from{transform:translateX(-2%)}to{transform:translateX(2%)}}`;
+    case "grid":
+      return `.leo-grid-deco{position:absolute;inset:0;opacity:.16;background-image:linear-gradient(${a}55 1px,transparent 1px),linear-gradient(90deg,${a}55 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse 80% 70% at 50% 40%,#000 20%,transparent 75%)}`;
+    case "shimmer":
+      return `.leo-sheen{position:absolute;inset:0;overflow:hidden}
+.leo-sheen::after{content:"";position:absolute;top:-50%;left:-60%;width:50%;height:200%;background:linear-gradient(105deg,transparent,#ffffff38,transparent);transform:rotate(8deg);animation:leoSheen 6.5s ease-in-out infinite}
+@keyframes leoSheen{0%,60%{left:-60%}100%{left:130%}}`;
+    case "orbs":
+      return `.leo-orb{position:absolute;width:280px;height:280px;top:-60px;right:-40px;border-radius:9999px;filter:blur(48px);background:${a}55;animation:leoFloat 12s ease-in-out infinite}
+.leo-orb-2{width:200px;height:200px;top:auto;right:auto;bottom:10%;left:-30px;background:${b}44;animation-delay:-4s;animation-duration:15s}
+.leo-orb-3{width:160px;height:160px;top:40%;right:25%;background:${c}33;animation-delay:-7s;animation-duration:18s}
+@keyframes leoFloat{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(12px,-18px) scale(1.06)}66%{transform:translate(-10px,14px) scale(.94)}}`;
+    case "dots":
+      return `.leo-dots{position:absolute;inset:0;opacity:.18;background-image:radial-gradient(${a} 1.5px,transparent 1.5px);background-size:28px 28px}`;
+    case "beams":
+      return `.leo-beam{position:absolute;width:2px;height:140%;top:-20%;left:30%;background:linear-gradient(180deg,transparent,${b}88,transparent);transform:rotate(25deg);animation:leoBeam 6s ease-in-out infinite}
+.leo-beam-2{left:62%;animation-delay:-2s}
+@keyframes leoBeam{0%,100%{opacity:.25;transform:rotate(25deg) translateY(0)}50%{opacity:.55;transform:rotate(25deg) translateY(8%)}}`;
+    case "noise":
+      return `.leo-noise{position:absolute;inset:0;opacity:.06;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}`;
+    case "none":
+      return "/* fx:none —— 这套装的主张就是不加装饰层 */";
+    default:
+      return `.leo-veil{position:absolute;inset:0;opacity:.12;background:linear-gradient(135deg,${a},transparent 65%)}`;
+  }
+}
+
+/** hero / cta / 页头之外，装饰层永不出现；容器与层叠关系是共享样式表的事。 */
+const FX_REDUCED_MOTION = `@media (prefers-reduced-motion:reduce){.leo-decor *,.leo-decor{animation:none!important}}`;
+
+/**
+ * 一套装的结构规则（打的是运行时 DOM：`.sec` / `.inner` / `.card` / `#site-nav`）。
+ *
+ * `template-css.ts` 里那十段 `skinStyles()` 打的是 asset 引擎的 `[data-section-kind]`，
+ * 在这条产线上一条都命中不了，所以按同样的设计主张重写一份。每套装至少动
+ * 「节的容器形状 / 卡片的边与影 / 标题的字距」中的两样，不是只换颜色。
+ */
+const SKIN_SITE_RULES: Record<SkinKey, (t: Theme) => string> = {
+  paper: (t) => `.sec{border-bottom:1px solid var(--border)}
+.sec .inner{max-width:68rem}
+.card{background:transparent;box-shadow:none;border:1px solid var(--border)}
+.card .thumb,.hero-media,.media{border-radius:6px}
+.btn{border-radius:2px;box-shadow:none}
+h1,h2{letter-spacing:-.01em;font-weight:600}
+.eyebrow{color:${cssToken(t.subInk)};letter-spacing:.22em}`,
+  editorial: (t) => `#site-nav{position:relative;border-top:5px solid ${cssToken(t.ink)};border-bottom:1px solid var(--border)}
+.sec{border-bottom:1px solid var(--border)}
+.sec .inner{max-width:58rem}
+h1,h2{letter-spacing:-.035em;line-height:1.02;font-weight:700}
+.card{border-radius:0;box-shadow:none;border:0;border-top:2px solid ${cssToken(t.ink)};background:transparent}
+.card .thumb{border-radius:0}
+.lead{font-size:1.18rem}`,
+  bento: () => `.sec:not(.sec-hero){width:min(74rem,calc(100% - 26px));margin:20px auto;border:1px solid var(--border);border-radius:32px;box-shadow:0 18px 50px #0f172a12;overflow:hidden}
+.card{border-radius:24px;box-shadow:0 10px 30px #0f172a0f;background:var(--surface)}
+.grid{gap:calc(var(--gap) * .75)}
+.icon{border-radius:18px}
+@media (max-width:640px){.sec:not(.sec-hero){width:calc(100% - 14px);margin:10px auto;border-radius:22px}}`,
+  brutalist: (t) => `.sec{border-bottom:3px solid ${cssToken(t.ink)}}
+#site-nav{border-top:3px solid ${cssToken(t.ink)};border-bottom:3px solid ${cssToken(t.ink)};backdrop-filter:none}
+.card{border:3px solid ${cssToken(t.ink)};border-radius:0;box-shadow:7px 7px 0 ${cssToken(t.ink)};background:var(--page-bg)}
+.btn{border-radius:0;box-shadow:5px 5px 0 ${cssToken(t.ink)};font-weight:800}
+h1,h2,h3{text-transform:uppercase;letter-spacing:-.02em}
+.icon{border-radius:0;border:3px solid ${cssToken(t.ink)}}`,
+  neon: (t) => `#site-nav{border-bottom:1px solid ${cssToken(t.primary)}3d}
+.card{background:#ffffff08;border:1px solid ${cssToken(t.primary)}3d}
+.btn{box-shadow:0 0 18px ${cssToken(t.primary)}66}
+.stat-value{text-shadow:0 0 12px ${cssToken(t.primary)}88}
+.eyebrow{letter-spacing:.24em}
+.form input,.form textarea{background:#ffffff0a;border-color:${cssToken(t.primary)}33}`,
+  fullscreen: () => `.sec{min-height:78vh;display:flex;align-items:center}
+.sec-footer,.sec-logos,.sec-stats{min-height:0;display:block}
+.sec .inner{width:100%}
+h1{letter-spacing:-.02em}
+.card{background:#ffffff0d;border:1px solid #ffffff1f}
+@media (max-width:640px){.sec{min-height:0;display:block}}`,
+  nature: (t) => `.sec:nth-child(even){width:min(74rem,calc(100% - 32px));margin:24px auto;border-radius:clamp(28px,5vw,64px);overflow:hidden}
+.card .thumb,.media,.hero-media{border-radius:42% 58% 48% 52%/54% 43% 57% 46%}
+.sec-head h2::after{content:"";display:block;width:52px;height:3px;margin:16px 0 0;background:${cssToken(t.primary)};border-radius:999px}
+.card{border-radius:clamp(18px,3vw,30px)}
+.icon{border-radius:9999px}`,
+  sand: (t) => `.sec:not(.sec-hero){width:min(70rem,calc(100% - 36px));margin:28px auto;border:1px solid ${cssToken(t.primary)}26;box-shadow:10px 12px 0 ${cssToken(t.primary)}12}
+.sec:nth-child(even){transform:rotate(-.18deg)}
+.card{background:var(--page-bg);box-shadow:6px 7px 0 ${cssToken(t.primary)}14}
+.card .thumb,.hero-media{border-radius:48% 48% 10px 10px}
+.eyebrow{letter-spacing:.28em}`,
+  navy: (t) => `#site-nav{background:${cssToken(t.gradFrom)};color:#fff;border-bottom:4px solid ${cssToken(t.primary)};backdrop-filter:none}
+#site-nav .brand,#site-nav nav a{color:#fff}
+.sec:not(.sec-hero):not(.sec-page-header) .inner{border-left:4px solid ${cssToken(t.primary)};padding-left:clamp(1.5rem,4vw,3rem)}
+.card{border-radius:2px;box-shadow:0 1px 0 var(--border)}
+.btn{border-radius:2px}
+.eyebrow{letter-spacing:.16em;font-weight:700}`,
+  glass: (t) => `.sec{width:min(74rem,calc(100% - 36px));margin:24px auto;border:1px solid #ffffffb8;border-radius:30px;box-shadow:0 24px 70px ${cssToken(t.gradFrom)}1f;overflow:hidden;backdrop-filter:blur(18px)}
+.card{background:#ffffff8f;border:1px solid #ffffffcc;border-radius:22px;box-shadow:0 12px 36px ${cssToken(t.gradFrom)}14}
+#site-nav{background:#ffffff94;border-bottom:1px solid #ffffffcc}
+@media (max-width:640px){.sec{width:calc(100% - 18px);margin:12px auto;border-radius:22px}}`,
+};
+
+/**
+ * 签名版块在产物里的长相。
+ *
+ * 降级表把 16+4 个 `sig*` 压进 22 个 website 闭集类型，压完只靠 `content.display`
+ * 认得出「这一节是这套装独有的」。运行时把它写成 `data-signature`，于是这里能给
+ * 每套装的签名节一套只属于它的版式 —— DOM 形状（节的种类、位置、槽位）由蓝图与
+ * 提取器决定，这里决定它铺开的方式。
+ */
+const SIGNATURE_RULES: Record<string, string> = {
+  "paper-index": `[data-signature="paper-index"] .grid{display:block}
+[data-signature="paper-index"] .card{display:grid;grid-template-columns:3.5rem 1fr;gap:1.2rem;border:0;border-top:1px solid var(--border);border-radius:0;padding:1.15rem 0;background:transparent;box-shadow:none}
+[data-signature="paper-index"] .card h3{font-weight:500}`,
+  "editorial-hero": `[data-signature="editorial-hero"] .hero-body{grid-template-columns:1fr;gap:1.2rem}
+[data-signature="editorial-hero"] h1{font-size:calc(var(--h1) * 1.15);border-bottom:3px solid currentColor;padding-bottom:.35em}`,
+  "bento-hero": `[data-signature="bento-hero"] .hero-body{grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));align-items:stretch}
+[data-signature="bento-hero"] .hero-copy,[data-signature="bento-hero"] .hero-media{background:var(--surface);border-radius:28px;padding:1.6rem}`,
+  "brutal-hero": `[data-signature="brutal-hero"] .hero-body{gap:0}
+[data-signature="brutal-hero"] .hero-copy{border:3px solid currentColor;padding:1.6rem}
+[data-signature="brutal-hero"] h1{font-size:calc(var(--h1) * 1.25)}`,
+  "neon-hero": `[data-signature="neon-hero"] .hero-copy{border-left:2px solid var(--primary);padding-left:1.4rem}
+[data-signature="neon-hero"] .eyebrow{text-shadow:0 0 12px var(--primary)}`,
+  "fs-intro": `[data-signature="fs-intro"]{min-height:92vh}
+[data-signature="fs-intro"] .hero-body{grid-template-columns:1fr;text-align:center;justify-items:center}
+[data-signature="fs-intro"] h1{font-size:calc(var(--h1) * 1.35)}`,
+  "nature-ribbon": `[data-signature="nature-ribbon"] .grid{grid-template-columns:1fr}
+[data-signature="nature-ribbon"] .card{display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:2rem;background:transparent;border:0;box-shadow:none;padding:1rem 0}
+[data-signature="nature-ribbon"] .card:nth-child(even){direction:rtl}
+[data-signature="nature-ribbon"] .card:nth-child(even)>*{direction:ltr}`,
+  "sand-stamp": `[data-signature="sand-stamp"] .grid{grid-template-columns:repeat(auto-fit,minmax(9rem,1fr))}
+[data-signature="sand-stamp"] .stat,[data-signature="sand-stamp"] .card{border:2px dashed var(--primary);border-radius:9999px;aspect-ratio:1/1;display:grid;place-content:center;box-shadow:none;background:transparent}`,
+  "navy-ledger": `[data-signature="navy-ledger"] .timeline{gap:0}
+[data-signature="navy-ledger"] .timeline li{border-left:0;border-bottom:1px solid var(--border);display:grid;grid-template-columns:7rem 1fr;gap:1.2rem;padding:.9rem 0}
+[data-signature="navy-ledger"] .timeline .year{color:var(--primary);text-align:right}`,
+  "glass-grid": `[data-signature="glass-grid"] .grid{grid-template-columns:repeat(auto-fit,minmax(13rem,1fr))}
+[data-signature="glass-grid"] .card{background:#ffffffa6;border-radius:26px;backdrop-filter:blur(22px)}`,
+};
+
+/** 这一套装的样式表全文（令牌 + 结构 + 装饰 + 签名版块），500 个模板里同装共用。 */
+export function skinCss(t: Theme): string {
+  const skinKey = t.skinKey as SkinKey;
+  const rules = SKIN_SITE_RULES[skinKey];
+  const signature = SIGNATURE_RULES[SKIN_SIGNATURE[skinKey].display] ?? "";
+  const scope = `html[data-skin="${cssIdent(skinKey) || "unknown"}"]`;
+  // 每条规则单占一行（含 @media 整块写一行），所以按行加作用域就够；
+  // @keyframes 与 @media 的前奏不能被加前缀，@media 里的规则要加。
+  const scopeRule = (rule: string): string =>
+    rule.trim() && rule.includes("{") ? `${scope} ${rule.trim()}` : rule;
+  const scoped = (css: string): string =>
+    css
+      .split("\n")
+      .filter((line) => line.trim())
+      .map((line) => {
+        const media = /^(@media[^{]*\{)([\s\S]*)\}$/.exec(line);
+        if (media) {
+          const inner = media[2].split(/(?<=\})/).filter(Boolean).map(scopeRule).join("");
+          return `${media[1]}${inner}}`;
+        }
+        if (line.startsWith("@") || !line.includes("{")) return line;
+        return scopeRule(line);
+      })
+      .join("\n");
+  return safeCss(`/* skin:${skinKey} —— 只属于这一套装的样式；共享部分在 assets/styles.css */
+${skinRootCss(t)}
+${scoped(rules ? rules(t) : "")}
+${scoped(fxCss(t))}
+${scoped(signature)}
+${FX_REDUCED_MOTION}
+`);
 }
 
 // ————————————————————————————————————————————————————————————
@@ -1395,6 +1677,87 @@ export const RUNTIME_JS = String.raw`// OceanLeo website-source@1 runtime ——
     },
   };
 
+  /** 长度只收 数字 + px/rem/em/% 或无单位；calc( 、url( 、分号之类一律拦掉。 */
+  function cssLen(v) {
+    var s = str(v).trim();
+    return /^-?[\d.]+(?:px|rem|em|%)?$/.test(s) ? s : "";
+  }
+  /** 字体栈只收字族名 / 空格 / 逗号 / 单引号 / 连字符。 */
+  function cssFonts(v) {
+    var s = str(v).trim();
+    return /^[A-Za-z0-9\s,'-]+$/.test(s) ? s : "";
+  }
+  function ident(v) {
+    var s = str(v).trim();
+    return /^[a-z][a-z0-9-]*$/.test(s) ? s : "";
+  }
+
+  // 装的令牌 → CSS 变量。这是「换装换的是真长相」在运行时的落点：圆角四档、
+  // 疏密四档、两个真字体栈、明暗六个面全部由 site.json 的 skin.tokens 决定，
+  // 改 site.json 就能改，不必碰 CSS。
+  var TOKEN_COLORS = [["primary", "--primary"], ["pageBg", "--page-bg"], ["surface", "--surface"],
+    ["navBg", "--nav-bg"], ["border", "--border"], ["ink", "--ink"], ["sub", "--sub"]];
+  var TOKEN_LENGTHS = [["radiusCard", "--radius"], ["radiusBtn", "--radius-btn"], ["radiusImg", "--radius-img"],
+    ["radiusPill", "--radius-pill"], ["sectionSpace", "--space"], ["gap", "--gap"]];
+
+  function applySkin(cfg) {
+    var root = document.documentElement;
+    var skin = cfg.skin || null;
+    var tk = (skin && skin.tokens) || null;
+    if (!tk) {
+      // 老工程对象没有 skin 段：退回按 typography 二选一，产物照旧能渲染。
+      root.style.setProperty("--heading-font", cfg.typography && cfg.typography.headingFont === "serif"
+        ? "Georgia,'Noto Serif SC',serif"
+        : "system-ui,-apple-system,'PingFang SC',sans-serif");
+      return;
+    }
+    if (ident(skin.key)) root.setAttribute("data-skin", ident(skin.key));
+    if (ident(skin.fx)) root.setAttribute("data-fx", ident(skin.fx));
+    if (ident(skin.signatureDisplay)) root.setAttribute("data-signature", ident(skin.signatureDisplay));
+    TOKEN_COLORS.forEach(function (pair) {
+      var v = cssColor(tk[pair[0]]);
+      if (v) root.style.setProperty(pair[1], v);
+    });
+    TOKEN_LENGTHS.forEach(function (pair) {
+      var v = cssLen(tk[pair[0]]);
+      if (v) root.style.setProperty(pair[1], v);
+    });
+    if (cssLen(tk.h1)) root.style.setProperty("--h1", "clamp(1.9rem,4.6vw," + cssLen(tk.h1) + ")");
+    if (cssLen(tk.h2)) root.style.setProperty("--h2", "clamp(1.35rem,2.9vw," + cssLen(tk.h2) + ")");
+    if (cssFonts(tk.headingFont)) root.style.setProperty("--heading-font", cssFonts(tk.headingFont));
+    if (cssFonts(tk.bodyFont)) root.style.setProperty("--body-font", cssFonts(tk.bodyFont));
+  }
+
+  // 装饰层（fx 轴）：只在 hero / cta / 页头背后铺一层，类名闭集，规则全在
+  // assets/skin.css 里 —— 这里不拼 HTML、不写内联样式，只挂类名。
+  var DECOR = {
+    aurora: ["leo-aurora"],
+    blobs: ["leo-blob", "leo-blob leo-blob-2", "leo-blob leo-blob-3"],
+    stripes: ["leo-stripes"],
+    "neon-grid": ["leo-neon-grid", "leo-neon-halo"],
+    spotlight: ["leo-spotlight", "leo-spotbeam"],
+    waves: ["leo-wave"],
+    grid: ["leo-grid-deco"],
+    shimmer: ["leo-sheen"],
+    orbs: ["leo-orb", "leo-orb leo-orb-2", "leo-orb leo-orb-3"],
+    dots: ["leo-dots"],
+    beams: ["leo-beam", "leo-beam leo-beam-2"],
+    noise: ["leo-noise"],
+    none: [],
+  };
+  var DECOR_SECTIONS = { hero: 1, cta: 1, "page-header": 1 };
+
+  function decorLayer(type) {
+    var skin = state.cfg && state.cfg.skin;
+    var fx = skin ? ident(skin.fx) : "";
+    if (!fx || !DECOR_SECTIONS[type]) return null;
+    var classes = Object.prototype.hasOwnProperty.call(DECOR, fx) ? DECOR[fx] : ["leo-veil"];
+    if (!classes.length) return null;
+    return h("div", { class: "leo-decor", "aria-hidden": "true" }, classes.map(function (c) {
+      return h("div", { class: c });
+    }));
+  }
+
   function sectionStyle(s) {
     var st = s.style || {};
     var css = "padding-top:" + px(st.paddingTop, 240) + "px;padding-bottom:" + px(st.paddingBottom, 240) + "px";
@@ -1416,11 +1779,16 @@ export const RUNTIME_JS = String.raw`// OceanLeo website-source@1 runtime ——
       var render = R[s.type];
       if (!render) return;
       var st = s.style || {};
+      var c = s.content || {};
+      // 签名节在产物里靠 display 认出来（降级表把 sig* 压成闭集类型后只剩这个记号），
+      // 运行时把它写成 data-signature，于是这套装的签名版式才有选择器可打。
+      var sig = c.signatureKind ? ident(c.display) : "";
       var sec = h("section", {
         id: s.id,
         class: "sec sec-" + str(s.type) + " w-" + str(st.contentWidth || "wide") + " flow-" + str(st.layout || "default"),
         style: sectionStyle(s),
-      }, h("div", { class: "inner" }, render(s.content || {})));
+        "data-signature": sig,
+      }, [decorLayer(s.type), h("div", { class: "inner" }, render(c))]);
       host.appendChild(sec);
     });
     var links = document.querySelectorAll("#site-nav a[data-page]");
@@ -1433,9 +1801,7 @@ export const RUNTIME_JS = String.raw`// OceanLeo website-source@1 runtime ——
     var root = document.documentElement;
     root.style.setProperty("--primary", cssColor(cfg.themeColor) || "#2563eb");
     root.style.setProperty("--page-bg", cssColor(cfg.backgroundColor) || "#ffffff");
-    root.style.setProperty("--heading-font", cfg.typography && cfg.typography.headingFont === "serif"
-      ? "Georgia,'Noto Serif SC',serif"
-      : "system-ui,-apple-system,'PingFang SC',sans-serif");
+    applySkin(cfg);
     var lh = Number(cfg.typography && cfg.typography.lineHeight);
     root.style.setProperty("--line-height", String(isFinite(lh) && lh > 0 ? Math.min(lh, 3) : 1.65));
     var nav = clear(document.getElementById("site-nav"));
@@ -1482,52 +1848,53 @@ export const RUNTIME_JS = String.raw`// OceanLeo website-source@1 runtime ——
 `;
 
 /** 样式表 —— 同样 500 个模板共用一份；配色/字体/圆角由 site.json 注入 CSS 变量。 */
-export const RUNTIME_CSS = String.raw`:root{--primary:#2563eb;--page-bg:#fff;--ink:#0f172a;--sub:#475569;--heading-font:system-ui,-apple-system,'PingFang SC',sans-serif;--line-height:1.65;--radius:16px}
+export const RUNTIME_CSS = String.raw`:root{--primary:#2563eb;--page-bg:#fff;--surface:#f8fafc;--nav-bg:#ffffffef;--border:#0000001f;--ink:#0f172a;--sub:#475569;--heading-font:system-ui,-apple-system,'PingFang SC',sans-serif;--body-font:system-ui,-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;--line-height:1.65;--radius:16px;--radius-btn:999px;--radius-img:12px;--radius-pill:999px;--space:72px;--gap:24px;--h1:clamp(1.9rem,4.6vw,3rem);--h2:clamp(1.35rem,2.9vw,2rem)}
 *{box-sizing:border-box}
-body{margin:0;background:var(--page-bg);color:var(--ink);font:16px/var(--line-height) system-ui,-apple-system,'PingFang SC','Microsoft YaHei',sans-serif}
+body{margin:0;background:var(--page-bg);color:var(--ink);font:16px/var(--line-height) var(--body-font)}
 h1,h2,h3,.brand{font-family:var(--heading-font);line-height:1.15;margin:0}
-h1{font-size:clamp(2.1rem,5vw,3.4rem);font-weight:800}
-h2{font-size:clamp(1.5rem,3vw,2.2rem);font-weight:800}
+h1{font-size:var(--h1);font-weight:800}
+h2{font-size:var(--h2);font-weight:800}
 h3{font-size:1.05rem;font-weight:700}
 p{margin:.55em 0}
 a{color:inherit;text-decoration:none}
-#site-nav{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:1.5rem;padding:.85rem 1.5rem;background:#ffffffef;backdrop-filter:blur(8px);border-bottom:1px solid #0000000f}
+#site-nav{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:1.5rem;padding:.85rem 1.5rem;background:var(--nav-bg);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
 #site-nav .brand{font-weight:800;font-size:1.05rem}
 #site-nav nav{display:flex;gap:1.1rem;margin-left:auto;font-size:.9rem}
 #site-nav nav a.active{color:var(--primary);font-weight:600}
-#lang-toggle{border:1px solid var(--primary);color:var(--primary);background:transparent;border-radius:999px;padding:.25rem .6rem;font-size:.75rem;cursor:pointer}
-.sec{width:100%}
-.sec .inner{margin:0 auto;padding:0 1.5rem}
+#lang-toggle{border:1px solid var(--primary);color:var(--primary);background:transparent;border-radius:var(--radius-pill);padding:.25rem .6rem;font-size:.75rem;cursor:pointer}
+.sec{width:100%;position:relative}
+.sec .inner{margin:0 auto;padding:0 1.5rem;position:relative;z-index:1}
 .w-narrow .inner{max-width:48rem}.w-normal .inner{max-width:64rem}.w-wide .inner{max-width:72rem}.w-full .inner{max-width:none}
-.sec-head{max-width:42rem;margin-bottom:2.25rem}
+.leo-decor{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.sec-head{max-width:42rem;margin-bottom:calc(var(--gap) * 1.5)}
 .sec[style*="text-align:center"] .sec-head{margin-left:auto;margin-right:auto}
 .eyebrow{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--primary);margin:0 0 .5rem}
 .lead{font-size:1.06rem;opacity:.9}
 .sub{opacity:.75;font-size:.94rem}
 .center{text-align:center}
-.grid{display:grid;gap:1.25rem}
+.grid{display:grid;gap:var(--gap)}
 .grid-2{grid-template-columns:repeat(auto-fit,minmax(18rem,1fr))}
 .grid-3{grid-template-columns:repeat(auto-fit,minmax(15rem,1fr))}
 .grid-4{grid-template-columns:repeat(auto-fit,minmax(12rem,1fr))}
-.split{display:grid;gap:2.5rem;grid-template-columns:repeat(auto-fit,minmax(20rem,1fr));align-items:center}
+.split{display:grid;gap:calc(var(--gap) * 1.6);grid-template-columns:repeat(auto-fit,minmax(20rem,1fr));align-items:center}
 .flow-reverse .split>*:first-child{order:2}
-.card{background:#ffffff14;border:1px solid #8888881f;border-radius:var(--radius);overflow:hidden;padding:1.35rem}
+.card{background:#ffffff14;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;padding:1.35rem}
 .card .pad,.product .pad{padding:0}
-.card .thumb,.hero-media,.media,.avatar,.shot{border-radius:var(--radius);overflow:hidden}
+.card .thumb,.hero-media,.media,.avatar,.shot{border-radius:var(--radius-img);overflow:hidden}
 .card .thumb{margin:-1.35rem -1.35rem 1rem}
 .thumb.square img{aspect-ratio:1/1}
 img.cover,.logo-img{display:block;width:100%;height:100%;object-fit:cover}
-.hero-body{display:grid;gap:2.5rem;grid-template-columns:repeat(auto-fit,minmax(20rem,1fr));align-items:center}
+.hero-body{display:grid;gap:calc(var(--gap) * 1.6);grid-template-columns:repeat(auto-fit,minmax(20rem,1fr));align-items:center}
 .hero-media img{height:22rem}
 .cta-row{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:1.5rem}
-.btn{display:inline-block;padding:.7rem 1.6rem;border-radius:999px;font-weight:600;background:var(--primary);color:#fff}
+.btn{display:inline-block;padding:.7rem 1.6rem;border-radius:var(--radius-btn);font-weight:600;background:var(--primary);color:#fff}
 .btn.ghost{background:transparent;border:1.5px solid currentColor;color:inherit}
 .btn.link{background:none;padding:0;color:var(--primary)}
-.icon{display:inline-flex;align-items:center;justify-content:center;width:2.75rem;height:2.75rem;border-radius:12px;background:#8888881f;color:var(--primary);margin-bottom:.85rem}
+.icon{display:inline-flex;align-items:center;justify-content:center;width:2.75rem;height:2.75rem;border-radius:var(--radius-img);background:#8888881f;color:var(--primary);margin-bottom:.85rem}
 .stat{text-align:center}
 .stat-value{font-size:2.1rem;font-weight:800;color:var(--primary)}
 .stat-label{font-size:.88rem;opacity:.75}
-.badge{display:inline-block;padding:.15rem .55rem;border-radius:999px;background:var(--primary);color:#fff;font-size:.72rem;margin:.4rem 0}
+.badge{display:inline-block;padding:.15rem .55rem;border-radius:var(--radius-pill);background:var(--primary);color:#fff;font-size:.72rem;margin:.4rem 0}
 .price{font-size:1.35rem;font-weight:800;color:var(--primary);margin:.4rem 0}
 .plan.featured{outline:2px solid var(--primary)}
 .plan ul,.bullets{list-style:none;padding:0;margin:.9rem 0;display:grid;gap:.45rem;font-size:.92rem}
@@ -1539,14 +1906,14 @@ img.cover,.logo-img{display:block;width:100%;height:100%;object-fit:cover}
 .member .avatar{width:9rem;height:9rem;margin:0 auto 1rem}
 .avatar .photo-slot{width:100%;height:100%}
 .avatar-sm{display:inline-flex;width:3.25rem!important;height:3.25rem!important;flex:0 0 auto;margin:0!important}
-.photo-slot{display:flex;align-items:center;justify-content:center;padding:.65rem;border:1px dashed #88888866;border-radius:var(--radius);background:#88888812;color:inherit;font-size:.72rem;line-height:1.25;text-align:center}
+.photo-slot{display:flex;align-items:center;justify-content:center;padding:.65rem;border:1px dashed #88888866;border-radius:var(--radius-img);background:#88888812;color:inherit;font-size:.72rem;line-height:1.25;text-align:center}
 .role{color:var(--primary);font-size:.9rem;margin:.2rem 0}
 .step-no{display:inline-block;font-size:1.6rem;font-weight:800;color:var(--primary);opacity:.35}
 blockquote{margin:0}
 blockquote footer{margin-top:.9rem;font-size:.85rem;opacity:.75}
 .quote-author{display:flex;align-items:center;gap:.7rem;text-align:left}
 .faq-list{display:grid;gap:.7rem}
-details{border:1px solid #8888881f;border-radius:var(--radius);padding:1rem 1.15rem}
+details{border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.15rem}
 summary{cursor:pointer;font-weight:600}
 .logo-strip,.marquee .track{display:flex;gap:2rem;align-items:center;flex-wrap:wrap;justify-content:center;opacity:.7;font-weight:700}
 .marquee{overflow:hidden}
@@ -1554,20 +1921,20 @@ summary{cursor:pointer;font-weight:600}
 @keyframes mq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 .chart{display:flex;align-items:flex-end;gap:1.1rem;height:14rem}
 .bar-wrap{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;text-align:center}
-.bar{background:var(--primary);border-radius:8px 8px 0 0;position:relative;min-height:8px}
+.bar{background:var(--primary);border-radius:var(--radius-img) var(--radius-img) 0 0;position:relative;min-height:8px}
 .bar span{position:absolute;top:-1.5rem;left:0;right:0;font-size:.8rem;font-weight:700}
 .bar-label{font-size:.8rem;opacity:.7;margin-top:.4rem}
 .insight{font-weight:600;font-size:1.05rem}
-.timeline{list-style:none;padding:0;display:grid;gap:1.6rem}
+.timeline{list-style:none;padding:0;display:grid;gap:calc(var(--gap) * 1.1)}
 .timeline .year{font-size:.8rem;font-weight:700;color:var(--primary);letter-spacing:.1em}
-.timeline li{border-left:2px solid #88888833;padding-left:1.2rem}
-.page-header h1{font-size:clamp(1.6rem,3.4vw,2.4rem)}
+.timeline li{border-left:2px solid var(--border);padding-left:1.2rem}
+.page-header h1{font-size:calc(var(--h1) * .78)}
 .cta-band{display:grid;gap:1.25rem}
 .contact-list{list-style:none;padding:0;display:grid;gap:.6rem;font-size:.95rem}
-.form{display:grid;gap:.75rem;padding:1.5rem;border:1px solid #8888881f;border-radius:var(--radius)}
+.form{display:grid;gap:.75rem;padding:1.5rem;border:1px solid var(--border);border-radius:var(--radius)}
 .form label{display:grid;gap:.35rem;font-size:.85rem}
-.form input,.form textarea{border:1px solid #88888833;border-radius:10px;padding:.6rem .75rem;font:inherit;background:transparent;color:inherit}
-.footer-grid{display:grid;gap:1.5rem;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr))}
+.form input,.form textarea{border:1px solid var(--border);border-radius:var(--radius-btn);padding:.6rem .75rem;font:inherit;background:transparent;color:inherit}
+.footer-grid{display:grid;gap:var(--gap);grid-template-columns:repeat(auto-fit,minmax(16rem,1fr))}
 .footer-grid nav{display:grid;gap:.5rem;font-size:.9rem;opacity:.85}
 .load-error{padding:2rem;color:#b91c1c}
 @media (max-width:640px){#site-nav nav{display:none}}
@@ -1624,8 +1991,12 @@ function indexHtml(structure: TemplateStructureIR, lang: Lang): string {
   const t = structure.theme;
   const title = lang === "en" ? structure.siteTitle.en : structure.siteTitle.zh;
   const desc = lang === "en" ? structure.description.en : structure.description.zh;
+  const skinKey = cssIdent(t.skinKey);
+  const signature = SKIN_SIGNATURE[t.skinKey as SkinKey];
+  // 三个 data-* 都在 <html> 上：装的样式表按它们生效，运行时未跑完也已经是这套装的长相
+  // （首屏不会先闪一版默认皮），而且产物侧靠它们就能量出「这份源码是哪套装发的」。
   return `<!DOCTYPE html>
-<html lang="${lang === "en" ? "en" : "zh-CN"}" data-lang="${lang}">
+<html lang="${lang === "en" ? "en" : "zh-CN"}" data-lang="${lang}" data-skin="${skinKey}" data-fx="${cssIdent(t.accentFx)}" data-signature="${cssIdent(signature ? signature.display : "")}">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -1633,7 +2004,8 @@ function indexHtml(structure: TemplateStructureIR, lang: Lang): string {
 <meta name="description" content="${escapeHtml(desc)}"/>
 <meta name="generator" content="OceanLeo ${WEBSITE_SOURCE_SCHEMA} · ${structure.slug}"/>
 <link rel="stylesheet" href="assets/styles.css"/>
-<style>:root{--radius:${cssToken(t.radiusTokens.card)};--ink:${cssToken(t.ink)};--sub:${cssToken(t.subInk)}}</style>
+<link rel="stylesheet" href="${SKIN_CSS_PATH}"/>
+<style>${safeCss(skinRootCss(t))}</style>
 </head>
 <body>
 <header id="site-nav"></header>
@@ -1665,7 +2037,9 @@ function readme(structure: TemplateStructureIR): string {
 - 模板 slug：\`${structure.slug}\`
 - 布局家族：${t.layoutLabel}（\`${t.layoutKey}\`）
 - 配色：${t.paletteLabel}（\`${t.paletteKey}\`，主色 ${t.primary}）
-- 版式基因：圆角 ${t.radius} / 密度 ${t.density} / 标题字族 ${t.font}
+- 套装：${t.skinLabel}（\`${t.skinKey}\`）${t.forceDark ? " · 暗色" : ""}
+- 版式基因：圆角 ${t.radius} / 密度 ${t.density} / 标题字族 ${t.font} / 装饰 ${t.accentFx}
+- 签名版块：\`${SKIN_SIGNATURE[t.skinKey as SkinKey]?.kind ?? "—"}\`（这套装独有，换装即换掉）
 - 页面：${pages}
 - 双语：\`${SITE_CONFIG_PATH}\`（中文）与 \`${SITE_CONFIG_EN_PATH}\`（English），页面右上角切换
 
@@ -1676,7 +2050,8 @@ function readme(structure: TemplateStructureIR): string {
 | \`${SITE_CONFIG_PATH}\` | 工程对象（页面 → 板块 → 槽位）。改文案、换图、删加板块都在这里 |
 | \`${SITE_CONFIG_EN_PATH}\` | 英文版工程对象，结构与中文版逐节一致 |
 | \`${ENTRY_HTML}\` | 页面骨架，只有导航容器与主体容器 |
-| \`assets/styles.css\` | 全部样式；主色/圆角/字体走 CSS 变量 |
+| \`assets/styles.css\` | 共享样式；主色/圆角/疏密/字体全部读 CSS 变量，500 个模板同一份 |
+| \`${SKIN_CSS_PATH}\` | **这一套装自己的样式**：全套令牌 + 结构规则 + 装饰效果 + 签名版块版式 |
 | \`assets/app.js\` | 按工程对象渲染 22 类板块 |
 | \`${STRUCTURE_PATH}\` | 结构中间表示（含每节变体号与槽位角色），供校验与二次生成 |
 | \`${TEMPLATE_AXES_PATH}\` | 轻编辑三轴（构成 / 外观 / 文案）的当前值、准入选项与确定性换轴数据 |
@@ -1752,6 +2127,7 @@ export function buildWebsiteSourceTree(
       ? [{ path: TEMPLATE_AXES_PATH, mediaType: "application/json", text: `${JSON.stringify(axes, null, 2)}\n` }]
       : []),
     { path: "assets/styles.css", mediaType: "text/css", text: RUNTIME_CSS },
+    { path: SKIN_CSS_PATH, mediaType: "text/css", text: skinCss(structure.theme) },
     { path: "assets/app.js", mediaType: "text/javascript", text: RUNTIME_JS },
     { path: "README.md", mediaType: "text/markdown", text: readme(structure) },
   ];
@@ -1801,12 +2177,146 @@ export function selectionKeysFor(structure: TemplateStructureIR) {
   };
 }
 
-/** 发射自检：22 个目标类型的 content 组装器齐全、38 个 kind 全有落点。 */
+// ————————————————————————————————————————————————————————————
+// 发射自检：映射齐全 + 五条轴没有塌成「所有装同值」
+// ————————————————————————————————————————————————————————————
+
+/** 产物里必须齐的装令牌；少一个就意味着某条轴又有一半退回写死值。 */
+const REQUIRED_SKIN_TOKENS = [
+  "primary", "page-bg", "surface", "nav-bg", "border", "ink", "sub",
+  "radius", "radius-btn", "radius-img", "radius-pill",
+  "space", "gap", "h1", "h2", "line-height", "heading-font", "body-font",
+];
+
+/** 守卫取样用的最小 theme：只含算令牌 / 装饰 / 明暗要用的格子，不牵动 taxonomy 与内容包。 */
+function guardTheme(skin: Skin): Theme {
+  const p = paletteByKey(skin.palettes[0]);
+  return {
+    shapeKey: "s6",
+    layoutKey: "corporate",
+    layoutLabel: "企业官网",
+    skinKey: skin.key,
+    skinLabel: skin.label,
+    paletteKey: p.key,
+    paletteLabel: p.label,
+    paletteFamily: p.family,
+    primary: p.primary,
+    primaryDark: p.primaryDark,
+    gradFrom: p.gradFrom,
+    gradTo: p.gradTo,
+    soft: p.soft,
+    ink: p.ink,
+    subInk: p.sub,
+    accent: p.accent,
+    heroDark: p.heroDark,
+    forceDark: skin.dark,
+    radius: skin.radius,
+    radiusTokens: RADIUS_TOKENS[skin.radius],
+    density: skin.density,
+    densityTokens: DENSITY_TOKENS[skin.density],
+    font: skin.font,
+    fontStack: FONT_STACK[skin.font],
+    accentFx: skin.fx,
+    isSignature: true,
+  };
+}
+
+function tokenDecls(css: string, pattern: RegExp): string {
+  const out: string[] = [];
+  for (const m of css.matchAll(/--([a-z0-9-]+)\s*:\s*([^;}]*)/gi)) {
+    if (pattern.test(m[1])) out.push(`${m[1]}=${m[2].trim()}`);
+  }
+  return [...new Set(out)].sort().join("|");
+}
+
+/**
+ * 每条轴在产物字节上的取值（守卫用）。
+ *
+ * 读的是发射器**真的会写进产物**的那几段字节（`:root` 令牌块、装饰规则、明暗面），
+ * 不读 `SKINS` 表的声明值 —— 声明成十档而产物只有一档，正是这个守卫要拦的东西。
+ */
+function skinAxisReadings() {
+  return SKINS.map((skin) => {
+    const theme = guardTheme(skin);
+    const root = skinRootCss(theme);
+    const surfaces = skinSurfacesFor(theme);
+    return {
+      skin,
+      root,
+      surfaces,
+      radius: tokenDecls(root, /^radius/),
+      density: tokenDecls(root, /^(space|gap|h1|h2|line-height)$/),
+      font: tokenDecls(root, /^(heading-font|body-font)$/),
+      fx: fxCss(theme),
+      signature: SKIN_SIGNATURE[skin.key],
+    };
+  });
+}
+
+/**
+ * 发射自检：22 个目标类型的 content 组装器齐全、全部 kind 有落点，
+ * **并且五条装轴与签名版块在产物里没有塌成「所有装同值」**。
+ *
+ * 后半段是这次补的：此前守卫只查映射齐全性，于是「圆角三档在产物里塌成一档」、
+ * 「fx 一个字节都没进产物」这类回退可以静默照产（`probes/V1-w01-guard-counterexample.sh`
+ * 实测四个反例 0/4 拦不住）。轴退化必须当场抛错，而不是等验收位去数产物。
+ */
 export function assertEmitterComplete(): void {
   for (const kind of ALL_SECTION_KINDS) {
     const type = SECTION_TYPE_MAP[kind];
     if (!type) throw new Error(`接口 B 缺 ${kind} 的落点`);
     if (!BUILDERS[type]) throw new Error(`缺 ${type} 的 content 组装器（kind=${kind}）`);
     if (!SECTION_CONTENT_SCHEMA[type]) throw new Error(`缺 ${type} 的 content schema`);
+  }
+
+  const rows = skinAxisReadings();
+  if (rows.length < 2) throw new Error(`装少于 2 套（${rows.length}），无从谈「换装看得出来」`);
+
+  for (const row of rows) {
+    for (const token of REQUIRED_SKIN_TOKENS) {
+      if (!new RegExp(`--${token}\\s*:\\s*[^;}]`).test(row.root)) {
+        throw new Error(`装 ${row.skin.key} 的产物令牌缺 --${token}：这条轴会在产物里退回写死值`);
+      }
+    }
+  }
+
+  for (const axis of ["radius", "density", "font", "fx"] as const) {
+    const values = new Set(rows.map((row) => row[axis]));
+    if (values.size < 2) {
+      throw new Error(
+        `轴退化：${rows.length} 套装的 \`${axis}\` 在产物里是同一个值 —— 换装不会改变产出源码，` +
+        `拒绝照产（取值：${[...values][0].slice(0, 120)}）`,
+      );
+    }
+  }
+
+  const darkSkins = rows.filter((row) => row.skin.dark);
+  if (!darkSkins.length || darkSkins.length === rows.length) {
+    throw new Error(`暗色轴退化：${rows.length} 套装的明暗声明全同（暗色 ${darkSkins.length} 套）`);
+  }
+  for (const row of darkSkins) {
+    if (!isDarkColor(row.surfaces.pageBg)) {
+      throw new Error(`装 ${row.skin.key} 声明暗色，产物底色 ${row.surfaces.pageBg} 却不暗`);
+    }
+    if (relLuminance(row.surfaces.ink) <= 0.5) {
+      throw new Error(`装 ${row.skin.key} 声明暗色，产物正文色 ${row.surfaces.ink} 却不浅`);
+    }
+  }
+
+  const sigKinds = new Set(rows.map((row) => row.signature.kind));
+  const sigDisplays = new Set(rows.map((row) => row.signature.display));
+  if (sigKinds.size !== rows.length || sigDisplays.size !== rows.length) {
+    throw new Error(
+      `签名版块退化：${rows.length} 套装只有 ${sigKinds.size} 个不同的签名 kind、` +
+      `${sigDisplays.size} 个不同的 display —— 有装在借别人的签名`,
+    );
+  }
+  for (const row of rows) {
+    if (!ALL_SECTION_KINDS.includes(row.signature.kind)) {
+      throw new Error(`装 ${row.skin.key} 的签名 ${row.signature.kind} 不在 SectionKind 体系里`);
+    }
+    if (!SIGNATURE_RULES[row.signature.display]) {
+      throw new Error(`装 ${row.skin.key} 的签名 ${row.signature.display} 在产物里没有自己的版式规则`);
+    }
   }
 }
