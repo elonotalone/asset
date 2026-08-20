@@ -1531,16 +1531,32 @@ export function buildWebsiteSourceBundle(
   sub: SubCategory,
   opts: BuildTreeOptions = {},
 ): WebsiteSourceBundle {
-  const lang: Lang = opts.defaultLang ?? "zh";
   const structure = buildTemplateStructure(meta, industry, sub);
   const config = buildWebsiteSourceConfig(structure, "zh");
   const configEn = buildWebsiteSourceConfig(structure, "en");
   const axes = buildTemplateAxesMetadata(meta, industry, sub, structure, config);
+  return { structure, config, configEn, axes, tree: buildWebsiteSourceTree(structure, axes, opts) };
+}
+
+/**
+ * 只按结构 IR 产源码树。换装预览与 `template-skins.selfcheck.mjs` 走这条：
+ * 它们要固定内容与构成、只换装，拿不到（也不需要）taxonomy 的 meta。
+ */
+export function buildWebsiteSourceTree(
+  structure: TemplateStructureIR,
+  axes: TemplateAxesMetadata<VirtualPageOut> | null,
+  opts: BuildTreeOptions = {},
+): SourceTree {
+  const lang: Lang = opts.defaultLang ?? "zh";
+  const config = buildWebsiteSourceConfig(structure, "zh");
+  const configEn = buildWebsiteSourceConfig(structure, "en");
   const siteFiles: SourceFile[] = [
     { path: ENTRY_HTML, mediaType: "text/html", text: indexHtml(structure, lang) },
     { path: SITE_CONFIG_PATH, mediaType: "application/json", text: `${JSON.stringify(config, null, 2)}\n` },
     { path: SITE_CONFIG_EN_PATH, mediaType: "application/json", text: `${JSON.stringify(configEn, null, 2)}\n` },
-    { path: TEMPLATE_AXES_PATH, mediaType: "application/json", text: `${JSON.stringify(axes, null, 2)}\n` },
+    ...(axes
+      ? [{ path: TEMPLATE_AXES_PATH, mediaType: "application/json", text: `${JSON.stringify(axes, null, 2)}\n` }]
+      : []),
     { path: "assets/styles.css", mediaType: "text/css", text: RUNTIME_CSS },
     { path: "assets/app.js", mediaType: "text/javascript", text: RUNTIME_JS },
     { path: "README.md", mediaType: "text/markdown", text: readme(structure) },
@@ -1558,14 +1574,13 @@ export function buildWebsiteSourceBundle(
   const sha = opts.sha256;
   const len = opts.byteLen ?? ((t: string) => new TextEncoder().encode(t).length);
   const manifest = manifestFor(siteFiles, sha ?? (() => ""), len);
-  const tree: SourceTree = {
+  return {
     entrypoint: MANIFEST_PATH,
     files: [
       { path: MANIFEST_PATH, mediaType: "application/json", text: `${JSON.stringify(manifest, null, 2)}\n` },
       ...siteFiles,
     ],
   };
-  return { structure, config, configEn, axes, tree };
 }
 
 /** 素材选材键（website / make 两站按行业 / 子类 / 色系挑模板时用这几维）。 */

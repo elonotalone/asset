@@ -344,9 +344,32 @@ export function dnaFor(
   variant: number,
   _defaultPaletteFamily?: string,
 ): TemplateDNA {
+  return assembleDna(slug, industryKey, variant, skinForVariant(industryKey, variant));
+}
+
+/**
+ * 换装：内容、行业、变体号与页面构成全部保持原样，只把这一套装的五条轴与配色换掉。
+ *
+ * 「换一个皮看看」和自检器都走这里 —— 只有把「同一份内容、同一版式」固定住，
+ * 换皮前后产物的差异才只能由装本身解释。
+ */
+export function dnaForSkin(
+  slug: string,
+  industryKey: string,
+  variant: number,
+  skinKey: SkinKey,
+): TemplateDNA {
+  return assembleDna(slug, industryKey, variant, skinByKey(skinKey));
+}
+
+function assembleDna(
+  slug: string,
+  industryKey: string,
+  variant: number,
+  skin: Skin,
+): TemplateDNA {
   const subKey = slug.replace(/-\d+$/, "");
   const shape = shapeForSite(industryKey, variant, subKey);
-  const skin = skinForVariant(industryKey, variant);
   const palette = paletteForSkin(skin, variant);
   const layout = layoutForShape(shape.key, mainPageKey(industryKey, subKey));
   const styleSeed = SKINS.findIndex((candidate) => candidate.key === skin.key);
