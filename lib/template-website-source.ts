@@ -15,7 +15,9 @@ import type { Lang } from "./template-i18n";
 import type { Industry, SubCategory, TemplateMeta } from "./template-taxonomy";
 import { hashStr } from "./hash";
 import {
+  FONT_STACK,
   SHAPE_SECTION_BLUEPRINTS,
+  SKIN_SIGNATURE,
   dnaFor,
   mainPageKey,
   mainSectionKind,
@@ -100,6 +102,50 @@ export interface VirtualPageOut {
   sections: VirtualSectionOut[];
 }
 
+/**
+ * 一套装在产物里的全部可测令牌。
+ *
+ * `typography` 那三个字段是 website 的闭集（`sans|serif|mono`），装不下第三档字族，
+ * 也装不下圆角与疏密 —— 所以这些**只做加法**地放在这里，website 不认也不会坏，
+ * 而运行时与 `index.html` 的内联 `:root` 都按它落到真正的 CSS 变量上。
+ */
+export interface SkinTokensOut {
+  radiusCard: string;
+  radiusBtn: string;
+  radiusImg: string;
+  radiusPill: string;
+  sectionSpace: string;
+  gap: string;
+  h1: string;
+  h2: string;
+  lineHeight: number;
+  /** 真字体栈（含中文字族），不是 `sans|serif` 这种档位名。 */
+  headingFont: string;
+  bodyFont: string;
+  pageBg: string;
+  surface: string;
+  navBg: string;
+  border: string;
+  ink: string;
+  sub: string;
+  primary: string;
+}
+
+export interface SkinOut {
+  key: string;
+  label: string;
+  radius: string;
+  density: string;
+  font: string;
+  fx: string;
+  dark: boolean;
+  /** 这套装独有的板块（asset 的 `SectionKind`）。 */
+  signatureKind: string;
+  /** 该板块在 site.json 里的渲染分支标记，运行时按它走不同的 DOM。 */
+  signatureDisplay: string;
+  tokens: SkinTokensOut;
+}
+
 export interface VirtualSiteConfigOut {
   siteName: string;
   themeColor: string;
@@ -111,9 +157,112 @@ export interface VirtualSiteConfigOut {
     lineHeight: number;
     headingWeight: number;
   };
+  skin: SkinOut;
   navigation: { label: string; href: string }[];
   sections: VirtualSectionOut[];
   pages: VirtualPageOut[];
+}
+
+// ————————————————————————————————————————————————————————————
+// 装的令牌：明暗面派生
+// ————————————————————————————————————————————————————————————
+
+type Theme = TemplateStructureIR["theme"];
+
+function rgbOf(value: string): [number, number, number] | null {
+  const m = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(String(value).trim());
+  if (!m) return null;
+  const raw = m[1].length === 3 ? m[1].split("").map((c) => c + c).join("") : m[1];
+  return [0, 2, 4].map((i) => Number.parseInt(raw.slice(i, i + 2), 16)) as [number, number, number];
+}
+
+function hexOf(rgb: [number, number, number]): string {
+  return `#${rgb.map((v) => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, "0")).join("")}`;
+}
+
+/** a 与 b 按 t 比例混合（t=0 全 a，t=1 全 b）；解析不了就原样退回 a。 */
+function mix(a: string, b: string, t: number): string {
+  const ra = rgbOf(a);
+  const rb = rgbOf(b);
+  if (!ra || !rb) return a;
+  return hexOf([0, 1, 2].map((i) => ra[i] + (rb[i] - ra[i]) * t) as [number, number, number]);
+}
+
+function relLuminance(value: string): number {
+  const rgb = rgbOf(value);
+  if (!rgb) return 1;
+  const [r, g, b] = rgb.map((v) => v / 255);
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+function isDarkColor(value: string): boolean {
+  return relLuminance(value) < 0.4;
+}
+
+interface SkinSurfaces {
+  dark: boolean;
+  pageBg: string;
+  surface: string;
+  navBg: string;
+  border: string;
+  ink: string;
+  sub: string;
+  deep: string;
+}
+
+/**
+ * 暗色皮的暗面不能拿 `palette.soft` 当底：`glacier`（`fullscreen` 用的那套）的 `soft`
+ * 是 `#f0f9ff`，照发就是「声明暗色、产出浅底深字」。所以底色与正文色都在这里显式派生，
+ * 派生完再校一次明暗关系，永远保证暗底配浅字。
+ */
+function skinSurfacesFor(t: Theme): SkinSurfaces {
+  if (!t.forceDark) {
+    return {
+      dark: false,
+      pageBg: "#ffffff",
+      surface: t.soft,
+      navBg: "#ffffff",
+      border: mix(t.ink, "#ffffff", 0.88),
+      ink: t.ink,
+      sub: t.subInk,
+      deep: t.ink,
+    };
+  }
+  const pageBg = isDarkColor(t.soft) ? t.soft : mix(t.ink, "#000000", 0.5);
+  const ink = isDarkColor(t.ink) ? mix(t.soft, "#ffffff", 0.5) : t.ink;
+  return {
+    dark: true,
+    pageBg,
+    surface: mix(pageBg, "#ffffff", 0.07),
+    navBg: mix(pageBg, "#000000", 0.3),
+    border: mix(pageBg, ink, 0.18),
+    ink,
+    sub: mix(ink, pageBg, 0.38),
+    deep: mix(pageBg, "#000000", 0.35),
+  };
+}
+
+function skinTokensFor(t: Theme, surfaces: SkinSurfaces): SkinTokensOut {
+  return {
+    radiusCard: t.radiusTokens.card,
+    radiusBtn: t.radiusTokens.btn,
+    radiusImg: t.radiusTokens.img,
+    radiusPill: t.radiusTokens.pill,
+    sectionSpace: t.densityTokens.section,
+    gap: t.densityTokens.gap,
+    h1: t.densityTokens.h1,
+    h2: t.densityTokens.h2,
+    lineHeight: t.density === "compact" ? 1.5 : t.density === "airy" ? 1.8 : 1.65,
+    headingFont: t.fontStack,
+    bodyFont: FONT_STACK.sans,
+    pageBg: surfaces.pageBg,
+    surface: surfaces.surface,
+    navBg: surfaces.navBg,
+    border: surfaces.border,
+    ink: surfaces.ink,
+    sub: surfaces.sub,
+    primary: t.primary,
+  };
 }
 
 // ————————————————————————————————————————————————————————————
@@ -178,6 +327,8 @@ interface EmitCtx {
   keyword: string;
   /** 当前配置内的图片序号；zh/en 分别从 0 开始，因而两份配置引用同一组文件。 */
   photoCursor: number;
+  /** 这套装的明暗面（暗色皮的底色与正文色在这里已经派生好，节级不再各算各的）。 */
+  surfaces: SkinSurfaces;
 }
 
 type ContentBuilder = (section: SectionIR, ctx: EmitCtx) => Record<string, unknown>;
@@ -501,33 +652,45 @@ function px(v: string): number {
   return Math.max(0, Math.min(LIMITS.paddingMax, Number.parseInt(v, 10) || 0));
 }
 
-function surfaceColors(section: SectionIR, structure: TemplateStructureIR): { backgroundColor: string; textColor: string } {
+function surfaceColors(
+  section: SectionIR,
+  structure: TemplateStructureIR,
+  sk: SkinSurfaces,
+): { backgroundColor: string; textColor: string } {
   const t = structure.theme;
-  const white = t.forceDark ? t.soft : "#ffffff";
   switch (section.intent.surface) {
     case "soft":
     case "card":
-      return { backgroundColor: t.soft, textColor: t.ink };
+      return { backgroundColor: sk.surface, textColor: sk.ink };
     case "gradient":
-      return { backgroundColor: t.gradFrom, textColor: section.intent.onDark ? "#ffffff" : t.ink };
+      return { backgroundColor: t.gradFrom, textColor: section.intent.onDark ? "#ffffff" : sk.ink };
     case "dark":
-      return { backgroundColor: t.forceDark ? t.soft : t.ink, textColor: t.forceDark ? t.ink : "#ffffff" };
+      return sk.dark
+        ? { backgroundColor: sk.deep, textColor: sk.ink }
+        : { backgroundColor: t.ink, textColor: "#ffffff" };
     case "image":
-      return { backgroundColor: t.ink, textColor: "#ffffff" };
+      return { backgroundColor: sk.dark ? sk.deep : t.ink, textColor: "#ffffff" };
     case "primary":
       return { backgroundColor: t.primary, textColor: "#ffffff" };
     default:
-      return { backgroundColor: white, textColor: t.ink };
+      return { backgroundColor: sk.pageBg, textColor: sk.ink };
   }
 }
 
 /** 紧凑节（asset 里是 py-8 / py-12 的条带，不吃整节密度）。 */
 const BAND_KINDS = new Set(["stats", "logos", "marquee", "sigNeonStats"]);
 
-function styleFor(section: SectionIR, structure: TemplateStructureIR): VirtualSectionStyleOut {
+function styleFor(
+  section: SectionIR,
+  structure: TemplateStructureIR,
+  sk: SkinSurfaces,
+): VirtualSectionStyleOut {
   const t = structure.theme;
-  const pad = BAND_KINDS.has(section.kind) ? 48 : px(t.densityTokens.section);
-  const colors = surfaceColors(section, structure);
+  // 紧凑条带也要跟着疏密走，否则 compact 与 airy 在这些节上产出同一个数。
+  const pad = BAND_KINDS.has(section.kind)
+    ? Math.round(px(t.densityTokens.section) * 0.62)
+    : px(t.densityTokens.section);
+  const colors = surfaceColors(section, structure, sk);
   const cols = section.intent.columns;
   const contentWidth: VirtualSectionStyleOut["contentWidth"] =
     section.intent.surface === "image" ? "full" : cols >= 3 ? "wide" : cols === 2 ? "normal" : "narrow";
@@ -565,8 +728,14 @@ function expand(section: SectionIR): { type: WebsiteSectionType; from: SectionIR
   return [primary];
 }
 
-function footerSection(structure: TemplateStructureIR, lang: Lang, id: string): VirtualSectionOut {
+function footerSection(
+  structure: TemplateStructureIR,
+  lang: Lang,
+  id: string,
+  sk: SkinSurfaces,
+): VirtualSectionOut {
   const t = structure.theme;
+  const pad = px(t.densityTokens.section);
   return {
     id,
     type: "footer",
@@ -579,10 +748,10 @@ function footerSection(structure: TemplateStructureIR, lang: Lang, id: string): 
       image: NO_IMAGE,
     },
     style: {
-      backgroundColor: "#0f172a",
-      textColor: "#e2e8f0",
-      paddingTop: 56,
-      paddingBottom: 40,
+      backgroundColor: sk.dark ? sk.deep : t.ink,
+      textColor: sk.dark ? sk.ink : mix(t.soft, "#ffffff", 0.4),
+      paddingTop: Math.round(pad * 0.78),
+      paddingBottom: Math.round(pad * 0.56),
       contentWidth: "wide",
       alignment: "left",
       layout: "default",
@@ -601,18 +770,27 @@ function emitPage(page: PageIR, structure: TemplateStructureIR, ctx: EmitCtx): V
     return `${type}-${n}`.slice(0, LIMITS.sectionIdMax);
   };
   const sections: VirtualSectionOut[] = [];
+  const signatureKind = SKIN_SIGNATURE[structure.theme.skinKey].kind;
   for (const sec of page.sections) {
     for (const { type, from } of expand(sec)) {
+      const content = BUILDERS[type](from, ctx);
+      // 降级表把 16 个 sig* 压进 22 个 website 类型，压完就认不出原来是哪个 sig 了。
+      // 签名节在这里补一个渲染分支标记（沿用 marquee → logos 的先例），于是产物侧
+      // 既保住了 website 的闭集类型，又量得出「这一节是这套装独有的」。
+      if (from.kind === signatureKind) {
+        content.display = SKIN_SIGNATURE[structure.theme.skinKey].display;
+        content.signatureKind = from.kind;
+      }
       sections.push({
         id: nextId(type),
         type,
-        content: BUILDERS[type](from, ctx),
-        style: styleFor(from, structure),
+        content,
+        style: styleFor(from, structure, ctx.surfaces),
       });
     }
   }
   // asset 的页脚是整页固定尾部（不在 SectionKind 里），接口 B §2 要求每页补一节 footer。
-  sections.push(footerSection(structure, ctx.lang, nextId("footer")));
+  sections.push(footerSection(structure, ctx.lang, nextId("footer"), ctx.surfaces));
   return {
     id: page.key,
     name: pick(page.label, ctx.lang),
@@ -630,24 +808,40 @@ function fontFor(font: string): "sans" | "serif" | "mono" {
 /** 结构 IR → 一份 `VirtualSiteConfig`（单语言；双语走两份文件）。 */
 export function buildWebsiteSourceConfig(structure: TemplateStructureIR, lang: Lang = "zh"): VirtualSiteConfigOut {
   const t = structure.theme;
+  const surfaces = skinSurfacesFor(t);
+  const tokens = skinTokensFor(t, surfaces);
+  const signature = SKIN_SIGNATURE[t.skinKey];
   const ctx: EmitCtx = {
     structure,
     lang,
     pageLabel: "",
     keyword: lang === "en" ? structure.sub.labelEn : structure.sub.label,
     photoCursor: 0,
+    surfaces,
   };
   const pages = structure.pages.slice(0, LIMITS.pagesMax).map((p) => emitPage(p, structure, ctx));
   return {
     siteName: pick(structure.brand, lang),
     themeColor: t.primary,
-    backgroundColor: t.forceDark ? t.soft : "#ffffff",
+    backgroundColor: surfaces.pageBg,
     typography: {
       bodyFont: "sans",
       headingFont: fontFor(t.font),
       baseSize: 16,
-      lineHeight: t.density === "compact" ? 1.55 : t.density === "airy" ? 1.75 : 1.65,
-      headingWeight: 800,
+      lineHeight: tokens.lineHeight,
+      headingWeight: t.skinKey === "editorial" ? 700 : 800,
+    },
+    skin: {
+      key: t.skinKey,
+      label: t.skinLabel,
+      radius: t.radius,
+      density: t.density,
+      font: t.font,
+      fx: t.accentFx,
+      dark: t.forceDark,
+      signatureKind: signature.kind,
+      signatureDisplay: signature.display,
+      tokens,
     },
     navigation: structure.nav.map((n) => ({ label: pick(n.label, lang), href: n.path })),
     // `sections` 是 home 的兼容别名（接口 B §6）：两处写同一份数组。

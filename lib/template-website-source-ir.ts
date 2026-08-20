@@ -1223,6 +1223,104 @@ function irSigStickerCta(ctx: IrCtx): ReturnType<Extractor> {
   };
 }
 
+// —— 素白 / 自然 / 暖砂 / 深蓝的签名版块 ————————————————————
+//
+// 这四套装原先没有自己的签名节。它们各自的结构主张不同，所以槽位形状也各不相同：
+// 素白是一张编号索引表（无图、无卡片、只有细线），自然是一条上下交错的图文缎带，
+// 暖砂是一排手作印章（数字 + 印记文字），深蓝是一张年份账目表。
+
+function irSigPaperIndex(ctx: IrCtx): ReturnType<Extractor> {
+  const zsrc = ctx.zh.c.services.length ? ctx.zh.c.services : ctx.zh.c.features.map((f) => ({ name: f.title, desc: f.desc }));
+  const esrc = ctx.en.c.services.length ? ctx.en.c.services : ctx.en.c.features.map((f) => ({ name: f.title, desc: f.desc }));
+  const blocks = pairs(zsrc, esrc, 8).map(([z, e], i) => ({
+    key: `row-${i + 1}`,
+    slots: [
+      text("index", "meta", bi(String(i + 1).padStart(2, "0"), String(i + 1).padStart(2, "0"))),
+      text("title", "heading", bi(z.name, e.name)),
+      rich("description", "body", bi(z.desc, e.desc)),
+    ],
+  }));
+  return {
+    variant: 0,
+    variantCount: 1,
+    intent: intent(ctx, { surface: "page", align: "left", columns: 1, hasMedia: false }),
+    slots: [
+      text("eyebrow", "eyebrow", bi("索引", "Index")),
+      text("title", "heading", bi(ctx.zh.c.servicesTitle, ctx.en.c.servicesTitle)),
+      rich("subtitle", "subheading", bi(ctx.zh.c.servicesSubtitle, ctx.en.c.servicesSubtitle)),
+    ],
+    groups: [{ name: "items", blocks }],
+  };
+}
+
+function irSigNatureRibbon(ctx: IrCtx): ReturnType<Extractor> {
+  const zBody = ctx.zh.c.aboutBody;
+  const eBody = ctx.en.c.aboutBody;
+  const blocks = pairs(zBody, eBody, 3).map(([z, e], i) => ({
+    key: `band-${i + 1}`,
+    slots: [
+      text("title", "heading", bi(ctx.zh.c.features[i]?.title ?? ctx.zh.c.aboutTitle, ctx.en.c.features[i]?.title ?? ctx.en.c.aboutTitle)),
+      rich("description", "body", bi(z, e)),
+      image(ctx, "image", 40 + i),
+    ],
+  }));
+  return {
+    variant: 0,
+    variantCount: 1,
+    intent: intent(ctx, { surface: "soft", align: "left", columns: 2, hasMedia: true }),
+    slots: [
+      text("eyebrow", "eyebrow", bi("一路生长", "How we grow")),
+      text("title", "heading", bi(ctx.zh.c.aboutTitle, ctx.en.c.aboutTitle)),
+    ],
+    groups: [{ name: "items", blocks }],
+  };
+}
+
+function irSigSandStamp(ctx: IrCtx): ReturnType<Extractor> {
+  const blocks = pairs(ctx.zh.c.stats, ctx.en.c.stats, 4).map(([z, e], i) => ({
+    key: `stamp-${i + 1}`,
+    slots: [
+      price("value", bi(z.value, e.value)),
+      text("label", "label", bi(z.label, e.label)),
+      icon("icon", GLYPHS[(i + 3) % GLYPHS.length]),
+    ],
+  }));
+  return {
+    variant: 0,
+    variantCount: 1,
+    intent: intent(ctx, { surface: "card", align: "center", columns: 4 }),
+    slots: [
+      text("title", "heading", bi("手作留痕", "Made by hand")),
+      rich("subtitle", "subheading", bi(ctx.zh.c.aboutBody[0] ?? "", ctx.en.c.aboutBody[0] ?? "")),
+    ],
+    groups: [{ name: "items", blocks }],
+  };
+}
+
+function irSigNavyLedger(ctx: IrCtx): ReturnType<Extractor> {
+  const zsrc = ctx.zh.c.services.length ? ctx.zh.c.services : ctx.zh.c.features.map((f) => ({ name: f.title, desc: f.desc }));
+  const esrc = ctx.en.c.services.length ? ctx.en.c.services : ctx.en.c.features.map((f) => ({ name: f.title, desc: f.desc }));
+  const blocks = pairs(zsrc, esrc, 6).map(([z, e], i) => ({
+    key: `line-${i + 1}`,
+    slots: [
+      text("year", "meta", bi(`No.${String(i + 1).padStart(2, "0")}`, `No.${String(i + 1).padStart(2, "0")}`)),
+      text("title", "heading", bi(z.name, e.name)),
+      rich("description", "body", bi(z.desc, e.desc)),
+    ],
+  }));
+  return {
+    variant: 0,
+    variantCount: 1,
+    intent: intent(ctx, { surface: "page", align: "left", columns: 1 }),
+    slots: [
+      text("eyebrow", "eyebrow", bi("业务清单", "Ledger")),
+      text("title", "heading", bi(ctx.zh.c.servicesTitle, ctx.en.c.servicesTitle)),
+      rich("subtitle", "subheading", bi(ctx.zh.c.servicesSubtitle, ctx.en.c.servicesSubtitle)),
+    ],
+    groups: [{ name: "items", blocks }],
+  };
+}
+
 const EXTRACTORS: Record<SectionKind, Extractor> = {
   hero: irHero,
   stats: irStats,
@@ -1262,6 +1360,10 @@ const EXTRACTORS: Record<SectionKind, Extractor> = {
   sigBrutalHero: irSigBrutalHero,
   sigBrutalCards: irSigBrutalCards,
   sigStickerCta: irSigStickerCta,
+  sigPaperIndex: irSigPaperIndex,
+  sigNatureRibbon: irSigNatureRibbon,
+  sigSandStamp: irSigSandStamp,
+  sigNavyLedger: irSigNavyLedger,
 };
 
 /** 所有 asset 章节种类（发射器/接口 B 的完整性由测试对着这张表查）。 */

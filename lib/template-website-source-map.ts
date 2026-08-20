@@ -83,6 +83,10 @@ export const SECTION_TYPE_MAP: Record<SectionKind, WebsiteSectionType> = {
   sigBrutalHero: "hero",
   sigBrutalCards: "services",
   sigStickerCta: "cta",
+  sigPaperIndex: "services",
+  sigNatureRibbon: "about",
+  sigSandStamp: "stats",
+  sigNavyLedger: "timeline",
 };
 
 /** 哪些 kind 是「降级发射」（marker / 报告里要如实记账）。 */

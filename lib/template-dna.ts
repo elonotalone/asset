@@ -146,7 +146,13 @@ export type SectionKind =
   | "sigBentoFeatures"
   | "sigBrutalHero"
   | "sigBrutalCards"
-  | "sigStickerCta";
+  | "sigStickerCta"
+  // 素白 / 自然 / 暖砂 / 深蓝这四套装原先一个签名版块都没有，只能借别人家的
+  // sig* 冒充；这四个是它们各自的
+  | "sigPaperIndex"
+  | "sigNatureRibbon"
+  | "sigSandStamp"
+  | "sigNavyLedger";
 
 export interface LayoutFamily {
   /** 兼容旧消费者的字段名；值现在就是 s3/s4/s5/s6。 */
@@ -171,7 +177,10 @@ export const SHAPE_SECTION_BLUEPRINTS: Record<
   Record<string, readonly BlueprintSection[]>
 > = {
   s3: {
-    home: ["sigFsIntro", "features", "sigFsPanel", "sigFsSplit", "sigFsPanel", "cta"],
+    // 这里原先写死了 fullscreen 家族的 sigFs*，于是十套装里有九套在三页站上冒充
+    // 全屏叙事。构成只决定「有几页、每页讲什么」，长相归装 —— 签名版块由
+    // SKIN_SIGNATURE 按当前装注入。
+    home: ["hero", "features", "about", "gallery", "cta"],
     about: ["pageHeader", "about", "gallery", "team", "cta"],
     contact: ["pageHeader", "contact"],
   },
@@ -212,7 +221,108 @@ export function mainSectionKind(mainKey: MainPageKey): SectionKind {
   return mainKey === "works" ? "gallery" : mainKey;
 }
 
-function layoutForShape(shapeKey: ShapeKey, mainKey: MainPageKey): LayoutFamily {
+// ————————————————————————————————————————————————————————————
+// 签名版块：每套装在首页上独有的结构
+// ————————————————————————————————————————————————————————————
+
+export interface SkinSignature {
+  /** 只属于这套装的板块。十套装的这个值两两不同，是「换皮看得出来」的结构证据。 */
+  kind: SectionKind;
+  /** 降级到 website 闭集类型之后，靠它在 site.json 里认出这是哪套装的签名节。 */
+  display: string;
+  /** `lead` 顶掉首页开场节（签名本身就是一个头屏），`after-lead` 插在开场之后。 */
+  placement: "lead" | "after-lead";
+  /** 同家族的附属签名节，插在开场段之后；没有就是空。 */
+  extras: SectionKind[];
+}
+
+/**
+ * 十套装 → 十个互不相同的签名版块。
+ *
+ * 这之前签名版块是**按页面构成**发的（`SHAPE_SECTION_BLUEPRINTS.s3` 里写死 sigFs*），
+ * 于是「换装」在结构上等于什么都没换。签名归装之后，同一份内容同一个构成，换装会
+ * 换掉首页的开场结构 —— 这才是 DOM 形状的差别，不是换个颜色。
+ */
+export const SKIN_SIGNATURE: Record<SkinKey, SkinSignature> = {
+  paper: {
+    kind: "sigPaperIndex",
+    display: "paper-index",
+    placement: "after-lead",
+    extras: [],
+  },
+  editorial: {
+    kind: "sigEditorialHero",
+    display: "editorial-hero",
+    placement: "lead",
+    extras: ["sigEditorialFeature", "sigPullQuote", "sigEditorialGallery"],
+  },
+  bento: {
+    kind: "sigBentoHero",
+    display: "bento-hero",
+    placement: "lead",
+    extras: ["sigBentoFeatures"],
+  },
+  brutalist: {
+    kind: "sigBrutalHero",
+    display: "brutal-hero",
+    placement: "lead",
+    extras: ["sigBrutalCards", "sigStickerCta"],
+  },
+  neon: {
+    kind: "sigNeonHero",
+    display: "neon-hero",
+    placement: "lead",
+    extras: ["sigNeonStats", "sigCodeWindow"],
+  },
+  fullscreen: {
+    kind: "sigFsIntro",
+    display: "fs-intro",
+    placement: "lead",
+    extras: ["sigFsPanel", "sigFsSplit"],
+  },
+  nature: {
+    kind: "sigNatureRibbon",
+    display: "nature-ribbon",
+    placement: "after-lead",
+    extras: [],
+  },
+  sand: {
+    kind: "sigSandStamp",
+    display: "sand-stamp",
+    placement: "after-lead",
+    extras: [],
+  },
+  navy: {
+    kind: "sigNavyLedger",
+    display: "navy-ledger",
+    placement: "after-lead",
+    extras: [],
+  },
+  glass: {
+    kind: "sigGlassGrid",
+    display: "glass-grid",
+    placement: "after-lead",
+    extras: [],
+  },
+};
+
+/** 首页最多几节；签名注入不许把首页撑爆。 */
+const HOME_SECTION_MAX = 12;
+
+function withSignature(sections: readonly SectionKind[] | undefined, skinKey: SkinKey): SectionKind[] {
+  const out = [...(sections ?? [])];
+  if (!out.length) return out;
+  const sig = SKIN_SIGNATURE[skinKey];
+  if (sig.placement === "lead") out.splice(0, 1, sig.kind);
+  else out.splice(1, 0, sig.kind);
+  if (sig.extras.length) {
+    // 附属节插在开场段之后、收尾 cta 之前。
+    out.splice(Math.min(out.length - 1, 3), 0, ...sig.extras);
+  }
+  return out.slice(0, HOME_SECTION_MAX);
+}
+
+function layoutForShape(shapeKey: ShapeKey, mainKey: MainPageKey, skinKey?: SkinKey): LayoutFamily {
   const shape = shapeByKey(shapeKey);
   const pages = shape.pages.map((page) => (page === "main" ? mainKey : page)) as PageKey[];
   const blueprint = SHAPE_SECTION_BLUEPRINTS[shapeKey];
@@ -227,6 +337,7 @@ function layoutForShape(shapeKey: ShapeKey, mainKey: MainPageKey): LayoutFamily 
     ) as SectionKind[];
   }
 
+  if (skinKey) sections.home = withSignature(sections.home, skinKey);
   return { key: shape.key, label: shape.label, pages, sections };
 }
 
@@ -371,7 +482,7 @@ function assembleDna(
   const subKey = slug.replace(/-\d+$/, "");
   const shape = shapeForSite(industryKey, variant, subKey);
   const palette = paletteForSkin(skin, variant);
-  const layout = layoutForShape(shape.key, mainPageKey(industryKey, subKey));
+  const layout = layoutForShape(shape.key, mainPageKey(industryKey, subKey), skin.key);
   const styleSeed = SKINS.findIndex((candidate) => candidate.key === skin.key);
 
   return {
