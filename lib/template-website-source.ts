@@ -1348,8 +1348,13 @@ export const RUNTIME_JS = String.raw`// OceanLeo website-source@1 runtime ——
   function safeUrl(v) {
     var s = str(v).trim();
     if (!s) return "#";
-    if (s.charAt(0) === "#" || s.charAt(0) === "/" || s.indexOf("./") === 0 || s.indexOf("../") === 0) return s;
+    if (s.charAt(0) === "#") return s;
     if (/^(?:https?:|mailto:|tel:)/i.test(s)) return s;
+    // 站内路径三种形态一律放行：绝对 /a、显式 ./a ../a、裸相对 images/x.webp。
+    // 判据是「整串不含冒号」⇒ 不可能带协议头，javascript: / data: 进不来，
+    // 连 "jav\tascript:" 这类插字符绕过也进不来（浏览器抽掉制表符后冒号仍在）。
+    // 协议相对 //host 与 \\host（URL 规范把反斜杠当斜杠）显式挡掉。
+    if (s.indexOf(":") < 0 && s.indexOf("\\") < 0 && s.slice(0, 2) !== "//") return s;
     return "#";
   }
   /** 颜色只收 #hex / rgb(a) / hsl(a) / 关键字；url(...) 之类进不来。 */
