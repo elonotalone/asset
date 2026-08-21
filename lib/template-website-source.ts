@@ -1344,18 +1344,34 @@ export const RUNTIME_JS = String.raw`// OceanLeo website-source@1 runtime ——
 
   function str(v) { return v == null ? "" : String(v); }
 
-  /** 只放行锚点 / 站内相对路径 / http(s) / mailto / tel，其余（javascript: data: …）降级。 */
+  /**
+   * 只放行锚点 / 站内相对路径 / http(s) / mailto / tel，其余（javascript: data: …）降级。
+   *
+   * **先按 URL 规范归一化，再判**。这个顺序是判据本身的一部分：浏览器不会拿我们收到的
+   * 原始串去解析，WHATWG URL 规范要求解析器在动手之前先做两步预处理，所以「我判的那个串」
+   * 必须就是「浏览器解析的那个串」，否则两者的差就是绕过口子。历史上漏过的两条正是这个形状：
+   * "/<tab>/host"（抽掉 tab 后变成协议相对）与 "<NUL>//host"（剥掉首尾 NUL 后变成协议相对）。
+   * 归一化是整类修法 —— 补黑名单只能挡住举出来的那两个控制字符，第三个照样绕。
+   */
   function safeUrl(v) {
-    var s = str(v).trim();
+    // ① URL 规范预处理（WHATWG URL «basic URL parser» 的头两步）：
+    //    整串抽掉所有 tab / CR / LF；再剥掉首尾的 C0 控制字符与空格（trim() 不剥 NUL，规范剥）。
+    var s = str(v).replace(/[\t\r\n]/g, "").replace(/^[\u0000-\u0020]+|[\u0000-\u0020]+$/g, "");
     if (!s) return "#";
     if (s.charAt(0) === "#") return s;
     if (/^(?:https?:|mailto:|tel:)/i.test(s)) return s;
-    // 站内路径三种形态一律放行：绝对 /a、显式 ./a ../a、裸相对 images/x.webp。
-    // 判据是「整串不含冒号」⇒ 不可能带协议头，javascript: / data: 进不来，
-    // 连 "jav\tascript:" 这类插字符绕过也进不来（浏览器抽掉制表符后冒号仍在）。
-    // 协议相对 //host 与 \\host（URL 规范把反斜杠当斜杠）显式挡掉。
-    if (s.indexOf(":") < 0 && s.indexOf("\\") < 0 && s.slice(0, 2) !== "//") return s;
-    return "#";
+    // ② 反斜杠一律挡：URL 规范在特殊 scheme 下把反斜杠当斜杠，UNC 与混写都能长出 authority。
+    if (s.indexOf("\\") >= 0) return "#";
+    // ③ 协议相对 //host：归一化之后才判，"/<tab>/host"、"<NUL>//host"、"///host" 到这里都已经现形。
+    if (s.slice(0, 2) === "//") return "#";
+    // ④ 剩下的只能是站内相对引用。会不会长出协议头，只取决于**第一段**
+    //    （首个 / ? # 之前那截，RFC 3986 的 segment-nz-nc，规范就规定它不许含冒号）：
+    //    - NFKC 把全角冒号 U+FF1A 这类兼容字符折回 ASCII 冒号，折完再看有没有冒号；
+    //    - 第一段里的 % 与 & 也一并挡掉 —— 它们是「解不解码由下游决定」的编码入口，
+    //      %3a / &#58; / &#x3a; / &colon; 都是冒号的另一种写法，我们不替下游赌它不解码。
+    //    查询串与锚点里的 % 和 & 不受影响（第一段在它们之前就结束了）。
+    if (/[:%&]/.test(s.split(/[/?#]/)[0].normalize("NFKC"))) return "#";
+    return s;
   }
   /** 颜色只收 #hex / rgb(a) / hsl(a) / 关键字；url(...) 之类进不来。 */
   function cssColor(v) {
