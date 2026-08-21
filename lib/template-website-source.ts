@@ -2285,12 +2285,22 @@ export function assertEmitterComplete(): void {
     }
   }
 
+  // 全同是最刺眼的一档，但不是唯一一档：「三档圆角在产物里塌成两档」同样是回退，
+  // 而它过得了 size < 2。所以每条轴都拿**声明档数**当下限 —— 皮表里分了几档，
+  // 产物字节里就必须分得出几档。
   for (const axis of ["radius", "density", "font", "fx"] as const) {
     const values = new Set(rows.map((row) => row[axis]));
     if (values.size < 2) {
       throw new Error(
         `轴退化：${rows.length} 套装的 \`${axis}\` 在产物里是同一个值 —— 换装不会改变产出源码，` +
         `拒绝照产（取值：${[...values][0].slice(0, 120)}）`,
+      );
+    }
+    const declared = new Set(rows.map((row) => row.skin[axis]));
+    if (values.size < declared.size) {
+      throw new Error(
+        `轴半退化：\`${axis}\` 在皮表里声明了 ${declared.size} 档（${[...declared].join("/")}），` +
+        `产物字节里只分得出 ${values.size} 档 —— 有几档在发射端被压掉了，拒绝照产`,
       );
     }
   }
