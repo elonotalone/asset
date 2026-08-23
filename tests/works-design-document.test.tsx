@@ -291,6 +291,8 @@ interface LedgerRow {
   ossUrl?: string;
   status?: string;
   weight?: number;
+  /** 台账 `rule` 里的四值枚举；`@font-face` 只许载允许再分发的那几种（仲裁 07）。 */
+  licenseCode?: string;
 }
 
 function ledgerRows(): LedgerRow[] | null {
@@ -332,6 +334,23 @@ test("① CSS 里的每一条 @font-face 都指向台账 approved 的字体文�
     assert.ok(
       approvedFiles.has(face.src),
       `${FONT_CSS} 里 "${face.family}" 指的文件不在台账里：${face.src}`,
+    );
+  }
+
+  // 第二道独立的锁（仲裁 07）：`@font-face` 就是**我们自己分发**这份字体文件，
+  // 所以能进这份 CSS 的许可必须是**允许再分发**的那几种。
+  // 台账改三档之后，`use-ok-no-redistribute` 那一档的意思正是「权利人许可你用，
+  // 但禁止转载与转换」—— 状态标成 approved 而许可代号不在这四种里，
+  // 上面那道按 status 的闸就拦不住它，所以这里按许可代号再拦一次。
+  const REDISTRIBUTABLE = new Set(["OFL", "Apache-2.0", "CC0", "PDM"]);
+  const byFile = new Map(approved.filter((row) => row.ossUrl).map((row) => [String(row.ossUrl), row]));
+  for (const face of faces) {
+    const row = byFile.get(face.src);
+    if (!row) continue;
+    assert.ok(
+      REDISTRIBUTABLE.has(String(row.licenseCode ?? "")),
+      `${FONT_CSS} 分发了 "${face.family}"，但台账给它的许可是 ` +
+        `${row.licenseCode ?? "(空)"} —— 不在允许再分发的四种里`,
     );
   }
 });
