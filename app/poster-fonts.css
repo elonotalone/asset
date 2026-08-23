@@ -1,0 +1,117 @@
+/* ============================================================================
+ * poster-fonts.css —— works 页海报查看器（`DesignDocumentViewer`）用的美术字。
+ * ----------------------------------------------------------------------------
+ * 为什么需要这一份：工程文件里的 `text` 元素带 `fontFamily`（载体规格 §3 允许
+ * `fonts[]` 声明 family + licenseCode），查看器第一天就把它写进了 inline style，
+ * 但站上从来没有加载过这些字 —— 浏览器拿不到 family 就落到系统默认，于是
+ * 「站内打开」和「货架封面」是两套字。这一份把字真的加载进来。
+ *
+ * 字体文件**不进依赖闭包**：入库校验只许闭包里出现 image/png|jpeg|webp，woff2 / ttf
+ * 会被判「dependency is not an image」。所以美术字走两条腿——站点这份 webfont
+ * 负责浏览器，光栅器负责本地字体文件——工程文件里只用 `fontFamily` 指名。
+ *
+ * **本文件的准据是 `oceandino:scripts/data/oceanleo-poster-fonts.json`（W2 的字体台账）。**
+ * 台账落盘后，此处只许留 `status=approved` 的款；`status != approved` 的必须删掉。
+ * 写这一版时台账尚未落盘（实测 `ls` 无此文件），所以先按
+ * `design:app/art-fonts.css` 的全量抄一版形状（同一批 OSS 文件、family 名对齐
+ * 光栅器匹配名），并把「按 approved 裁剪」记成待办。
+ *
+ * family 名不许在这里改写：它必须和工程文件里的 `fontFamily`、以及光栅器注册的
+ * family 逐字一致，否则两边选到的是不同的脸。
+ * ========================================================================== */
+
+/* ── 手写 / 毛笔（Google Fonts 系）───────────────────────────────────────── */
+@font-face { font-family: "Ma Shan Zheng"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/ma-shan-zheng.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "Long Cang"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/long-cang.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "Liu Jian Mao Cao"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/liu-jian-mao-cao.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "Zhi Mang Xing"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/zhi-mang-xing.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "LXGW WenKai Lite"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/lxgw-wenkai.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "Smiley Sans"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/smiley-sans.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "ZCOOL QingKe HuangYou"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/zcool-qingke-huangyou.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "ZCOOL KuaiLe"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/zcool-kuaile.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "站酷小薇体"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/zcool-xiaowei.ttf") format("truetype"); font-display: swap; }
+
+/* ── 正文与庄重标题：思源黑 / 思源宋 ─────────────────────────────────────
+ * Regular / Bold / Black 同 family 靠 weight 选。这一族同时是查看器的兜底：
+ * 光栅器的默认脸就是 Noto Sans CJK SC（`assemblers/composite/font.mjs` 的
+ * `PREFERRED_FACES`），`noto-sans-sc.otf` 是同一副字，所以拉丁 display 字缺汉字
+ * 时两边落到的是同一副脸，而不是浏览器的系统 UI 字。 */
+@font-face { font-family: "Source Han Sans CN"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/noto-sans-sc.otf") format("opentype"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Source Han Sans CN"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/noto-sans-sc-bold.otf") format("opentype"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Source Han Sans CN"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/noto-sans-sc-black.otf") format("opentype"); font-weight: 900; font-display: swap; }
+@font-face { font-family: "Source Han Serif CN"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/noto-serif-sc.otf") format("opentype"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Source Han Serif CN"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/noto-serif-sc-bold.otf") format("opentype"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Source Han Serif CN"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/noto-serif-sc-black.otf") format("opentype"); font-weight: 900; font-display: swap; }
+
+/* 光栅器把 Noto Sans CJK SC 抽脸后注册成这两个别名。工程文件若直接指名它们，
+ * 站内也要认，否则同一份文档两边选到不同的脸。 */
+@font-face { font-family: "Noto Sans CJK SC"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/noto-sans-sc.otf") format("opentype"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Noto Sans CJK SC"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/noto-sans-sc-bold.otf") format("opentype"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Noto Sans SC"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/noto-sans-sc.otf") format("opentype"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Noto Sans SC"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/noto-sans-sc-bold.otf") format("opentype"); font-weight: 700; font-display: swap; }
+
+/* ── 标题黑 / 综艺 / 超粗 display ────────────────────────────────────────── */
+@font-face { font-family: "YouSheBiaoTiHei"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/youshe-biaoti-hei.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "YOUSHEhaoshenti"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/youshe-haoshenti.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "YS HelloFont BangBangTi"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/youshe-bangbang.otf") format("opentype"); font-display: swap; }
+@font-face { font-family: "PangMenZhengDao"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/pangmen-biaoti.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "PangMenZhengDao-Cu"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/pangmen-cushu.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "Pangmenzhengdaoqingsongti"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/pangmen-qingsong.otf") format("opentype"); font-display: swap; }
+@font-face { font-family: "PangZhenGui-PMZD"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/pangmen-zhengui-kai.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "ZCOOL_KuHei"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/zcool-kuhei.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "zcool-gdh"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/zcool-gaoduanhei.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "zcoolwenyiti"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/zcool-wenyi.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "xiaowei"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/zcool-logo.otf") format("opentype"); font-display: swap; }
+@font-face { font-family: "HuXiaoBo-NanShen"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/huxiaobo-nanshen.otf") format("opentype"); font-display: swap; }
+@font-face { font-family: "HuXiaoBo-ZhenShuai"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/huxiaobo-zhenshuai.otf") format("opentype"); font-display: swap; }
+@font-face { font-family: "HuXiaoBao-SaoBao"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/huxiaobo-saobao.otf") format("opentype"); font-display: swap; }
+@font-face { font-family: "ZhenyanGB"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/ruizi-zhenyan.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "lianmengqiyilushuaizhengruiheiti"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/lianmeng-lushuai.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "ziticqtezhanti"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/chuanqi-tezhan.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "HelloFont WenYiHei"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/ziyou-wenyi-hei.otf") format("opentype"); font-display: swap; }
+@font-face { font-family: "HelloFont FangHuaTi"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/ziyou-fanghua.otf") format("opentype"); font-display: swap; }
+@font-face { font-family: "shetumodengxiaofangti"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/shetu-modern.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "WenCang"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/wencang.ttf") format("truetype"); font-display: swap; }
+
+/* ── 圆体 / 可爱 ─────────────────────────────────────────────────────────── */
+@font-face { font-family: "TsangerShuYuanT"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/canger-shuyuan-w03.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "TsangerYuYangT"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/canger-yuyang-w03.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "TsangerXWZ"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/canger-xiaowanzi.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "jf-openhuninn-1.1"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/jf-fenyuan.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "AZPPT_1_1436212_19"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/azhu-paopao.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "LXGW Marker Gothic"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/lxgw-manhei.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "QTxiaotu"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/qiantu-xiaotu.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "SetoFont"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/setofont.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "Chiron GoRound TC"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/chiron-goround-tc.ttf") format("truetype"); font-display: swap; }
+
+/* ── 手写 / 毛笔 / 书法 ──────────────────────────────────────────────────── */
+@font-face { font-family: "Muyao-Softbrush"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/muyao-ruanbi.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "MuyaoPleased"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/muyao-suixin.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "Slidefu"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/yanshi-foxi.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "Slidexiaxing"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/yanshi-xiaxingkai.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "slideyouran"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/yanshi-youranxiaokai.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "Slidechunfeng"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/yanshi-chunfengkai.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "Slideqiuhong"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/yanshi-qiuhongkai.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "ShouShuti"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/zhiyong-shoushu.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "IdeaFonts QianXiaTi"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/dianzi-qianxia.otf") format("opentype"); font-display: swap; }
+@font-face { font-family: "荆南缘默体"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/jingnan-yuanmo.ttf") format("truetype"); font-display: swap; }
+
+/* ── 文艺明体 / 楷 ───────────────────────────────────────────────────────── */
+@font-face { font-family: "Cactus Classical Serif"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/cactus-classical-serif.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "Klee One"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/klee-one-semibold.ttf") format("truetype"); font-display: swap; }
+
+/* ── 阿里普惠（现代黑，Bold / Heavy 同 family 靠 weight）──────────────────── */
+@font-face { font-family: "Alibaba PuHuiTi"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/ali-puhui-bold.otf") format("opentype"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Alibaba PuHuiTi"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/ali-puhui-heavy.otf") format("opentype"); font-weight: 900; font-display: swap; }
+
+/* ── 英文 display ────────────────────────────────────────────────────────── */
+@font-face { font-family: "Bebas Neue"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/bebas-neue.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "Anton"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/anton.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "Oswald"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/oswald.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "Montserrat"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/montserrat.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "Playfair Display"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/playfair-display.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "Abril Fatface"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/abril-fatface.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "Pacifico"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/pacifico.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "Lobster"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/lobster.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "Dancing Script"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/dancing-script.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "Caveat"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/caveat.ttf") format("truetype"); font-display: swap; }
