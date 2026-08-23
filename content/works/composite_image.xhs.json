@@ -31,12 +31,12 @@
         "licenseUrl": "https://openfontlicense.org/open-font-license-official-text/"
       },
       {
-        "text": "Source Han Sans CN（字体）",
+        "text": "Smiley Sans Oblique（字体）",
         "licenseCode": "OFL",
         "licenseUrl": "https://openfontlicense.org/open-font-license-official-text/"
       },
       {
-        "text": "Source Han Sans CN Heavy（字体）",
+        "text": "Source Han Sans CN（字体）",
         "licenseCode": "OFL",
         "licenseUrl": "https://openfontlicense.org/open-font-license-official-text/"
       },
@@ -93,7 +93,7 @@
         "fonts": [
           "LXGW Marker Gothic",
           "Source Han Sans CN",
-          "Source Han Sans CN Heavy"
+          "Smiley Sans Oblique"
         ],
         "declaredAssets": [
           {
@@ -110,13 +110,13 @@
         "outputs": [
           {
             "path": "xhs-figure-ledger-loud-01.cover.webp",
-            "byteSize": 45348,
-            "sha256": "81fe8b32660c7ab16900dd852016dfacd58ff188f4f68c8121b5332e6390ab66"
+            "byteSize": 45882,
+            "sha256": "f3480185e077e23dd39249d01c952b824f8c228330981cd91edec1159ae50299"
           },
           {
             "path": "xhs-figure-ledger-loud-01.full.webp",
-            "byteSize": 120250,
-            "sha256": "d809ec1f66094e46623c92266fd7176affa1efcdff8d607387b63d9a7fc284af"
+            "byteSize": 125444,
+            "sha256": "69474cfadaac7e2fc74f8e474a476b9f9bfdcdd39713b222e86e1645efd93f22"
           }
         ]
       }
@@ -154,12 +154,12 @@
         "licenseUrl": "https://openfontlicense.org/open-font-license-official-text/"
       },
       {
-        "text": "Source Han Sans CN（字体）",
+        "text": "Smiley Sans Oblique（字体）",
         "licenseCode": "OFL",
         "licenseUrl": "https://openfontlicense.org/open-font-license-official-text/"
       },
       {
-        "text": "Source Han Sans CN Heavy（字体）",
+        "text": "Source Han Sans CN（字体）",
         "licenseCode": "OFL",
         "licenseUrl": "https://openfontlicense.org/open-font-license-official-text/"
       },
@@ -216,7 +216,7 @@
         "fonts": [
           "LXGW Marker Gothic",
           "Source Han Sans CN",
-          "Source Han Sans CN Heavy"
+          "Smiley Sans Oblique"
         ],
         "declaredAssets": [
           {
@@ -233,13 +233,13 @@
         "outputs": [
           {
             "path": "xhs-figure-ledger-loud-02.cover.webp",
-            "byteSize": 29356,
-            "sha256": "228b400c37b6e2eec4315d260c6069239c743e47f0f1c9ee10a2efe0bfb519c5"
+            "byteSize": 30226,
+            "sha256": "7628ae9347ad66da54c48aa39a2f4e43bece2b24d75f41a70216d997c02791ee"
           },
           {
             "path": "xhs-figure-ledger-loud-02.full.webp",
-            "byteSize": 75790,
-            "sha256": "6a0dee55f83bc14e631917c49c39c82c9ac2c73430b548469bb527c6244499b4"
+            "byteSize": 78452,
+            "sha256": "b9752f9041436aa299d4bcc75cbf13ea6412d0bbd8ca7ca7c045d2922ff975ec"
           }
         ]
       }

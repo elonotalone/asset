@@ -559,10 +559,10 @@
       {
         "id": "title-hi1",
         "type": "shape",
-        "x": 432.2,
-        "y": 192.52,
-        "w": 373.82,
-        "h": 176.82,
+        "x": 362.9,
+        "y": 206.84,
+        "w": 304.52,
+        "h": 148.17,
         "rotation": 0,
         "locked": false,
         "opacity": 1,
@@ -590,8 +590,8 @@
           "text": "五分钟出门妆",
           "fontSize": 115.51,
           "color": "#2A1B22",
-          "fontFamily": "Source Han Sans CN Heavy",
-          "fontWeight": 900,
+          "fontFamily": "Smiley Sans Oblique",
+          "fontWeight": 400,
           "fontStyle": "normal",
           "lineHeight": 1.28,
           "letterSpacing": 0,
@@ -756,18 +756,18 @@
       ]
     },
     {
+      "family": "Smiley Sans Oblique",
+      "licenseCode": "OFL",
+      "weights": [
+        400
+      ]
+    },
+    {
       "family": "Source Han Sans CN",
       "licenseCode": "OFL",
       "weights": [
         400,
         700
-      ]
-    },
-    {
-      "family": "Source Han Sans CN Heavy",
-      "licenseCode": "OFL",
-      "weights": [
-        900
       ]
     }
   ],
@@ -807,12 +807,12 @@
         "licenseUrl": "https://openfontlicense.org/open-font-license-official-text/"
       },
       {
-        "text": "Source Han Sans CN（字体）",
+        "text": "Smiley Sans Oblique（字体）",
         "licenseCode": "OFL",
         "licenseUrl": "https://openfontlicense.org/open-font-license-official-text/"
       },
       {
-        "text": "Source Han Sans CN Heavy（字体）",
+        "text": "Source Han Sans CN（字体）",
         "licenseCode": "OFL",
         "licenseUrl": "https://openfontlicense.org/open-font-license-official-text/"
       }
