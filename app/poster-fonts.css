@@ -11,9 +11,14 @@
  * 光栅器管本机字体文件 —— 工程文件里只用 `fontFamily` 指名。
  *
  * 准据：`oceandino:scripts/data/oceanleo-poster-fonts.json`（W2 的字体台账，机器真相）。
- * 台账 71 款里 approved 31 / unverified 34 / rejected 6；
- * 这里只收 approved 的那些行。台账的规则原文：「status 不是 approved 的字体，
- * 不许出现在任何成品里」。
+ * 台账 71 款分**四档**（仲裁 07）：approved 32 / use-ok-no-redistribute 11 /
+ * unverified 22 / rejected 6。**这里只收 approved 的那些行。**
+ *
+ * 四档判的是**再分发权**，不是「证不出授权」：`use-ok-no-redistribute` 那 11 款是
+ * 证得出授权的（权利人明许商用），只是那份授权**禁止转载分发与格式转换** ——
+ * 而 `@font-face` 从我们自己的 OSS 桶发一份字体文件，做的恰好就是被禁的那件事。
+ * 所以「许可上能用」不等于「能进这份 CSS」。台账规则原文：
+ * 「只有 approved 能进任何由我们自己分发的路径（webfont CSS、OSS 上的字体文件、光栅器嵌入）」。
  *
  * 一款为什么可能有好几条：台账的 `family` 是字体文件 name 表里的 en-US 名，`aliases`
  * 是站内历来用的别名（例 `zcool-xiaowei.ttf` 文件里叫 `ZCOOL XiaoWei`，站内一直写
@@ -35,11 +40,15 @@
  * `font-weight` 取 `weight`、一律 `font-display: swap`，按台账 `role` 分组排序。
  * 跑完必跑 `node --import ./tests/register-tsx.mjs --test tests/works-design-document.test.tsx`。
  *
- * 生成读数：族名 36 个、`@font-face` 47 条，出自 approved 31 行。
+ * 生成读数：族名 37 个、`@font-face` 48 条，出自 approved 32 行。
  * ========================================================================== */
 
 /* ── role=body（台账 role 字段）─────────────────────────────────────── */
 @font-face { font-family: "Cactus Classical Serif"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/cactus-classical-serif.ttf") format("truetype"); font-weight: 400; font-display: swap; }
+/* ⚠️ 这一款的字体文件是 48.8 MiB（台账 byteSize 51,170,304，实测 content-length 逐字相等）。
+ * 声明它本身不花流量（浏览器只在真有元素指名这个族时才去拉），但**骨架一旦指名它，
+ * 打开这件成品就要下 49 MB**。骨架侧请优先用同组的其它款。 */
+@font-face { font-family: "Chiron GoRound TC ExtraLight"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/chiron-goround-tc.ttf") format("truetype"); font-weight: 200; font-display: swap; }
 @font-face { font-family: "jf-openhuninn-1.1"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/jf-fenyuan.ttf") format("truetype"); font-weight: 400; font-display: swap; }
 
 /* ── role=title（台账 role 字段）─────────────────────────────────────── */
