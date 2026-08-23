@@ -38,5 +38,35 @@
     "idx": 7,
     "file": "bg-wash-indigo.webp",
     "path": "/opt/cursor-workspaces/oceandino/scratch/w4-poster-assets/gen/band1/bg-wash-indigo.webp"
+  },
+  {
+    "idx": 8,
+    "file": "bg-concrete-slate.webp",
+    "path": "/opt/cursor-workspaces/oceandino/scratch/w4-poster-assets/gen/band2/bg-concrete-slate.webp"
+  },
+  {
+    "idx": 9,
+    "file": "bg-felt-navy.webp",
+    "path": "/opt/cursor-workspaces/oceandino/scratch/w4-poster-assets/gen/band2/bg-felt-navy.webp"
+  },
+  {
+    "idx": 10,
+    "file": "bg-stucco-clay.webp",
+    "path": "/opt/cursor-workspaces/oceandino/scratch/w4-poster-assets/gen/band2/bg-stucco-clay.webp"
+  },
+  {
+    "idx": 11,
+    "file": "bg-terrazzo-espresso.webp",
+    "path": "/opt/cursor-workspaces/oceandino/scratch/w4-poster-assets/gen/band2/bg-terrazzo-espresso.webp"
+  },
+  {
+    "idx": 12,
+    "file": "bg-weave-charcoal.webp",
+    "path": "/opt/cursor-workspaces/oceandino/scratch/w4-poster-assets/gen/band2/bg-weave-charcoal.webp"
+  },
+  {
+    "idx": 13,
+    "file": "bg-weave-forest.webp",
+    "path": "/opt/cursor-workspaces/oceandino/scratch/w4-poster-assets/gen/band2/bg-weave-forest.webp"
   }
 ]
