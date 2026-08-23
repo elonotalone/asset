@@ -80,8 +80,24 @@ function designDocOf(payload: WorkPayload): DesignDoc | null {
   return d;
 }
 
-// 画布尺寸按容器宽度自适应：所有尺寸换算成百分比，字号换算成 cqw
-// （1cqw = 容器宽度的 1%），这样缩放时版面比例与字号级差同时守住。
+// 工程文件里没有 fontFamily、或指名的美术字缺这个字（拉丁 display 字没有汉字）时
+// 落到这一族。光栅器的默认脸就是 Noto Sans CJK SC（assemblers/composite/font.mjs 的
+// PREFERRED_FACES），`Source Han Sans CN` 是同一副字、且是字体台账里 approved 的那个名 ——
+// 两边兜底到同一副脸，才不会「站内是系统 UI 字、封面是思源黑」。
+const POSTER_FALLBACK_STACK = '"Source Han Sans CN", sans-serif';
+
+/** 工程文件的 fontFamily 后面接同一条兜底链。已经自带兜底链的原样用。 */
+function posterFontFamily(family?: string): string {
+  const named = family?.trim();
+  if (!named) return POSTER_FALLBACK_STACK;
+  const first = named.includes(",") ? named : `"${named.replace(/^["']|["']$/g, "")}"`;
+  return `${first}, ${POSTER_FALLBACK_STACK}`;
+}
+
+// 画布尺寸按容器宽度自适应：所有尺寸换算成百分比，字号与**所有绝对像素量**
+// （圆角、描边宽）换算成 cqw（1cqw = 容器宽度的 1%）。
+// 圆角与描边不换算是真会看出来的错：容器 896px、画布 1240px 时，
+// radius:40 在站内画成 40 屏幕像素，在封面上却是 40 画布单位（≈29 屏幕像素）。
 function DesignDocumentViewer({ work, payload }: { work: WorkEntry; payload: WorkPayload }) {
   const tt = useUI();
   const doc = designDocOf(payload);
@@ -91,6 +107,8 @@ function DesignDocumentViewer({ work, payload }: { work: WorkEntry; payload: Wor
   const H = typeof doc.height === "number" && doc.height > 0 ? doc.height : 1754;
   const elements = [...(doc.elements ?? [])].sort((a, b) => (a.z ?? 0) - (b.z ?? 0));
   const pct = (v: number, base: number) => `${(v / base) * 100}%`;
+  /** 画布单位 → 随容器缩放的长度。0 保持 0，别写成 "0cqw" 让人以为是别的东西。 */
+  const cq = (v: number) => (v > 0 ? `${(v / W) * 100}cqw` : 0);
 
   return (
     <div
@@ -101,6 +119,24 @@ function DesignDocumentViewer({ work, payload }: { work: WorkEntry; payload: Wor
         background: doc.background ?? "#FFFFFF",
         position: "relative",
         maxWidth: "min(100%, 56rem)",
+        // 排字复位。文字与它背后的高亮块严丝合缝，靠的是「站内量出来的字宽
+        // 等于 W1 量出来的字宽」；下面任何一项被祖先或 Tailwind preflight 改动，
+        // 块和字就错开，所以在这里显式钉死，不靠继承。
+        fontFamily: POSTER_FALLBACK_STACK,
+        letterSpacing: "normal",
+        wordSpacing: "normal",
+        textTransform: "none",
+        fontKerning: "normal",
+        fontFeatureSettings: "normal",
+        fontVariationSettings: "normal",
+        fontVariantLigatures: "normal",
+        // 不许浏览器用合成粗体假冒 900 字重 —— 合成出来的字比光栅器胖一圈。
+        fontSynthesis: "none",
+        // 光栅器（napi-rs canvas / Skia）落的是灰度反锯齿，这里跟着要灰度，
+        // 不要子像素。body 上那个 antialiased 恰好是灰度，但那是别人的类名，
+        // 不能当依据，所以在这里自己写一遍。
+        WebkitFontSmoothing: "antialiased",
+        textRendering: "auto",
       }}
     >
       {elements.map((el, i) => {
@@ -136,12 +172,17 @@ function DesignDocumentViewer({ work, payload }: { work: WorkEntry; payload: Wor
               style={{
                 ...box,
                 color: el.fill ?? "#1F2328",
-                fontFamily: el.fontFamily,
+                fontFamily: posterFontFamily(el.fontFamily),
                 fontSize: `${(size / W) * 100}cqw`,
                 fontWeight: el.fontWeight ?? 400,
                 lineHeight: el.lineHeight ?? 1.35,
                 textAlign: el.align ?? "left",
                 whiteSpace: "pre-wrap",
+                // 换行点必须和光栅器一致：拉丁词整体挪行、不拆词
+                // （raster.mjs 的 tokenize 就是这么断的）。祖先上一个
+                // break-words 会被继承下来把词拆开，所以显式复位。
+                overflowWrap: "normal",
+                wordBreak: "normal",
                 overflow: "hidden",
               }}
             >
@@ -153,14 +194,24 @@ function DesignDocumentViewer({ work, payload }: { work: WorkEntry; payload: Wor
         if (el.type === "image" || el.type === "icon") {
           const src = el.assetId ? work.view.assets?.[el.assetId] : undefined;
           if (!src) {
+            // 占位块看起来像一块设计，是已知的误判源：所以一定带上文案说明
+            // 「这里本该有图、图没跟着文档来」，而不是留一块干净的浅灰。
+            const missing = el.alt?.trim() || tt("图片");
             return (
               <div
                 key={key}
-                style={{ ...box, background: "#EEF1F5", borderRadius: el.radius ?? 0 }}
-                className="flex items-center justify-center overflow-hidden text-[10px] text-zinc-400"
-                title={el.alt}
+                style={{
+                  ...box,
+                  background: "#EEF1F5",
+                  borderRadius: cq(el.radius ?? 0),
+                  paddingInline: "1cqw",
+                }}
+                className="flex items-center justify-center overflow-hidden text-center text-[10px] leading-tight text-zinc-400"
+                role="img"
+                aria-label={tt("{alt}（这一格的图没有随文档提供）", { alt: missing })}
+                title={tt("{alt}（这一格的图没有随文档提供）", { alt: missing })}
               >
-                {el.alt ?? tt("图片")}
+                {missing}
               </div>
             );
           }
@@ -173,7 +224,7 @@ function DesignDocumentViewer({ work, payload }: { work: WorkEntry; payload: Wor
               style={{
                 ...box,
                 objectFit: el.fit === "fill" ? "fill" : el.fit === "contain" ? "contain" : "cover",
-                borderRadius: el.radius ?? 0,
+                borderRadius: cq(el.radius ?? 0),
               }}
             />
           );
@@ -183,7 +234,14 @@ function DesignDocumentViewer({ work, payload }: { work: WorkEntry; payload: Wor
           return (
             <svg
               key={key}
-              style={box}
+              style={{
+                ...box,
+                // svg 默认是 inline，行盒的 baseline 间隙会把它顶下去几个像素；
+                // overflow 默认 hidden 会把描边压在 viewBox 边界上的那半个线宽切掉。
+                // 效果层（星光、圆点、折线）正是画在盒子边上的那一类。
+                display: "block",
+                overflow: "visible",
+              }}
               viewBox={`${x} ${y} ${w} ${h}`}
               preserveAspectRatio="none"
               aria-label={el.alt}
@@ -212,6 +270,7 @@ function DesignDocumentViewer({ work, payload }: { work: WorkEntry; payload: Wor
         }
 
         // rect / ellipse / chart-embed 以及未知类型：按矩形块画，别把元素丢了。
+        // 描边走 border-box（Tailwind preflight）压在盒子内侧，与光栅器一致。
         return (
           <div
             key={key}
@@ -220,9 +279,9 @@ function DesignDocumentViewer({ work, payload }: { work: WorkEntry; payload: Wor
               background: el.fill ?? "transparent",
               border:
                 el.stroke && (el.strokeWidth ?? 0) > 0
-                  ? `${el.strokeWidth}px solid ${el.stroke}`
+                  ? `${cq(el.strokeWidth ?? 0)} solid ${el.stroke}`
                   : undefined,
-              borderRadius: el.type === "ellipse" ? "50%" : el.radius ?? 0,
+              borderRadius: el.type === "ellipse" ? "50%" : cq(el.radius ?? 0),
             }}
           />
         );
