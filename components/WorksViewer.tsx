@@ -98,7 +98,7 @@ function posterFontFamily(family?: string): string {
 // （圆角、描边宽）换算成 cqw（1cqw = 容器宽度的 1%）。
 // 圆角与描边不换算是真会看出来的错：容器 896px、画布 1240px 时，
 // radius:40 在站内画成 40 屏幕像素，在封面上却是 40 画布单位（≈29 屏幕像素）。
-function DesignDocumentViewer({ work, payload }: { work: WorkEntry; payload: WorkPayload }) {
+function FlatDocumentViewer({ work, payload }: { work: WorkEntry; payload: WorkPayload }) {
   const tt = useUI();
   const doc = designDocOf(payload);
   if (!doc) return <Fallback work={work} reason="这份设计稿的结构读不出来，先看封面。" />;
@@ -292,6 +292,1010 @@ function DesignDocumentViewer({ work, payload }: { work: WorkEntry; payload: Wor
       })}
     </div>
   );
+}
+
+/* ---------------- props 形：站内 684 张模板与用户编辑器共用的那一套 ---------------- */
+
+// 仲裁 01：统一流水线产的是这一套 —— 顶层 `spec` + `document.elements[].props`，
+// `type ∈ {shape,text,image}`，几何键 `x/y/w/h/rotation/z/opacity`，图用 `props.src`。
+// 上面那套 flat 形没有作废（存量四件封面还在用），所以这里是**多认一套**，不是替换。
+// 两套都自称 `oceanleo.design-document.v1` ⇒ 只能按形状判，不能按版本号判。
+//
+// 几何、效果、常数**逐处对齐 `/root/projects/design/lib/render.ts`
+// 的 `exportDocumentToSVG`**（684 张模板与用户真正的编辑器都走它，光栅器那侧
+// 也要落到同一套口径）。对齐到「同样的 SVG 标签、同样的属性、同样的数字」这一级，
+// 是为了让「站内点开看到的」与「货架封面」不各画一套 —— 两边错开半个字，
+// 一眼就看出是机器拼的。
+//
+// 安全：`props.src` 只收 `https://` 与 `data:image/`；颜色、字体名、`d` 一律
+// 走 React 属性，不拼 HTML、不 `dangerouslySetInnerHTML`（UC-1）。
+
+interface PropsElement {
+  id?: string;
+  type?: string;
+  x?: number;
+  y?: number;
+  w?: number;
+  h?: number;
+  rotation?: number;
+  z?: number;
+  opacity?: number;
+  hidden?: boolean;
+  props?: Record<string, unknown>;
+}
+
+interface PropsBackground {
+  color?: string;
+  gradient?: string;
+  image?: string;
+  opacity?: number;
+  overlay?: string;
+  overlayColor?: string;
+  overlayOpacity?: number;
+  crop?: { x?: number; y?: number; w?: number; h?: number };
+}
+
+interface PropsDoc {
+  width?: number;
+  height?: number;
+  background?: PropsBackground;
+  elements?: PropsElement[];
+}
+
+function numOr(v: unknown, fallback: number): number {
+  return typeof v === "number" && Number.isFinite(v) ? v : fallback;
+}
+
+function strOf(v: unknown): string | undefined {
+  return typeof v === "string" && v.trim() !== "" ? v : undefined;
+}
+
+const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
+
+/** 文字渐变预设。取值与 `render.ts:33` 的 `TEXT_GRADIENTS` 逐条相同。 */
+const TEXT_GRADIENTS: Record<string, string> = {
+  sunset: "linear-gradient(90deg, #f97316, #ef4444, #db2777)",
+  ocean: "linear-gradient(90deg, #06b6d4, #2563eb)",
+  forest: "linear-gradient(90deg, #16a34a, #065f46)",
+  gold: "linear-gradient(180deg, #fef08a, #fbbf24 45%, #d97706)",
+  candy: "linear-gradient(90deg, #f472b6, #a855f7)",
+  flame: "linear-gradient(180deg, #fde047, #f97316 55%, #dc2626)",
+};
+
+const SHAPE_DASH = "8 8";
+const TAPE_FILL_OPACITY = 0.72;
+const TAPE_HIGHLIGHT_OPACITY = 0.22;
+
+/** 顶层逗号拆分（`rgba()` 里的逗号不算）。`render.ts:918` 的同一份逻辑。 */
+function splitTopLevel(input: string): string[] {
+  const out: string[] = [];
+  let depth = 0;
+  let cur = "";
+  for (const ch of input) {
+    if (ch === "(") depth += 1;
+    if (ch === ")") depth -= 1;
+    if (ch === "," && depth === 0) {
+      out.push(cur);
+      cur = "";
+    } else cur += ch;
+  }
+  if (cur.trim()) out.push(cur);
+  return out;
+}
+
+function parseStop(raw: string): { color: string; pos?: number } {
+  const t = raw.trim();
+  const m = t.match(/^(.*?)\s+(-?\d+(?:\.\d+)?)%$/);
+  if (m) return { color: m[1].trim(), pos: Number.parseFloat(m[2]) };
+  return { color: t };
+}
+
+interface GradientSpec {
+  kind: "linear" | "radial";
+  x1?: number;
+  y1?: number;
+  x2?: number;
+  y2?: number;
+  stops: { color: string; pos?: number }[];
+}
+
+/**
+ * `linear-gradient(<deg>, c1, c2[, ...])` / `radial-gradient(...)` → SVG 渐变。
+ * ⚠️ 与渲染端同一条口径：线性渐变**少了角度那一段就整条丢掉**（`render.ts:963`
+ * 的 `parts.length < 3`）。所以这里也返回 null 而不是自己补一个角度 ——
+ * 补了就会出现「站内有渐变、封面没有」。
+ */
+function parseGradient(spec: string): GradientSpec | null {
+  const text = spec.trim();
+  if (/^radial-gradient\(/i.test(text)) {
+    const inner = text.match(/radial-gradient\(([\s\S]+)\)$/i);
+    if (!inner) return null;
+    const parts = splitTopLevel(inner[1]);
+    if (parts[0] && /circle|ellipse|at |closest|farthest|%|px/i.test(parts[0]) && !/#|rgb|hsl/i.test(parts[0])) {
+      parts.shift();
+    }
+    const stops = parts.map(parseStop);
+    return stops.length >= 2 ? { kind: "radial", stops } : null;
+  }
+  if (!/^linear-gradient\(/i.test(text)) return null;
+  const inner = text.match(/linear-gradient\(([\s\S]+)\)$/i);
+  if (!inner) return null;
+  const parts = splitTopLevel(inner[1]);
+  if (parts.length < 3) return null;
+  const angle = Number.parseFloat(parts[0].trim());
+  const deg = Number.isFinite(angle) ? angle : 135;
+  const rad = ((deg - 90) * Math.PI) / 180;
+  return {
+    kind: "linear",
+    x1: (50 - Math.cos(rad) * 50) / 100,
+    y1: (50 - Math.sin(rad) * 50) / 100,
+    x2: (50 + Math.cos(rad) * 50) / 100,
+    y2: (50 + Math.sin(rad) * 50) / 100,
+    stops: parts.slice(1).map(parseStop),
+  };
+}
+
+function isGradient(v?: string): boolean {
+  return !!v && /(linear|radial)-gradient\(/i.test(v);
+}
+
+function GradientDef({ id, spec }: { id: string; spec: GradientSpec }) {
+  const stops = spec.stops.map((st, i) => (
+    <stop
+      key={i}
+      offset={`${(st.pos != null ? st.pos : (i / Math.max(1, spec.stops.length - 1)) * 100).toFixed(1)}%`}
+      stopColor={st.color}
+    />
+  ));
+  if (spec.kind === "radial") {
+    return (
+      <radialGradient id={id} cx="0.5" cy="0.42" r="0.85">
+        {stops}
+      </radialGradient>
+    );
+  }
+  return (
+    <linearGradient
+      id={id}
+      gradientUnits="objectBoundingBox"
+      x1={spec.x1?.toFixed(4)}
+      y1={spec.y1?.toFixed(4)}
+      x2={spec.x2?.toFixed(4)}
+      y2={spec.y2?.toFixed(4)}
+    >
+      {stops}
+    </linearGradient>
+  );
+}
+
+/** `shape-geometry.ts:48`：圆角不许超过短边一半。 */
+function clampedRadius(w: number, h: number, radius = 0): number {
+  return Math.min(Math.max(0, radius), Math.min(Math.max(0, w), Math.max(0, h)) / 2);
+}
+
+function starPoints(w: number, h: number, spikes: number): string {
+  const cx = w / 2;
+  const cy = h / 2;
+  const outer = Math.min(w, h) / 2;
+  const inner = outer * 0.45;
+  const step = Math.PI / spikes;
+  let rot = (Math.PI / 2) * 3;
+  const pts: string[] = [];
+  for (let i = 0; i < spikes; i += 1) {
+    pts.push(`${cx + Math.cos(rot) * outer},${cy + Math.sin(rot) * outer}`);
+    rot += step;
+    pts.push(`${cx + Math.cos(rot) * inner},${cy + Math.sin(rot) * inner}`);
+    rot += step;
+  }
+  return pts.join(" ");
+}
+
+function burstPoints(w: number, h: number, spikes: number): string {
+  const cx = w / 2;
+  const cy = h / 2;
+  const outer = Math.min(w, h) / 2;
+  const inner = outer * 0.78;
+  const pts: string[] = [];
+  for (let i = 0; i < spikes * 2; i += 1) {
+    const r = i % 2 === 0 ? outer : inner;
+    const a = (i / (spikes * 2)) * Math.PI * 2 - Math.PI / 2;
+    pts.push(`${(cx + Math.cos(a) * r).toFixed(1)},${(cy + Math.sin(a) * r).toFixed(1)}`);
+  }
+  return pts.join(" ");
+}
+
+function sparklePath(w: number, h: number): string {
+  const cx = w / 2;
+  const cy = h / 2;
+  const R = Math.min(w, h) / 2;
+  const r = R * 0.16;
+  return (
+    `M ${cx} ${cy - R} C ${cx + r} ${cy - r}, ${cx + r} ${cy - r}, ${cx + R} ${cy} ` +
+    `C ${cx + r} ${cy + r}, ${cx + r} ${cy + r}, ${cx} ${cy + R} ` +
+    `C ${cx - r} ${cy + r}, ${cx - r} ${cy + r}, ${cx - R} ${cy} ` +
+    `C ${cx - r} ${cy - r}, ${cx - r} ${cy - r}, ${cx} ${cy - R} Z`
+  );
+}
+
+function tapePoints(w: number, h: number): string {
+  const width = Math.max(1, w);
+  const height = Math.max(1, h);
+  const teeth = Math.max(4, Math.min(14, Math.round(width / 28)));
+  const depth = Math.max(1, Math.min(height * 0.18, 6));
+  const pts: string[] = [];
+  for (let i = 0; i <= teeth; i += 1) pts.push(`${(i / teeth) * width},${i % 2 === 0 ? depth : 0}`);
+  for (let i = teeth; i >= 0; i -= 1) pts.push(`${(i / teeth) * width},${height - (i % 2 === 0 ? 0 : depth)}`);
+  return pts.join(" ");
+}
+
+/** `editor-interactions.ts:382`：裁剪框（归一化）→ 铺在裁剪窗下面的整张图。 */
+function cropGeometry(crop: PropsBackground["crop"], w: number, h: number) {
+  const cw = Math.min(1, Math.max(0.01, numOr(crop?.w, 1)));
+  const ch = Math.min(1, Math.max(0.01, numOr(crop?.h, 1)));
+  const cx = Math.min(1 - cw, Math.max(0, numOr(crop?.x, 0)));
+  const cy = Math.min(1 - ch, Math.max(0, numOr(crop?.y, 0)));
+  return { x: (-cx / cw) * w, y: (-cy / ch) * h, width: w / cw, height: h / ch };
+}
+
+const IMAGE_CSS_FILTER: Record<string, string> = {
+  bw: "grayscale(1)",
+  vintage: "sepia(.7) contrast(1.1)",
+  vivid: "saturate(1.5) contrast(1.05)",
+  cool: "hue-rotate(18deg) saturate(1.1)",
+  warm: "sepia(.2) saturate(1.3)",
+};
+
+/** `props.src` 只许 `https://` 与 `data:image/`（入库校验 B1/B6 的同一条闸）。 */
+function safeImageSrc(src?: string): string | null {
+  if (!src) return null;
+  return /^https:\/\//i.test(src) || /^data:image\//i.test(src) ? src : null;
+}
+
+interface RenderCtx {
+  defs: React.ReactNode[];
+  notes: Set<string>;
+}
+
+function domId(el: PropsElement, index: number): string {
+  return String(el.id ?? `el-${index}`).replace(/[^A-Za-z0-9_-]/g, "_");
+}
+
+function PropsShape(el: PropsElement, w: number, h: number, ctx: RenderCtx, id: string) {
+  const p = el.props ?? {};
+  const kind = strOf(p.kind) ?? "rect";
+  const rawFill = strOf(p.fill) ?? "transparent";
+  let fill = kind === "line" || kind === "arrow" ? "none" : rawFill;
+  const stroke = strOf(p.stroke) ?? "transparent";
+  const strokeWidth = Math.max(0, numOr(p.strokeWidth, 0));
+  const dash = p.strokeStyle === "dashed" ? SHAPE_DASH : undefined;
+
+  if (isGradient(rawFill) && kind !== "line" && kind !== "arrow") {
+    const spec = parseGradient(rawFill);
+    if (spec) {
+      ctx.defs.push(<GradientDef key={`sg-${id}`} id={`sg-${id}`} spec={spec} />);
+      fill = `url(#sg-${id})`;
+    }
+  }
+
+  const common = { fill, stroke, strokeWidth, strokeDasharray: dash };
+
+  if (!SHAPE_KINDS.has(kind)) {
+    // 认不出的图形不许悄悄画成一块矩形（矩形会被当成设计），也不许丢掉
+    // （丢掉会被当成没做）：照矩形画出来，同时在画布下面把它点名。
+    ctx.notes.add(`这份文档里有本站还没有几何实现的图形：kind=${kind}，先按矩形块画，形状与货架封面会不一样。`);
+  }
+
+  // 色块的落影三档。数字与渲染端 `render.ts:1168-1180` 逐个相同 ——
+  // 差一档就是「站内的块浮起来、封面的块贴着」。
+  const preset = strOf(p.shadowPreset);
+  if (preset && preset !== "none") {
+    const sh =
+      preset === "hard"
+        ? { dy: 12, blur: 2, opacity: 0.4 }
+        : preset === "medium"
+          ? { dy: 10, blur: 6, opacity: 0.32 }
+          : { dy: 8, blur: 9, opacity: 0.26 };
+    ctx.defs.push(
+      <filter key={`shape-shadow-${id}`} id={`shape-shadow-${id}`} x="-25%" y="-25%" width="150%" height="150%">
+        <feDropShadow dx={0} dy={sh.dy} stdDeviation={sh.blur} floodColor="rgb(15,23,42)" floodOpacity={sh.opacity} />
+      </filter>,
+    );
+    return (
+      <g filter={`url(#shape-shadow-${id})`}>
+        {PropsShapeGeometry(w, h, kind, common, rawFill, stroke, strokeWidth, dash, fill, p)}
+      </g>
+    );
+  }
+
+  return PropsShapeGeometry(w, h, kind, common, rawFill, stroke, strokeWidth, dash, fill, p);
+}
+
+type ShapeCommon = { fill: string; stroke: string; strokeWidth: number; strokeDasharray?: string };
+
+/** 站内在用的 `ShapeKind`（`design/lib/shape-geometry.ts` 那一套的子集 + 全部实测用量）。 */
+const SHAPE_KINDS = new Set([
+  "rect",
+  "circle",
+  "triangle",
+  "line",
+  "arrow",
+  "star",
+  "burst",
+  "sparkle",
+  "polygon",
+  "ribbon",
+  "banner",
+  "tape",
+  "seal",
+]);
+
+function PropsShapeGeometry(
+  w: number,
+  h: number,
+  kind: string,
+  common: ShapeCommon,
+  rawFill: string,
+  stroke: string,
+  strokeWidth: number,
+  dash: string | undefined,
+  fill: string,
+  p: Record<string, unknown>,
+) {
+  if (kind === "circle") return <ellipse cx={w / 2} cy={h / 2} rx={w / 2} ry={h / 2} {...common} />;
+  if (kind === "triangle") return <polygon points={`${w / 2},0 ${w},${h} 0,${h}`} {...common} />;
+  if (kind === "line") {
+    return (
+      <line
+        x1={0}
+        y1={h / 2}
+        x2={w}
+        y2={h / 2}
+        stroke={stroke !== "transparent" ? stroke : rawFill}
+        strokeWidth={Math.max(2, strokeWidth)}
+        strokeDasharray={dash}
+      />
+    );
+  }
+  if (kind === "arrow") {
+    return (
+      <g>
+        <line
+          x1={0}
+          y1={h / 2}
+          x2={w - 24}
+          y2={h / 2}
+          stroke={stroke !== "transparent" ? stroke : rawFill}
+          strokeWidth={Math.max(2, strokeWidth)}
+          strokeDasharray={dash}
+        />
+        <polygon
+          points={`${w - 24},6 ${w},${h / 2} ${w - 24},${h - 6}`}
+          fill={rawFill}
+          stroke={stroke}
+          strokeWidth={Math.max(2, strokeWidth)}
+          strokeDasharray={dash}
+        />
+      </g>
+    );
+  }
+  if (kind === "star") {
+    return <polygon points={starPoints(w, h, Math.max(4, Math.min(32, Math.round(numOr(p.points, 5)))))} {...common} />;
+  }
+  if (kind === "burst") {
+    return <polygon points={burstPoints(w, h, Math.max(4, Math.min(32, Math.round(numOr(p.points, 12)))))} {...common} />;
+  }
+  if (kind === "sparkle") return <path d={sparklePath(w, h)} {...common} />;
+  if (kind === "polygon") {
+    return (
+      <polygon points={`${w * 0.5},0 ${w},${h * 0.38} ${w * 0.82},${h} ${w * 0.18},${h} 0,${h * 0.38}`} {...common} />
+    );
+  }
+  if (kind === "ribbon") {
+    return <polygon points={`0,0 ${w},0 ${w - 24},${h / 2} ${w},${h} 0,${h} 24,${h / 2}`} {...common} />;
+  }
+  if (kind === "banner") {
+    const notch = Math.min(h * 0.5, w * 0.08);
+    return (
+      <polygon points={`0,0 ${w},0 ${w - notch},${h * 0.5} ${w},${h} 0,${h} ${notch},${h * 0.5}`} {...common} />
+    );
+  }
+  if (kind === "tape") {
+    return (
+      <g>
+        <polygon points={tapePoints(w, h)} fill={fill} fillOpacity={TAPE_FILL_OPACITY} stroke={stroke} strokeWidth={strokeWidth} />
+        <path
+          d={`M ${w * 0.18} ${h * 0.12} L ${w * 0.72} ${h * 0.88}`}
+          stroke="white"
+          strokeOpacity={TAPE_HIGHLIGHT_OPACITY}
+          strokeWidth={Math.max(1, h * 0.12)}
+        />
+      </g>
+    );
+  }
+  if (kind === "seal") {
+    const cx = w / 2;
+    const cy = h / 2;
+    const rOuter = Math.min(w, h) / 2;
+    const sw = strokeWidth || Math.max(3, rOuter * 0.08);
+    const ring = stroke !== "transparent" ? stroke : rawFill;
+    const sealText = strOf(p.sealText);
+    return (
+      <g>
+        <circle cx={cx} cy={cy} r={Number((rOuter - sw / 2).toFixed(1))} fill={fill} stroke={ring} strokeWidth={sw} />
+        <circle cx={cx} cy={cy} r={Number((rOuter * 0.78).toFixed(1))} fill="none" stroke={ring} strokeWidth={Number((sw * 0.6).toFixed(1))} />
+        {sealText ? (
+          <text
+            x={cx}
+            y={cy}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            fill={stroke !== "transparent" ? stroke : "#ffffff"}
+            fontSize={Math.max(12, rOuter * 0.45)}
+            fontWeight={800}
+          >
+            {sealText}
+          </text>
+        ) : null}
+      </g>
+    );
+  }
+  return <rect x={0} y={0} width={w} height={h} rx={clampedRadius(w, h, numOr(p.radius, 0))} {...common} />;
+}
+
+function PropsText(el: PropsElement, w: number, h: number, ctx: RenderCtx, id: string) {
+  const p = el.props ?? {};
+  const fs = numOr(p.fontSize, 24);
+  const lineStep = numOr(p.lineHeight, 1.2) * fs;
+  const align = p.textAlign === "center" ? "center" : p.textAlign === "right" ? "right" : "left";
+  const anchor = align === "center" ? "middle" : align === "right" ? "end" : "start";
+  const x = align === "center" ? w / 2 : align === "right" ? w : 0;
+  const lines = String(strOf(p.text) ?? "").split("\n");
+  const effect = strOf(p.effect) ?? "none";
+  const decoration = strOf(p.textDecoration);
+
+  // 排字属性一次给全，三层（描边层 / 长影层 / 主字层）用同一份，
+  // 否则叠出来的层会错位半个字。
+  const face = {
+    fontSize: fs,
+    fontFamily: posterFontFamily(strOf(p.fontFamily)),
+    fontWeight: numOr(p.fontWeight, 400),
+    fontStyle: strOf(p.fontStyle) ?? "normal",
+    textAnchor: anchor,
+    letterSpacing: numOr(p.letterSpacing, 0),
+    ...(decoration && decoration !== "none" ? { textDecoration: decoration } : {}),
+  } as const;
+
+  const tspans = lines.map((line, i) => (
+    <tspan key={i} x={x} y={fs + i * lineStep}>
+      {line}
+    </tspan>
+  ));
+
+  // 仲裁 03：高亮块宽由引擎按真实字体度量显式给（甲案 = 引擎发一个 `shape`
+  // 矩形 + 文字 `effect: "none"`）。**所以这一侧不再叠估算块** ——
+  // 渲染端那套「全角≈1.0em、ASCII≈0.55em」的估算对美术字大幅失真，
+  // 叠上去就是重影加错位。遇到还写着 highlight 的文档，把它点名，
+  // 不静默吃掉（静默吃掉 = 用户看不到本该有的荧光块，却没人知道）。
+  if (effect === "highlight" || effect === "background") {
+    ctx.notes.add(
+      "这份文档的文字写了 effect: highlight，而块宽按仲裁 03 由引擎显式给成一个 shape 矩形：" +
+        "站内不再自己估算叠块，所以这段字后面没有荧光块就说明引擎没给。",
+    );
+  }
+
+  let fillPaint = strOf(p.color) ?? "#111827";
+  const gradSpec =
+    strOf(p.fillGradient) ??
+    (strOf(p.gradientPreset) && p.gradientPreset !== "none" ? TEXT_GRADIENTS[String(p.gradientPreset)] : undefined) ??
+    (effect === "gradient" ? TEXT_GRADIENTS.gold : undefined);
+  if (gradSpec) {
+    const spec = parseGradient(gradSpec);
+    if (spec) {
+      ctx.defs.push(<GradientDef key={`tg-${id}`} id={`tg-${id}`} spec={spec} />);
+      fillPaint = `url(#tg-${id})`;
+    }
+  }
+
+  let strokeProps: React.SVGProps<SVGTextElement> = {};
+  const under: React.ReactNode[] = [];
+  if (effect === "outline2") {
+    const sc = numOr(p.strokeScale, 0.12);
+    const inner = Math.max(1, fs * sc);
+    const outer = Math.max(2, fs * sc * 2.1);
+    const c1 = strOf(p.strokeColor) ?? "#7f1d1d";
+    const c2 = strOf(p.strokeColor2) ?? "#ffffff";
+    under.push(
+      <text key="o2-outer" {...face} fill={c2} stroke={c2} strokeWidth={Number(outer.toFixed(1))} paintOrder="stroke" strokeLinejoin="round">
+        {tspans}
+      </text>,
+      <text key="o2-inner" {...face} fill={c1} stroke={c1} strokeWidth={Number(inner.toFixed(1))} paintOrder="stroke" strokeLinejoin="round">
+        {tspans}
+      </text>,
+    );
+  } else if (effect === "stroke" || effect === "outline" || effect === "hollow" || effect === "splice" || effect === "neon") {
+    const sc = numOr(p.strokeScale, 1 / 9);
+    strokeProps = {
+      stroke: strOf(p.strokeColor) ?? "#0f172a",
+      strokeWidth: Number(Math.max(1, fs * sc).toFixed(1)),
+      paintOrder: "stroke",
+      strokeLinejoin: "round",
+    };
+  }
+
+  if (effect === "longshadow" || effect === "echo" || effect === "splice") {
+    const shColor = strOf(p.shadowColorHex) ?? "rgba(0,0,0,0.28)";
+    const steps = Math.min(14, Math.max(6, Math.round(fs * 0.14)));
+    for (let s = steps; s >= 1; s -= 1) {
+      const d = Number((s * fs * 0.02).toFixed(1));
+      under.unshift(
+        <g key={`ls-${s}`} transform={`translate(${d} ${d})`}>
+          <text {...face} fill={shColor}>
+            {tspans}
+          </text>
+        </g>,
+      );
+    }
+  }
+
+  let filter: string | undefined;
+  if (effect === "shadow" || effect === "drop" || effect === "glow" || effect === "neon") {
+    const soft = effect === "glow" || effect === "neon";
+    ctx.defs.push(
+      <filter key={`sh-${id}`} id={`sh-${id}`} x="-50%" y="-50%" width="200%" height="200%">
+        <feDropShadow
+          dx={0}
+          dy={soft ? 0 : Number((fs * 0.05).toFixed(1))}
+          stdDeviation={Number((soft ? fs * 0.14 : fs * 0.06).toFixed(1))}
+          floodColor={strOf(p.shadowColorHex) ?? "rgba(15,23,42,0.5)"}
+        />
+      </filter>,
+    );
+    filter = `url(#sh-${id})`;
+  }
+
+  const known = new Set([
+    "none",
+    "highlight",
+    "background",
+    "shadow",
+    "drop",
+    "glow",
+    "neon",
+    "longshadow",
+    "echo",
+    "splice",
+    "outline",
+    "outline2",
+    "stroke",
+    "hollow",
+    "gradient",
+  ]);
+  if (!known.has(effect)) {
+    ctx.notes.add(`这份文档的文字写了 effect: ${effect}，本站还不认它，这段字按无效果画，与货架封面会不一样。`);
+  }
+
+  return (
+    <>
+      {under}
+      <text {...face} {...strokeProps} fill={effect === "hollow" ? "none" : fillPaint} filter={filter}>
+        {tspans}
+      </text>
+    </>
+  );
+}
+
+function PropsImage(
+  el: PropsElement,
+  w: number,
+  h: number,
+  ctx: RenderCtx,
+  id: string,
+  alt: string,
+  missingLabel: string,
+) {
+  const p = el.props ?? {};
+  const src = safeImageSrc(strOf(p.src));
+  const radius = Math.max(0, numOr(p.radius, 0));
+
+  if (!src) {
+    const raw = strOf(p.src);
+    ctx.notes.add(
+      raw
+        ? `有一格的图 src 不是 https:// 或 data:image/（拿到的是「${raw.slice(0, 24)}…」），本站不加载它。`
+        : "有一格的 image 元素没有 props.src，这一格的图没跟着文档来。",
+    );
+    // 缺图不画一块干净的浅灰（干净的灰块会被当成设计），带上文案说明缺的是什么。
+    return (
+      <g>
+        <rect x={0} y={0} width={w} height={h} rx={radius} fill="#EEF1F5" />
+        <text
+          x={w / 2}
+          y={h / 2}
+          textAnchor="middle"
+          dominantBaseline="middle"
+          fill="#9AA4B2"
+          fontSize={Math.max(12, Math.min(w, h) * 0.09)}
+        >
+          {missingLabel}
+        </text>
+      </g>
+    );
+  }
+
+  const geo = cropGeometry(p.crop as PropsBackground["crop"], w, h);
+  ctx.defs.push(
+    <clipPath key={`clip-${id}`} id={`clip-${id}`}>
+      <rect x={0} y={0} width={w} height={h} rx={radius} />
+    </clipPath>,
+  );
+
+  // 抠图主体的接地投影 / 描边：与渲染端同一组常数（`render.ts:1211-1242`），
+  // 都基于图片自身 alpha，对透明 PNG 有效。
+  const shadow = strOf(p.dropShadow) && p.dropShadow !== "none" ? String(p.dropShadow) : "";
+  const outlineC = strOf(p.outlineColor);
+  let imgFilter: string | undefined;
+  if (shadow || outlineC) {
+    const dim = Math.min(w, h);
+    const outlineW = numOr(p.outlineWidth, Math.max(3, dim * 0.012));
+    const pieces: React.ReactNode[] = [];
+    let inner = "SourceGraphic";
+    if (outlineC) {
+      pieces.push(
+        <feMorphology key="dil" in="SourceAlpha" operator="dilate" radius={Number(outlineW.toFixed(1))} result="dil" />,
+        <feFlood key="oc" floodColor={outlineC} result="oc" />,
+        <feComposite key="cmp" in="oc" in2="dil" operator="in" result="outline" />,
+        <feMerge key="mrg" result="outlineMerged">
+          <feMergeNode in="outline" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>,
+      );
+      inner = "outlineMerged";
+    }
+    if (shadow) {
+      const cfg =
+        shadow === "hard"
+          ? { dy: dim * 0.03, blur: dim * 0.02, a: 0.4 }
+          : shadow === "medium"
+            ? { dy: dim * 0.022, blur: dim * 0.03, a: 0.32 }
+            : { dy: dim * 0.015, blur: dim * 0.035, a: 0.26 };
+      pieces.push(
+        <feDropShadow
+          key="ds"
+          in={inner}
+          dx={0}
+          dy={Number(cfg.dy.toFixed(1))}
+          stdDeviation={Number(cfg.blur.toFixed(1))}
+          floodColor={`rgba(15,23,42,${cfg.a})`}
+        />,
+      );
+    }
+    ctx.defs.push(
+      <filter key={`imf-${id}`} id={`imf-${id}`} x="-25%" y="-25%" width="150%" height="150%">
+        {pieces}
+      </filter>,
+    );
+    imgFilter = `url(#imf-${id})`;
+  }
+
+  const flipX = p.flipX === true;
+  const flipY = p.flipY === true;
+  const cssFilter = IMAGE_CSS_FILTER[strOf(p.filter) ?? ""];
+
+  return (
+    <g filter={imgFilter}>
+      <g
+        clipPath={`url(#clip-${id})`}
+        transform={
+          flipX || flipY
+            ? `translate(${flipX ? w : 0} ${flipY ? h : 0}) scale(${flipX ? -1 : 1} ${flipY ? -1 : 1})`
+            : undefined
+        }
+      >
+        <image
+          href={src}
+          x={geo.x}
+          y={geo.y}
+          width={geo.width}
+          height={geo.height}
+          preserveAspectRatio="none"
+          style={cssFilter ? { filter: cssFilter } : undefined}
+          aria-label={alt || undefined}
+        />
+      </g>
+    </g>
+  );
+}
+
+/** 背景纹理叠层。取值与常数逐条对齐 `render.ts:1448-1533` 的 `bgOverlaySvg`。 */
+function PropsOverlay({ bg, W, H, ctx }: { bg: PropsBackground; W: number; H: number; ctx: RenderCtx }) {
+  const ov = strOf(bg.overlay);
+  if (!ov || ov === "none") return null;
+  const c = strOf(bg.overlayColor) ?? "#ffffff";
+  const op = numOr(bg.overlayOpacity, 0.18);
+
+  if (ov === "rays") {
+    const n = 24;
+    const R = Math.hypot(W, H);
+    const cx = W / 2;
+    const cy = H * 0.42;
+    const wedges: React.ReactNode[] = [];
+    for (let i = 0; i < n; i += 2) {
+      const a0 = (i / n) * Math.PI * 2;
+      const a1 = ((i + 1) / n) * Math.PI * 2;
+      wedges.push(
+        <polygon
+          key={i}
+          points={`${cx.toFixed(1)},${cy.toFixed(1)} ${(cx + Math.cos(a0) * R).toFixed(1)},${(cy + Math.sin(a0) * R).toFixed(1)} ${(cx + Math.cos(a1) * R).toFixed(1)},${(cy + Math.sin(a1) * R).toFixed(1)}`}
+          fill={c}
+        />,
+      );
+    }
+    return <g opacity={op}>{wedges}</g>;
+  }
+  if (ov === "vignette") {
+    ctx.defs.push(
+      <radialGradient key="ov-vig" id="ov-vig" cx="0.5" cy="0.45" r="0.75">
+        <stop offset="55%" stopColor="rgba(0,0,0,0)" />
+        <stop offset="100%" stopColor={c} />
+      </radialGradient>,
+    );
+    return <rect x={0} y={0} width={W} height={H} fill="url(#ov-vig)" opacity={op} />;
+  }
+  if (ov === "dots") {
+    const gap = Math.max(36, W * 0.05);
+    ctx.defs.push(
+      <pattern key="ov-dots" id="ov-dots" width={gap} height={gap} patternUnits="userSpaceOnUse">
+        <circle cx={Number((gap / 2).toFixed(1))} cy={Number((gap / 2).toFixed(1))} r={Number((gap * 0.09).toFixed(1))} fill={c} />
+      </pattern>,
+    );
+    return <rect x={0} y={0} width={W} height={H} fill="url(#ov-dots)" opacity={op} />;
+  }
+  if (ov === "grid") {
+    const gap = Math.max(48, W * 0.06);
+    ctx.defs.push(
+      <pattern key="ov-grid" id="ov-grid" width={gap} height={gap} patternUnits="userSpaceOnUse">
+        <path d={`M ${gap} 0 L 0 0 0 ${gap}`} fill="none" stroke={c} strokeWidth={1.5} />
+      </pattern>,
+    );
+    return <rect x={0} y={0} width={W} height={H} fill="url(#ov-grid)" opacity={op} />;
+  }
+  if (ov === "diagonal") {
+    const gap = Math.max(28, W * 0.035);
+    ctx.defs.push(
+      <pattern key="ov-diag" id="ov-diag" width={gap} height={gap} patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+        <rect x={0} y={0} width={Number((gap / 2).toFixed(1))} height={gap} fill={c} />
+      </pattern>,
+    );
+    return <rect x={0} y={0} width={W} height={H} fill="url(#ov-diag)" opacity={op} />;
+  }
+  if (ov === "noise") {
+    ctx.defs.push(
+      <filter key="ov-noise" id="ov-noise">
+        <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves={2} stitchTiles="stitch" />
+        <feColorMatrix type="saturate" values="0" />
+      </filter>,
+    );
+    return <rect x={0} y={0} width={W} height={H} filter="url(#ov-noise)" opacity={Math.min(op, 0.08)} />;
+  }
+  if (ov === "confetti") {
+    const cols = ["#f472b6", "#fbbf24", "#34d399", "#60a5fa", "#f87171"];
+    let s = 987654321;
+    const rnd = () => {
+      s = (Math.imul(s, 1103515245) + 12345) & 0x7fffffff;
+      return s / 0x7fffffff;
+    };
+    const bits: React.ReactNode[] = [];
+    const count = Math.round((W * H) / 26000);
+    for (let i = 0; i < count; i += 1) {
+      const px = Number((rnd() * W).toFixed(1));
+      const py = Number((rnd() * H).toFixed(1));
+      const sz = 6 + rnd() * 12;
+      const rot = Number((rnd() * 90).toFixed(1));
+      const col = cols[Math.floor(rnd() * cols.length)];
+      bits.push(
+        <rect
+          key={i}
+          x={px}
+          y={py}
+          width={Number(sz.toFixed(1))}
+          height={Number((sz * 0.5).toFixed(1))}
+          rx={2}
+          fill={col}
+          transform={`rotate(${rot} ${px} ${py})`}
+        />,
+      );
+    }
+    return <g opacity={op}>{bits}</g>;
+  }
+  ctx.notes.add(`这份文档的背景纹理 overlay=${ov} 本站还不认，背景少一层纹理。`);
+  return null;
+}
+
+function PropsDocumentViewer({ work, doc }: { work: WorkEntry; doc: PropsDoc }) {
+  const tt = useUI();
+  const W = numOr(doc.width, 0) > 0 ? numOr(doc.width, 1080) : 1080;
+  const H = numOr(doc.height, 0) > 0 ? numOr(doc.height, 1440) : 1440;
+  const bg = doc.background ?? {};
+  const ctx: RenderCtx = { defs: [], notes: new Set() };
+
+  let bgFill = strOf(bg.color) ?? "#ffffff";
+  if (strOf(bg.gradient)) {
+    const spec = parseGradient(String(bg.gradient));
+    if (spec) {
+      ctx.defs.push(<GradientDef key="bg-gradient" id="bg-gradient" spec={spec} />);
+      bgFill = "url(#bg-gradient)";
+    }
+  }
+
+  const bgSrc = safeImageSrc(strOf(bg.image));
+  const bgGeo = cropGeometry(bg.crop, W, H);
+
+  const body = [...(doc.elements ?? [])]
+    .filter((el) => el.hidden !== true)
+    .sort((a, b) => numOr(a.z, 0) - numOr(b.z, 0))
+    .map((el, index) => {
+      const x = numOr(el.x, 0);
+      const y = numOr(el.y, 0);
+      const w = Math.max(numOr(el.w, 0), 0);
+      const h = Math.max(numOr(el.h, 0), 0);
+      const id = domId(el, index);
+      const alt = strOf(el.props?.alt) ?? "";
+      let inner: React.ReactNode = null;
+
+      if (el.type === "shape") inner = PropsShape(el, w, h, ctx, id);
+      else if (el.type === "text") inner = PropsText(el, w, h, ctx, id);
+      else if (el.type === "image") {
+        inner = PropsImage(el, w, h, ctx, id, alt, alt || tt("这一格的图没有随文档提供"));
+      } else {
+        // `type` 只有三值（入库校验 B1）。多出来的一律点名，不悄悄丢。
+        ctx.notes.add(`这份文档里有本站不认的元素 type=${String(el.type)}，这一层没有画出来。`);
+        return null;
+      }
+
+      // 旋转绕元素中心，与渲染端同一条 transform（`render.ts:1142`）。
+      return (
+        <g
+          key={`${id}-${index}`}
+          transform={`translate(${x + w / 2} ${y + h / 2}) rotate(${numOr(el.rotation, 0)}) translate(${-w / 2} ${-h / 2})`}
+          opacity={typeof el.opacity === "number" ? clamp01(el.opacity) : undefined}
+        >
+          {inner}
+        </g>
+      );
+    });
+
+  const overlay = <PropsOverlay bg={bg} W={W} H={H} ctx={ctx} />;
+  if (bgSrc) {
+    ctx.defs.push(
+      <clipPath key="background-crop" id="background-crop">
+        <rect x={0} y={0} width={W} height={H} />
+      </clipPath>,
+    );
+  }
+  const notes = [...ctx.notes];
+
+  return (
+    <div className="flex flex-col gap-2">
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        className="mx-auto w-full rounded-xl border border-zinc-200 shadow-sm"
+        style={{
+          display: "block",
+          maxWidth: "min(100%, 56rem)",
+          aspectRatio: `${W} / ${H}`,
+          // 排字复位：下面这几项被祖先或 Tailwind preflight 改动一项，
+          // 字宽就与光栅器量出来的不一样，字和它背后的块就错开。
+          fontFamily: POSTER_FALLBACK_STACK,
+          fontSynthesis: "none",
+          fontKerning: "normal",
+          fontFeatureSettings: "normal",
+          fontVariationSettings: "normal",
+          fontVariantLigatures: "normal",
+          // 光栅器（resvg / Skia）按未经 hinting 的 advance 摆字；
+          // geometricPrecision 是浏览器这一侧同样不吃 hinting 的那一档。
+          textRendering: "geometricPrecision",
+          WebkitFontSmoothing: "antialiased",
+        }}
+        role="img"
+        aria-label={work.title}
+      >
+        <defs>{ctx.defs}</defs>
+        <rect x={0} y={0} width={W} height={H} fill={bgFill} />
+        {bgSrc ? (
+          <g clipPath="url(#background-crop)">
+            <image
+              href={bgSrc}
+              x={bgGeo.x}
+              y={bgGeo.y}
+              width={bgGeo.width}
+              height={bgGeo.height}
+              preserveAspectRatio="none"
+              opacity={numOr(bg.opacity, 1)}
+            />
+          </g>
+        ) : null}
+        {overlay}
+        {body}
+      </svg>
+      {notes.length > 0 ? (
+        <ul className="mx-auto flex w-full max-w-[56rem] flex-col gap-1 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] leading-relaxed text-amber-800">
+          {notes.map((note) => (
+            <li key={note}>{tt(note)}</li>
+          ))}
+        </ul>
+      ) : null}
+    </div>
+  );
+}
+
+/* ---------------- 判形：props 形 / flat 形 / 认不出来 ---------------- */
+
+type DocForm =
+  | { form: "props"; doc: PropsDoc }
+  | { form: "flat" }
+  | { form: "unknown"; why: string };
+
+/**
+ * 两套序列化都自称 `oceanleo.design-document.v1`（`W6` 已记为已知缺陷），
+ * 所以只能按形状判：
+ * - 顶层有 `spec`、或元素带 `props` 对象 ⇒ props 形（仲裁 01 裁定的那一套）；
+ * - 元素带 flat 形独有的键（`width` / `fontSizePx` / `pathData` / `assetId`）⇒ flat 形；
+ * - 都判不出来 ⇒ **说认不出**，不许静默渲成空白或一堆灰块。
+ */
+export function documentFormOf(payload: WorkPayload): DocForm {
+  if (!payload || typeof payload !== "object") return { form: "unknown", why: "这份文档不是一个对象。" };
+  const doc = (payload as Record<string, unknown>).document;
+  if (!doc || typeof doc !== "object") {
+    return { form: "unknown", why: "这份文档里没有 document 这一节。" };
+  }
+  const d = doc as Record<string, unknown>;
+  if (!Array.isArray(d.elements)) {
+    return { form: "unknown", why: "这份文档的 document.elements 不是一个数组。" };
+  }
+  const elements = d.elements as Record<string, unknown>[];
+  const hasProps = elements.some((el) => el && typeof el === "object" && typeof el.props === "object" && el.props !== null);
+  const hasSpec = typeof (payload as Record<string, unknown>).spec === "object" && (payload as Record<string, unknown>).spec !== null;
+  if (hasProps || (hasSpec && elements.some((el) => el && typeof el.w === "number"))) {
+    return { form: "props", doc: d as PropsDoc };
+  }
+  const hasFlat = elements.some(
+    (el) =>
+      el &&
+      typeof el === "object" &&
+      (typeof el.width === "number" ||
+        typeof el.fontSizePx === "number" ||
+        typeof el.pathData === "string" ||
+        typeof el.assetId === "string"),
+  );
+  if (hasFlat) return { form: "flat" };
+  if (elements.length === 0) return { form: "unknown", why: "这份文档一个元素都没有。" };
+  return {
+    form: "unknown",
+    why: "这份文档的元素既没有 props 形的 props 对象，也没有 flat 形的 width / fontSizePx / pathData / assetId。",
+  };
+}
+
+/** 认不出来的时候把话说明白：空白页会被当成没做，灰块会被当成设计。 */
+function UnknownDocument({ work, why }: { work: WorkEntry; why: string }) {
+  const tt = useUI();
+  return (
+    <div className="flex flex-col gap-3 rounded-xl border border-amber-300 bg-amber-50 p-5">
+      <p className="text-sm font-medium text-amber-900">{tt("这份文档我认不出，所以没有把它画出来。")}</p>
+      <p className="text-xs leading-relaxed text-amber-800">{tt(why)}</p>
+      <p className="text-xs leading-relaxed text-amber-800">
+        {tt("本站认两套：props 形（顶层 spec + 元素 props）与 flat 形（元素 width / fontSizePx / pathData / assetId）。下面这张是货架封面，不是站内渲染的结果。")}
+      </p>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={work.cover} alt={work.title} className="max-h-[52vh] w-auto self-center rounded-lg shadow-sm" />
+    </div>
+  );
+}
+
+function DesignDocumentViewer({ work, payload }: { work: WorkEntry; payload: WorkPayload }) {
+  const detected = documentFormOf(payload);
+  if (detected.form === "props") return <PropsDocumentViewer work={work} doc={detected.doc} />;
+  if (detected.form === "flat") return <FlatDocumentViewer work={work} payload={payload} />;
+  return <UnknownDocument work={work} why={detected.why} />;
 }
 
 /* ---------------- chart / workflow：站内渲染结构化 JSON ---------------- */
