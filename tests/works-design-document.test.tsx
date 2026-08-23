@@ -21,6 +21,13 @@ const LAYOUT = "app/layout.tsx";
 const FIXTURE = "tests/fixtures/poster/skeleton-poster.document.json";
 /** 仲裁 01 裁定的那一套：顶层 `spec` + `document.elements[].props`。 */
 const PROPS_FIXTURE = "tests/fixtures/poster/skeleton-poster.props.json";
+/**
+ * `W1` 的排版引擎**真跑出来的**一件产物，连它自己的收据一起收进来（逐字节，未手改）。
+ * 产法写在 `W3-delivery.md` 第 3 轮那一节；它是「防重影」那条判据的标的物 ——
+ * 手写的 fixture 证不了「引擎申报几块就画几块」，因为申报数也会被我一起写。
+ */
+const ENGINE_FIXTURE = "tests/fixtures/poster/engine-poster.document.json";
+const ENGINE_RECEIPT = "tests/fixtures/poster/engine-poster.receipt.json";
 
 /**
  * W2 的字体台账。它在另一个仓（文档仓 `/opt/cursor-workspaces/oceandino`），
@@ -748,19 +755,145 @@ test("⑨ 文字三档效果（shadow / outline2 / gradient）与长影：数字
   assert.ok(html.includes(`translate(${far} ${far})`), `长影最远那一层的偏移不对（期望 ${far}）`);
 });
 
-test("⑩ effect: highlight 不再自己估算叠块（仲裁 03：块宽由引擎显式给），但要点名", () => {
+/** 渲染端 `render.ts:883-905` 的估算表。测试自己算一遍，不抄实现的数。 */
+function estimateLineWidth(text: string, fontSize: number, letterSpacing = 0): number {
+  let units = 0;
+  let n = 0;
+  for (const ch of text) {
+    n += 1;
+    const code = ch.codePointAt(0) ?? 0;
+    if (
+      (code >= 0x4e00 && code <= 0x9fff) ||
+      (code >= 0x3000 && code <= 0x30ff) ||
+      (code >= 0xff00 && code <= 0xffef) ||
+      (code >= 0x3400 && code <= 0x4dbf)
+    ) units += 1.0;
+    else if (ch === " " || "iIlj.,'!|".includes(ch)) units += 0.3;
+    else if ("mwMW".includes(ch)) units += 0.85;
+    else units += 0.55;
+  }
+  return units * fontSize + Math.max(0, n - 1) * letterSpacing;
+}
+
+test("⑩ 元素写 effect:highlight 就画且只画一块；写 effect:none 一块都不画（仲裁 08）", () => {
   const html = renderProps();
   const el = elementOf("legacy-highlight");
   const color = el.props.highlightColor as string;
+  const fs = el.props.fontSize as number;
+  const text = el.props.text as string;
 
-  // 渲染端那套「全角≈1.0em、ASCII≈0.55em」的估算对美术字大幅失真，
-  // 叠上去就是重影加错位 —— 所以这一侧一个估算块都不许出现。
-  assert.equal(html.includes(color), false, "又自己估算了一层高亮块，会与引擎显式给的块重影");
-  assert.equal(/<rect[^>]*rx="[\d.]+"[^>]*fill="#fde047"/.test(html), false, "高亮块以别的写法漏了出来");
+  // 存量 684 张里有 123 个元素真写着 `effect: "highlight"`。站内要照
+  // `asset.oceanleo.com/design` 今天的样子把它们渲出来，就必须画这一层 ——
+  // 删掉等于让那 123 处当场少一块底，而图看着还挺正常。
+  const lines = text.split("\n").filter((line) => line.trim());
+  const blocks = html.match(new RegExp(`<rect[^>]*fill="${color}"[^>]*>`, "g")) ?? [];
+  assert.equal(blocks.length, lines.length, `写了 effect:highlight 的元素应当每行画一块（共 ${lines.length} 行）`);
 
-  // 但字本身照旧要上屏，而且要把「块由引擎给」这件事说出来，不静默吃掉。
-  assert.ok(html.includes(el.props.text as string), "高亮那段字没上屏");
-  assert.match(html, /effect: highlight/, "遇到 highlight 没点名，用户看不到块也不知道为什么");
+  // 几何逐个数对齐 `render.ts:1319-1325`：块居中于字身、宽按行文本估算。
+  const wLine = estimateLineWidth(lines[0], fs, (el.props.letterSpacing as number) ?? 0);
+  const r1 = (v: number) => Number(v.toFixed(1));
+  assert.ok(blocks[0].includes(`x="${r1(-fs * 0.08)}"`), "块的左缘没按 fs*0.08 的内边距外扩");
+  assert.ok(blocks[0].includes(`y="${r1(fs - fs * 0.66)}"`), "块的顶边不在 baseline-0.66em 上，块会偏离字身");
+  assert.ok(blocks[0].includes(`width="${r1(wLine + fs * 0.16)}"`), `块宽与渲染端的估算不一致（期望 ${r1(wLine + fs * 0.16)}）`);
+  assert.ok(blocks[0].includes(`height="${r1(fs * 0.82)}"`), "块高不是 0.82em，盖不住字身");
+
+  // 字压在块上面，不是块盖住字。
+  const blockAt = html.indexOf(blocks[0]);
+  const textAt = html.indexOf(lines[0], blockAt);
+  assert.ok(blockAt >= 0 && textAt > blockAt, "块画在了字之上，字会被荧光块埋掉");
+
+  // **触发条件是 effect 的取值，不是 highlightColor 在不在。**
+  // 同一个元素改成 `effect: "none"`（颜色照留）⇒ 一块都不许画。
+  const noneDoc = JSON.parse(JSON.stringify(PROPS_ENVELOPE)) as typeof PROPS_ENVELOPE;
+  const target = (noneDoc.document.elements ?? []).find((e) => e.id === "legacy-highlight") as DesignElement & {
+    props: Record<string, unknown>;
+  };
+  target.props.effect = "none";
+  const noneHtml = render(<WorksViewer work={propsWork()} payload={noneDoc} />);
+  assert.equal(
+    (noneHtml.match(new RegExp(`<rect[^>]*fill="${color}"`, "g")) ?? []).length,
+    0,
+    "元素写的是 effect:none，站内却自己估了一块 —— 新产文档全走这个取值，这就是重影",
+  );
+  assert.ok(noneHtml.includes(lines[0]), "改成 effect:none 之后字也跟着没了");
+});
+
+test("⑩ 防重影：新产文档里块是引擎发的独立元素，块数恰好等于收据申报的数量", () => {
+  // 标的物是**真的引擎产物**：`poster-compose` 跑出来的文档 + 它自己的收据。
+  // 命令写在交付单里，doc/receipt 逐字节收进 fixture，没有手改。
+  const envelope = JSON.parse(readFileSync(ENGINE_FIXTURE, "utf8")) as { document: DesignDoc };
+  const receipt = JSON.parse(readFileSync(ENGINE_RECEIPT, "utf8")) as {
+    readings: { effectsUsed?: Record<string, number>; elementCount?: number };
+  };
+  const declared = receipt.readings.effectsUsed?.highlight ?? 0;
+  assert.ok(declared >= 1, "这份引擎产物里一个高亮块都没有，撑不起这条判据");
+
+  const elements = envelope.document.elements ?? [];
+  assert.equal(elements.length, receipt.readings.elementCount, "fixture 与它的收据不是同一次产出");
+
+  // ① 块与文字是**两个独立元素**：块是 `shape/rect`（id 形如 `title-hi3`），
+  //    文字是 `text`，两者 id 不同、z 相邻。
+  const engineBlocks = elements.filter((e) => /-hi\d+$/.test(String(e.id)));
+  assert.equal(engineBlocks.length, declared, `引擎发的块数应当等于收据申报的 ${declared} 个`);
+  for (const block of engineBlocks) {
+    assert.equal(block.type, "shape", `${block.id} 不是 shape：块必须是独立元素，不是文字的附属键`);
+    assert.equal((block.props as Record<string, unknown>).kind, "rect");
+    const host = elements.find((e) => e.type === "text" && String(e.id).startsWith(String(block.id).split("-hi")[0]));
+    assert.ok(host, `${block.id} 找不到它盖的那行字`);
+    assert.ok((block.z as number) < (host.z as number), `${block.id} 的 z 没有低于那行字，块会盖住字`);
+  }
+
+  // ② 新产文档里**不存在 `effect: "highlight"` 这个取值** —— 这是重影在物理上
+  //    不可能发生的根据（仲裁 03 甲案：引擎发块、文字写 none）。
+  const texts = elements.filter((e) => e.type === "text");
+  assert.ok(texts.length >= 2, "这份产物里文字太少");
+  for (const t of texts) {
+    assert.notEqual(
+      (t.props as Record<string, unknown>).effect,
+      "highlight",
+      `${t.id} 写了 effect:highlight —— 新产文档一律写 none，写了就会在站内多估一块`,
+    );
+  }
+
+  // ③ 画出来的块数**恰好**等于收据申报的数量：多一块就是重影，少一块就是漏底。
+  const html = render(
+    <WorksViewer work={propsWork({ id: "w3-engine-fixture", sourceFile: ENGINE_FIXTURE })} payload={envelope} />,
+  );
+  let drawnBlocks = 0;
+  for (const block of engineBlocks) {
+    const bp = block.props as Record<string, unknown>;
+    // 块的签名取自元素自己：宽 / 圆角 / 填色。估算出来的那种块宽是按
+    // 「全角≈1.0em」算的，不可能等于引擎量出来的这个宽 ⇒ 多叠一层必然多一个匹配。
+    const sig = new RegExp(
+      `<rect[^>]*width="${bp.width ?? block.w}"[^>]*rx="${bp.radius}"[^>]*fill="${bp.fill}"[^>]*>`,
+      "g",
+    );
+    const hit = (html.match(sig) ?? []).length;
+    assert.equal(hit, 1, `${block.id} 这一块画了 ${hit} 次（引擎发一个元素就该画一次）`);
+    drawnBlocks += hit;
+  }
+  assert.equal(drawnBlocks, declared, `画出来的块数 ${drawnBlocks} 与收据申报的 ${declared} 不相等`);
+  // 估算块的缺省色一次都不许出现（没有任何元素点名它）。
+  assert.equal(html.includes("#fde047"), false, "新产文档里冒出了估算块的缺省色，说明站内又自己叠了一层");
+
+  // teeth：这条判据得真能看见重影，否则它绿着也不说明什么。
+  // 把引擎发块的那行字改成也写 `effect: highlight`（颜色取同一个）——
+  // 这正是重影的样子：一份文档里同一行字有两块底。块数必须当场多出来。
+  const ghost = JSON.parse(readFileSync(ENGINE_FIXTURE, "utf8")) as { document: DesignDoc };
+  const block0 = engineBlocks[0];
+  const fill0 = (block0.props as Record<string, unknown>).fill as string;
+  const hostId = String(block0.id).split("-hi")[0];
+  const ghostHost = (ghost.document.elements ?? []).find(
+    (e) => e.type === "text" && String(e.id).startsWith(hostId),
+  ) as DesignElement & { props: Record<string, unknown> };
+  ghostHost.props.effect = "highlight";
+  ghostHost.props.highlightColor = fill0;
+  const ghostHtml = render(
+    <WorksViewer work={propsWork({ id: "w3-engine-ghost", sourceFile: ENGINE_FIXTURE })} payload={ghost} />,
+  );
+  const before = (html.match(new RegExp(`<rect[^>]*fill="${fill0}"[^>]*>`, "g")) ?? []).length;
+  const after = (ghostHtml.match(new RegExp(`<rect[^>]*fill="${fill0}"[^>]*>`, "g")) ?? []).length;
+  assert.ok(after > before, "重影都看不见：这条判据没有牙，随便叠几块它都会绿");
 });
 
 test("⑪ props.src 只收 https:// 与 data:image/，别的一律不加载（入库校验 B1/B6 同一条闸）", () => {
@@ -789,6 +922,36 @@ test("⑪ props.src 只收 https:// 与 data:image/，别的一律不加载（�
   target.props.src = "data:image/svg+xml;base64,PHN2Zy8+";
   const svgHtml = render(<WorksViewer work={propsWork()} payload={svgPayload} />);
   assert.equal(svgHtml.includes("data:image/svg+xml"), false, "data:image/svg+xml 被收下了，光栅器那边解不开");
+
+  // ⚠️ `http://` 与相对路径也一律拒（`V1` 的 R2 点名要补这一句）。
+  // 入库校验 `_design_asset_urls`（`reviewed_material_catalog.py:2333-2358`）只收
+  // `https://` 与 `data:image/(png|webp|jpeg);base64`，别的抛
+  // 「design image is outside its dependency closure」——
+  // 站内能显示而入库过不了，就是「站上看着好，进不了货架」的那类破相；
+  // 而 `http://` 本身还会让整页从 https 降级成混合内容。
+  for (const bad of [
+    "http://cdn.oceanleo.app/poster/bg.png",
+    "//cdn.oceanleo.app/poster/bg.png",
+    "/poster-assets/bg.png",
+    "poster-assets/bg.png",
+    "../../public/poster-assets/bg.png",
+    "HTTPS:/cdn.oceanleo.app/bg.png",
+    "data:image/png,notbase64",
+  ]) {
+    const payload = JSON.parse(JSON.stringify(PROPS_ENVELOPE)) as typeof PROPS_ENVELOPE;
+    const el = (payload.document.elements ?? []).find((e) => e.id === "badge") as DesignElement & {
+      props: Record<string, unknown>;
+    };
+    el.props.src = bad;
+    const out = render(<WorksViewer work={propsWork()} payload={payload} />);
+    assert.equal(out.includes(bad), false, `src="${bad}" 进了 DOM`);
+    assert.equal(out.includes(`href="${bad}"`), false, `src="${bad}" 被渲成了 <image href>`);
+    assert.match(out, /不是 https/, `src="${bad}" 被拒了却没点名，这一格看起来就像设计里本来有块灰`);
+  }
+
+  // 合法的那两种反过来也要真的收下（否则「全拒」也能让上面那一串绿）。
+  assert.match(scene.props.src as string, /^https:\/\//);
+  assert.match(badge.props.src as string, /^data:image\/(png|jpeg|webp);base64,/);
 });
 
 test("⑮ 缺尺寸时的兜底画布与光栅器同一组数（不然长宽比都不是一个）", () => {

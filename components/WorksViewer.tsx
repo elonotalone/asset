@@ -356,6 +356,41 @@ function strOf(v: unknown): string | undefined {
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 
+/** 渲染端一律把几何量收到一位小数再写进属性；这一侧同样收，免得差在末位。 */
+const round1 = (v: number) => Number(v.toFixed(1));
+
+/**
+ * 单行宽度的 CJK 感知估算。`render.ts:883-905` 的同一份表，逐档相同。
+ *
+ * ⚠️ 这是**估算**，不是量出来的字宽 —— 它只用在存量文档
+ * （元素自己写了 `effect: highlight`）那一支上，因为那 123 处除了这套估算
+ * 没有别的宽度来源。我们新产的文档里块宽由引擎按真实字体度量量好、
+ * 作为独立 `shape/rect` 发出来，走不到这里（仲裁 03 甲案 + 仲裁 08）。
+ */
+function estimateLineWidth(text: string, fontSize: number, letterSpacing = 0): number {
+  let units = 0;
+  let n = 0;
+  for (const ch of text) {
+    n += 1;
+    const code = ch.codePointAt(0) ?? 0;
+    if (
+      (code >= 0x4e00 && code <= 0x9fff) ||
+      (code >= 0x3000 && code <= 0x30ff) ||
+      (code >= 0xff00 && code <= 0xffef) ||
+      (code >= 0x3400 && code <= 0x4dbf)
+    ) {
+      units += 1.0;
+    } else if (ch === " " || "iIlj.,'!|".includes(ch)) {
+      units += 0.3;
+    } else if ("mwMW".includes(ch)) {
+      units += 0.85;
+    } else {
+      units += 0.55;
+    }
+  }
+  return units * fontSize + Math.max(0, n - 1) * letterSpacing;
+}
+
 /** 文字渐变预设。取值与 `render.ts:33` 的 `TEXT_GRADIENTS` 逐条相同。 */
 const TEXT_GRADIENTS: Record<string, string> = {
   sunset: "linear-gradient(90deg, #f97316, #ef4444, #db2777)",
@@ -781,16 +816,40 @@ function PropsText(el: PropsElement, w: number, h: number, ctx: RenderCtx, id: s
     </tspan>
   ));
 
-  // 仲裁 03：高亮块宽由引擎按真实字体度量显式给（甲案 = 引擎发一个 `shape`
-  // 矩形 + 文字 `effect: "none"`）。**所以这一侧不再叠估算块** ——
-  // 渲染端那套「全角≈1.0em、ASCII≈0.55em」的估算对美术字大幅失真，
-  // 叠上去就是重影加错位。遇到还写着 highlight 的文档，把它点名，
-  // 不静默吃掉（静默吃掉 = 用户看不到本该有的荧光块，却没人知道）。
+  // 高亮块（仲裁 08）：**元素自己写了 `effect: highlight` 才画，而且只画一块。**
+  //
+  // 站内查看器渲的是存量 684 张，其中 123 个元素真写着 `effect: "highlight"`，
+  // 它们的块宽只有渲染端这套估算值可用（`render.ts:883` 的「全角≈1.0em、
+  // ASCII≈0.55em」）。删掉这条能力，那 123 处当场少一块底，而图看着还挺正常
+  // —— 那才是缺陷。所以这一支照 `render.ts:1312-1325` 原样画，
+  // 与 `asset.oceanleo.com/design` 今天的样子一致。
+  //
+  // 重影不会发生，理由是取值本身：我们**新产**的文档走仲裁 03 甲案 ——
+  // 块是引擎按真实字体度量发的独立 `shape/rect`（id 形如 `title-hi1`），
+  // 那行文字写的是 `effect: "none"` ⇒ 这一支永远不触发。
+  // 光栅器只渲新产物，所以它遇到 `highlight` 点名抛；两侧行为不同是因为
+  // 服务对象不同（渲存量 / 渲新产），不是不一致。
+  const highlightLayer: React.ReactNode[] = [];
   if (effect === "highlight" || effect === "background") {
-    ctx.notes.add(
-      "这份文档的文字写了 effect: highlight，而块宽按仲裁 03 由引擎显式给成一个 shape 矩形：" +
-        "站内不再自己估算叠块，所以这段字后面没有荧光块就说明引擎没给。",
-    );
+    const hlFill = strOf(p.highlightColor) ?? "#fde047";
+    const ls = numOr(p.letterSpacing, 0);
+    lines.forEach((line, i) => {
+      if (!line.trim()) return;
+      const wLine = estimateLineWidth(line, fs, ls);
+      const hx = align === "center" ? x - wLine / 2 : align === "right" ? x - wLine : x;
+      const baseline = fs + i * lineStep;
+      highlightLayer.push(
+        <rect
+          key={`hi-${i}`}
+          x={round1(hx - fs * 0.08)}
+          y={round1(baseline - fs * 0.66)}
+          width={round1(wLine + fs * 0.16)}
+          height={round1(fs * 0.82)}
+          rx={round1(fs * 0.08)}
+          fill={hlFill}
+        />,
+      );
+    });
   }
 
   let fillPaint = strOf(p.color) ?? "#111827";
@@ -884,8 +943,11 @@ function PropsText(el: PropsElement, w: number, h: number, ctx: RenderCtx, id: s
     ctx.notes.add(`这份文档的文字写了 effect: ${effect}，本站还不认它，这段字按无效果画，与货架封面会不一样。`);
   }
 
+  // 叠序与渲染端 `render.ts:1426` 同一串：高亮块 → 长影 → 描边层 → 主字。
+  // 块在最底下，字压在块上面 —— 反过来就是「荧光块把字盖掉」。
   return (
     <>
+      {highlightLayer}
       {under}
       <text {...face} {...strokeProps} fill={effect === "hollow" ? "none" : fillPaint} filter={filter}>
         {tspans}
