@@ -3,83 +3,88 @@
   "cells": [
     {
       "idx": 0,
-      "file": "bg-blush-plain.webp",
-      "path": "bg-blush-plain"
+      "file": "bg-blush-plain-b5.webp",
+      "path": "bg-blush-plain-b5"
     },
     {
       "idx": 1,
-      "file": "bg-clay-warm.webp",
-      "path": "bg-clay-warm"
+      "file": "bg-butter-soft-b5.webp",
+      "path": "bg-butter-soft-b5"
     },
     {
       "idx": 2,
-      "file": "bg-cream-diffuse.webp",
-      "path": "bg-cream-diffuse"
+      "file": "bg-clay-warm-b5.webp",
+      "path": "bg-clay-warm-b5"
     },
     {
       "idx": 3,
-      "file": "bg-deep-forest.webp",
-      "path": "bg-deep-forest"
+      "file": "bg-deep-forest-b5.webp",
+      "path": "bg-deep-forest-b5"
     },
     {
       "idx": 4,
-      "file": "bg-frosted-teal.webp",
-      "path": "bg-frosted-teal"
+      "file": "bg-frosted-teal-b5.webp",
+      "path": "bg-frosted-teal-b5"
     },
     {
       "idx": 5,
-      "file": "bg-indigo-velvet.webp",
-      "path": "bg-indigo-velvet"
+      "file": "bg-indigo-velvet-b5.webp",
+      "path": "bg-indigo-velvet-b5"
     },
     {
       "idx": 6,
-      "file": "bg-ink-wash.webp",
-      "path": "bg-ink-wash"
+      "file": "bg-linen-warm-b4.webp",
+      "path": "bg-linen-warm-b4"
     },
     {
       "idx": 7,
-      "file": "bg-linen-warm.webp",
-      "path": "bg-linen-warm"
+      "file": "bg-linen-warm-b5.webp",
+      "path": "bg-linen-warm-b5"
     },
     {
       "idx": 8,
-      "file": "bg-macaron-pink.webp",
-      "path": "bg-macaron-pink"
+      "file": "bg-macaron-pink-b4.webp",
+      "path": "bg-macaron-pink-b4"
     },
     {
       "idx": 9,
-      "file": "bg-midnight-aurora.webp",
-      "path": "bg-midnight-aurora"
+      "file": "bg-macaron-pink-b5.webp",
+      "path": "bg-macaron-pink-b5"
     },
     {
       "idx": 10,
-      "file": "bg-mist-grey.webp",
-      "path": "bg-mist-grey"
+      "file": "bg-midnight-aurora-b5.webp",
+      "path": "bg-midnight-aurora-b5"
     },
     {
       "idx": 11,
-      "file": "bg-morandi-sage.webp",
-      "path": "bg-morandi-sage"
+      "file": "bg-mist-grey-b4.webp",
+      "path": "bg-mist-grey-b4"
     },
     {
       "idx": 12,
-      "file": "bg-paper-grain.webp",
-      "path": "bg-paper-grain"
+      "file": "bg-morandi-sage-b4.webp",
+      "path": "bg-morandi-sage-b4"
     },
     {
       "idx": 13,
-      "file": "bg-sage-plain.webp",
-      "path": "bg-sage-plain"
+      "file": "bg-ocean-dusk-b4.webp",
+      "path": "bg-ocean-dusk-b4"
     },
     {
       "idx": 14,
-      "file": "bg-slate-night.webp",
-      "path": "bg-slate-night"
+      "file": "bg-paper-grain-b5.webp",
+      "path": "bg-paper-grain-b5"
     },
     {
       "idx": 15,
-      "file": "bg-sunset-amber.webp",
-      "path": "bg-sunset-amber"
+      "file": "bg-slate-night-b4.webp",
+      "path": "bg-slate-night-b4"
+    },
+    {
+      "idx": 16,
+      "file": "bg-slate-night-b5.webp",
+      "path": "bg-slate-night-b5"
     }
   ]
 }
