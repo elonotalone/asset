@@ -549,10 +549,16 @@ const IMAGE_CSS_FILTER: Record<string, string> = {
   warm: "sepia(.2) saturate(1.3)",
 };
 
-/** `props.src` 只许 `https://` 与 `data:image/`（入库校验 B1/B6 的同一条闸）。 */
+/**
+ * `props.src` 只许 `https://` 与 `data:image/<png|jpeg|webp>;base64,`。
+ * 前半条是入库校验 B1/B6 的闸；后半条与光栅器 `props-raster.mjs:648` 收的形状
+ * 一模一样 —— 站内能显示而光栅器解不开（或反过来），就又是一处「两边不是同一张图」。
+ */
 function safeImageSrc(src?: string): string | null {
   if (!src) return null;
-  return /^https:\/\//i.test(src) || /^data:image\//i.test(src) ? src : null;
+  const value = src.trim();
+  if (/^https:\/\//i.test(value)) return value;
+  return /^data:image\/(png|jpeg|webp);base64,/i.test(value) ? value : null;
 }
 
 interface RenderCtx {
@@ -1124,8 +1130,10 @@ function propsOverlay(bg: PropsBackground, W: number, H: number, ctx: RenderCtx)
 
 function PropsDocumentViewer({ work, doc }: { work: WorkEntry; doc: PropsDoc }) {
   const tt = useUI();
-  const W = numOr(doc.width, 0) > 0 ? numOr(doc.width, 1080) : 1080;
-  const H = numOr(doc.height, 0) > 0 ? numOr(doc.height, 1440) : 1440;
+  // 缺尺寸时的兜底画布要与光栅器同一组数（`props-raster.mjs:50-51`）：
+  // 兜底不一致 = 同一份没写尺寸的文档，站内和封面连长宽比都不是一个。
+  const W = numOr(doc.width, 0) > 0 ? numOr(doc.width, 1242) : 1242;
+  const H = numOr(doc.height, 0) > 0 ? numOr(doc.height, 1656) : 1656;
   const bg = doc.background ?? {};
   const ctx: RenderCtx = { defs: [], notes: new Set() };
 

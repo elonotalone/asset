@@ -776,6 +776,29 @@ test("⑪ props.src 只收 https:// 与 data:image/，别的一律不加载（�
   assert.equal(html.includes("alert(document.domain)"), false, "敌意 src 的正文进了 DOM");
   assert.match(html, /#EEF1F5/, "被拒的图没画占位块");
   assert.match(html, /不是 https/, "被拒的图没点名，看起来就像设计里本来就有一块灰");
+  // 拒掉的那串一个字都不许回显：回显等于把不可信内容搬进页面。
+  assert.equal(html.includes("document.domain"), false, "被拒的 src 被原样念了出来");
+
+  // `data:` 收的形状要与光栅器 props-raster.mjs 完全一样：它只解
+  // data:image/<png|jpeg|webp>;base64,…。站内多收一种，就是站内显示得出、
+  // 封面解不开 —— 又一处「两边不是同一张图」。
+  const svgPayload = JSON.parse(JSON.stringify(PROPS_ENVELOPE)) as typeof PROPS_ENVELOPE;
+  const target = (svgPayload.document.elements ?? []).find((e) => e.id === "badge") as DesignElement & {
+    props: Record<string, unknown>;
+  };
+  target.props.src = "data:image/svg+xml;base64,PHN2Zy8+";
+  const svgHtml = render(<WorksViewer work={propsWork()} payload={svgPayload} />);
+  assert.equal(svgHtml.includes("data:image/svg+xml"), false, "data:image/svg+xml 被收下了，光栅器那边解不开");
+});
+
+test("⑮ 缺尺寸时的兜底画布与光栅器同一组数（不然长宽比都不是一个）", () => {
+  const payload = {
+    spec: { id: "no-size" },
+    document: { elements: [{ id: "a", type: "shape", x: 0, y: 0, w: 10, h: 10, z: 1, props: { kind: "rect", fill: "#000000" } }] },
+  };
+  const html = render(<WorksViewer work={propsWork()} payload={payload} />);
+  // props-raster.mjs:50-51 的 PROPS_DEFAULT_WIDTH / HEIGHT。
+  assert.ok(html.includes('viewBox="0 0 1242 1656"'), "缺尺寸时的兜底画布与光栅器不一致");
 });
 
 test("⑫ 图的裁剪 / 圆角 / 翻转 / 落影与渲染端同一套算法", () => {
