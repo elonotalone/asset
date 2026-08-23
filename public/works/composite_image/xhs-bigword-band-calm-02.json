@@ -53,7 +53,7 @@
         "h": 129.17,
         "rotation": 0,
         "locked": false,
-        "opacity": 0.92,
+        "opacity": 1,
         "props": {
           "kind": "tape",
           "fill": "#E8C46A",
@@ -237,44 +237,6 @@
         "z": 9
       },
       {
-        "id": "dots-seam-d1",
-        "type": "shape",
-        "x": 1030.86,
-        "y": 852.84,
-        "w": 37.26,
-        "h": 37.26,
-        "rotation": 0,
-        "locked": false,
-        "opacity": 0.8,
-        "props": {
-          "kind": "circle",
-          "fill": "#7FA8C9",
-          "stroke": "transparent",
-          "strokeWidth": 0,
-          "radius": 0
-        },
-        "z": 10
-      },
-      {
-        "id": "dots-seam-d2",
-        "type": "shape",
-        "x": 1096.11,
-        "y": 900.31,
-        "w": 37.26,
-        "h": 37.26,
-        "rotation": 0,
-        "locked": false,
-        "opacity": 0.8,
-        "props": {
-          "kind": "circle",
-          "fill": "#7FA8C9",
-          "stroke": "transparent",
-          "strokeWidth": 0,
-          "radius": 0
-        },
-        "z": 11
-      },
-      {
         "id": "subtitle-l1",
         "type": "text",
         "x": 111.78,
@@ -296,7 +258,7 @@
           "textAlign": "left",
           "effect": "none"
         },
-        "z": 12
+        "z": 10
       },
       {
         "id": "tagbed-scrim",
@@ -315,7 +277,7 @@
           "strokeWidth": 0,
           "radius": 0
         },
-        "z": 13
+        "z": 11
       },
       {
         "id": "tag-a-pill1",
@@ -335,7 +297,7 @@
           "radius": 65.28
         },
         "name": "药丸底",
-        "z": 14
+        "z": 12
       },
       {
         "id": "tag-a-l1",
@@ -359,7 +321,7 @@
           "textAlign": "left",
           "effect": "none"
         },
-        "z": 15
+        "z": 13
       },
       {
         "id": "tag-b-pill1",
@@ -379,7 +341,7 @@
           "radius": 65.28
         },
         "name": "药丸底",
-        "z": 16
+        "z": 14
       },
       {
         "id": "tag-b-l1",
@@ -403,7 +365,7 @@
           "textAlign": "left",
           "effect": "none"
         },
-        "z": 17
+        "z": 15
       },
       {
         "id": "tag-c-pill1",
@@ -417,13 +379,13 @@
         "opacity": 1,
         "props": {
           "kind": "rect",
-          "fill": "#7FA8C9",
+          "fill": "#F2F5F8",
           "stroke": "transparent",
           "strokeWidth": 0,
           "radius": 65.28
         },
         "name": "药丸底",
-        "z": 18
+        "z": 16
       },
       {
         "id": "tag-c-l1",
@@ -438,7 +400,7 @@
         "props": {
           "text": "衣柜留白",
           "fontSize": 75.76,
-          "color": "#1A1305",
+          "color": "#1D242B",
           "fontFamily": "Source Han Sans CN",
           "fontWeight": 700,
           "fontStyle": "normal",
@@ -447,7 +409,7 @@
           "textAlign": "left",
           "effect": "none"
         },
-        "z": 19
+        "z": 17
       },
       {
         "id": "spark-tl-s1",
@@ -467,7 +429,7 @@
           "radius": 0,
           "points": 4
         },
-        "z": 20
+        "z": 18
       },
       {
         "id": "spark-tl-s2",
@@ -487,7 +449,7 @@
           "radius": 0,
           "points": 4
         },
-        "z": 21
+        "z": 19
       },
       {
         "id": "spark-tl-s3",
@@ -507,7 +469,7 @@
           "radius": 0,
           "points": 4
         },
-        "z": 22
+        "z": 20
       }
     ],
     "updatedAt": "2026-08-23T00:00:00.000Z"

@@ -53,7 +53,7 @@
         "h": 129.17,
         "rotation": 0,
         "locked": false,
-        "opacity": 0.92,
+        "opacity": 1,
         "props": {
           "kind": "tape",
           "fill": "#C0452F",
@@ -237,44 +237,6 @@
         "z": 9
       },
       {
-        "id": "dots-seam-d1",
-        "type": "shape",
-        "x": 1030.86,
-        "y": 852.84,
-        "w": 37.26,
-        "h": 37.26,
-        "rotation": 0,
-        "locked": false,
-        "opacity": 0.8,
-        "props": {
-          "kind": "circle",
-          "fill": "#A98F5F",
-          "stroke": "transparent",
-          "strokeWidth": 0,
-          "radius": 0
-        },
-        "z": 10
-      },
-      {
-        "id": "dots-seam-d2",
-        "type": "shape",
-        "x": 1096.11,
-        "y": 900.31,
-        "w": 37.26,
-        "h": 37.26,
-        "rotation": 0,
-        "locked": false,
-        "opacity": 0.8,
-        "props": {
-          "kind": "circle",
-          "fill": "#A98F5F",
-          "stroke": "transparent",
-          "strokeWidth": 0,
-          "radius": 0
-        },
-        "z": 11
-      },
-      {
         "id": "subtitle-l1",
         "type": "text",
         "x": 111.78,
@@ -296,7 +258,7 @@
           "textAlign": "left",
           "effect": "none"
         },
-        "z": 12
+        "z": 10
       },
       {
         "id": "subtitle-l2",
@@ -320,7 +282,7 @@
           "textAlign": "left",
           "effect": "none"
         },
-        "z": 13
+        "z": 11
       },
       {
         "id": "tagbed-scrim",
@@ -339,7 +301,7 @@
           "strokeWidth": 0,
           "radius": 0
         },
-        "z": 14
+        "z": 12
       },
       {
         "id": "tag-a-pill1",
@@ -359,7 +321,7 @@
           "radius": 65.28
         },
         "name": "药丸底",
-        "z": 15
+        "z": 13
       },
       {
         "id": "tag-a-l1",
@@ -383,7 +345,7 @@
           "textAlign": "left",
           "effect": "none"
         },
-        "z": 16
+        "z": 14
       },
       {
         "id": "tag-b-pill1",
@@ -403,7 +365,7 @@
           "radius": 65.28
         },
         "name": "药丸底",
-        "z": 17
+        "z": 15
       },
       {
         "id": "tag-b-l1",
@@ -427,7 +389,7 @@
           "textAlign": "left",
           "effect": "none"
         },
-        "z": 18
+        "z": 16
       },
       {
         "id": "tag-c-pill1",
@@ -441,13 +403,13 @@
         "opacity": 1,
         "props": {
           "kind": "rect",
-          "fill": "#A98F5F",
+          "fill": "#221F19",
           "stroke": "transparent",
           "strokeWidth": 0,
           "radius": 65.28
         },
         "name": "药丸底",
-        "z": 19
+        "z": 17
       },
       {
         "id": "tag-c-l1",
@@ -462,7 +424,7 @@
         "props": {
           "text": "一张卡够",
           "fontSize": 75.76,
-          "color": "#FFF6EC",
+          "color": "#FFFFFF",
           "fontFamily": "Source Han Sans CN",
           "fontWeight": 700,
           "fontStyle": "normal",
@@ -471,7 +433,7 @@
           "textAlign": "left",
           "effect": "none"
         },
-        "z": 20
+        "z": 18
       },
       {
         "id": "spark-tl-s1",
@@ -491,7 +453,7 @@
           "radius": 0,
           "points": 4
         },
-        "z": 21
+        "z": 19
       },
       {
         "id": "spark-tl-s2",
@@ -511,7 +473,7 @@
           "radius": 0,
           "points": 4
         },
-        "z": 22
+        "z": 20
       },
       {
         "id": "spark-tl-s3",
@@ -531,7 +493,7 @@
           "radius": 0,
           "points": 4
         },
-        "z": 23
+        "z": 21
       }
     ],
     "updatedAt": "2026-08-23T00:00:00.000Z"

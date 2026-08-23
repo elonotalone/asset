@@ -4,7 +4,7 @@
     "artifactType": "composite_image",
     "title": "租的房子也能住出家的样子：只换带得走的三样",
     "styleId": "xhs.figure-right-ledger.loud",
-    "summary": "租房改造封面：抠好的人物立在右侧并出血到画板下缘，左上三行主标题用得意黑（Smiley Sans Oblique）美术字，最后一行「家的样子」压一块按真实字体度量量出来的黄色高亮块 —— 块宽由 0.80 em/字的实测字宽算出，首末字各留 13.66 画布单位内边距，不是估算。三行标题把下面的白卡、副标题、分隔、要点、收口条整体让下 298 画布单位（骨架的 titleLines 规则），所以标题再长也不压卡。白卡里三条要点是四字关键词而不是句子，因为封面缩到 180px 宽时只有 ≥8px 的字号档才读得出。装饰记号（星光 3 + 圆点 2）共 5 个、占 30 个元素的 16.7%，其余全是各司其职的结构：压底色块、标签行、分隔线、角标。背景底选安静区平均亮度 94.5 的暖陶色渐层，所以字用近黑；除背景底与人物外不引入第三张图。与同骨架第 02 件的差别是文案长度（这件三行标题 + 三条要点，那件一行标题 + 两条），不是换配色。",
+    "summary": "租房改造封面：抠好的人物立在右侧并出血到画板下缘，左上三行主标题用得意黑（Smiley Sans Oblique）美术字，最后一行「家的样子」压一块按真实字体度量量出来的黄色高亮块 —— 块宽由 0.80 em/字的实测字宽算出，首末字各留 13.66 画布单位内边距，不是估算。三行标题把下面的白卡、副标题、分隔、要点、收口条整体让下 298 画布单位（骨架的 titleLines 规则），所以标题再长也不压卡。白卡里三条要点是四字关键词而不是句子，因为封面缩到 180px 宽时只有 ≥8px 的字号档才读得出。装饰记号（星光 3 + 圆点 2）共 5 个、占 30 个元素的 16.7%，其余全是各司其职的结构：压底色块、标签行、分隔线、角标。背景底选安静区平均亮度 94.5 的暖陶色渐层，所以字用近黑，每段文字实测对比度 6.3:1 以上；除背景底与人物外不引入第三张图。与同骨架第 02 件的差别是文案长度（这件三行标题 + 三条要点，那件一行标题 + 两条），不是换配色。",
     "cover": "/works/composite_image/xhs-figure-ledger-loud-01.cover.webp",
     "view": {
       "kind": "design-document",
@@ -254,7 +254,7 @@
     "artifactType": "composite_image",
     "title": "发薪当天先转走三成，月底不用再算钱去哪了",
     "styleId": "xhs.bigword-band.calm",
-    "summary": "存钱主题封面：无主体图，字是主角。巨字「发薪当天 / 先转走三成」用站酷小薇（ZCOOL XiaoWei）美术字错位排布，下面一行带偏移投影；实测它每字 1.00 em、墨占比 12.6%，比思源宋 Heavy 更瘦，所以压底面板的不透明度相应调高，暗底上不会发虚。顶部一条窄标签带写期号，巨字下一条短分隔线，再下面两行细注解释为什么月底不用算账 —— 细注槽这一轮加宽到 0.82 画板宽 × 3 行 × h1 档，34 字的长文案不再被截断（收据里 shrink 与 truncated 都是 0）。底部三枚标签药丸给可检索关键词。背景底是纸纹渐层，安静区在中部，所以巨字落在安静区内、四边各留 6% 安全边。装饰记号（星光 3 + 圆点 2）共 5 个、占 24 个元素的 20.8%，中部不放任何装饰。",
+    "summary": "存钱主题封面：无主体图，字是主角。巨字「发薪当天 / 先转走三成」用站酷小薇（ZCOOL XiaoWei）美术字错位排布，下面一行带偏移投影；实测它每字 1.02 em、落墨 20.1%、笔画 0.087 em，比思源宋 Heavy 细 37%，这一条不靠换字体解决，靠压底面板补 —— 巨字实测对比度 15.7:1。顶部一条窄标签带写期号，巨字下一条短分隔线，再下面两行细注解释为什么月底不用算账 —— 细注槽这一轮加宽到 0.82 画板宽 × 3 行 × h1 档，40 字容量，34 字的长文案不再被截断（收据里 shrink 与 truncated 都是 0）。底部三枚标签药丸给可检索关键词，第三枚是深色反色 chip（原来它是 deco 底 + accentInk 字，纸底实测只有 2.95:1，现在 16.6:1）。背景底是纸纹渐层，安静区在中部，所以巨字落在安静区内、四边各留 6% 安全边。装饰记号只剩左上 3 枚星光，占 22 个元素的 13.6%（连角标底那朵 burst 一起算是 18.2%），中部与右侧不放任何装饰。",
     "cover": "/works/composite_image/xhs-bigword-band-calm-01.cover.webp",
     "view": {
       "kind": "design-document",
@@ -320,7 +320,6 @@
           "bigword-a",
           "bigword-b",
           "rule",
-          "dots-seam",
           "subtitle",
           "tagbed",
           "tag-a",
@@ -329,9 +328,9 @@
           "spark-tl"
         ],
         "metrics": {
-          "elementCount": 24,
+          "elementCount": 22,
           "textElementCount": 9,
-          "shapeElementCount": 14,
+          "shapeElementCount": 12,
           "imageElementCount": 1,
           "lineCount": 9,
           "placeholderCount": 0,
@@ -353,13 +352,13 @@
         "outputs": [
           {
             "path": "xhs-bigword-band-calm-01.cover.webp",
-            "byteSize": 70438,
-            "sha256": "466801aa9e147066d1105c5ff15222b2d067c5f0c0cdc99082aab45a4fdc2cde"
+            "byteSize": 70244,
+            "sha256": "cf0bb2e8b682f09ff5bb30fe0be8f0d51b08d5331c8299338e0866a4deb66642"
           },
           {
             "path": "xhs-bigword-band-calm-01.full.webp",
-            "byteSize": 195488,
-            "sha256": "4aba7cf1234d6bba9e79ad93645baec5a9f25d8f13b125f690937d81b15de6c8"
+            "byteSize": 194468,
+            "sha256": "863b6037b1be7b7400e5265d36f9ff06a6afb616a7849fd78266d63cee79c71c"
           }
         ]
       }
@@ -370,7 +369,7 @@
     "artifactType": "composite_image",
     "title": "先扔再买：衣柜腾出一格再逛街",
     "styleId": "xhs.bigword-band.calm",
-    "summary": "换季衣柜封面：同一副骨架的短文案档与暗底档 —— 站酷小薇巨字缩到「先扔 / 再买」两字一行，细注只一行，背景底换成夜色渐层。暗底下全部文字按配色里的 ink 翻成近白（#F2F5F8），标签药丸取近白描边，序号用 Oswald 排在右上。装饰记号 5 个、占 23 个元素的 21.7%。与第 01 件同骨架同结构，差别在文案长度、明暗档与配色。",
+    "summary": "换季衣柜封面：同一副骨架的短文案档与暗底档 —— 站酷小薇巨字缩到「先扔 / 再买」两字一行，细注只一行，背景底换成夜色渐层。暗底下全部文字按配色里的 ink 翻成近白（#F2F5F8），标签药丸第三枚翻成浅色 chip，序号用 Oswald 排在右上。每段文字的实测对比度都在 6:1 以上。装饰记号 3 枚、占 21 个元素的 14.3%（最严数法 19.0%）。与第 01 件同骨架同结构，差别在文案长度、明暗档与配色。",
     "cover": "/works/composite_image/xhs-bigword-band-calm-02.cover.webp",
     "view": {
       "kind": "design-document",
@@ -436,7 +435,6 @@
           "bigword-a",
           "bigword-b",
           "rule",
-          "dots-seam",
           "subtitle",
           "tagbed",
           "tag-a",
@@ -445,9 +443,9 @@
           "spark-tl"
         ],
         "metrics": {
-          "elementCount": 23,
+          "elementCount": 21,
           "textElementCount": 8,
-          "shapeElementCount": 14,
+          "shapeElementCount": 12,
           "imageElementCount": 1,
           "lineCount": 8,
           "placeholderCount": 0,
@@ -469,13 +467,13 @@
         "outputs": [
           {
             "path": "xhs-bigword-band-calm-02.cover.webp",
-            "byteSize": 235396,
-            "sha256": "375e28bf0c836850a59435aecf0c9247bbef6d431dd977b8c947b21070bfd2ac"
+            "byteSize": 234156,
+            "sha256": "1a1beda50023084946d04e4278828a8b431cfb133f945297eabd203eadc4d71e"
           },
           {
             "path": "xhs-bigword-band-calm-02.full.webp",
-            "byteSize": 690252,
-            "sha256": "8c5632ae451f1ef5d6940ca800ea8c287a2e4b6f39739f0c651f18615defdf47"
+            "byteSize": 688376,
+            "sha256": "50c1b9fe0e0cb4b93fd90dac5fd2c9aa9a9e95581041e0d8a6d34cd374de5d99"
           }
         ]
       }
