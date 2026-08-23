@@ -14,15 +14,6 @@
       "aspect": 0.75
     },
     "downloadable": true,
-    "workflow": {
-      "id": "composite_image/xhs/xhs.figure-right-ledger.loud",
-      "name": "小红书封面 · 骨架：主体立右 + 要点白卡（loud）",
-      "docs": {
-        "base": "docs/workflows/material-workflows/base/composite_image.md",
-        "scene": "docs/design-guides/composite_image/xhs/_INDEX.md",
-        "productGuide": "docs/design-guides/composite_image/xhs/_PRODUCT-DOC.md"
-      }
-    },
     "attribution": [
       {
         "text": "bg-clay-warm-b5（OceanLeo 第一方，素材台账 bg-clay-warm-b5）",
@@ -146,15 +137,6 @@
       "aspect": 0.75
     },
     "downloadable": true,
-    "workflow": {
-      "id": "composite_image/xhs/xhs.figure-right-ledger.loud",
-      "name": "小红书封面 · 骨架：主体立右 + 要点白卡（loud）",
-      "docs": {
-        "base": "docs/workflows/material-workflows/base/composite_image.md",
-        "scene": "docs/design-guides/composite_image/xhs/_INDEX.md",
-        "productGuide": "docs/design-guides/composite_image/xhs/_PRODUCT-DOC.md"
-      }
-    },
     "attribution": [
       {
         "text": "bg-macaron-pink-b5（OceanLeo 第一方，素材台账 bg-macaron-pink-b5）",
@@ -278,15 +260,6 @@
       "aspect": 0.75
     },
     "downloadable": true,
-    "workflow": {
-      "id": "composite_image/xhs/xhs.bigword-band.calm",
-      "name": "小红书封面 · 骨架：巨字错位 + 标签带（calm）",
-      "docs": {
-        "base": "docs/workflows/material-workflows/base/composite_image.md",
-        "scene": "docs/design-guides/composite_image/xhs/_INDEX.md",
-        "productGuide": "docs/design-guides/composite_image/xhs/_PRODUCT-DOC.md"
-      }
-    },
     "attribution": [
       {
         "text": "bg-paper-grain-b5（OceanLeo 第一方，素材台账 bg-paper-grain-b5）",
@@ -401,15 +374,6 @@
       "aspect": 0.75
     },
     "downloadable": true,
-    "workflow": {
-      "id": "composite_image/xhs/xhs.bigword-band.calm",
-      "name": "小红书封面 · 骨架：巨字错位 + 标签带（calm）",
-      "docs": {
-        "base": "docs/workflows/material-workflows/base/composite_image.md",
-        "scene": "docs/design-guides/composite_image/xhs/_INDEX.md",
-        "productGuide": "docs/design-guides/composite_image/xhs/_PRODUCT-DOC.md"
-      }
-    },
     "attribution": [
       {
         "text": "bg-slate-night-b5（OceanLeo 第一方，素材台账 bg-slate-night-b5）",
