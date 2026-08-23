@@ -221,10 +221,11 @@ test("① 兜底链上的三款也必须在 CSS 里，且这份 CSS 真的被站
   const declared = declaredFamilies(css);
   // 查看器给每个 text 接的兜底族：光栅器兜底那副字，用台账 approved 的那个名。
   assert.ok(declared.has(normalizeFamily("Source Han Sans CN")), `兜底族在 ${FONT_CSS} 里没有 @font-face`);
-  // 存量成品直接指名过光栅器兜底体的双名，站内也得认，否则那四件两边不是同一套字。
-  for (const family of ["Noto Sans CJK SC", "Noto Sans SC"]) {
-    assert.ok(declared.has(normalizeFamily(family)), `"${family}" 在 ${FONT_CSS} 里没有 @font-face`);
-  }
+  // 存量成品直接指名过光栅器的兜底体，站内也得认，否则那几件两边不是同一套字。
+  assert.ok(
+    declared.has(normalizeFamily("Noto Sans CJK SC")),
+    `"Noto Sans CJK SC" 在 ${FONT_CSS} 里没有 @font-face（存量成品指名了它）`,
+  );
   const viewer = readFileSync(VIEWER, "utf8");
   assert.match(viewer, /Source Han Sans CN/, "查看器没接兜底链，拉丁 display 字缺汉字时会落到系统 UI 字");
 
@@ -321,6 +322,40 @@ test("① approved 的每一款都能按台账里的名（family 与 aliases）�
         `"${face.family}" 指的是 weight=${row.weight} 的脸，CSS 里的 font-weight 对不上`,
       );
     }
+  }
+});
+
+test("① 这些族名不许撞站点的全局字体栈（撞上就是全站每页拉一份 8 MB 中文字）", () => {
+  const declared = declaredFamilies(readFileSync(FONT_CSS, "utf8"));
+
+  // 全家桶主题里有 body{font-family: Noto Sans SC, …}：站上今天没有这个名的
+  // @font-face，正文落在系统字上。这一份 CSS 只该管 works 页的海报，
+  // 一旦声明了全局栈里的名，全站每一页都会去 OSS 拉那份中文 OTF。
+  const globalCss = [
+    "app/globals.css",
+    "node_modules/@oceanleo/ui/theme/ui.css",
+    "node_modules/@oceanleo/ui/src/theme/ui.css",
+  ]
+    .filter((file) => existsSync(file))
+    .map((file) => readFileSync(file, "utf8"))
+    .join("\n");
+  assert.ok(globalCss.length > 0, "一份全局样式都没读到，这条检查会假绿");
+
+  const globalNames = new Set<string>();
+  for (const hit of globalCss.match(/font-family\s*:\s*([^;}]+)/g) ?? []) {
+    const value = hit.replace(/^font-family\s*:\s*/, "");
+    if (value.includes("var(")) continue; // 解不开的变量不猜
+    for (const name of familyCandidates(value)) globalNames.add(normalizeFamily(name));
+  }
+  assert.ok(globalNames.size > 0, "全局字体栈一个名都没解出来，这条检查会假绿");
+
+  for (const family of declared) {
+    assert.equal(
+      globalNames.has(family),
+      false,
+      `${FONT_CSS} 声明的 "${family}" 也出现在站点全局字体栈里 —— ` +
+        `海报字体会被全站正文用上，每页多拉一份中文字。改用它在台账里的另一个名。`,
+    );
   }
 });
 
