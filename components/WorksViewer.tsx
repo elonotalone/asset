@@ -90,7 +90,11 @@ const POSTER_FALLBACK_STACK = '"Source Han Sans CN", sans-serif';
 function posterFontFamily(family?: string): string {
   const named = family?.trim();
   if (!named) return POSTER_FALLBACK_STACK;
-  const first = named.includes(",") ? named : `"${named.replace(/^["']|["']$/g, "")}"`;
+  const bare = named.replace(/^["']|["']$/g, "");
+  // 指名的就是兜底那一款时不再重复接一遍（`"X", "X", sans-serif` 是同一个意思，
+  // 但读起来像有人把兜底链拼了两次）。
+  if (`"${bare}", sans-serif` === POSTER_FALLBACK_STACK) return POSTER_FALLBACK_STACK;
+  const first = named.includes(",") ? named : `"${bare}"`;
   return `${first}, ${POSTER_FALLBACK_STACK}`;
 }
 
@@ -898,10 +902,11 @@ function PropsImage(
   const radius = Math.max(0, numOr(p.radius, 0));
 
   if (!src) {
-    const raw = strOf(p.src);
+    // 拒掉的 src 一个字都不回显：回显等于把不可信内容搬进页面，
+    // 而「这一格为什么是空的」用不着把那串东西念出来。
     ctx.notes.add(
-      raw
-        ? `有一格的图 src 不是 https:// 或 data:image/（拿到的是「${raw.slice(0, 24)}…」），本站不加载它。`
+      strOf(p.src)
+        ? "有一格的图 src 不是 https:// 或 data:image/，本站不加载它，所以这一格是占位块。"
         : "有一格的 image 元素没有 props.src，这一格的图没跟着文档来。",
     );
     // 缺图不画一块干净的浅灰（干净的灰块会被当成设计），带上文案说明缺的是什么。
@@ -1006,8 +1011,14 @@ function PropsImage(
   );
 }
 
-/** 背景纹理叠层。取值与常数逐条对齐 `render.ts:1448-1533` 的 `bgOverlaySvg`。 */
-function PropsOverlay({ bg, W, H, ctx }: { bg: PropsBackground; W: number; H: number; ctx: RenderCtx }) {
+/**
+ * 背景纹理叠层。取值与常数逐条对齐 `render.ts:1448-1533` 的 `bgOverlaySvg`。
+ *
+ * ⚠️ 这里是普通函数、不是组件：`pattern` / `radialGradient` 要在 `<defs>` 被
+ * React 读到之前就压进 `ctx.defs`。写成组件的话它在 `<defs>` 之后才执行，
+ * 纹理就会引用一个不存在的 id —— 站内背景干净一片，封面上有纹理。
+ */
+function propsOverlay(bg: PropsBackground, W: number, H: number, ctx: RenderCtx) {
   const ov = strOf(bg.overlay);
   if (!ov || ov === "none") return null;
   const c = strOf(bg.overlayColor) ?? "#ffffff";
@@ -1164,7 +1175,7 @@ function PropsDocumentViewer({ work, doc }: { work: WorkEntry; doc: PropsDoc }) 
       );
     });
 
-  const overlay = <PropsOverlay bg={bg} W={W} H={H} ctx={ctx} />;
+  const overlay = propsOverlay(bg, W, H, ctx);
   if (bgSrc) {
     ctx.defs.push(
       <clipPath key="background-crop" id="background-crop">

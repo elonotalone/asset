@@ -10,15 +10,13 @@
   },
   "attribution": [
     {
-      "assetId": "scene",
-      "source": "OceanLeo 素材库",
-      "license": "CC0 1.0",
+      "text": "\"design-scene-classroom-01\" by OceanLeo 素材库",
+      "licenseCode": "CC0",
       "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
     },
     {
-      "assetId": "font-smiley",
-      "source": "得意黑 Smiley Sans",
-      "license": "SIL OFL 1.1",
+      "text": "\"Smiley Sans\" 得意黑",
+      "licenseCode": "SIL-OFL-1.1",
       "licenseUrl": "https://scripts.sil.org/OFL"
     }
   ],
@@ -125,7 +123,7 @@
         "opacity": 1,
         "props": {
           "kind": "star",
-          "fill": "#fde047",
+          "fill": "#fcd34d",
           "stroke": "transparent",
           "strokeWidth": 0,
           "radius": 0,

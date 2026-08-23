@@ -19,6 +19,8 @@ const FONT_CSS = "app/poster-fonts.css";
 const VIEWER = "components/WorksViewer.tsx";
 const LAYOUT = "app/layout.tsx";
 const FIXTURE = "tests/fixtures/poster/skeleton-poster.document.json";
+/** 仲裁 01 裁定的那一套：顶层 `spec` + `document.elements[].props`。 */
+const PROPS_FIXTURE = "tests/fixtures/poster/skeleton-poster.props.json";
 
 /**
  * W2 的字体台账。它在另一个仓（文档仓 `/opt/cursor-workspaces/oceandino`），
@@ -173,21 +175,29 @@ function allDocuments(): { file: string; doc: DesignDoc }[] {
         .filter((name) => name.endsWith(".json"))
         .map((name) => path.join(shelf, name))
     : [];
-  for (const file of [...files, FIXTURE]) {
+  for (const file of [...files, FIXTURE, PROPS_FIXTURE]) {
     const doc = readDoc(file);
     if (doc) out.push({ file, doc });
   }
   return out;
 }
 
+/**
+ * 两套序列化的字体名落点不同：flat 形在 `el.fontFamily`，props 形在
+ * `el.props.fontFamily`（站内 684 张与本波产物都是后者）。两处都要收，
+ * 少收一处就等于「新形状的字没被这条判据管住」。
+ */
 function familiesUsedBy(doc: DesignDoc): string[] {
-  return [
-    ...new Set(
-      (doc.elements ?? [])
-        .filter((el): el is DesignElement & { fontFamily: string } => typeof el.fontFamily === "string")
-        .flatMap((el) => familyCandidates(el.fontFamily)),
-    ),
-  ];
+  const names: string[] = [];
+  for (const el of doc.elements ?? []) {
+    const flat = typeof el.fontFamily === "string" ? el.fontFamily : null;
+    const props = el.props && typeof el.props === "object" ? (el.props as Record<string, unknown>) : null;
+    const inProps = props && typeof props.fontFamily === "string" ? props.fontFamily : null;
+    for (const value of [flat, inProps]) {
+      if (value) names.push(...familyCandidates(value));
+    }
+  }
+  return [...new Set(names)];
 }
 
 const FIXTURE_ENVELOPE = JSON.parse(readFileSync(FIXTURE, "utf8")) as {
@@ -537,17 +547,32 @@ test("⑥ 真实产出文档（W1 未就绪时用 fixture）渲染不抛错，�
   );
   assert.ok(html.length > 0, "渲染出空串");
 
-  const groups = (doc.elements ?? []).filter((el) => el.type === "group").length;
-  const nodes =
-    (html.match(/<div style="position:absolute/g) ?? []).length +
-    (html.match(/<img /g) ?? []).length +
-    (html.match(/<svg/g) ?? []).length;
-  assert.equal(nodes, (doc.elements ?? []).length - groups, `${file}：落墨节点数与元素数对不上`);
+  // 两套序列化各有自己的落墨节点形状：flat 形一个元素一个 div/img/svg，
+  // props 形一个元素一个 <g transform>。判形错了就等于这条判据没在管事，
+  // 所以先按文档自己的形状选口径，再数。
+  const isProps = (doc.elements ?? []).some((el) => el.props && typeof el.props === "object");
+  if (isProps) {
+    const drawable = (doc.elements ?? []).filter(
+      (el) => el.hidden !== true && (el.type === "shape" || el.type === "text" || el.type === "image"),
+    ).length;
+    const nodes = (html.match(/<g transform="translate\(/g) ?? []).length;
+    assert.equal(nodes, drawable, `${file}：props 形落墨节点数与元素数对不上`);
+  } else {
+    const groups = (doc.elements ?? []).filter((el) => el.type === "group").length;
+    const nodes =
+      (html.match(/<div style="position:absolute/g) ?? []).length +
+      (html.match(/<img /g) ?? []).length +
+      (html.match(/<svg/g) ?? []).length;
+    assert.equal(nodes, (doc.elements ?? []).length - groups, `${file}：落墨节点数与元素数对不上`);
+  }
 
   // 每段文字都要真的出现在 DOM 里（被吞掉的字在图上就是空白）。
   for (const el of doc.elements ?? []) {
-    if (el.type !== "text" || typeof el.text !== "string" || !el.text.trim()) continue;
-    const line = el.text.split("\n")[0].replace(/["'<>&]/g, "").trim();
+    if (el.type !== "text") continue;
+    const props = el.props && typeof el.props === "object" ? (el.props as Record<string, unknown>) : null;
+    const raw = typeof el.text === "string" ? el.text : typeof props?.text === "string" ? props.text : null;
+    if (!raw || !raw.trim()) continue;
+    const line = raw.split("\n")[0].replace(/["'<>&]/g, "").trim();
     if (line) assert.ok(html.includes(line), `${file}：文字没上屏 → ${line}`);
   }
 });
@@ -583,6 +608,272 @@ test("排字复位钉死在容器上：块与字错开的每一个来源都显�
   // 换行点必须和光栅器的 tokenize 一致：拉丁词整体挪行，不拆词。
   assert.match(html, /overflow-wrap:normal/, "text 没复位 overflow-wrap，祖先的 break-words 会把拉丁词拆开");
   assert.match(html, /word-break:normal/, "text 没复位 word-break");
+});
+
+/* ══════════════ props 形（仲裁 01 裁定的那一套）══════════════════════════════
+ *
+ * 判据仍然只有一条：**用户点开一件海报，看到的必须和货架封面是同一张图。**
+ * props 形的渲染端是 `design/lib/render.ts` 的 `exportDocumentToSVG`（684 张模板与
+ * 用户编辑器都走它），所以这一节断言的是「站内画出来的几何与效果，和那一端
+ * 逐个数字对得上」，而不是「组件没崩」。期望值一律按渲染端的公式当场算，
+ * 不抄一串浮点数 —— 抄下来的数字改了公式也不会红。
+ */
+
+const PROPS_ENVELOPE = JSON.parse(readFileSync(PROPS_FIXTURE, "utf8")) as {
+  spec: Record<string, unknown>;
+  document: DesignDoc;
+  attribution: WorkAttribution[];
+};
+
+function propsWork(overrides: Partial<WorkEntry> = {}): WorkEntry {
+  return {
+    ...fixtureWork(),
+    id: "w3-props-fixture",
+    title: "W3 fixture · props 形查看器验收稿",
+    styleId: "props-fixture",
+    attribution: PROPS_ENVELOPE.attribution,
+    sourceFile: PROPS_FIXTURE,
+    ...overrides,
+  };
+}
+
+function renderProps(): string {
+  return render(<WorksViewer work={propsWork()} payload={PROPS_ENVELOPE} />);
+}
+
+function elementOf(id: string): DesignElement & { props: Record<string, unknown> } {
+  const el = (PROPS_ENVELOPE.document.elements ?? []).find((e) => e.id === id);
+  assert.ok(el, `fixture 里没有 id=${id} 这个元素`);
+  return el as DesignElement & { props: Record<string, unknown> };
+}
+
+/** 渲染端 `render.ts:968-972` 的角度换算。站内那一份必须给出同样的四个数。 */
+function gradientAxis(deg: number) {
+  const rad = ((deg - 90) * Math.PI) / 180;
+  return {
+    x1: ((50 - Math.cos(rad) * 50) / 100).toFixed(4),
+    y1: ((50 - Math.sin(rad) * 50) / 100).toFixed(4),
+    x2: ((50 + Math.cos(rad) * 50) / 100).toFixed(4),
+    y2: ((50 + Math.sin(rad) * 50) / 100).toFixed(4),
+  };
+}
+
+test("⑦ 判形：props 形走 props 分支、flat 形照旧、认不出的文档说认不出", () => {
+  const propsHtml = renderProps();
+  const doc = PROPS_ENVELOPE.document;
+  assert.ok(
+    propsHtml.includes(`viewBox="0 0 ${doc.width} ${doc.height}"`),
+    "props 形没渲成文档尺寸的 svg 画布",
+  );
+  // props 形不该落到 flat 那一支的绝对定位 div 上（落过去就是几何全错）。
+  assert.equal(propsHtml.includes('<div style="position:absolute'), false, "props 形掉进了 flat 分支");
+
+  // flat 形不许被这一波带走：存量四件封面还在用它。
+  const flatHtml = render(<WorksViewer work={fixtureWork()} payload={FIXTURE_ENVELOPE} />);
+  assert.ok(flatHtml.includes('<div style="position:absolute'), "flat 分支被换掉了，存量四件会渲错");
+
+  // 判不出来的时候要说话：空白页会被当成没做，灰块会被当成设计。
+  const alien = render(
+    <WorksViewer work={propsWork()} payload={{ document: { width: 100, height: 100, elements: [{ id: "x", type: "shape" }] } }} />,
+  );
+  assert.match(alien, /认不出/, "认不出的文档没说认不出");
+  assert.equal(alien.includes("<svg"), false, "认不出的文档还是画了一张图出来");
+  assert.match(alien, /props 形/, "认不出的提示没说清本站认哪两套");
+});
+
+test("⑧ 背景与色块的 linear-gradient 字符串真的变成 SVG 渐变（角度、停靠都对得上）", () => {
+  const html = renderProps();
+
+  // 背景：linear-gradient(160deg, #0b1120, #1e293b)
+  const bgAxis = gradientAxis(160);
+  assert.match(html, /<linearGradient id="bg-gradient"/, "背景渐变没落地");
+  assert.ok(
+    html.includes(`x1="${bgAxis.x1}" y1="${bgAxis.y1}" x2="${bgAxis.x2}" y2="${bgAxis.y2}"`),
+    `背景渐变的角度换算与渲染端不一致（期望 ${JSON.stringify(bgAxis)}）`,
+  );
+  assert.ok(html.includes('fill="url(#bg-gradient)"'), "背景没有用上那条渐变");
+
+  // 色块：linear-gradient(180deg, rgba(2,6,23,0.1), #020617 78%)
+  // ⚠️ rgba() 里的逗号不许当成停靠分隔符；带百分比的停靠要落到 offset 上。
+  assert.match(html, /<linearGradient id="sg-scrim"/, "色块渐变没落地（202 处实测用量走的就是这一支）");
+  assert.ok(html.includes('stop-color="rgba(2,6,23,0.1)"'), "rgba 停靠被逗号拆坏了");
+  assert.ok(html.includes('offset="78.0%"'), "带百分比的停靠没落到 offset 上");
+  assert.ok(html.includes('fill="url(#sg-scrim)"'), "色块没有用上它自己的渐变");
+
+  // 背景纹理（544/684 张在用）：dots 走 pattern，间距按渲染端公式。
+  const gap = Math.max(36, (PROPS_ENVELOPE.document.width ?? 1080) * 0.05);
+  assert.ok(html.includes(`<pattern id="ov-dots" width="${gap}" height="${gap}"`), "背景纹理 dots 没落地");
+});
+
+test("⑨ 文字三档效果（shadow / outline2 / gradient）与长影：数字逐个对齐渲染端", () => {
+  const html = renderProps();
+
+  // shadow：dy = fs*0.05、stdDeviation = fs*0.06（`render.ts:1417`）。
+  const title = elementOf("title");
+  const tfs = title.props.fontSize as number;
+  assert.match(html, /<filter id="sh-title"/, "shadow 效果没落地");
+  assert.ok(
+    html.includes(`dy="${Number((tfs * 0.05).toFixed(1))}" stdDeviation="${Number((tfs * 0.06).toFixed(1))}"`),
+    `投影的偏移/模糊与渲染端不一致（fs=${tfs}）`,
+  );
+  assert.ok(html.includes('flood-color="rgba(2,6,23,0.62)"'), "shadowColorHex 没落地，投影会变成默认色");
+
+  // outline2：内描边 fs*sc、外描边 fs*sc*2.1，外层在下（先画白后画彩再画字）。
+  const outlined = elementOf("outlined");
+  const ofs = outlined.props.fontSize as number;
+  const sc = outlined.props.strokeScale as number;
+  const inner = Number(Math.max(1, ofs * sc).toFixed(1));
+  const outer = Number(Math.max(2, ofs * sc * 2.1).toFixed(1));
+  assert.match(html, /paint-order="stroke"/, "描边没写 paint-order=stroke，描边会盖住字身");
+  // 三层用的是同一段字，所以按「含这段字的 <text> 标签」逐层取，不按字符串位置猜。
+  const layers = html.match(/<text [^>]*><tspan[^>]*>双层描边标题<\/tspan><\/text>/g) ?? [];
+  assert.equal(layers.length, 3, `outline2 应当是三层（外描边 / 内描边 / 字），实际 ${layers.length} 层`);
+  assert.ok(layers[0].includes(`stroke-width="${outer}"`), `最底层不是外描边（期望宽 ${outer}）`);
+  assert.ok(layers[1].includes(`stroke-width="${inner}"`), `中间层不是内描边（期望宽 ${inner}）`);
+  assert.equal(layers[2].includes("stroke="), false, "最上层不是干净的字身，描边会把字埋掉");
+  assert.ok(layers[0].includes('fill="#ffffff"') && layers[1].includes('fill="#7f1d1d"'), "两层描边的颜色接反了");
+
+  // gradient：fillGradient 变成 SVG 渐变并接到字的 fill 上。
+  assert.match(html, /<linearGradient id="tg-gradient-line"/, "渐变字没落地");
+  assert.ok(html.includes('fill="url(#tg-gradient-line)"'), "渐变字的 fill 没接上渐变");
+  assert.ok(html.includes('offset="45.0%"'), "渐变字中间那个停靠丢了");
+
+  // longshadow：层数 = clamp(round(fs*0.14), 6, 14)，每层沿 45° 偏 s*fs*0.02。
+  const ls = elementOf("long-shadow");
+  const lfs = ls.props.fontSize as number;
+  const steps = Math.min(14, Math.max(6, Math.round(lfs * 0.14)));
+  const copies = (html.match(/fill="rgba\(0,0,0,0\.34\)"/g) ?? []).length;
+  assert.equal(copies, steps, `长影层数不对（期望 ${steps} 层）`);
+  const far = Number((steps * lfs * 0.02).toFixed(1));
+  assert.ok(html.includes(`translate(${far} ${far})`), `长影最远那一层的偏移不对（期望 ${far}）`);
+});
+
+test("⑩ effect: highlight 不再自己估算叠块（仲裁 03：块宽由引擎显式给），但要点名", () => {
+  const html = renderProps();
+  const el = elementOf("legacy-highlight");
+  const color = el.props.highlightColor as string;
+
+  // 渲染端那套「全角≈1.0em、ASCII≈0.55em」的估算对美术字大幅失真，
+  // 叠上去就是重影加错位 —— 所以这一侧一个估算块都不许出现。
+  assert.equal(html.includes(color), false, "又自己估算了一层高亮块，会与引擎显式给的块重影");
+  assert.equal(/<rect[^>]*rx="[\d.]+"[^>]*fill="#fde047"/.test(html), false, "高亮块以别的写法漏了出来");
+
+  // 但字本身照旧要上屏，而且要把「块由引擎给」这件事说出来，不静默吃掉。
+  assert.ok(html.includes(el.props.text as string), "高亮那段字没上屏");
+  assert.match(html, /effect: highlight/, "遇到 highlight 没点名，用户看不到块也不知道为什么");
+});
+
+test("⑪ props.src 只收 https:// 与 data:image/，别的一律不加载（入库校验 B1/B6 同一条闸）", () => {
+  const html = renderProps();
+  const scene = elementOf("scene");
+  const badge = elementOf("badge");
+
+  assert.ok(html.includes(`href="${scene.props.src}"`), "https 图没渲成 <image href>");
+  assert.ok(html.includes(`href="${badge.props.src}"`), "data:image 图没渲成 <image href>");
+
+  // 敌意 src 一个字都不许进 DOM，并且这一格要看得出是缺陷不是设计。
+  assert.equal(html.includes("javascript:"), false, "javascript: 的 src 进了 DOM");
+  assert.equal(html.includes("alert(document.domain)"), false, "敌意 src 的正文进了 DOM");
+  assert.match(html, /#EEF1F5/, "被拒的图没画占位块");
+  assert.match(html, /不是 https/, "被拒的图没点名，看起来就像设计里本来就有一块灰");
+});
+
+test("⑫ 图的裁剪 / 圆角 / 翻转 / 落影与渲染端同一套算法", () => {
+  const html = renderProps();
+  const scene = elementOf("scene");
+  const w = scene.w as number;
+  const h = scene.h as number;
+  const crop = scene.props.crop as { x: number; y: number; w: number; h: number };
+
+  // 裁剪：`editor-interactions.ts:382` 的投影 —— 整张图铺在裁剪窗下面。
+  const destX = (-crop.x / crop.w) * w;
+  const destW = w / crop.w;
+  assert.ok(html.includes(`x="${destX}"`), `裁剪后的横向偏移不对（期望 ${destX}）`);
+  assert.ok(html.includes(`width="${destW}"`), `裁剪后的宽不对（期望 ${destW}）`);
+  assert.match(html, /preserveAspectRatio="none"/, "图没按渲染端的 preserveAspectRatio=none 铺（会变形口径不一致）");
+
+  // 圆角走 clipPath（不是 CSS 圆角）：与渲染端同一处裁法。
+  assert.ok(html.includes(`<clipPath id="clip-scene"><rect x="0" y="0" width="${w}" height="${h}" rx="${scene.props.radius}">`), "图的圆角没走 clipPath");
+
+  // 翻转：先平移一整个宽再镜像，图才不会跑出盒子。
+  assert.ok(html.includes(`translate(${w} 0) scale(-1 1)`), "flipX 的变换不对");
+
+  // 抠图落影三档：dim = min(w,h)，soft 档 dy = dim*0.015、blur = dim*0.035。
+  const dim = Math.min(w, h);
+  assert.ok(
+    html.includes(`dy="${Number((dim * 0.015).toFixed(1))}" stdDeviation="${Number((dim * 0.035).toFixed(1))}"`),
+    "抠图落影的偏移/模糊与渲染端不一致",
+  );
+  // CSS 滤镜白名单：filter=vivid 只许映射成渲染端那一条。
+  assert.match(html, /filter:saturate\(1\.5\) contrast\(1\.05\)/, "图的 filter 没按渲染端的映射落地");
+});
+
+test("⑬ 几何：z 升序、旋转绕中心、hidden 不落墨、认不出的一律点名", () => {
+  const html = renderProps();
+
+  // z 升序：底色块（z=1）必须排在正文字（z=20）之前。
+  const scrimAt = html.indexOf("url(#sg-scrim)");
+  const kickerAt = html.indexOf("秋季公开课");
+  assert.ok(scrimAt >= 0 && kickerAt >= 0, "底色块或正文字没渲出来");
+  assert.ok(scrimAt < kickerAt, "没按 z 升序排：底色块盖到字上面了");
+
+  // 旋转绕元素中心，与渲染端 `render.ts:1142` 同一条 transform。
+  const wedge = elementOf("wedge");
+  const x = wedge.x as number;
+  const y = wedge.y as number;
+  const w = wedge.w as number;
+  const h = wedge.h as number;
+  assert.ok(
+    html.includes(`translate(${x + w / 2} ${y + h / 2}) rotate(${wedge.rotation}) translate(${-w / 2} ${-h / 2})`),
+    "旋转不是绕元素中心，元素会甩到别处",
+  );
+
+  // 几何真的画出来了（不是所有 kind 都被兜成矩形）。
+  assert.match(html, /<ellipse cx="210" cy="210"/, "circle 没画成椭圆（16,470 个实测用量走这一支）");
+  assert.ok(html.includes(`points="${w / 2},0 ${w},${h} 0,${h}"`), "triangle 的三个点不对");
+  // 几何一律写在元素本地坐标里（位移由外面那层 transform 给），所以 sparkle 从 (w/2, 0) 起笔。
+  const sparkle = elementOf("sparkle-1");
+  assert.ok(
+    html.includes(`<path d="M ${(sparkle.w as number) / 2} 0 C`),
+    "sparkle 没画成星芒（1,385 个实测用量走这一支）",
+  );
+
+  // 隐藏层一笔不落。
+  assert.equal(html.includes("#ff00ff"), false, "hidden 的层被画出来了");
+
+  // 认不出的东西一律点名：图形 kind、文字 effect、元素 type、背景纹理。
+  assert.match(html, /kind=hexagon/, "认不出的图形没点名");
+  assert.match(html, /effect: wobble/, "认不出的文字效果没点名");
+  assert.match(html, /type=sticker/, "认不出的元素类型没点名");
+  assert.equal(html.includes("✨"), false, "认不出的元素被硬画了出来");
+});
+
+test("⑭ props 形的字也接兜底链，且用到的每一款都在 poster-fonts.css 里", () => {
+  const html = renderProps();
+  const declared = declaredFamilies(readFileSync(FONT_CSS, "utf8"));
+  const used = familiesUsedBy(PROPS_ENVELOPE.document);
+  assert.ok(used.length >= 3, `props fixture 只用了 ${used.length} 款字，撑不起这条判据`);
+
+  for (const family of used) {
+    assert.ok(
+      declared.has(normalizeFamily(family)),
+      `props 形文档用了 "${family}"，${FONT_CSS} 里没有它的 @font-face（站内会落到系统字，和封面不是同一套）`,
+    );
+    // 每一处 fontFamily 后面都要接兜底链：拉丁 display 字没有汉字时，
+    // 两边都落到 Source Han Sans CN，才不会「站内是系统 UI 字、封面是思源黑」。
+    const chain = `&quot;${family}&quot;, &quot;${FALLBACK_FAMILY}&quot;, sans-serif`;
+    // 指名的就是兜底那一款时，`"X", sans-serif` 本身就是那条链，不必再接一遍。
+    const selfIsFallback = `font-family="&quot;${FALLBACK_FAMILY}&quot;, sans-serif"`;
+    assert.ok(
+      html.includes(`font-family="${chain}"`) ||
+        (family === FALLBACK_FAMILY && html.includes(selfIsFallback)),
+      `"${family}" 没接兜底链`,
+    );
+  }
+
+  // 存量文档写 `Smiley Sans`、字体文件声明的是 `Smiley Sans Oblique`（仲裁 04）：
+  // 按 alias 声明之后，文档里那个常见写法必须能命中。
+  assert.ok(declared.has(normalizeFamily("Smiley Sans")), "台账 alias 没落进 CSS，存量写法 Smiley Sans 会命不中");
 });
 
 test("查看器仍然不引 iframe / srcdoc / innerHTML（UC-1 不许因为这一波松掉）", () => {
