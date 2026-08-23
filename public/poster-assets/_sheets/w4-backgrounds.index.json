@@ -1,0 +1,85 @@
+{
+  "sheet": "w4-backgrounds.webp",
+  "cells": [
+    {
+      "idx": 0,
+      "file": "bg-blush-plain.webp",
+      "path": "bg-blush-plain"
+    },
+    {
+      "idx": 1,
+      "file": "bg-clay-warm.webp",
+      "path": "bg-clay-warm"
+    },
+    {
+      "idx": 2,
+      "file": "bg-cream-diffuse.webp",
+      "path": "bg-cream-diffuse"
+    },
+    {
+      "idx": 3,
+      "file": "bg-deep-forest.webp",
+      "path": "bg-deep-forest"
+    },
+    {
+      "idx": 4,
+      "file": "bg-frosted-teal.webp",
+      "path": "bg-frosted-teal"
+    },
+    {
+      "idx": 5,
+      "file": "bg-indigo-velvet.webp",
+      "path": "bg-indigo-velvet"
+    },
+    {
+      "idx": 6,
+      "file": "bg-ink-wash.webp",
+      "path": "bg-ink-wash"
+    },
+    {
+      "idx": 7,
+      "file": "bg-linen-warm.webp",
+      "path": "bg-linen-warm"
+    },
+    {
+      "idx": 8,
+      "file": "bg-macaron-pink.webp",
+      "path": "bg-macaron-pink"
+    },
+    {
+      "idx": 9,
+      "file": "bg-midnight-aurora.webp",
+      "path": "bg-midnight-aurora"
+    },
+    {
+      "idx": 10,
+      "file": "bg-mist-grey.webp",
+      "path": "bg-mist-grey"
+    },
+    {
+      "idx": 11,
+      "file": "bg-morandi-sage.webp",
+      "path": "bg-morandi-sage"
+    },
+    {
+      "idx": 12,
+      "file": "bg-paper-grain.webp",
+      "path": "bg-paper-grain"
+    },
+    {
+      "idx": 13,
+      "file": "bg-sage-plain.webp",
+      "path": "bg-sage-plain"
+    },
+    {
+      "idx": 14,
+      "file": "bg-slate-night.webp",
+      "path": "bg-slate-night"
+    },
+    {
+      "idx": 15,
+      "file": "bg-sunset-amber.webp",
+      "path": "bg-sunset-amber"
+    }
+  ]
+}

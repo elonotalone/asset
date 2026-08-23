@@ -1,0 +1,35 @@
+{
+  "sheet": "w4-decorations.webp",
+  "cells": [
+    {
+      "idx": 0,
+      "file": "design-deco-confetti-01.webp",
+      "path": "design-deco-confetti-01"
+    },
+    {
+      "idx": 1,
+      "file": "design-deco-floral-corner-01.webp",
+      "path": "design-deco-floral-corner-01"
+    },
+    {
+      "idx": 2,
+      "file": "design-deco-gold-stroke-01.webp",
+      "path": "design-deco-gold-stroke-01"
+    },
+    {
+      "idx": 3,
+      "file": "design-deco-sparkle-01.webp",
+      "path": "design-deco-sparkle-01"
+    },
+    {
+      "idx": 4,
+      "file": "design-deco-tropical-01.webp",
+      "path": "design-deco-tropical-01"
+    },
+    {
+      "idx": 5,
+      "file": "design-deco-watercolor-01.webp",
+      "path": "design-deco-watercolor-01"
+    }
+  ]
+}
