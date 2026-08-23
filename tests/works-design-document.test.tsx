@@ -710,6 +710,33 @@ test("⑧ 背景与色块的 linear-gradient 字符串真的变成 SVG 渐变（
   // 背景纹理（544/684 张在用）：dots 走 pattern，间距按渲染端公式。
   const gap = Math.max(36, (PROPS_ENVELOPE.document.width ?? 1080) * 0.05);
   assert.ok(html.includes(`<pattern id="ov-dots" width="${gap}" height="${gap}"`), "背景纹理 dots 没落地");
+  assert.ok(html.includes('fill="url(#ov-dots)"'), "dots 的 pattern 落地了但没有谁用它，背景还是一张平底");
+});
+
+test("⑧ 每一个 url(#…) 都要解得开：指空的引用在页面上看不出坏，图却少一层", () => {
+  // 这一条是「背景纹理没落地」那个缺陷的一般形式：`pattern` / 渐变 / `clipPath` /
+  // `filter` 只要在 `<defs>` 落地**之后**才被压进去，`fill="url(#ov-dots)"` 就指向
+  // 一个不存在的 id。浏览器不报错、不显形 —— 站内背景干净一片、封面有纹理，
+  // 而页面上看不出哪里坏了。所以逐个引用去对 defs 里的 id。
+  for (const [name, html] of [
+    ["自备 fixture", renderProps()],
+    [
+      "真引擎产物",
+      render(
+        <WorksViewer
+          work={propsWork({ id: "w3-engine-defs", sourceFile: ENGINE_FIXTURE })}
+          payload={JSON.parse(readFileSync(ENGINE_FIXTURE, "utf8"))}
+        />,
+      ),
+    ],
+  ] as const) {
+    const defined = new Set((html.match(/ id="([^"]+)"/g) ?? []).map((m) => /id="([^"]+)"/.exec(m)![1]));
+    const referenced = [...new Set((html.match(/url\(#([^)]+)\)/g) ?? []).map((m) => /url\(#([^)]+)\)/.exec(m)![1]))];
+    assert.ok(referenced.length >= 3, `${name} 一个 url(#…) 都没有，这条判据在这份文档上不成立`);
+    for (const id of referenced) {
+      assert.ok(defined.has(id), `${name} 引用了 url(#${id})，但 defs 里没有这个 id —— 这一层在站内是空的`);
+    }
+  }
 });
 
 test("⑨ 文字三档效果（shadow / outline2 / gradient）与长影：数字逐个对齐渲染端", () => {
@@ -1026,6 +1053,34 @@ test("⑬ 几何：z 升序、旋转绕中心、hidden 不落墨、认不出的�
 
   // 隐藏层一笔不落。
   assert.equal(html.includes("#ff00ff"), false, "hidden 的层被画出来了");
+
+  // z 升序不是「有一对顺序对了」就算：把一串块按乱序写进文档，
+  // DOM 里的先后必须完全跟着 z 走（数组顺序一个都不许渗进来）。
+  const palette = ["#010203", "#040506", "#070809", "#0a0b0c", "#0d0e0f", "#101112"];
+  const shuffled = [5, 2, 0, 4, 1, 3];
+  const zOrder = {
+    spec: { id: "z-order" },
+    document: {
+      width: 600,
+      height: 600,
+      elements: shuffled.map((z, i) => ({
+        id: `z-${z}`,
+        type: "shape",
+        x: 0,
+        y: i * 10,
+        w: 100,
+        h: 10,
+        z: z * 7,
+        props: { kind: "rect", fill: palette[z] },
+      })),
+    },
+  };
+  const zHtml = render(<WorksViewer work={propsWork({ id: "w3-z-order" })} payload={zOrder} />);
+  const seen = palette.map((color) => zHtml.indexOf(color));
+  for (const [i, at] of seen.entries()) assert.ok(at >= 0, `z=${i * 7} 那一块没画出来`);
+  for (let i = 1; i < seen.length; i += 1) {
+    assert.ok(seen[i] > seen[i - 1], `z 升序没排对：z=${i * 7} 排在了 z=${(i - 1) * 7} 前面`);
+  }
 
   // 认不出的东西一律点名：图形 kind、文字 effect、元素 type、背景纹理。
   assert.match(html, /kind=hexagon/, "认不出的图形没点名");
