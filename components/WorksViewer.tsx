@@ -236,11 +236,15 @@ function DesignDocumentViewer({ work, payload }: { work: WorkEntry; payload: Wor
               key={key}
               style={{
                 ...box,
-                // svg 默认是 inline，行盒的 baseline 间隙会把它顶下去几个像素；
-                // overflow 默认 hidden 会把描边压在 viewBox 边界上的那半个线宽切掉。
-                // 效果层（星光、圆点、折线）正是画在盒子边上的那一类。
+                // svg 默认是 inline：这里虽然 position:absolute 已经把它变成块级，
+                // 还是写明白，免得以后有人去掉定位就多出一段 baseline 间隙。
                 display: "block",
-                overflow: "visible",
+                // **裁到盒子**，这是与光栅器约好的口径：`raster.mjs` 的 path 分支
+                // 按 `rect(x,y,w,h)` 做 clip，理由是「svg viewport 默认 overflow:hidden」。
+                // 这里显式写成 hidden，就是把那条默认变成写下来的契约 ——
+                // 两边同裁，一份 `d` 画出盒子外的部分两边一起没有，不会一边有一边没。
+                // ⇒ 骨架给 path 的盒子必须真的框住它的 `d`（见 W3 交付单给 W1/W5 的接口说明）。
+                overflow: "hidden",
               }}
               viewBox={`${x} ${y} ${w} ${h}`}
               preserveAspectRatio="none"

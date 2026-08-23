@@ -305,11 +305,11 @@
         "id": "dot-a",
         "type": "path",
         "x": 176,
-        "y": 1272,
+        "y": 1260,
         "width": 24,
         "height": 24,
         "z": 29,
-        "pathData": "M188 1272 A 12 12 0 1 1 187.9 1272 Z",
+        "pathData": "M 188 1260 A 12 12 0 1 1 187.9 1260 Z",
         "fill": "#B4451F",
         "alt": "圆点"
       },
@@ -317,11 +317,11 @@
         "id": "dot-b",
         "type": "path",
         "x": 216,
-        "y": 1272,
+        "y": 1260,
         "width": 24,
         "height": 24,
         "z": 30,
-        "pathData": "M228 1272 A 12 12 0 1 1 227.9 1272 Z",
+        "pathData": "M 228 1260 A 12 12 0 1 1 227.9 1260 Z",
         "fill": "#1F2328",
         "alt": "圆点"
       },
@@ -338,8 +338,14 @@
     ]
   },
   "assets": {
-    "bg": { "assetId": "bg", "mediaType": "image/webp" },
-    "logo": { "assetId": "logo", "mediaType": "image/png" }
+    "bg": {
+      "assetId": "bg",
+      "mediaType": "image/webp"
+    },
+    "logo": {
+      "assetId": "logo",
+      "mediaType": "image/png"
+    }
   },
   "attribution": [
     {

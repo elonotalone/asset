@@ -113,6 +113,34 @@ const GENERIC_FAMILIES = new Set([
   "unset",
 ]);
 
+/** 查看器给每个 text 接的兜底族（`POSTER_FALLBACK_STACK` 的第一个名）。 */
+const FALLBACK_FAMILY = "Source Han Sans CN";
+
+/**
+ * 站点全局样式里实名写出来的字体族。海报字体一旦声明了这里面的名，
+ * 全站正文就会跟着用上（`body{font-family: Noto Sans SC, …}` 就是这么一条）。
+ */
+function globalFontStackNames(): Set<string> {
+  const css = [
+    "app/globals.css",
+    "node_modules/@oceanleo/ui/theme/ui.css",
+    "node_modules/@oceanleo/ui/src/theme/ui.css",
+  ]
+    .filter((file) => existsSync(file))
+    .map((file) => readFileSync(file, "utf8"))
+    .join("\n");
+  assert.ok(css.length > 0, "一份全局样式都没读到，这条检查会假绿");
+
+  const names = new Set<string>();
+  for (const hit of css.match(/font-family\s*:\s*([^;}]+)/g) ?? []) {
+    const value = hit.replace(/^font-family\s*:\s*/, "");
+    if (value.includes("var(")) continue; // 解不开的变量不猜
+    for (const name of familyCandidates(value)) names.add(normalizeFamily(name));
+  }
+  assert.ok(names.size > 0, "全局字体栈一个名都没解出来，这条检查会假绿");
+  return names;
+}
+
 function familyCandidates(value: string): string[] {
   return value
     .split(",")
@@ -297,22 +325,43 @@ test("① approved 的每一款都能按台账里的名（family 与 aliases）�
     t.diagnostic(`字体台账还没落盘（${FONT_LEDGER}）`);
     return;
   }
-  const declared = declaredFamilies(readFileSync(FONT_CSS, "utf8"));
+  const css = readFileSync(FONT_CSS, "utf8");
+  const declared = declaredFamilies(css);
+  const faces = declaredFaces(css);
   const approved = rows.filter((row) => row.status === "approved");
+  const globalNames = globalFontStackNames();
+  const fallbackFiles = new Set(
+    faces.filter((face) => normalizeFamily(face.family) === normalizeFamily(FALLBACK_FAMILY)).map((f) => f.src),
+  );
 
   for (const row of approved) {
     for (const name of [row.family, ...(row.aliases ?? [])]) {
       if (!name) continue;
+      if (declared.has(normalizeFamily(name))) continue;
+
+      // 允许缺席的**唯一**理由：这个名撞了站点全局字体栈（声明它就等于把全站正文
+      // 换成这份中文 OTF），而它指的文件已经在兜底族名下声明过 —— 查看器给每个
+      // text 都接了兜底链，所以指名它的文字最终落到的是同一份文件、同一副字。
+      // 两个条件缺一个都算真的缺款。
       assert.ok(
-        declared.has(normalizeFamily(name)),
+        globalNames.has(normalizeFamily(name)),
         `台账 approved 的 "${name}" 在 ${FONT_CSS} 里没有 @font-face —— ` +
           `光栅器按 family ∪ aliases 两套名都认，站内少一个名就渲不出`,
+      );
+      assert.ok(
+        row.ossUrl && fallbackFiles.has(row.ossUrl),
+        `"${name}" 撞了站点全局字体栈所以不能声明，但它指的 ${row.ossUrl} ` +
+          `也没有挂在兜底族 "${FALLBACK_FAMILY}" 名下 —— 那指名它的文字两边就不是同一副字`,
+      );
+      assert.match(
+        readFileSync(VIEWER, "utf8"),
+        new RegExp(`"${FALLBACK_FAMILY}"`),
+        `查看器没接兜底族 "${FALLBACK_FAMILY}"，上面那条豁免就不成立`,
       );
     }
   }
   // 台账的 weight 必须逐条落到 CSS 的 font-weight 上：字重挑错了脸，
   // 站内会比封面胖一圈或瘦一圈（容器上 font-synthesis:none，不许合成粗体补救）。
-  const faces = declaredFaces(readFileSync(FONT_CSS, "utf8"));
   for (const row of approved) {
     if (typeof row.weight !== "number" || !row.ossUrl) continue;
     for (const face of faces.filter((candidate) => candidate.src === row.ossUrl)) {
@@ -327,27 +376,10 @@ test("① approved 的每一款都能按台账里的名（family 与 aliases）�
 
 test("① 这些族名不许撞站点的全局字体栈（撞上就是全站每页拉一份 8 MB 中文字）", () => {
   const declared = declaredFamilies(readFileSync(FONT_CSS, "utf8"));
-
   // 全家桶主题里有 body{font-family: Noto Sans SC, …}：站上今天没有这个名的
   // @font-face，正文落在系统字上。这一份 CSS 只该管 works 页的海报，
   // 一旦声明了全局栈里的名，全站每一页都会去 OSS 拉那份中文 OTF。
-  const globalCss = [
-    "app/globals.css",
-    "node_modules/@oceanleo/ui/theme/ui.css",
-    "node_modules/@oceanleo/ui/src/theme/ui.css",
-  ]
-    .filter((file) => existsSync(file))
-    .map((file) => readFileSync(file, "utf8"))
-    .join("\n");
-  assert.ok(globalCss.length > 0, "一份全局样式都没读到，这条检查会假绿");
-
-  const globalNames = new Set<string>();
-  for (const hit of globalCss.match(/font-family\s*:\s*([^;}]+)/g) ?? []) {
-    const value = hit.replace(/^font-family\s*:\s*/, "");
-    if (value.includes("var(")) continue; // 解不开的变量不猜
-    for (const name of familyCandidates(value)) globalNames.add(normalizeFamily(name));
-  }
-  assert.ok(globalNames.size > 0, "全局字体栈一个名都没解出来，这条检查会假绿");
+  const globalNames = globalFontStackNames();
 
   for (const family of declared) {
     assert.equal(
@@ -375,12 +407,21 @@ test("② path 元素渲成 <svg><path d>，d 原样透传，且不被父容器�
   const svgCount = (html.match(/<svg/g) ?? []).length;
   assert.equal(svgCount, paths.length, `<svg> ${svgCount} 个，path 元素 ${paths.length} 个，对不上`);
 
-  // svg 默认 inline + overflow:hidden：前者被行盒基线顶下去几像素，
-  // 后者把压在 viewBox 边界上的半个线宽切掉。两样都要显式复位。
+  // 与光栅器约好的口径：两边都**裁到元素盒子**（`raster.mjs` 的 path 分支按
+  // rect(x,y,w,h) clip）。站内这里写成显式 hidden，把 svg 的默认变成写下来的契约；
+  // 一边裁一边不裁，同一份 d 就会画出两张图。
   for (const svg of html.match(/<svg[^>]*>/g) ?? []) {
     assert.match(svg, /display:block/, `svg 没有 display:block → ${svg.slice(0, 120)}`);
-    assert.match(svg, /overflow:visible/, `svg 没有 overflow:visible → ${svg.slice(0, 120)}`);
+    assert.match(svg, /overflow:hidden/, `svg 没有 overflow:hidden（与光栅器的 clip 对不上）`);
     assert.match(svg, /viewBox="/, `svg 缺 viewBox → ${svg.slice(0, 120)}`);
+  }
+
+  // viewBox 必须就是元素盒子（文档绝对坐标），`d` 才能按绝对坐标写。
+  for (const el of paths) {
+    assert.ok(
+      html.includes(`viewBox="${el.x} ${el.y} ${el.width} ${el.height}"`),
+      `path ${el.id} 的 viewBox 不是它的盒子，d 的绝对坐标就落错地方`,
+    );
   }
 
   // 描边色/填充色原样落地，别被默认值吞掉。

@@ -1,37 +1,48 @@
 /* ============================================================================
  * poster-fonts.css —— works 页海报查看器（`DesignDocumentViewer`）用的美术字。
+ * **这份文件是生成物，不要手改**；改法见下面「怎么重跑」。
  * ----------------------------------------------------------------------------
  * 为什么需要这一份：工程文件的 `text` 元素带 `fontFamily`，查看器第一天就把它写进了
- * inline style，但站上从来没有加载过这些字 —— 浏览器拿不到 family 就落到系统默认，
- * 于是「站内打开」和「货架封面」是两套字。这一份把字真的加载进来。
+ * inline style，但站上从来没有加载过这些字（`grep font-face app/ components/` 曾经零命中）
+ * —— 浏览器拿不到 family 就落到系统默认，于是「站内打开」和「货架封面」是两套字。
  *
- * 字体文件**不进依赖闭包**：入库校验只许闭包里出现 image/png|jpeg|webp，ttf / otf
- * 会被判「dependency is not an image」。所以美术字走两条腿 —— 站点这份 webfont 管
- * 浏览器，光栅器管本机字体文件 —— 工程文件里只用 `fontFamily` 指名。
+ * 字体文件**不进依赖闭包**：入库校验只许闭包里出现 image/png|jpeg|webp，ttf / otf 会被判
+ * 「dependency is not an image」。所以美术字走两条腿 —— 站点这份 webfont 管浏览器，
+ * 光栅器管本机字体文件 —— 工程文件里只用 `fontFamily` 指名。
  *
- * **准据是 `oceandino:scripts/data/oceanleo-poster-fonts.json`（W2 的字体台账）。**
- * 台账 71 款里 approved 31 / unverified 34 / rejected 6；这里只收 **approved 的 31 行**，
- * 逐款按台账的 `ossUrl` 与 `weight` 写死。台账那句规则原文：「status 不是 approved 的
- * 字体，不许出现在任何成品里」—— 所以 unverified 与 rejected 的 40 款一款都不在这里。
+ * 准据：`oceandino:scripts/data/oceanleo-poster-fonts.json`（W2 的字体台账，机器真相）。
+ * 台账 71 款里 approved 31 / unverified 34 / rejected 6；
+ * 这里只收 approved 的那些行。台账的规则原文：「status 不是 approved 的字体，
+ * 不许出现在任何成品里」。
  *
- * 一款为什么可能出现两条：台账的 `family` 是字体文件 name 表里的 en-US 名，`aliases`
- * 是站内历来用的名（例 `zcool-xiaowei.ttf` 文件里叫 `ZCOOL XiaoWei`，站内一直写
- * 「站酷小薇体」）。光栅器 `font.mjs` 按 `family` ∪ `aliases` 两套名查表，两个名都认，
- * 站内也必须两个名都认，否则同一份文档一边渲得出、一边渲不出。
+ * 一款为什么可能有好几条：台账的 `family` 是字体文件 name 表里的 en-US 名，`aliases`
+ * 是站内历来用的别名（例 `zcool-xiaowei.ttf` 文件里叫 `ZCOOL XiaoWei`，站内一直写
+ * 「站酷小薇体」）。光栅器 `font.mjs` 按 `family` ∪ `aliases` 大小写不敏感地查表，
+ * 两个名都认、且把同名的多行一起注册；站内必须照着来，否则同一份文档一边渲得出、
+ * 一边渲不出。`font-weight` 逐条取台账的 `weight`（容器上 `font-synthesis: none`，
+ * 字重挑错脸就没有合成粗体来兜）。
  *
- * family 名不许在这里改写：它必须和工程文件里的 `fontFamily`、以及光栅器注册的族名
- * 逐字一致（大小写不敏感），否则两边选到的是不同的脸。
+ * **故意没有声明的名：`Noto Sans SC`。**
+ * 它们撞了站点的全局字体栈（`@oceanleo/ui` 的 `body{font-family: Noto Sans SC, …}`）。
+ * 声明了就等于**全站每一页正文**都去 OSS 拉这份 8 MB 级的中文 OTF，而这份 CSS 只该管
+ * works 页的海报。指名它们的文字仍然是对的字：查看器给每个 text 都接了兜底族
+ * `Source Han Sans CN`（同一份 `noto-sans-sc*.otf`，见下面 role=body 那几条），
+ * 落到的是同一副字。判据由 `tests/works-design-document.test.tsx` 那几条「①」守着。
  *
- * 重新裁剪（台账变动后）：读台账里 status=approved 的行，按 family ∪ aliases 展开，
- * 每行一条 `@font-face`，`font-weight` 取台账的 `weight`。判据由
- * `tests/works-design-document.test.tsx` 的「① 台账」三条守着。
+ * 怎么重跑（台账变了就重跑，别手改）：读台账里 `status=approved` 的行，按
+ * `family` ∪ `aliases` 展开成族名，跳过与 `@oceanleo/ui/src/theme/ui.css` 里
+ * 实名出现的族重名的那些，每行一条 `@font-face`：`src` 取 `ossUrl`、
+ * `font-weight` 取 `weight`、一律 `font-display: swap`，按台账 `role` 分组排序。
+ * 跑完必跑 `node --import ./tests/register-tsx.mjs --test tests/works-design-document.test.tsx`。
+ *
+ * 生成读数：族名 36 个、`@font-face` 47 条，出自 approved 31 行。
  * ========================================================================== */
 
-/* ── role=body ─────────────────────────────────────────────────────────── */
+/* ── role=body（台账 role 字段）─────────────────────────────────────── */
 @font-face { font-family: "Cactus Classical Serif"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/cactus-classical-serif.ttf") format("truetype"); font-weight: 400; font-display: swap; }
 @font-face { font-family: "jf-openhuninn-1.1"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/jf-fenyuan.ttf") format("truetype"); font-weight: 400; font-display: swap; }
 
-/* ── role=title ─────────────────────────────────────────────────────────── */
+/* ── role=title（台账 role 字段）─────────────────────────────────────── */
 @font-face { font-family: "Bebas Neue"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/bebas-neue.ttf") format("truetype"); font-weight: 400; font-display: swap; }
 @font-face { font-family: "Klee One"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/klee-one-semibold.ttf") format("truetype"); font-weight: 600; font-display: swap; }  /* 台账 family: Klee One SemiBold */
 @font-face { font-family: "Klee One SemiBold"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/klee-one-semibold.ttf") format("truetype"); font-weight: 600; font-display: swap; }
@@ -44,7 +55,7 @@
 @font-face { font-family: "ZCOOL XiaoWei"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/zcool-xiaowei.ttf") format("truetype"); font-weight: 400; font-display: swap; }
 @font-face { font-family: "站酷小薇体"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/zcool-xiaowei.ttf") format("truetype"); font-weight: 400; font-display: swap; }  /* 台账 family: ZCOOL XiaoWei */
 
-/* ── role=display ─────────────────────────────────────────────────────────── */
+/* ── role=display（台账 role 字段）─────────────────────────────────────── */
 @font-face { font-family: "Abril Fatface"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/abril-fatface.ttf") format("truetype"); font-weight: 400; font-display: swap; }
 @font-face { font-family: "Anton"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/anton.ttf") format("truetype"); font-weight: 400; font-display: swap; }
 @font-face { font-family: "lianmengqiyilushuaizhengruiheiti"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/lianmeng-lushuai.ttf") format("truetype"); font-weight: 400; font-display: swap; }
@@ -52,6 +63,15 @@
 @font-face { font-family: "LXGW Marker Gothic"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/lxgw-manhei.ttf") format("truetype"); font-weight: 400; font-display: swap; }
 @font-face { font-family: "Montserrat"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/montserrat.ttf") format("truetype"); font-weight: 100; font-display: swap; }  /* 台账 family: Montserrat Thin */
 @font-face { font-family: "Montserrat Thin"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/montserrat.ttf") format("truetype"); font-weight: 100; font-display: swap; }
+@font-face { font-family: "Noto Sans CJK SC"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/noto-sans-sc.otf") format("opentype"); font-weight: 400; font-display: swap; }  /* 台账 family: Source Han Sans CN */
+@font-face { font-family: "Noto Sans CJK SC"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/noto-sans-sc-bold.otf") format("opentype"); font-weight: 700; font-display: swap; }  /* 台账 family: Source Han Sans CN */
+@font-face { font-family: "Noto Sans CJK SC"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/noto-sans-sc-black.otf") format("opentype"); font-weight: 900; font-display: swap; }  /* 台账 family: Source Han Sans CN Heavy */
+@font-face { font-family: "Noto Serif CJK SC"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/noto-serif-sc.otf") format("opentype"); font-weight: 400; font-display: swap; }  /* 台账 family: Source Han Serif CN */
+@font-face { font-family: "Noto Serif CJK SC"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/noto-serif-sc-bold.otf") format("opentype"); font-weight: 700; font-display: swap; }  /* 台账 family: Source Han Serif CN */
+@font-face { font-family: "Noto Serif CJK SC"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/noto-serif-sc-black.otf") format("opentype"); font-weight: 900; font-display: swap; }  /* 台账 family: Source Han Serif CN Heavy */
+@font-face { font-family: "Noto Serif SC"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/noto-serif-sc.otf") format("opentype"); font-weight: 400; font-display: swap; }  /* 台账 family: Source Han Serif CN */
+@font-face { font-family: "Noto Serif SC"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/noto-serif-sc-bold.otf") format("opentype"); font-weight: 700; font-display: swap; }  /* 台账 family: Source Han Serif CN */
+@font-face { font-family: "Noto Serif SC"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/noto-serif-sc-black.otf") format("opentype"); font-weight: 900; font-display: swap; }  /* 台账 family: Source Han Serif CN Heavy */
 @font-face { font-family: "Smiley Sans"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/smiley-sans.ttf") format("truetype"); font-weight: 400; font-display: swap; }  /* 台账 family: Smiley Sans Oblique */
 @font-face { font-family: "Smiley Sans Oblique"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/smiley-sans.ttf") format("truetype"); font-weight: 400; font-display: swap; }
 @font-face { font-family: "Source Han Sans CN"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/noto-sans-sc.otf") format("opentype"); font-weight: 400; font-display: swap; }
@@ -64,7 +84,7 @@
 @font-face { font-family: "Source Han Serif CN Heavy"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/noto-serif-sc-black.otf") format("opentype"); font-weight: 900; font-display: swap; }
 @font-face { font-family: "ZCOOL QingKe HuangYou"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/zcool-qingke-huangyou.ttf") format("truetype"); font-weight: 400; font-display: swap; }
 
-/* ── role=script ─────────────────────────────────────────────────────────── */
+/* ── role=script（台账 role 字段）─────────────────────────────────────── */
 @font-face { font-family: "Caveat"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/caveat.ttf") format("truetype"); font-weight: 400; font-display: swap; }
 @font-face { font-family: "Dancing Script"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/dancing-script.ttf") format("truetype"); font-weight: 400; font-display: swap; }
 @font-face { font-family: "Liu Jian Mao Cao"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/liu-jian-mao-cao.ttf") format("truetype"); font-weight: 400; font-display: swap; }
@@ -72,25 +92,3 @@
 @font-face { font-family: "Ma Shan Zheng"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/ma-shan-zheng.ttf") format("truetype"); font-weight: 400; font-display: swap; }
 @font-face { font-family: "Pacifico"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/pacifico.ttf") format("truetype"); font-weight: 400; font-display: swap; }
 @font-face { font-family: "Zhi Mang Xing"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/zhi-mang-xing.ttf") format("truetype"); font-weight: 400; font-display: swap; }
-/* ── 光栅器兜底体的另一个名 ─────────────────────────────────────────────────
- * 光栅器渲一段没指名（或指名查不到）的字时，用的是本机
- * `NotoSansCJK-Regular.ttc` 抽出来的 SC 脸（`font.mjs` 的 `PREFERRED_FACES`）。
- * 存量成品里也有直接写 `fontFamily: "Noto Sans CJK SC, sans-serif"` 的
- * （`public/works/composite_image/resume-clinical-01.json`）。这个名台账一条都没收，
- * 站内查不到就落到系统 UI 字 —— 而封面上是 Noto Sans CJK SC，两边不是同一套字。
- *
- * 所以这里给同一份**台账 approved 的文件**（`noto-sans-sc*.otf`，台账 family
- * `Source Han Sans CN`，OFL）再挂一个名。**没有引入新字体、没有新授权**：
- * Noto Sans CJK SC 与 Source Han Sans CN 是同一副字的 Google / Adobe 双名。
- * 已请 W2 把这个名补进台账那三行的 `aliases`（`signals/W3-W2.md` S1），
- * 补完之后这一段就有台账出处，不再是站内单方面声明。
- *
- * **`Noto Sans SC` 这个名是故意不声明的。** 全家桶主题里有
- * `body{font-family: Noto Sans SC, -apple-system, …}`（`@oceanleo/ui/theme/ui.css`）——
- * 站上今天没有这个名的 `@font-face`，所以正文落在系统字上。这里一旦声明它，
- * **全站每一页的正文**都会去 OSS 拉这份 8.0 MB 的 OTF（三个字重合计 24.6 MB），
- * 而这一份 CSS 只该管 works 页的海报。判据由 `tests/works-design-document.test.tsx` 的
- * 「不许撞站点全局字体栈」一条守着。 */
-@font-face { font-family: "Noto Sans CJK SC"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/noto-sans-sc.otf") format("opentype"); font-weight: 400; font-display: swap; }
-@font-face { font-family: "Noto Sans CJK SC"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/noto-sans-sc-bold.otf") format("opentype"); font-weight: 700; font-display: swap; }
-@font-face { font-family: "Noto Sans CJK SC"; src: url("https://oceanleo-assets.oss-cn-guangzhou.aliyuncs.com/assets/font/noto-sans-sc-black.otf") format("opentype"); font-weight: 900; font-display: swap; }
