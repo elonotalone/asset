@@ -1,39 +1,56 @@
 [
   {
-    "id": "xhs-photo-press-02",
+    "id": "xhs-figure-ledger-loud-01",
     "artifactType": "composite_image",
-    "title": "专门跑一趟只为看一栋楼，值得吗",
-    "styleId": "xhs-photo-press",
-    "summary": "城市漫游封面：一张仰角实拍的建筑立面铺满整幅，三行深色主标题压在照片上部那块亮而平的天空上，一道短停顿线之下写一行落款。选图先量过——那块要放字的地方平均亮度 204、起伏 σ20，所以字用近黑而不是白；字底下没有垫任何色块，版面除照片外不引入新颜色。与同风格第 01 件的差别在文字块的位置与行数（那件是底部两行白字，这件是顶部三行深字），不是换张照片换句文案。",
-    "cover": "/works/composite_image/xhs-photo-press-02.cover.webp",
+    "title": "租的房子也能住出家的样子：只换带得走的四样",
+    "styleId": "xhs.figure-right-ledger.loud",
+    "summary": "租房改造封面：抠好的人物立在右侧并出血到画板下缘，左上三行主标题，最后一行「家的样子」压一块按真实字体度量量出来的黄色高亮块（块的左右边缘与首末字各留 13.66 画布单位内边距，不是估算宽）。标题下两行副标题交代前提「退租要复原」，左下一张白卡逐条列出只换带得走的四样，每条前一枚圆点。背景底选的是安静区平均亮度 94.5 的暖陶色渐层，所以字用近黑；除背景底与人物外不引入第三张图。与同骨架第 02 件的差别是文案长度（这件三行标题 + 四条要点，那件一行标题 + 两条），不是换配色。",
+    "cover": "/works/composite_image/xhs-figure-ledger-loud-01.cover.webp",
     "view": {
       "kind": "design-document",
-      "src": "/works/composite_image/xhs-photo-press-02.json",
-      "assets": {
-        "bg": "/works/composite_image/xhs-photo-press-02.bg.webp"
-      },
-      "download": "/works/composite_image/xhs-photo-press-02.full.webp",
+      "src": "/works/composite_image/xhs-figure-ledger-loud-01.json",
+      "assets": {},
+      "download": "/works/composite_image/xhs-figure-ledger-loud-01.full.webp",
       "aspect": 0.75
     },
     "downloadable": true,
     "workflow": {
-      "id": "composite_image/xhs/xhs-photo-press",
-      "name": "小红书封面 · 照片压字",
+      "id": "composite_image/xhs/xhs.figure-right-ledger.loud",
+      "name": "小红书封面 · 骨架：主体立右 + 要点白卡（loud）",
       "docs": {
         "base": "docs/workflows/material-workflows/base/composite_image.md",
         "scene": "docs/design-guides/composite_image/xhs/_INDEX.md",
-        "style": "docs/design-guides/composite_image/xhs/xhs-photo-press.md",
         "productGuide": "docs/design-guides/composite_image/xhs/_PRODUCT-DOC.md"
       }
     },
     "attribution": [
       {
-        "text": "背景照片：Pexels 素材库（平台 platform_assets all-pexels-37927678，原图 975×1300 未裁切未修改，仅作本复合件的组成部分使用）",
-        "licenseCode": "PEXELS",
-        "licenseUrl": "https://www.pexels.com/license/"
+        "text": "bg-clay-warm-b5（OceanLeo 第一方，素材台账 bg-clay-warm-b5）",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
       },
       {
-        "text": "版面、文字与配色：OceanLeo 第一方原创",
+        "text": "指向女生 小红书 抠图（OceanLeo 第一方，素材台账 design-figure-point-woman-01）",
+        "licenseCode": "OCEANLEO-AIGEN",
+        "licenseUrl": "https://oceanleo.com/licenses/first-party"
+      },
+      {
+        "text": "LXGW Marker Gothic（字体）",
+        "licenseCode": "OFL",
+        "licenseUrl": "https://openfontlicense.org/open-font-license-official-text/"
+      },
+      {
+        "text": "Source Han Sans CN（字体）",
+        "licenseCode": "OFL",
+        "licenseUrl": "https://openfontlicense.org/open-font-license-official-text/"
+      },
+      {
+        "text": "Source Han Sans CN Heavy（字体）",
+        "licenseCode": "OFL",
+        "licenseUrl": "https://openfontlicense.org/open-font-license-official-text/"
+      },
+      {
+        "text": "版面、文字与配色：OceanLeo 第一方原创（骨架 xhs.figure-right-ledger.loud，坐标全部由骨架 + poster-compose 摊出）",
         "licenseCode": "CC0-1.0",
         "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
       }
@@ -41,265 +58,131 @@
     "readings": {
       "canvas": "1242x1656",
       "axes": {
-        "style": "xhs-photo-press",
-        "hook": "question",
-        "topic": "shop-visit",
-        "composition": "fullbleed"
+        "style": "xhs.figure-right-ledger.loud",
+        "textLength": "long",
+        "hook": "promise",
+        "topic": "rental-makeover",
+        "composition": "figure-right"
       },
       "producedBy": {
-        "step1": "project-json --in <正文>.json --out xhs-photo-press-02.json（信封 oceanleo.design-document.v1）",
-        "step2": "design-doc-raster --in <raster>.json --out out/（bg + full + cover 三件像素）",
-        "note": "两步都走注册工具，本件没有一次性脚本参与。"
+        "step1": "poster-compose --in <入参>.json --out xhs-figure-ledger-loud-01.json（骨架 xhs.figure-right-ledger.loud + 文案 + 配色 + 素材 → oceanleo.design-document.v1，props 形）",
+        "step2": "design-doc-raster --in <raster>.json --out out/（xhs-figure-ledger-loud-01.full.webp + xhs-figure-ledger-loud-01.cover.webp）",
+        "note": "两步都走注册工具，本件没有一次性脚本参与；坐标一处未手填。"
       },
       "receipt": {
         "envelope": "oceanleo.design-document.v1",
-        "bodyShape": "scene",
-        "entrypoint": "design-document.json",
-        "sourceBytes": 2725,
-        "canonicalByteSize": 1910,
-        "indentOverheadBytes": 815,
+        "form": "props",
+        "skeleton": "xhs.figure-right-ledger.loud",
+        "slotsFilled": [
+          "bg",
+          "wash",
+          "card",
+          "card-tape",
+          "figure",
+          "dots",
+          "sparkles",
+          "rule",
+          "eyebrow",
+          "badge",
+          "title",
+          "subtitle",
+          "points",
+          "footer"
+        ],
+        "metrics": {
+          "elementCount": 42,
+          "textElementCount": 12,
+          "shapeElementCount": 28,
+          "imageElementCount": 2,
+          "lineCount": 12,
+          "placeholderCount": 0,
+          "assetCount": 2,
+          "fontFamilyCount": 3
+        },
+        "fonts": [
+          "LXGW Marker Gothic",
+          "Source Han Sans CN",
+          "Source Han Sans CN Heavy"
+        ],
         "declaredAssets": [
           {
             "assetId": "bg",
-            "path": "xhs-photo-press-02.bg.webp",
-            "sha256": "fe108fba19bcfb050cc573aea9f181bbf6a39b9693ecad551678a0fa2ff1622c",
-            "byteSize": 53918
-          }
-        ],
-        "declaredAssetCount": 1,
-        "attributionCount": 3,
-        "metrics": {
-          "elementCount": 4,
-          "elementTypeCount": 3,
-          "textElementCount": 2,
-          "paletteColorCount": 3,
-          "distinctZCount": 4,
-          "assetCount": 1,
-          "titleLength": 23,
-          "attributionCount": 3
-        },
-        "license": {
-          "usage_scope": "component-only",
-          "license_family": "PEXELS",
-          "supply_tier": "platform-pool"
-        }
-      },
-      "raster": {
-        "tool": "design-doc-raster",
-        "drawn": {
-          "text": 2,
-          "image": 1,
-          "placeholder": 0,
-          "shape": 0,
-          "lines": 1
-        },
-        "font": "Noto Sans CJK SC（第 2 张脸，落墨 3475 像素）",
-        "fullByteSize": 110716,
-        "coverByteSize": 47880,
-        "coverSize": "621x828",
-        "legibility": {
-          "previewWidth": 180,
-          "titlePx": 116,
-          "titlePxAtPreview": 16.8,
-          "titleContrast": 11.18,
-          "minTextPxAtPreview": 4.6,
-          "minContrast": 11.18,
-          "blockFingerprint": "image@0,0,1,1 | line@0.1,0.4,0.1,0 | text@0.1,0.1,0.7,0.3 | text@0.1,0.5,0.6,0"
-        }
-      },
-      "selfCheck": {
-        "photoPick": "选图时按风格文档 §3「有没有一块安静区」逐张量的：候选 5 张里这一张的标题落点 L204/σ20（第二名 L201/σ21 但整幅起伏更大，其余三张 σ 43–58）。量的是照片本身，不是成品。",
-        "textPlacement": "标题落点实测背衬 #bcd0db、落款落点 #d1d5dc，都在亮档，所以两处都取近黑 #16181A —— 风格文档 §4「亮照片配深字」。",
-        "photoScale": "原图 975×1300 与画布 1242×1656 同为 3:4，cover 无裁切，绘制时放大 1.274 倍；闭包里存的是未经处理的原件，没有落一份放大过的字节。",
-        "vs01": "与 01 件的版块指纹对照：01 是 text@0.1,0.7,0.8,0.2（底部两行白字），本件是 text@0.1,0.1,0.7,0.3（顶部三行深字）——风格文档 §8 要求的「位置与行数都变」两条都满足。",
-        "catalogGate": "本件 elementCount=4、源字节 2725 B，低于 design-document 载体契约 §8.1/§8.2 的入库线（元素 ≥ 20、源字节 ≥ 16384 B）。这不是本件的疏漏：小红书封面按场景文档只有标题与落款两层，凑到 20 个元素就是契约 §6 F2 点名的「凑数元素」。同族已上架的 3 件同样在线下（4/8/4 个元素）。处置见 base/composite_image.md §6.3，等操作员裁。"
-      }
-    }
-  },
-  {
-    "id": "xhs-photo-press-01",
-    "artifactType": "composite_image",
-    "title": "城里 5 家坐到打烊的咖啡馆",
-    "styleId": "xhs-photo-press",
-    "summary": "探店清单封面：整幅一张夜色露台照，白字直压在照片的暗部，只有标题与落款两层信息。",
-    "cover": "/works/composite_image/xhs-photo-press-01.cover.webp",
-    "view": {
-      "kind": "design-document",
-      "src": "/works/composite_image/xhs-photo-press-01.json",
-      "assets": {
-        "bg": "/works/composite_image/xhs-photo-press-01.bg.webp"
-      },
-      "download": "/works/composite_image/xhs-photo-press-01.full.webp",
-      "aspect": 0.75
-    },
-    "downloadable": true,
-    "attribution": [
-      {
-        "text": "背景照片：Hilmi Işılak / Pexels（平台素材库 ph-coffee；仅作本复合件的组成部分使用，已按 3:4 裁切缩放）",
-        "licenseCode": "PEXELS",
-        "licenseUrl": "https://www.pexels.com/license/"
-      },
-      {
-        "text": "版面、文字与配色：OceanLeo 第一方原创",
-        "licenseCode": "CC0-1.0",
-        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
-      }
-    ],
-    "readings": {
-      "canvas": "1242x1656",
-      "axes": {
-        "style": "xhs-photo-press",
-        "hook": "count-list",
-        "topic": "shop-visit",
-        "composition": "fullbleed"
-      },
-      "receipt": {
-        "envelope": "oceanleo.design-document.v1",
-        "bodyShape": "scene",
-        "entrypoint": "design-document.json",
-        "sourceBytes": 2375,
-        "canonicalByteSize": 1615,
-        "indentOverheadBytes": 760,
-        "declaredAssets": [
-          {
-            "assetId": "bg",
-            "path": "xhs-photo-press-01.bg.webp",
-            "sha256": "d0fb73bf5cc0ccf488750cfe2f1a9789a0d05af14965130443012d73ddcb11b1",
-            "byteSize": 52648
-          }
-        ],
-        "declaredAssetCount": 1,
-        "attributionCount": 3,
-        "metrics": {
-          "elementCount": 4,
-          "elementTypeCount": 3,
-          "textElementCount": 2,
-          "paletteColorCount": 4,
-          "distinctZCount": 4,
-          "assetCount": 1,
-          "titleLength": 22,
-          "attributionCount": 3
-        },
-        "license": null
-      },
-      "selfCheck": {
-        "titlePx": 116,
-        "titlePxAt180": 16.8,
-        "titleContrast": 17.94,
-        "bandEnergyAt180": 69.3,
-        "infoLayers": 2,
-        "blockFingerprint": "image@0.0,0.0,1.0,1.0 | text@0.1,0.7,0.8,0.2"
-      }
-    }
-  },
-  {
-    "id": "xhs-split-note-01",
-    "artifactType": "composite_image",
-    "title": "扔掉 6 箱杂物，阳台才坐得下人",
-    "styleId": "xhs-split-note",
-    "summary": "改造前后对比封面：上半是同角度、同尺寸的两张实景，下半一整块米纸色底承住标题、做法与标签。",
-    "cover": "/works/composite_image/xhs-split-note-01.cover.webp",
-    "view": {
-      "kind": "design-document",
-      "src": "/works/composite_image/xhs-split-note-01.json",
-      "assets": {
-        "before": "/works/composite_image/xhs-split-note-01.before.webp",
-        "after": "/works/composite_image/xhs-split-note-01.after.webp"
-      },
-      "download": "/works/composite_image/xhs-split-note-01.full.webp",
-      "aspect": 0.75
-    },
-    "downloadable": true,
-    "attribution": [
-      {
-        "text": "前后两张阳台图：OceanLeo 第一方生成（同角度改造前 / 改造后示意）",
-        "licenseCode": "CC0-1.0",
-        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
-      },
-      {
-        "text": "版面、文字与配色：OceanLeo 第一方原创",
-        "licenseCode": "CC0-1.0",
-        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
-      }
-    ],
-    "readings": {
-      "canvas": "1242x1656",
-      "axes": {
-        "style": "xhs-split-note",
-        "hook": "before-after",
-        "topic": "home",
-        "composition": "stack"
-      },
-      "receipt": {
-        "envelope": "oceanleo.design-document.v1",
-        "bodyShape": "scene",
-        "entrypoint": "design-document.json",
-        "sourceBytes": 4141,
-        "canonicalByteSize": 2801,
-        "indentOverheadBytes": 1340,
-        "declaredAssets": [
-          {
-            "assetId": "before",
-            "path": "xhs-split-note-01.before.webp",
-            "sha256": "c1bfd6c8d10c6f840f7ad5093609ae950284f4e2bc1eb64fdc106d104e28ee08",
-            "byteSize": 62848
+            "sha256": "17999b0ab5f1d657f38ab9ca27b68fe4e765ca53586e2c85f9867f6af3bf9b05",
+            "byteSize": 78580
           },
           {
-            "assetId": "after",
-            "path": "xhs-split-note-01.after.webp",
-            "sha256": "c85f75d4f8c51b08a5e22184df823e7541f84c2b58f7d25fc5238be755dba9b8",
-            "byteSize": 61950
+            "assetId": "figure",
+            "sha256": "b44166b18c256becd10a041a5d3f854931f4cf3f6d9411459501461838613309",
+            "byteSize": 114018
           }
         ],
-        "declaredAssetCount": 2,
-        "attributionCount": 4,
-        "metrics": {
-          "elementCount": 8,
-          "elementTypeCount": 3,
-          "textElementCount": 5,
-          "paletteColorCount": 4,
-          "distinctZCount": 6,
-          "assetCount": 2,
-          "titleLength": 23,
-          "attributionCount": 4
-        },
-        "license": null
-      },
-      "selfCheck": {
-        "titlePx": 116,
-        "titlePxAt180": 16.8,
-        "titleContrast": 13.32,
-        "bandEnergyAt180": 60.4,
-        "infoLayers": 3,
-        "blockFingerprint": "rect@0.0,0.4,1.0,0.6 | image@0.0,0.0,0.4,0.3 | image@0.5,0.0,0.4,0.3 | text@0.1,0.5,0.8,0.2"
+        "outputs": [
+          {
+            "path": "xhs-figure-ledger-loud-01.cover.webp",
+            "byteSize": 45348,
+            "sha256": "81fe8b32660c7ab16900dd852016dfacd58ff188f4f68c8121b5332e6390ab66"
+          },
+          {
+            "path": "xhs-figure-ledger-loud-01.full.webp",
+            "byteSize": 120250,
+            "sha256": "d809ec1f66094e46623c92266fd7176affa1efcdff8d607387b63d9a7fc284af"
+          }
+        ]
       }
     }
   },
   {
-    "id": "xhs-card-claim-01",
+    "id": "xhs-figure-ledger-loud-02",
     "artifactType": "composite_image",
-    "title": "简历投得越多，面试反而越少",
-    "styleId": "xhs-card-claim",
-    "summary": "观点封面：低饱和蓝绿渐变铺底，一张偏上的白卡里只关一句反常识断言，卡外一行署名。",
-    "cover": "/works/composite_image/xhs-card-claim-01.cover.webp",
+    "title": "五分钟出门妆：化妆台只留五样",
+    "styleId": "xhs.figure-right-ledger.loud",
+    "summary": "早八化妆封面：同一副骨架喂短文案的样子 —— 标题只排一行，高亮块只套住「出门妆」三个字，副标题收到四个字，白卡只列两条。骨架的 titleLines 让位规则因此不触发（内容量与基线一致），其余槽位原位不动，白卡与人物的相对关系保持不变。粉调背景底配近黑字，高亮块取配色里的 accent。这件与第 01 件用的是同一副骨架、同一组字体，唯一变量是文案长度与配色 —— 这正是骨架的验收判据。",
+    "cover": "/works/composite_image/xhs-figure-ledger-loud-02.cover.webp",
     "view": {
       "kind": "design-document",
-      "src": "/works/composite_image/xhs-card-claim-01.json",
-      "assets": {
-        "bg": "/works/composite_image/xhs-card-claim-01.bg.webp"
-      },
-      "download": "/works/composite_image/xhs-card-claim-01.full.webp",
+      "src": "/works/composite_image/xhs-figure-ledger-loud-02.json",
+      "assets": {},
+      "download": "/works/composite_image/xhs-figure-ledger-loud-02.full.webp",
       "aspect": 0.75
     },
     "downloadable": true,
+    "workflow": {
+      "id": "composite_image/xhs/xhs.figure-right-ledger.loud",
+      "name": "小红书封面 · 骨架：主体立右 + 要点白卡（loud）",
+      "docs": {
+        "base": "docs/workflows/material-workflows/base/composite_image.md",
+        "scene": "docs/design-guides/composite_image/xhs/_INDEX.md",
+        "productGuide": "docs/design-guides/composite_image/xhs/_PRODUCT-DOC.md"
+      }
+    },
     "attribution": [
       {
-        "text": "背景渐变：Артем Дворецкий / Pexels（平台素材库 background；仅作本复合件的组成部分使用，已按 3:4 裁切并整体压暗）",
-        "licenseCode": "PEXELS",
-        "licenseUrl": "https://www.pexels.com/license/"
+        "text": "bg-macaron-pink-b5（OceanLeo 第一方，素材台账 bg-macaron-pink-b5）",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
       },
       {
-        "text": "版面、文字与配色：OceanLeo 第一方原创",
+        "text": "美妆女生 抠图（OceanLeo 第一方，素材台账 design-figure-beauty-01）",
+        "licenseCode": "OCEANLEO-AIGEN",
+        "licenseUrl": "https://oceanleo.com/licenses/first-party"
+      },
+      {
+        "text": "LXGW Marker Gothic（字体）",
+        "licenseCode": "OFL",
+        "licenseUrl": "https://openfontlicense.org/open-font-license-official-text/"
+      },
+      {
+        "text": "Source Han Sans CN（字体）",
+        "licenseCode": "OFL",
+        "licenseUrl": "https://openfontlicense.org/open-font-license-official-text/"
+      },
+      {
+        "text": "Source Han Sans CN Heavy（字体）",
+        "licenseCode": "OFL",
+        "licenseUrl": "https://openfontlicense.org/open-font-license-official-text/"
+      },
+      {
+        "text": "版面、文字与配色：OceanLeo 第一方原创（骨架 xhs.figure-right-ledger.loud，坐标全部由骨架 + poster-compose 摊出）",
         "licenseCode": "CC0-1.0",
         "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
       }
@@ -307,47 +190,322 @@
     "readings": {
       "canvas": "1242x1656",
       "axes": {
-        "style": "xhs-card-claim",
-        "hook": "counterclaim",
-        "topic": "career",
-        "composition": "card"
+        "style": "xhs.figure-right-ledger.loud",
+        "textLength": "short",
+        "hook": "howmany",
+        "topic": "morning-routine",
+        "composition": "figure-right"
+      },
+      "producedBy": {
+        "step1": "poster-compose --in <入参>.json --out xhs-figure-ledger-loud-02.json（骨架 xhs.figure-right-ledger.loud + 文案 + 配色 + 素材 → oceanleo.design-document.v1，props 形）",
+        "step2": "design-doc-raster --in <raster>.json --out out/（xhs-figure-ledger-loud-02.full.webp + xhs-figure-ledger-loud-02.cover.webp）",
+        "note": "两步都走注册工具，本件没有一次性脚本参与；坐标一处未手填。"
       },
       "receipt": {
         "envelope": "oceanleo.design-document.v1",
-        "bodyShape": "scene",
-        "entrypoint": "design-document.json",
-        "sourceBytes": 2394,
-        "canonicalByteSize": 1634,
-        "indentOverheadBytes": 760,
+        "form": "props",
+        "skeleton": "xhs.figure-right-ledger.loud",
+        "slotsFilled": [
+          "bg",
+          "wash",
+          "card",
+          "card-tape",
+          "figure",
+          "dots",
+          "sparkles",
+          "rule",
+          "eyebrow",
+          "badge",
+          "title",
+          "subtitle",
+          "points",
+          "footer"
+        ],
+        "metrics": {
+          "elementCount": 35,
+          "textElementCount": 7,
+          "shapeElementCount": 26,
+          "imageElementCount": 2,
+          "lineCount": 7,
+          "placeholderCount": 0,
+          "assetCount": 2,
+          "fontFamilyCount": 3
+        },
+        "fonts": [
+          "LXGW Marker Gothic",
+          "Source Han Sans CN",
+          "Source Han Sans CN Heavy"
+        ],
         "declaredAssets": [
           {
             "assetId": "bg",
-            "path": "xhs-card-claim-01.bg.webp",
-            "sha256": "e32e725ba1175138052f2d9ae8b41e109fa1ea7e695439a7336460e13b3039ad",
-            "byteSize": 87634
+            "sha256": "3e863d687232679ec6dac8bf643614c16954742aa2dfe1a0e42eb48d09ddc461",
+            "byteSize": 69448
+          },
+          {
+            "assetId": "figure",
+            "sha256": "05c1ea275544050aaa51ae8498c099a64ab7e64cba99111d1cc4593b6e8443cf",
+            "byteSize": 74104
           }
         ],
-        "declaredAssetCount": 1,
-        "attributionCount": 3,
-        "metrics": {
-          "elementCount": 4,
-          "elementTypeCount": 3,
-          "textElementCount": 2,
-          "paletteColorCount": 4,
-          "distinctZCount": 4,
-          "assetCount": 1,
-          "titleLength": 20,
-          "attributionCount": 3
-        },
-        "license": null
+        "outputs": [
+          {
+            "path": "xhs-figure-ledger-loud-02.cover.webp",
+            "byteSize": 29356,
+            "sha256": "228b400c37b6e2eec4315d260c6069239c743e47f0f1c9ee10a2efe0bfb519c5"
+          },
+          {
+            "path": "xhs-figure-ledger-loud-02.full.webp",
+            "byteSize": 75790,
+            "sha256": "6a0dee55f83bc14e631917c49c39c82c9ac2c73430b548469bb527c6244499b4"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "xhs-bigword-band-calm-01",
+    "artifactType": "composite_image",
+    "title": "发薪当天先转走三成，月底不用再算钱去哪了",
+    "styleId": "xhs.bigword-band.calm",
+    "summary": "存钱主题封面：无主体图，字是主角。顶部一条窄标签带写期号，中部两行巨字「发薪当天 / 先转走三成」错位排布，下面一行是带偏移投影的那一行；巨字下一条短分隔线，再下面两行细注解释为什么月底不用算账，底部三枚标签药丸给可检索的关键词。背景底是纸纹渐层，安静区在中部，所以巨字落在安静区内、四边各留 6% 安全边。装饰只有左上角一处星光与右下角一处点阵，中部不放任何装饰。",
+    "cover": "/works/composite_image/xhs-bigword-band-calm-01.cover.webp",
+    "view": {
+      "kind": "design-document",
+      "src": "/works/composite_image/xhs-bigword-band-calm-01.json",
+      "assets": {},
+      "download": "/works/composite_image/xhs-bigword-band-calm-01.full.webp",
+      "aspect": 0.75
+    },
+    "downloadable": true,
+    "workflow": {
+      "id": "composite_image/xhs/xhs.bigword-band.calm",
+      "name": "小红书封面 · 骨架：巨字错位 + 标签带（calm）",
+      "docs": {
+        "base": "docs/workflows/material-workflows/base/composite_image.md",
+        "scene": "docs/design-guides/composite_image/xhs/_INDEX.md",
+        "productGuide": "docs/design-guides/composite_image/xhs/_PRODUCT-DOC.md"
+      }
+    },
+    "attribution": [
+      {
+        "text": "bg-paper-grain-b5（OceanLeo 第一方，素材台账 bg-paper-grain-b5）",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
       },
-      "selfCheck": {
-        "titlePx": 116,
-        "titlePxAt180": 16.8,
-        "titleContrast": 16.1,
-        "bandEnergyAt180": 71.5,
-        "infoLayers": 2,
-        "blockFingerprint": "image@0.0,0.0,1.0,1.0 | rect@0.1,0.1,0.8,0.4 | text@0.2,0.2,0.7,0.3"
+      {
+        "text": "Oswald（字体）",
+        "licenseCode": "OFL",
+        "licenseUrl": "https://openfontlicense.org/open-font-license-official-text/"
+      },
+      {
+        "text": "Source Han Sans CN（字体）",
+        "licenseCode": "OFL",
+        "licenseUrl": "https://openfontlicense.org/open-font-license-official-text/"
+      },
+      {
+        "text": "Source Han Serif CN Heavy（字体）",
+        "licenseCode": "OFL",
+        "licenseUrl": "https://openfontlicense.org/open-font-license-official-text/"
+      },
+      {
+        "text": "版面、文字与配色：OceanLeo 第一方原创（骨架 xhs.bigword-band.calm，坐标全部由骨架 + poster-compose 摊出）",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "canvas": "1242x1656",
+      "axes": {
+        "style": "xhs.bigword-band.calm",
+        "textLength": "long",
+        "hook": "instruction",
+        "topic": "saving-money",
+        "composition": "bigword-band"
+      },
+      "producedBy": {
+        "step1": "poster-compose --in <入参>.json --out xhs-bigword-band-calm-01.json（骨架 xhs.bigword-band.calm + 文案 + 配色 + 素材 → oceanleo.design-document.v1，props 形）",
+        "step2": "design-doc-raster --in <raster>.json --out out/（xhs-bigword-band-calm-01.full.webp + xhs-bigword-band-calm-01.cover.webp）",
+        "note": "两步都走注册工具，本件没有一次性脚本参与；坐标一处未手填。"
+      },
+      "receipt": {
+        "envelope": "oceanleo.design-document.v1",
+        "form": "props",
+        "skeleton": "xhs.bigword-band.calm",
+        "slotsFilled": [
+          "bg",
+          "band",
+          "eyebrow",
+          "panel",
+          "bigword-a",
+          "bigword-b",
+          "rule",
+          "subtitle",
+          "serial",
+          "tag-a",
+          "tag-b",
+          "tag-c",
+          "note",
+          "spark-tl",
+          "dots-br"
+        ],
+        "metrics": {
+          "elementCount": 34,
+          "textElementCount": 10,
+          "shapeElementCount": 23,
+          "imageElementCount": 1,
+          "lineCount": 10,
+          "placeholderCount": 0,
+          "assetCount": 1,
+          "fontFamilyCount": 3
+        },
+        "fonts": [
+          "Source Han Sans CN",
+          "Source Han Serif CN Heavy",
+          "Oswald"
+        ],
+        "declaredAssets": [
+          {
+            "assetId": "bg",
+            "sha256": "b08f8b6dca464f742471143149daaa7d878a15eb7868243b9d0fec040d28aba0",
+            "byteSize": 274222
+          }
+        ],
+        "outputs": [
+          {
+            "path": "xhs-bigword-band-calm-01.cover.webp",
+            "byteSize": 67246,
+            "sha256": "39f6325bbac7fd4ef493c89609842ebe36bdf733af4914b896ffcde14d4d567c"
+          },
+          {
+            "path": "xhs-bigword-band-calm-01.full.webp",
+            "byteSize": 201556,
+            "sha256": "3b5e29d4ea7a9db67dfcb990131df00ecd43b95d13e5e757cdfd9a53dbf5c4cc"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "xhs-bigword-band-calm-02",
+    "artifactType": "composite_image",
+    "title": "先扔再买：衣柜腾出一格再逛街",
+    "styleId": "xhs.bigword-band.calm",
+    "summary": "换季衣柜封面：同一副骨架的短文案档与暗底档 —— 巨字缩到「先扔 / 再买」两字一行，细注只一行，背景底换成夜色渐层。暗底下全部文字按配色里的 ink 翻成近白（#F2F5F8），标签药丸取近白描边，序号用 Oswald 排在右上。与第 01 件同骨架同结构，差别在文案长度、明暗档与配色。",
+    "cover": "/works/composite_image/xhs-bigword-band-calm-02.cover.webp",
+    "view": {
+      "kind": "design-document",
+      "src": "/works/composite_image/xhs-bigword-band-calm-02.json",
+      "assets": {},
+      "download": "/works/composite_image/xhs-bigword-band-calm-02.full.webp",
+      "aspect": 0.75
+    },
+    "downloadable": true,
+    "workflow": {
+      "id": "composite_image/xhs/xhs.bigword-band.calm",
+      "name": "小红书封面 · 骨架：巨字错位 + 标签带（calm）",
+      "docs": {
+        "base": "docs/workflows/material-workflows/base/composite_image.md",
+        "scene": "docs/design-guides/composite_image/xhs/_INDEX.md",
+        "productGuide": "docs/design-guides/composite_image/xhs/_PRODUCT-DOC.md"
+      }
+    },
+    "attribution": [
+      {
+        "text": "bg-slate-night-b5（OceanLeo 第一方，素材台账 bg-slate-night-b5）",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      },
+      {
+        "text": "Oswald（字体）",
+        "licenseCode": "OFL",
+        "licenseUrl": "https://openfontlicense.org/open-font-license-official-text/"
+      },
+      {
+        "text": "Source Han Sans CN（字体）",
+        "licenseCode": "OFL",
+        "licenseUrl": "https://openfontlicense.org/open-font-license-official-text/"
+      },
+      {
+        "text": "Source Han Serif CN Heavy（字体）",
+        "licenseCode": "OFL",
+        "licenseUrl": "https://openfontlicense.org/open-font-license-official-text/"
+      },
+      {
+        "text": "版面、文字与配色：OceanLeo 第一方原创（骨架 xhs.bigword-band.calm，坐标全部由骨架 + poster-compose 摊出）",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }
+    ],
+    "readings": {
+      "canvas": "1242x1656",
+      "axes": {
+        "style": "xhs.bigword-band.calm",
+        "textLength": "short",
+        "hook": "order",
+        "topic": "wardrobe-season",
+        "composition": "bigword-band"
+      },
+      "producedBy": {
+        "step1": "poster-compose --in <入参>.json --out xhs-bigword-band-calm-02.json（骨架 xhs.bigword-band.calm + 文案 + 配色 + 素材 → oceanleo.design-document.v1，props 形）",
+        "step2": "design-doc-raster --in <raster>.json --out out/（xhs-bigword-band-calm-02.full.webp + xhs-bigword-band-calm-02.cover.webp）",
+        "note": "两步都走注册工具，本件没有一次性脚本参与；坐标一处未手填。"
+      },
+      "receipt": {
+        "envelope": "oceanleo.design-document.v1",
+        "form": "props",
+        "skeleton": "xhs.bigword-band.calm",
+        "slotsFilled": [
+          "bg",
+          "band",
+          "eyebrow",
+          "panel",
+          "bigword-a",
+          "bigword-b",
+          "rule",
+          "subtitle",
+          "serial",
+          "tag-a",
+          "tag-b",
+          "tag-c",
+          "note",
+          "spark-tl",
+          "dots-br"
+        ],
+        "metrics": {
+          "elementCount": 33,
+          "textElementCount": 9,
+          "shapeElementCount": 23,
+          "imageElementCount": 1,
+          "lineCount": 9,
+          "placeholderCount": 0,
+          "assetCount": 1,
+          "fontFamilyCount": 3
+        },
+        "fonts": [
+          "Source Han Sans CN",
+          "Source Han Serif CN Heavy",
+          "Oswald"
+        ],
+        "declaredAssets": [
+          {
+            "assetId": "bg",
+            "sha256": "c837e1bd8be1a1063ef87b31cf477ef9ce7b35c05e80921fada838b203126175",
+            "byteSize": 65816
+          }
+        ],
+        "outputs": [
+          {
+            "path": "xhs-bigword-band-calm-02.cover.webp",
+            "byteSize": 24688,
+            "sha256": "6a0ad537cb6c93ce5dd9b59ce607a5517add64ca5f769c447b01eff9da0f81f7"
+          },
+          {
+            "path": "xhs-bigword-band-calm-02.full.webp",
+            "byteSize": 65458,
+            "sha256": "2e9df6ae620d2a6275492e073428c4b077aa2fc6bb2c29ac1e2a5f71db860191"
+          }
+        ]
       }
     }
   }

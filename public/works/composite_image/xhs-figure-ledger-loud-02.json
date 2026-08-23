@@ -1,0 +1,821 @@
+{
+  "schema": "oceanleo.design-document.v1",
+  "version": 1,
+  "title": "五分钟出门妆：化妆台只留五样",
+  "spec": {
+    "id": "xhs-figure-ledger-loud-02",
+    "industry": "通用",
+    "channel": "xhs",
+    "material": "xhs",
+    "title": "五分钟出门妆：化妆台只留五样",
+    "style": "xhs.figure-right-ledger.loud"
+  },
+  "document": {
+    "id": "xhs-figure-ledger-loud-02",
+    "title": "五分钟出门妆：化妆台只留五样",
+    "width": 1242,
+    "height": 1656,
+    "dpi": 96,
+    "background": {
+      "gradient": "linear-gradient(165deg, #F7E6EC, #FFFFFF)",
+      "opacity": 1,
+      "overlay": "grid",
+      "overlayColor": "#D9B7C3",
+      "overlayOpacity": 0.08
+    },
+    "elements": [
+      {
+        "id": "bg-img",
+        "type": "image",
+        "x": 0,
+        "y": 0,
+        "w": 1242,
+        "h": 1656,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 1,
+        "props": {
+          "src": "https://asset.oceanleo.com/poster-assets/bg/bg-macaron-pink-b5.webp",
+          "alt": "bg-macaron-pink-b5：第一方生成的竖幅渐层背景底，画面无文字（安静区 L92.52）",
+          "radius": 0,
+          "filter": "none",
+          "flipX": false,
+          "flipY": false
+        },
+        "z": 0
+      },
+      {
+        "id": "wash-scrim",
+        "type": "shape",
+        "x": 0,
+        "y": 0,
+        "w": 770.04,
+        "h": 1656,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 0.3,
+        "props": {
+          "kind": "rect",
+          "fill": "linear-gradient(90deg, #FFFFFF, #F7E6EC)",
+          "stroke": "transparent",
+          "strokeWidth": 0,
+          "radius": 0
+        },
+        "z": 1
+      },
+      {
+        "id": "card-scrim",
+        "type": "shape",
+        "x": 74.52,
+        "y": 662.4,
+        "w": 496.8,
+        "h": 579.6,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 0.95,
+        "props": {
+          "kind": "rect",
+          "fill": "#FFFFFF",
+          "stroke": "transparent",
+          "strokeWidth": 0,
+          "radius": 0
+        },
+        "z": 2
+      },
+      {
+        "id": "card-tape-tape",
+        "type": "shape",
+        "x": 111.78,
+        "y": 629.28,
+        "w": 173.88,
+        "h": 57.96,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 0.9,
+        "props": {
+          "kind": "tape",
+          "fill": "#FF9EB8",
+          "stroke": "transparent",
+          "strokeWidth": 0,
+          "radius": 0
+        },
+        "z": 3
+      },
+      {
+        "id": "figure-img",
+        "type": "image",
+        "x": 546.48,
+        "y": 960.48,
+        "w": 695.52,
+        "h": 695.52,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 1,
+        "props": {
+          "src": "https://asset.oceanleo.com/poster-assets/figure/design-figure-beauty-01.webp",
+          "alt": "美妆女生 抠图：抠好的主体，压在背景底右侧",
+          "radius": 0,
+          "filter": "none",
+          "flipX": false,
+          "flipY": false
+        },
+        "z": 4
+      },
+      {
+        "id": "dots-d1",
+        "type": "shape",
+        "x": 720.36,
+        "y": 248.4,
+        "w": 19.87,
+        "h": 19.87,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 0.85,
+        "props": {
+          "kind": "circle",
+          "fill": "#B98BD8",
+          "stroke": "transparent",
+          "strokeWidth": 0,
+          "radius": 0
+        },
+        "z": 5
+      },
+      {
+        "id": "dots-d2",
+        "type": "shape",
+        "x": 984.41,
+        "y": 439.49,
+        "w": 19.87,
+        "h": 19.87,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 0.85,
+        "props": {
+          "kind": "circle",
+          "fill": "#B98BD8",
+          "stroke": "transparent",
+          "strokeWidth": 0,
+          "radius": 0
+        },
+        "z": 6
+      },
+      {
+        "id": "dots-d3",
+        "type": "shape",
+        "x": 821.22,
+        "y": 630.59,
+        "w": 19.87,
+        "h": 19.87,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 0.85,
+        "props": {
+          "kind": "circle",
+          "fill": "#B98BD8",
+          "stroke": "transparent",
+          "strokeWidth": 0,
+          "radius": 0
+        },
+        "z": 7
+      },
+      {
+        "id": "dots-d4",
+        "type": "shape",
+        "x": 1085.27,
+        "y": 410.99,
+        "w": 19.87,
+        "h": 19.87,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 0.85,
+        "props": {
+          "kind": "circle",
+          "fill": "#B98BD8",
+          "stroke": "transparent",
+          "strokeWidth": 0,
+          "radius": 0
+        },
+        "z": 8
+      },
+      {
+        "id": "dots-d5",
+        "type": "shape",
+        "x": 922.08,
+        "y": 602.08,
+        "w": 19.87,
+        "h": 19.87,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 0.85,
+        "props": {
+          "kind": "circle",
+          "fill": "#B98BD8",
+          "stroke": "transparent",
+          "strokeWidth": 0,
+          "radius": 0
+        },
+        "z": 9
+      },
+      {
+        "id": "dots-d6",
+        "type": "shape",
+        "x": 758.88,
+        "y": 382.49,
+        "w": 19.87,
+        "h": 19.87,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 0.85,
+        "props": {
+          "kind": "circle",
+          "fill": "#B98BD8",
+          "stroke": "transparent",
+          "strokeWidth": 0,
+          "radius": 0
+        },
+        "z": 10
+      },
+      {
+        "id": "dots-d7",
+        "type": "shape",
+        "x": 1022.94,
+        "y": 573.58,
+        "w": 19.87,
+        "h": 19.87,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 0.85,
+        "props": {
+          "kind": "circle",
+          "fill": "#B98BD8",
+          "stroke": "transparent",
+          "strokeWidth": 0,
+          "radius": 0
+        },
+        "z": 11
+      },
+      {
+        "id": "dots-d8",
+        "type": "shape",
+        "x": 859.74,
+        "y": 353.99,
+        "w": 19.87,
+        "h": 19.87,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 0.85,
+        "props": {
+          "kind": "circle",
+          "fill": "#B98BD8",
+          "stroke": "transparent",
+          "strokeWidth": 0,
+          "radius": 0
+        },
+        "z": 12
+      },
+      {
+        "id": "dots-d9",
+        "type": "shape",
+        "x": 1123.8,
+        "y": 545.08,
+        "w": 19.87,
+        "h": 19.87,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 0.85,
+        "props": {
+          "kind": "circle",
+          "fill": "#B98BD8",
+          "stroke": "transparent",
+          "strokeWidth": 0,
+          "radius": 0
+        },
+        "z": 13
+      },
+      {
+        "id": "dots-d10",
+        "type": "shape",
+        "x": 960.6,
+        "y": 325.48,
+        "w": 19.87,
+        "h": 19.87,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 0.85,
+        "props": {
+          "kind": "circle",
+          "fill": "#B98BD8",
+          "stroke": "transparent",
+          "strokeWidth": 0,
+          "radius": 0
+        },
+        "z": 14
+      },
+      {
+        "id": "dots-d11",
+        "type": "shape",
+        "x": 797.41,
+        "y": 516.58,
+        "w": 19.87,
+        "h": 19.87,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 0.85,
+        "props": {
+          "kind": "circle",
+          "fill": "#B98BD8",
+          "stroke": "transparent",
+          "strokeWidth": 0,
+          "radius": 0
+        },
+        "z": 15
+      },
+      {
+        "id": "dots-d12",
+        "type": "shape",
+        "x": 1061.46,
+        "y": 296.98,
+        "w": 19.87,
+        "h": 19.87,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 0.85,
+        "props": {
+          "kind": "circle",
+          "fill": "#B98BD8",
+          "stroke": "transparent",
+          "strokeWidth": 0,
+          "radius": 0
+        },
+        "z": 16
+      },
+      {
+        "id": "sparkles-s1",
+        "type": "shape",
+        "x": 770.04,
+        "y": 712.08,
+        "w": 47.2,
+        "h": 47.2,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 1,
+        "props": {
+          "kind": "sparkle",
+          "fill": "#FF9EB8",
+          "stroke": "transparent",
+          "strokeWidth": 0,
+          "radius": 0,
+          "points": 4
+        },
+        "z": 17
+      },
+      {
+        "id": "sparkles-s2",
+        "type": "shape",
+        "x": 971.15,
+        "y": 809.9,
+        "w": 47.2,
+        "h": 47.2,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 1,
+        "props": {
+          "kind": "sparkle",
+          "fill": "#FF9EB8",
+          "stroke": "transparent",
+          "strokeWidth": 0,
+          "radius": 0,
+          "points": 4
+        },
+        "z": 18
+      },
+      {
+        "id": "sparkles-s3",
+        "type": "shape",
+        "x": 846.86,
+        "y": 739.63,
+        "w": 47.2,
+        "h": 47.2,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 1,
+        "props": {
+          "kind": "sparkle",
+          "fill": "#FF9EB8",
+          "stroke": "transparent",
+          "strokeWidth": 0,
+          "radius": 0,
+          "points": 4
+        },
+        "z": 19
+      },
+      {
+        "id": "sparkles-s4",
+        "type": "shape",
+        "x": 1047.97,
+        "y": 837.45,
+        "w": 47.2,
+        "h": 47.2,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 1,
+        "props": {
+          "kind": "sparkle",
+          "fill": "#FF9EB8",
+          "stroke": "transparent",
+          "strokeWidth": 0,
+          "radius": 0,
+          "points": 4
+        },
+        "z": 20
+      },
+      {
+        "id": "sparkles-s5",
+        "type": "shape",
+        "x": 923.67,
+        "y": 767.19,
+        "w": 47.2,
+        "h": 47.2,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 1,
+        "props": {
+          "kind": "sparkle",
+          "fill": "#FF9EB8",
+          "stroke": "transparent",
+          "strokeWidth": 0,
+          "radius": 0,
+          "points": 4
+        },
+        "z": 21
+      },
+      {
+        "id": "rule-rule",
+        "type": "shape",
+        "x": 124.2,
+        "y": 869.4,
+        "w": 198.72,
+        "h": 6.21,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 0.5,
+        "props": {
+          "kind": "line",
+          "fill": "transparent",
+          "stroke": "#B98BD8",
+          "strokeWidth": 6.21,
+          "radius": 0
+        },
+        "z": 22
+      },
+      {
+        "id": "eyebrow-pill1",
+        "type": "shape",
+        "x": 84.46,
+        "y": 107.83,
+        "w": 435.11,
+        "h": 53.16,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 1,
+        "props": {
+          "kind": "rect",
+          "fill": "#FF9EB8",
+          "stroke": "transparent",
+          "strokeWidth": 0,
+          "radius": 26.58
+        },
+        "name": "药丸底",
+        "z": 23
+      },
+      {
+        "id": "eyebrow-l1",
+        "type": "text",
+        "x": 99.36,
+        "y": 112.61,
+        "w": 546.48,
+        "h": 43.59,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 1,
+        "props": {
+          "text": "早八通勤 · 化妆台只留五样",
+          "fontSize": 32.29,
+          "color": "#37121F",
+          "fontFamily": "LXGW Marker Gothic",
+          "fontWeight": 400,
+          "fontStyle": "normal",
+          "lineHeight": 1.35,
+          "letterSpacing": 1.29,
+          "textAlign": "left",
+          "effect": "none"
+        },
+        "z": 24
+      },
+      {
+        "id": "badge-pill1",
+        "type": "shape",
+        "x": 944.24,
+        "y": 100.59,
+        "w": 238.15,
+        "h": 67.62,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 1,
+        "props": {
+          "kind": "rect",
+          "fill": "#B98BD8",
+          "stroke": "transparent",
+          "strokeWidth": 0,
+          "radius": 33.81
+        },
+        "name": "药丸底",
+        "z": 25
+      },
+      {
+        "id": "badge-l1",
+        "type": "text",
+        "x": 770.04,
+        "y": 112.61,
+        "w": 397.44,
+        "h": 43.59,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 1,
+        "props": {
+          "text": "五样 · 五分钟",
+          "fontSize": 32.29,
+          "color": "#37121F",
+          "fontFamily": "Source Han Sans CN",
+          "fontWeight": 700,
+          "fontStyle": "normal",
+          "lineHeight": 1.35,
+          "letterSpacing": 0,
+          "textAlign": "right",
+          "effect": "none"
+        },
+        "z": 26
+      },
+      {
+        "id": "title-hi1",
+        "type": "shape",
+        "x": 432.2,
+        "y": 192.52,
+        "w": 373.82,
+        "h": 176.82,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 1,
+        "props": {
+          "kind": "rect",
+          "fill": "#FF9EB8",
+          "stroke": "transparent",
+          "strokeWidth": 0,
+          "radius": 13.66
+        },
+        "name": "高亮块（宽度按真实字宽量出）",
+        "z": 27
+      },
+      {
+        "id": "title-l1",
+        "type": "text",
+        "x": 99.36,
+        "y": 207,
+        "w": 720.36,
+        "h": 147.85,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 1,
+        "props": {
+          "text": "五分钟出门妆",
+          "fontSize": 115.51,
+          "color": "#2A1B22",
+          "fontFamily": "Source Han Sans CN Heavy",
+          "fontWeight": 900,
+          "fontStyle": "normal",
+          "lineHeight": 1.28,
+          "letterSpacing": 0,
+          "textAlign": "left",
+          "effect": "none"
+        },
+        "z": 28
+      },
+      {
+        "id": "subtitle-l1",
+        "type": "text",
+        "x": 124.2,
+        "y": 703.8,
+        "w": 397.44,
+        "h": 68.74,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 1,
+        "props": {
+          "text": "五样就够",
+          "fontSize": 50.92,
+          "color": "#2A1B22",
+          "fontFamily": "Source Han Sans CN",
+          "fontWeight": 700,
+          "fontStyle": "normal",
+          "lineHeight": 1.35,
+          "letterSpacing": 0,
+          "textAlign": "left",
+          "effect": "none"
+        },
+        "z": 29
+      },
+      {
+        "id": "points-m1",
+        "type": "shape",
+        "x": 134.21,
+        "y": 931.39,
+        "w": 9.04,
+        "h": 9.04,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 1,
+        "props": {
+          "kind": "circle",
+          "fill": "#FF9EB8",
+          "stroke": "transparent",
+          "strokeWidth": 0,
+          "radius": 0
+        },
+        "z": 30
+      },
+      {
+        "id": "points-i1l1",
+        "type": "text",
+        "x": 153.26,
+        "y": 914.11,
+        "w": 368.38,
+        "h": 43.59,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 1,
+        "props": {
+          "text": "底妆一支两用",
+          "fontSize": 32.29,
+          "color": "#7A5C68",
+          "fontFamily": "Source Han Sans CN",
+          "fontWeight": 400,
+          "fontStyle": "normal",
+          "lineHeight": 1.35,
+          "letterSpacing": 0,
+          "textAlign": "left",
+          "effect": "none"
+        },
+        "z": 31
+      },
+      {
+        "id": "points-m2",
+        "type": "shape",
+        "x": 134.21,
+        "y": 996.51,
+        "w": 9.04,
+        "h": 9.04,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 1,
+        "props": {
+          "kind": "circle",
+          "fill": "#FF9EB8",
+          "stroke": "transparent",
+          "strokeWidth": 0,
+          "radius": 0
+        },
+        "z": 32
+      },
+      {
+        "id": "points-i2l1",
+        "type": "text",
+        "x": 153.26,
+        "y": 979.23,
+        "w": 368.38,
+        "h": 43.59,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 1,
+        "props": {
+          "text": "眉和唇同一支",
+          "fontSize": 32.29,
+          "color": "#7A5C68",
+          "fontFamily": "Source Han Sans CN",
+          "fontWeight": 400,
+          "fontStyle": "normal",
+          "lineHeight": 1.35,
+          "letterSpacing": 0,
+          "textAlign": "left",
+          "effect": "none"
+        },
+        "z": 33
+      },
+      {
+        "id": "footer-l1",
+        "type": "text",
+        "x": 74.52,
+        "y": 1490.4,
+        "w": 621,
+        "h": 28.5,
+        "rotation": 0,
+        "locked": false,
+        "opacity": 1,
+        "props": {
+          "text": "@oceanleo · 早八 5 分钟",
+          "fontSize": 21.11,
+          "color": "#7A5C68",
+          "fontFamily": "Source Han Sans CN",
+          "fontWeight": 400,
+          "fontStyle": "normal",
+          "lineHeight": 1.35,
+          "letterSpacing": 0,
+          "textAlign": "left",
+          "effect": "none"
+        },
+        "z": 34
+      }
+    ],
+    "updatedAt": "2026-08-23T00:00:00.000Z"
+  },
+  "palette": [
+    "#F7E6EC",
+    "#FFFFFF",
+    "#2A1B22",
+    "#7A5C68",
+    "#FF9EB8",
+    "#37121F",
+    "#D9B7C3",
+    "#B98BD8"
+  ],
+  "fonts": [
+    {
+      "family": "LXGW Marker Gothic",
+      "licenseCode": "OFL",
+      "weights": [
+        400
+      ]
+    },
+    {
+      "family": "Source Han Sans CN",
+      "licenseCode": "OFL",
+      "weights": [
+        400,
+        700
+      ]
+    },
+    {
+      "family": "Source Han Sans CN Heavy",
+      "licenseCode": "OFL",
+      "weights": [
+        900
+      ]
+    }
+  ],
+  "assets": [
+    {
+      "id": "bg",
+      "sha256": "3e863d687232679ec6dac8bf643614c16954742aa2dfe1a0e42eb48d09ddc461",
+      "mediaType": "image/webp",
+      "byteSize": 69448,
+      "licenseCode": "CC0-1.0"
+    },
+    {
+      "id": "figure",
+      "sha256": "05c1ea275544050aaa51ae8498c099a64ab7e64cba99111d1cc4593b6e8443cf",
+      "mediaType": "image/webp",
+      "byteSize": 74104,
+      "licenseCode": "OCEANLEO-AIGEN"
+    }
+  ],
+  "attribution": {
+    "entries": [
+      {
+        "text": "bg-macaron-pink-b5（OceanLeo 第一方，素材台账 bg-macaron-pink-b5）",
+        "licenseCode": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "assetId": "bg"
+      },
+      {
+        "text": "美妆女生 抠图（OceanLeo 第一方，素材台账 design-figure-beauty-01）",
+        "licenseCode": "OCEANLEO-AIGEN",
+        "licenseUrl": "https://oceanleo.com/licenses/first-party",
+        "assetId": "figure"
+      },
+      {
+        "text": "LXGW Marker Gothic（字体）",
+        "licenseCode": "OFL",
+        "licenseUrl": "https://openfontlicense.org/open-font-license-official-text/"
+      },
+      {
+        "text": "Source Han Sans CN（字体）",
+        "licenseCode": "OFL",
+        "licenseUrl": "https://openfontlicense.org/open-font-license-official-text/"
+      },
+      {
+        "text": "Source Han Sans CN Heavy（字体）",
+        "licenseCode": "OFL",
+        "licenseUrl": "https://openfontlicense.org/open-font-license-official-text/"
+      }
+    ]
+  }
+}
