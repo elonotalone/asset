@@ -815,18 +815,22 @@ test("⑩ 元素写 effect:highlight 就画且只画一块；写 effect:none 一
   const lines = text.split("\n").filter((line) => line.trim());
   const blocks = html.match(new RegExp(`<rect[^>]*fill="${color}"[^>]*>`, "g")) ?? [];
   assert.equal(blocks.length, lines.length, `写了 effect:highlight 的元素应当每行画一块（共 ${lines.length} 行）`);
+  const block0 = blocks[0];
+  const line0 = lines[0];
+  assert.ok(block0);
+  assert.ok(line0);
 
   // 几何逐个数对齐 `render.ts:1319-1325`：块居中于字身、宽按行文本估算。
-  const wLine = estimateLineWidth(lines[0], fs, (el.props.letterSpacing as number) ?? 0);
+  const wLine = estimateLineWidth(line0, fs, (el.props.letterSpacing as number) ?? 0);
   const r1 = (v: number) => Number(v.toFixed(1));
-  assert.ok(blocks[0].includes(`x="${r1(-fs * 0.08)}"`), "块的左缘没按 fs*0.08 的内边距外扩");
-  assert.ok(blocks[0].includes(`y="${r1(fs - fs * 0.66)}"`), "块的顶边不在 baseline-0.66em 上，块会偏离字身");
-  assert.ok(blocks[0].includes(`width="${r1(wLine + fs * 0.16)}"`), `块宽与渲染端的估算不一致（期望 ${r1(wLine + fs * 0.16)}）`);
-  assert.ok(blocks[0].includes(`height="${r1(fs * 0.82)}"`), "块高不是 0.82em，盖不住字身");
+  assert.ok(block0.includes(`x="${r1(-fs * 0.08)}"`), "块的左缘没按 fs*0.08 的内边距外扩");
+  assert.ok(block0.includes(`y="${r1(fs - fs * 0.66)}"`), "块的顶边不在 baseline-0.66em 上，块会偏离字身");
+  assert.ok(block0.includes(`width="${r1(wLine + fs * 0.16)}"`), `块宽与渲染端的估算不一致（期望 ${r1(wLine + fs * 0.16)}）`);
+  assert.ok(block0.includes(`height="${r1(fs * 0.82)}"`), "块高不是 0.82em，盖不住字身");
 
   // 字压在块上面，不是块盖住字。
-  const blockAt = html.indexOf(blocks[0]);
-  const textAt = html.indexOf(lines[0], blockAt);
+  const blockAt = html.indexOf(block0);
+  const textAt = html.indexOf(line0, blockAt);
   assert.ok(blockAt >= 0 && textAt > blockAt, "块画在了字之上，字会被荧光块埋掉");
 
   // **触发条件是 effect 的取值，不是 highlightColor 在不在。**
@@ -842,7 +846,7 @@ test("⑩ 元素写 effect:highlight 就画且只画一块；写 effect:none 一
     0,
     "元素写的是 effect:none，站内却自己估了一块 —— 新产文档全走这个取值，这就是重影",
   );
-  assert.ok(noneHtml.includes(lines[0]), "改成 effect:none 之后字也跟着没了");
+  assert.ok(noneHtml.includes(line0), "改成 effect:none 之后字也跟着没了");
 });
 
 test("⑩ 防重影：新产文档里块是引擎发的独立元素，块数恰好等于收据申报的数量", () => {
