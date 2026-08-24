@@ -119,8 +119,9 @@ test("有这一格：形状合法的 workflow 原样上屏，两段与三段 id 
   assert.deepEqual(problems, []);
 
   // 真片段带上这一格：条目上架，这一格进详情页。
-  const raw = { ...realEntry("composite_image.xhs.json"), workflow: WORKFLOW };
-  const { entry, problems: why } = parse(raw, "composite_image.xhs.json");
+  // 复合图片 16 条已按 2026-08-24 裁定清空，改用仍在货架上的 chart 条目做文件存在性夹具。
+  const raw = { ...realEntry("chart.json"), artifactType: "composite_image", workflow: WORKFLOW };
+  const { entry, problems: why } = parse(raw, "chart.json");
   assert.ok(entry, "带合法 workflow 的真片段必须上架");
   assert.deepEqual(entry.workflow, WORKFLOW);
   assert.deepEqual(why, []);
@@ -131,9 +132,9 @@ test("没这一格：69 件存量照常上架，卡片退回 styleId", () => {
   assert.equal(worksModule.parseWorkflow(undefined, "composite_image", problems), undefined);
   assert.deepEqual(problems, [], "缺这一格是对照组，不是问题");
 
-  const raw = realEntryWithout("composite_image.xhs.json", "workflow");
+  const raw = realEntryWithout("chart.json", "workflow");
   assert.equal("workflow" in raw, false, "存量片段本来就没有这一格");
-  const { entry, problems: why } = parse(raw, "composite_image.xhs.json");
+  const { entry, problems: why } = parse(raw, "chart.json");
   assert.ok(entry);
   assert.equal(entry.workflow, undefined);
   assert.deepEqual(why, []);
@@ -166,8 +167,8 @@ test("形状坏了：只丢这一格，条目照常上架并留下一条原因",
     );
     assert.equal(problems.length, 1, `${what}：应当只记一条原因，实得 ${problems.length}`);
 
-    const raw = { ...realEntry("composite_image.xhs.json"), workflow: cell };
-    const { entry, problems: why } = parse(raw, "composite_image.xhs.json");
+    const raw = { ...realEntry("chart.json"), artifactType: "composite_image", workflow: cell };
+    const { entry, problems: why } = parse(raw, "chart.json");
     assert.ok(entry, `${what}：坏了一格不许把整条成品从页面上抹掉`);
     assert.equal(entry.workflow, undefined, what);
     assert.equal(why.length, 1, what);
