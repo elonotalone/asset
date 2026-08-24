@@ -203,8 +203,8 @@ export function deriveProvenance(asset: ProvenanceAssetLike): ProvenanceFacts {
           ? true
           : undefined;
 
-  // 自产素材的 source_url 指向内部 JSON（例 .../design-templates/doc/mc-logo-02.json），
-  // 那不是出处，点开会下载到一个文件。自产分支改指法务页。
+  // 自产素材的 source_url 有时指向站内 JSON（不是外站出处页），点开会下载到一个文件。
+  // 自产分支改指法务页，不把内部 JSON 渲成可点链接。
   const sourceUrl = origin === "first-party" ? "" : safeHttpUrl(asset.source_url || "");
 
   return {
@@ -396,7 +396,7 @@ export const PROVENANCE_FIXTURES: Record<string, ProvenanceAssetLike> = {
   // 线上实测行（2026-08-07）：自产设计模板，source_url 指向内部 JSON。
   firstParty: {
     source: "oceanleo-design-template",
-    source_url: "https://asset.oceanleo.com/design-templates/doc/mc-logo-02.json",
+    source_url: "https://asset.oceanleo.com/internal/mc-logo-02.json",
     supply_tier: "byte-portable",
     license: {
       code: "OceanLeo-owned",

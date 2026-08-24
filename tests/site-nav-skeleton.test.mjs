@@ -17,7 +17,6 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { readFileSync } from "node:fs";
 
-import { DESIGN_TYPE_LABELS, DESIGN_TYPE_ORDER } from "../lib/design-taxonomy.ts";
 import {
   LIVE_SEARCH_TYPES,
   SERIES_ZONE,
@@ -45,8 +44,8 @@ const OPEN_ROUTE = readFileSync(new URL("../app/open/page.tsx", import.meta.url)
 const SERIES_ROUTE = readFileSync(new URL("../app/series/page.tsx", import.meta.url), "utf8");
 
 /**
- * 左栏真正渲染出来的名称。三个 ShellNavItem 数组（libraryTypes / designTypes /
- * codeTypes）都在 navGroups 之前拼好，所以从第一个数组起扫到底。
+ * 左栏真正渲染出来的名称。两个 ShellNavItem 数组（libraryTypes / codeTypes）
+ * 都在 navGroups 之前拼好，所以从第一个数组起扫到底。
  */
 function navLabels(src) {
   const start = src.indexOf("const libraryTypes");
@@ -76,24 +75,21 @@ test("左栏没有任何按数据来源分的伪类型（专区 / 总览 / 精�
   }
 });
 
-test("类型轴共 22 格 = 库内 10 + 平面设计 10 + 代码常量 2", () => {
+test("类型轴共 12 格 = 库内 10 + 代码常量 2", () => {
   const libraryTypes = arrayLength(ASSETS, "TYPE_ORDER");
   assert.equal(libraryTypes, 10);
-  assert.equal(DESIGN_TYPE_ORDER.length, 10);
 
   // 「网站」「网页动效」是写死在 SiteShell 里的两格（上游是代码常量不是 DB 表）。
   const codeTypes = navLabels(SHELL).filter((l) => l === "网站" || l === "网页动效");
   assert.deepEqual(codeTypes, ["网站", "网页动效"]);
 
-  assert.equal(libraryTypes + DESIGN_TYPE_ORDER.length + codeTypes.length, 22);
+  assert.equal(libraryTypes + codeTypes.length, 12);
 });
 
-test("十个平面设计类型各自出格，且走 /design/<类型> 而不是旧的 /design", () => {
-  assert.match(SHELL, /href:\s*`\/design\/\$\{t\}`/, "设计类型没有按类型出路由");
+test("平面设计模板十格已下架：左栏不再出 /design/<类型>", () => {
+  assert.equal(SHELL.includes("const designTypes"), false, "designTypes 数组还在");
+  assert.doesNotMatch(SHELL, /href:\s*`\/design\/\$\{t\}`/, "设计类型还在按类型出路由");
   assert.ok(!/href:\s*"\/design"/.test(SHELL), "旧的 /design 单一入口还在");
-  for (const type of DESIGN_TYPE_ORDER) {
-    assert.ok(DESIGN_TYPE_LABELS[type], `${type} 没有左栏名称`);
-  }
 });
 
 test("成品与工具单独成组，我的素材库那组不挂 heading", () => {
@@ -101,7 +97,7 @@ test("成品与工具单独成组，我的素材库那组不挂 heading", () => 
   assert.ok(labels.includes("我的素材库"), "我的素材库不在左栏");
   assert.ok(labels.includes("授权说明"), "授权说明不在左栏");
   // 「成品」与「插件」都不是素材类型（成品是按新工作流做出来的整件作品，插件是能打开
-  // 素材的工具、可看不可下），所以它们自己一组并带 heading，不混进类型轴那 22 格里。
+  // 素材的工具、可看不可下），所以它们自己一组并带 heading，不混进类型轴那 12 格里。
   // 原判据钉的是「只有类型轴带 heading」，那是这一组存在之前的样子。
   assert.ok(labels.includes("成品"), "成品不在左栏");
   assert.ok(labels.includes("插件"), "插件不在左栏");

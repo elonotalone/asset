@@ -209,7 +209,7 @@ test("外部素材渲染可点开的出处链接", () => {
 test("自产素材不把内部 JSON 当出处渲染", () => {
   const html = render(<AssetProvenance asset={firstParty} />);
   assert.ok(
-    !html.includes("design-templates/doc/mc-logo-02.json"),
+    !html.includes("internal/mc-logo-02.json"),
     "自产素材的 source_url 指向内部 JSON，不是出处，不许渲染成可点链接",
   );
   assert.equal(deriveProvenance(firstParty).sourceUrl, "");

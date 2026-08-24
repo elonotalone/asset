@@ -6,11 +6,6 @@ import { useUI } from "@oceanleo/ui/i18n";
 import { AppShell, ShellNavGroup, ShellNavItem } from "@/components/AppShell";
 import { browserClient, getCredits, signOutEverywhere } from "@/lib/oceanleo-auth";
 import { AssetType, TYPE_LABELS, TYPE_ORDER } from "@/lib/assets";
-import {
-  DESIGN_TYPE_LABELS,
-  DESIGN_TYPE_ORDER,
-  type DesignAssetType,
-} from "@/lib/design-taxonomy";
 
 function LeoAssetLogo() {
   return (
@@ -53,27 +48,6 @@ function TypeIcon({ type }: { type: AssetType }) {
     ppt: "M4 4h16v12H4zM4 16l3 4M20 16l-3 4M9 12V8h3a2 2 0 010 4z",
     chart: "M4 4v16h16M8 16v-4M12 16V8M16 16v-6",
     prompt: "M4 5h16v10H4zM8 19h8M12 15v4M7 8h6M7 11h10",
-  };
-  return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-      <path d={D[type]} />
-    </svg>
-  );
-}
-
-// 平面设计成品的十个类型，以及网站 / 网页动效这两个来自代码常量的类型。
-function DesignTypeIcon({ type }: { type: DesignAssetType }) {
-  const D: Record<DesignAssetType, string> = {
-    poster: "M5 3h14v18H5zM8 7h8M8 11h8M8 15h5",
-    cover: "M4 4h16v16H4zM4 14l4-4 4 4 3-3 5 5",
-    card: "M3 6h18v12H3zM7 10h4M7 14h7M16 10h2",
-    qrcode: "M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2M18 14h2v2h-2M14 18h2v2h-2M18 18h2v2h-2",
-    product_shot: "M4 7l8-4 8 4v10l-8 4-8-4zM4 7l8 4 8-4M12 11v10",
-    resume: "M6 3h9l4 4v14H6zM15 3v4h4M9 12h7M9 16h7M9 8h3",
-    logo: "M12 3l7 4v7l-7 5-7-5V7zM12 8.5l3 1.7v3.4l-3 1.7-3-1.7v-3.4z",
-    avatar: "M12 12a4 4 0 100-8 4 4 0 000 8zM4.5 20a7.5 7.5 0 0115 0",
-    emoji_pack: "M12 21a9 9 0 100-18 9 9 0 000 18zM9 10h.01M15 10h.01M8.5 14.5a4.5 4.5 0 007 0",
-    wallpaper: "M3 5h18v14H3zM3 15l5-5 4 4 3-2 6 5",
   };
   return (
     <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
@@ -161,9 +135,8 @@ function SiteShellInner({ children }: { children: ReactNode }) {
   //
   // 「开源专区」「成套素材」不是类型，前者是**即时搜索**这个功能、后者是素材的一种
   // **形态**，两者都降级成类型页里的开关（见 TypePageChrome），不再占左栏一格。
-  // 「模板专区 / 风格元素 / 设计模板」是按**数据来源**分的，不是按类型分的，
-  // 已按素材类型拆开归位：模板专区 → 网站，风格元素 → 网页动效，
-  // 设计模板 → 海报 / 封面 / 卡证 … 十个类型。**三者没有被合并成一个入口。**
+  // 「模板专区 / 风格元素」按素材类型归位：模板专区 → 网站，风格元素 → 网页动效。
+  // 「设计模板」十格（/design/<类型>，684 份语料）已按 2026-08-24 裁定下架，左栏不再出入口。
   //
   // 用 href（Next <Link>）而非 onClick(router.push)：<Link> 会预取目标路由、点击即
   // 客户端瞬时切换并高亮，不必等网络。这是消除「按按键要等很久才跳页」的关键。
@@ -176,15 +149,7 @@ function SiteShellInner({ children }: { children: ReactNode }) {
     match: () => onLibrary && activeType === t,
   }));
 
-  // ② 平面设计成品（public/design-templates/manifest.json，684 件按类型分十格）。
-  const designTypes: ShellNavItem[] = DESIGN_TYPE_ORDER.map((t) => ({
-    label: tt(DESIGN_TYPE_LABELS[t]),
-    icon: <DesignTypeIcon type={t} />,
-    href: `/design/${t}`,
-    match: (p) => p === `/design/${t}`,
-  }));
-
-  // ③ 两个来自代码常量的类型。
+  // ② 两个来自代码常量的类型。
   const codeTypes: ShellNavItem[] = [
     {
       label: tt("网站"),
@@ -203,10 +168,10 @@ function SiteShellInner({ children }: { children: ReactNode }) {
   const navGroups: ShellNavGroup[] = [
     {
       heading: tt("素材类型"),
-      items: [...libraryTypes, ...designTypes, ...codeTypes],
+      items: [...libraryTypes, ...codeTypes],
     },
     // 这一组也不是类型轴：「成品」是按新工作流做出来的整件作品（14 类都落在这里，
-    // 上面那 22 格没有一格装得下），「插件」是能打开素材的工具（可看不可下）。
+    // 上面那 12 格没有一格装得下），「插件」是能打开素材的工具（可看不可下）。
     // 两者都**不是素材类型**，所以单独成组，不混进「素材类型」那一栏。
     {
       heading: tt("成品与工具"),
