@@ -1,10 +1,9 @@
 "use client";
 
-import { ReactNode, Suspense, useEffect, useState } from "react";
+import { ReactNode, Suspense } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useUI } from "@oceanleo/ui/i18n";
-import { AppShell, ShellNavGroup, ShellNavItem } from "@/components/AppShell";
-import { browserClient, getCredits, signOutEverywhere } from "@/lib/oceanleo-auth";
+import { AssetSiteShell, type AssetNavGroup, type AssetNavItem } from "@/components/AssetSiteShell";
 import { AssetType, TYPE_LABELS, TYPE_ORDER } from "@/lib/assets";
 
 function LeoAssetLogo() {
@@ -49,18 +48,6 @@ function TypeIcon({ type }: { type: AssetType }) {
   );
 }
 
-function useEmail(): string | null {
-  const [email, setEmail] = useState<string | null>(null);
-  useEffect(() => {
-    const c = browserClient();
-    if (!c) return;
-    void c.auth.getSession().then(({ data }) => setEmail(data.session?.user?.email ?? null));
-    const sub = c.auth.onAuthStateChange((_e, s) => setEmail(s?.user?.email ?? null));
-    return () => sub.data.subscription.unsubscribe();
-  }, []);
-  return email;
-}
-
 // useSearchParams 必须包在 Suspense 里（Next 16 CSR bailout）。外层 SiteShell
 // 负责提供边界，内层 SiteShellInner 才真正读 query —— 这样每个引用 SiteShell 的
 // 页面都自动被覆盖，无需逐页再包一层。
@@ -75,31 +62,25 @@ export function SiteShell({ children }: { children: ReactNode }) {
 
 function SiteShellInner({ children }: { children: ReactNode }) {
   const tt = useUI();
-  const email = useEmail();
   const pathname = usePathname() || "/";
   const search = useSearchParams();
-  const [credits, setCredits] = useState<number | null>(null);
-
-  useEffect(() => {
-    getCredits().then((r) => {
-      if (r.ok && r.data) setCredits(r.data.balance_yuan);
-    });
-  }, []);
 
   const onLibrary = pathname === "/";
   const activeType = (search.get("type") as AssetType) || "image";
 
   // 左栏只有一条轴：**素材类型**（platform_assets 走网关实时查）。
   // 成品 / 插件 / 我的素材库 / 网站模板 / 网页动效 已从本站拿掉：asset 只摆素材让人下载。
+  // 账户 / 设置 / 积分入口也不再出现：共享 AppShell 没有关菜单的 prop，本站改走
+  // AssetSiteShell（见该文件顶部注释）。
 
-  const libraryTypes: ShellNavItem[] = TYPE_ORDER.map((t) => ({
+  const libraryTypes: AssetNavItem[] = TYPE_ORDER.map((t) => ({
     label: tt(TYPE_LABELS[t]),
     icon: <TypeIcon type={t} />,
     href: t === "image" ? "/" : `/?type=${t}`,
     match: () => onLibrary && activeType === t,
   }));
 
-  const navGroups: ShellNavGroup[] = [
+  const navGroups: AssetNavGroup[] = [
     {
       heading: tt("素材类型"),
       items: libraryTypes,
@@ -112,16 +93,12 @@ function SiteShellInner({ children }: { children: ReactNode }) {
   ];
 
   return (
-    <AppShell
+    <AssetSiteShell
       brand={{ name: "LeoAsset", accent: "#0ea5e9", logo: <LeoAssetLogo /> }}
       collapseKey="asset_sidebar_collapsed"
-      siteId="asset"
       navGroups={navGroups}
-      userEmail={email}
-      credits={credits}
-      onSignOut={() => signOutEverywhere()}
     >
       {children}
-    </AppShell>
+    </AssetSiteShell>
   );
 }

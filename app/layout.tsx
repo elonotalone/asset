@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 // 全家桶统一样式预编译产物（JS 方式 import，避开 pnpm git 依赖路径含 # 的问题）。
 import "@oceanleo/ui/theme/ui.css";
-import { LeoAssistant } from "@oceanleo/ui/shell";
 import { FreshBundleGuard } from "@/components/FreshBundleGuard";
 import { I18nProvider } from "@oceanleo/ui/i18n";
 import { getLocale, getMessages, normalizeLocale, htmlLang, localeDir, ttServer } from "@oceanleo/ui/i18n/server";
@@ -40,10 +39,9 @@ export default async function RootLayout({
       <body className="antialiased">
         <ThemeProvider>
           <I18nProvider locale={locale} messages={messages}>
-        <FreshBundleGuard />
-        {children}
-        <LeoAssistant siteId="asset" docType="doc" />
-                </I18nProvider>
+            <FreshBundleGuard />
+            {children}
+          </I18nProvider>
         </ThemeProvider>
         <IcpBeianFooter />
       </body>
