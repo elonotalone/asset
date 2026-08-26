@@ -32,7 +32,11 @@ export const SHELF_PINS: Record<WashPinCategory, string[]> = {
     "8f98cdcb-8f46-4009-8aee-8c39630f0a72",
     "719c3439-5f78-40c2-8b0a-d53119189b37",
   ],
-  "resume-template": [],
+  "resume-template": [
+    "354a6b58-0caf-4048-88eb-2a150fac2630",
+    "a3489bce-0e3d-4d45-add8-a7d0b7a4c93a",
+    "be979923-fb5a-4145-b8bb-87796ca66c00",
+  ],
   "flowchart-diagram": [],
   "longform-poster": [],
   "ecommerce-detail": [],

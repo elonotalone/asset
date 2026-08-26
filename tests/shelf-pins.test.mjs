@@ -69,9 +69,9 @@ test("第 2 页会把已钉的件滤掉，避免重复", async () => {
 
 test("第 1 页缺件时按 id 补拉，拉失败就空着那个槽", async () => {
   const fetched = [];
-  // 还没交件的类走空清单路径；已钉的类（合同协议）不在本用例里。
+  // 还没交件的类走空清单路径；已钉的类（合同协议 / 简历）不在本用例里。
   const empty = await attachShelfPins({
-    category: "resume-template",
+    category: "longform-poster",
     page: 1,
     items: [{ id: "library:old" }],
     fetchPinned: async (id) => {
