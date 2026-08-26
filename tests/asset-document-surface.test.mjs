@@ -23,6 +23,7 @@ test("官方发布编号从 tags 里挑出来，机器标签不算", () => {
     ["GF-2026-2621", "SPC民-C01-003"],
   );
   assert.deepEqual(officialDocNumbers(["HF-2025-04", "SDF-2025-0003"]), ["HF-2025-04", "SDF-2025-0003"]);
+  assert.deepEqual(officialDocNumbers(["OLW-0001", "律师业务文书"]), ["OLW-0001"]);
   assert.deepEqual(officialDocNumbers(["ind-law", "pages:3"]), []);
   assert.deepEqual(officialDocNumbers(undefined), []);
 });

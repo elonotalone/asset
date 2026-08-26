@@ -1065,6 +1065,7 @@ export const CATEGORY_PANELS: CategoryPanel[] = [
   // 法律文书（A/B 链入库的 category；二级 tab 等 C 链分类树映射后再加）
   { key: "legal-contract-model", label: "合同示范文本", icon: "📜", type: "document", subs: [ALL_SUB] },
   { key: "legal-litigation-form", label: "诉讼文书样式", icon: "⚖", type: "document", subs: [ALL_SUB] },
+  { key: "legal-lawyer-template", label: "律师业务文书", icon: "📝", type: "document", subs: [ALL_SUB] },
 ];
 
 export function panelByKey(key: string): CategoryPanel | undefined {
@@ -1182,6 +1183,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   // document（A 链合同示范文本 / B 链诉讼文书样式；category 窄查走网关原样参数）
   "legal-contract-model": "合同示范文本",
   "legal-litigation-form": "诉讼文书样式",
+  "legal-lawyer-template": "律师业务文书",
   // ppt（风格族目录；slug = OSS deck 目录名 = platform_assets.category）
   etching: "蚀刻编辑风",
   editorial: "杂志编辑风",
