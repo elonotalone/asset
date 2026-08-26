@@ -88,7 +88,7 @@ const ACTIVE_RUNTIME_ID = /^[a-z0-9](?:[a-z0-9._-]{0,126}[a-z0-9])?$/;
 const ACTIVE_RUNTIME_HOST = /^s-[0-9a-f]{32}\.oceanleo\.app$/;
 const SHA256 = /^[0-9a-f]{64}$/;
 
-type ActiveRuntimeKind = "plugin" | "game" | "website";
+type ActiveRuntimeKind = "game" | "website";
 
 interface ActiveRuntimeManifestItem {
   id: string;
@@ -121,7 +121,7 @@ function normalizeRuntimeItem(value: unknown): ActiveRuntimeManifestItem | null 
   if (
     typeof value.id !== "string" ||
     !ACTIVE_RUNTIME_ID.test(value.id) ||
-    !["plugin", "game", "website"].includes(String(value.kind)) ||
+    !["game", "website"].includes(String(value.kind)) ||
     value.source !== `content/active-runtime/${value.kind}/${value.id}` ||
     value.entry !== "index.html"
   ) {
