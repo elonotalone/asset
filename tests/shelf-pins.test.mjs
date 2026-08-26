@@ -19,7 +19,7 @@ import {
 
 test("八类各有置顶槽，且不再钉 v2 废品 uuid", () => {
   assert.deepEqual([...WASH_PIN_CATEGORIES], [
-    "contract-agreement",
+    "legal-contract-model",
     "legal-diligence",
     "legal-litigation-form",
     "legal-lawyer-template",
@@ -29,7 +29,8 @@ test("八类各有置顶槽，且不再钉 v2 废品 uuid", () => {
     "ecommerce-detail",
   ]);
   assert.equal(SHELF_PIN_LIMIT, 3);
-  assert.ok(matchersFor("contract-agreement").every((m) => m.source === "samr-htsfwb"));
+  // 合同区整区都是官方原文，没有"本轮新洗的三件"要提到最前，所以不设钉位。
+  assert.deepEqual(matchersFor("legal-contract-model"), []);
   assert.deepEqual(matchersFor("legal-litigation-form"), []);
   assert.equal(matchersFor("resume-template").length, 3);
   assert.ok(matchersFor("resume-template").every((m) => m.titlePrefix?.startsWith("OLR-")));

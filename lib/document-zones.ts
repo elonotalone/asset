@@ -35,16 +35,20 @@ export type DocumentZone = {
 export const DOCUMENT_ZONES: DocumentZone[] = [
   {
     slug: "contract",
-    category: "contract-agreement",
+    // 合同区读 `legal-contract-model`，不是 `contract-agreement`。
+    // 全国合同示范文本库那 1,188 件官方原文入库时用的就是这个 category；
+    // `contract-agreement` 装的是 v2 那批洗白废品，已被清空到 0 行。写错这一格
+    // 会让合同区一件都不显示。
+    category: "legal-contract-model",
     title: "合同区",
     type: "document",
     licenseKind: "official-public-domain",
     licenseLabel: "官方公有领域",
-    formats: ["docx", "md"],
+    formats: ["doc", "pdf"],
     officialNumbers: ["GF-2026-24"],
     officialSourceNote:
       "全国合同示范文本库原文。国家机关文件，依著作权法第五条第一项不适用著作权法。",
-    pinSource: "samr-htsfwb",
+    // 不钉位：这一区整区都是官方原文，没有"本轮新洗的三件"要提到最前。
   },
   {
     slug: "diligence",

@@ -1088,8 +1088,10 @@ export const CATEGORY_PANELS: CategoryPanel[] = [
   { key: "vehicle", label: "载具", icon: "🚗", type: "prompt", subs: [ALL_SUB] },
   // 文档分区（素材洗白 v2）：合同区 / 简历区等。面板键 = platform_assets.category。
   // 流程架构图产出是 pptx，落 PPT 类型页；长图海报 / 电商详情产出是 png，落图片类型页。
-  { key: "legal-contract-model", label: "合同示范文本", icon: "📜", type: "document", subs: [ALL_SUB] },
-  { key: "contract-agreement", label: "合同区", icon: "📑", type: "document", subs: [ALL_SUB] },
+  // 合同区只此一个面板：官方 1,188 件在 `legal-contract-model`。旧的
+  // `contract-agreement` 面板装的是 v2 洗白废品，库里已清空到 0 行，留着只会
+  // 多一个空面板，且与本面板同名。
+  { key: "legal-contract-model", label: "合同区", icon: "📜", type: "document", subs: [ALL_SUB] },
   { key: "legal-diligence", label: "尽职调查区", icon: "🔎", type: "document", subs: [ALL_SUB] },
   { key: "legal-litigation-form", label: "诉讼文书区", icon: "⚖", type: "document", subs: [ALL_SUB] },
   { key: "legal-lawyer-template", label: "律师文书区", icon: "📝", type: "document", subs: [ALL_SUB] },
@@ -1213,8 +1215,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   funnel: "漏斗图",
   gauge: "仪表盘",
   // document 分区 + 洗白五类（flowchart 在 ppt 页，poster/ecommerce 在图片页）
-  "legal-contract-model": "合同示范文本",
-  "contract-agreement": "合同区",
+  "legal-contract-model": "合同区",
   "legal-diligence": "尽职调查区",
   "legal-litigation-form": "诉讼文书区",
   "legal-lawyer-template": "律师文书区",

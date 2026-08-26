@@ -34,7 +34,8 @@ test("八个分区一个不少，标题是中文直白名不是英文 category",
   assert.deepEqual(
     DOCUMENT_ZONES.map((z) => z.category),
     [
-      "contract-agreement",
+      // 合同区读官方原文那一类；contract-agreement 是 v2 洗白废品，库里已清零。
+      "legal-contract-model",
       "legal-diligence",
       "legal-litigation-form",
       "legal-lawyer-template",

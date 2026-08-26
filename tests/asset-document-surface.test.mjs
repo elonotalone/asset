@@ -73,7 +73,9 @@ test("详情页文档走 DocumentPreview，尺寸行只渲染 dimensionLabel 的
   assert.match(DETAIL, /officialDocNumbers\(asset\.tags\)/);
   assert.match(ASSETS, /export function listLibraryCategories/);
   assert.match(ASSETS, /const qs = new URLSearchParams\(\{ type \}\)/);
-  assert.match(ASSETS, /key: "contract-agreement"/);
+  assert.match(ASSETS, /key: "legal-contract-model"/);
+  // 旧的 contract-agreement 面板已删：库里那一类是 v2 洗白废品，已清空到 0 行。
+  assert.doesNotMatch(ASSETS, /key: "contract-agreement"/);
   assert.match(ASSETS, /key: "resume-template"/);
   assert.match(ASSETS, /key: "flowchart-diagram"/);
   assert.match(ASSETS, /key: "longform-poster"/);
