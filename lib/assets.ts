@@ -4,7 +4,7 @@
 // Browsing is PUBLIC (no token needed), so unlike other sites' gateway clients
 // these are unauthenticated GETs. The gateway holds every source key.
 import type { MaterialOrigin } from "@/lib/type-page-views";
-import { attachShelfPins, libraryPrefixedId } from "@/lib/shelf-pins";
+import { attachShelfPins, itemMatchesPin } from "@/lib/shelf-pins";
 
 const GATEWAY =
   process.env.NEXT_PUBLIC_GATEWAY_URL || "https://api.oceanleo.com";
@@ -205,20 +205,36 @@ export async function searchAssets(params: {
   let items = params.origin
     ? raw.filter((a) => a.origin === params.origin)
     : raw;
-  // 洗白新件置顶：只在本仓钉名单，不改网关排序。见 lib/shelf-pins.ts。
+  // 洗白/官方新件置顶：按标题前缀或 source 钉，缺件跳过。见 lib/shelf-pins.ts。
   if (params.category) {
     items = await attachShelfPins({
       category: params.category,
       page,
       items,
-      fetchPinned: async (bareId) => {
-        const row = await getJson<Asset>(
-          `/v1/assets/detail?id=${encodeURIComponent(libraryPrefixedId(bareId))}`,
+      searchPinned: async (matcher) => {
+        const q = matcher.titlePrefix || matcher.ossKeyIncludes || "";
+        if (!q) throw new Error("pinned matcher has no searchable prefix");
+        const pinParams: Record<string, string> = {
+          q,
+          type: params.type,
+          license,
+          page: "1",
+          page_size: "8",
+          category: params.category || "",
+        };
+        if (params.origin && ORIGIN_FILTER_IS_SERVER_SIDE) {
+          pinParams.origin = params.origin;
+        }
+        const pinQs = new URLSearchParams(pinParams);
+        const pinLib = await getJson<LibraryResult>(
+          `/v1/assets/library/search?${pinQs.toString()}`,
         );
-        if (params.origin && row.origin && row.origin !== params.origin) {
+        const hit = (pinLib.items || []).find((a) => itemMatchesPin(a, matcher));
+        if (!hit) throw new Error("pinned asset not ingested yet");
+        if (params.origin && hit.origin && hit.origin !== params.origin) {
           throw new Error("pinned asset origin mismatch");
         }
-        return row;
+        return hit;
       },
     });
   }
