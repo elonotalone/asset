@@ -16,7 +16,7 @@ import {
   attachShelfPins,
 } from "../lib/shelf-pins.ts";
 
-test("五类各有一个空置顶槽，上限 3", () => {
+test("五类各有置顶槽且不超过上限 3", () => {
   assert.deepEqual([...WASH_PIN_CATEGORIES], [
     "contract-agreement",
     "resume-template",
@@ -69,10 +69,9 @@ test("第 2 页会把已钉的件滤掉，避免重复", async () => {
 
 test("第 1 页缺件时按 id 补拉，拉失败就空着那个槽", async () => {
   const fetched = [];
-  const original = pinsFor;
-  // contract-agreement 今天是空清单，走空路径。
+  // 还没交件的类走空清单路径；已钉的类（合同协议）不在本用例里。
   const empty = await attachShelfPins({
-    category: "contract-agreement",
+    category: "resume-template",
     page: 1,
     items: [{ id: "library:old" }],
     fetchPinned: async (id) => {
@@ -82,5 +81,4 @@ test("第 1 页缺件时按 id 补拉，拉失败就空着那个槽", async () =
   });
   assert.deepEqual(empty, [{ id: "library:old" }]);
   assert.deepEqual(fetched, []);
-  void original;
 });

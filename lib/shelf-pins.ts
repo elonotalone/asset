@@ -27,7 +27,11 @@ export type WashPinCategory = (typeof WASH_PIN_CATEGORIES)[number];
  * 空数组 = 这一类还没交件，目录按网关默认序。
  */
 export const SHELF_PINS: Record<WashPinCategory, string[]> = {
-  "contract-agreement": [],
+  "contract-agreement": [
+    "09eb7494-821f-4cce-be81-39057febdd6c",
+    "8f98cdcb-8f46-4009-8aee-8c39630f0a72",
+    "719c3439-5f78-40c2-8b0a-d53119189b37",
+  ],
   "resume-template": [],
   "flowchart-diagram": [],
   "longform-poster": [],
