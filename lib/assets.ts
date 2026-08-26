@@ -28,6 +28,7 @@ export type AssetType =
   | "3d"
   | "font"
   | "ppt"
+  | "document"
   | "chart"
   | "prompt";
 export type LicenseFilter = "commercial" | "modify" | "any";
@@ -59,6 +60,15 @@ export interface Asset {
   width: number | null;
   height: number | null;
   duration: number | null;
+  /** 网关投影已有（`supa.py` normalized.format）。文档件靠它显示格式。 */
+  format?: string;
+  /**
+   * 库行有 `file_size` 列，今天网关 library 投影没带。有就显示，没有就写「未标注」。
+   * 前端不编一个数。
+   */
+  file_size?: number | null;
+  oss_key?: string;
+  category?: string;
   author: string;
   source_url: string;
   license: AssetLicense;
@@ -625,6 +635,7 @@ export const TYPE_LABELS: Record<AssetType, string> = {
   "3d": "3D 模型",
   font: "字体",
   ppt: "PPT 模板",
+  document: "文档",
   chart: "图表",
   prompt: "Prompt 示例",
 };
@@ -632,7 +643,8 @@ export const TYPE_LABELS: Record<AssetType, string> = {
 // 左侧栏「素材类型」分区——**只列我们真正囤到 OSS 的类型**。用户在这些栏目里只能看到
 // 我们自有素材（platform_assets），OSS 里没有的类型不出现（例如 music 目前 OSS 无
 // 数据就不放进侧栏，避免出现「点进去永远空」的死栏目）。想找开源素材去「开源专区」。
-// 顺序对齐首页图片优先。DB 实有类型：image/chart/vector/sticker/video/3d/audio/font/ppt。
+// 顺序对齐首页图片优先。document 排在 ppt 后面：都是办公文档形态。
+// OPEN_SOURCE_TYPES / LIVE_SEARCH_TYPES 不列 document —— 外部上游不供文档。
 export const TYPE_ORDER: AssetType[] = [
   "image",
   "prompt",
@@ -640,6 +652,7 @@ export const TYPE_ORDER: AssetType[] = [
   "vector",
   "sticker",
   "ppt",
+  "document",
   "video",
   "3d",
   "audio",
@@ -1049,6 +1062,9 @@ export const CATEGORY_PANELS: CategoryPanel[] = [
   { key: "abstract", label: "抽象艺术", icon: "🎨", type: "prompt", subs: [ALL_SUB] },
   { key: "interior", label: "室内", icon: "🛋", type: "prompt", subs: [ALL_SUB] },
   { key: "vehicle", label: "载具", icon: "🚗", type: "prompt", subs: [ALL_SUB] },
+  // 法律文书（A/B 链入库的 category；二级 tab 等 C 链分类树映射后再加）
+  { key: "legal-contract-model", label: "合同示范文本", icon: "📜", type: "document", subs: [ALL_SUB] },
+  { key: "legal-litigation-form", label: "诉讼文书样式", icon: "⚖", type: "document", subs: [ALL_SUB] },
 ];
 
 export function panelByKey(key: string): CategoryPanel | undefined {
@@ -1163,6 +1179,9 @@ const CATEGORY_LABELS: Record<string, string> = {
   radar: "雷达图",
   funnel: "漏斗图",
   gauge: "仪表盘",
+  // document（A 链合同示范文本 / B 链诉讼文书样式；category 窄查走网关原样参数）
+  "legal-contract-model": "合同示范文本",
+  "legal-litigation-form": "诉讼文书样式",
   // ppt（风格族目录；slug = OSS deck 目录名 = platform_assets.category）
   etching: "蚀刻编辑风",
   editorial: "杂志编辑风",

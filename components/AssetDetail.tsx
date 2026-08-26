@@ -8,6 +8,13 @@ import {
 import { createPortal } from "react-dom";
 import { useUI } from "@oceanleo/ui/i18n";
 import { Asset, assetDetail, downloadHref, pptPageUrls } from "@/lib/assets";
+import {
+  assetFileName,
+  assetFormat,
+  dimensionLabel,
+  formatByteSize,
+  officialDocNumbers,
+} from "@/lib/asset-file-meta";
 import { LicenseFlags } from "@/components/LicenseBadge";
 import { ModelViewer } from "@/components/ModelViewer";
 import { AssetProvenance } from "@/components/AssetProvenance";
@@ -140,6 +147,56 @@ function ChartFrame({ asset }: { asset: Asset }) {
   );
 }
 
+function DocGlyph() {
+  return (
+    <svg className="mx-auto h-16 w-16 text-zinc-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>
+      <path d="M7 3h8l5 5v13H7zM15 3v5h5M9 12h6M9 16h4" strokeLinejoin="round" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/**
+ * 文档没有 width/height/duration，不能走 ZoomImage（会把 .doc/.pdf 当图片加载），
+ * 也不能把空的宽高直接拼进尺寸行。退化成文件名 + 格式 + 大小 + 编号。
+ */
+function DocumentPreview({ asset }: { asset: Asset }) {
+  const tt = useUI();
+  const name = assetFileName(asset);
+  const format = assetFormat(asset);
+  const size = formatByteSize(asset.file_size);
+  const nos = officialDocNumbers(asset.tags);
+  return (
+    <div className="flex flex-col gap-4 p-6">
+      {asset.thumb_url ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={asset.thumb_url} alt="" className="mx-auto max-h-40 object-contain" />
+      ) : (
+        <DocGlyph />
+      )}
+      <dl className="grid gap-2 text-sm">
+        <div className="flex gap-3">
+          <dt className="w-14 shrink-0 text-xs uppercase tracking-wide text-zinc-400">{tt("文件名")}</dt>
+          <dd className="min-w-0 break-all text-zinc-800">{name}</dd>
+        </div>
+        <div className="flex gap-3">
+          <dt className="w-14 shrink-0 text-xs uppercase tracking-wide text-zinc-400">{tt("格式")}</dt>
+          <dd className="text-zinc-800">{format ? format.toUpperCase() : tt("未标注")}</dd>
+        </div>
+        <div className="flex gap-3">
+          <dt className="w-14 shrink-0 text-xs uppercase tracking-wide text-zinc-400">{tt("大小")}</dt>
+          <dd className="text-zinc-800">{size || tt("未标注")}</dd>
+        </div>
+        {nos.length > 0 ? (
+          <div className="flex gap-3">
+            <dt className="w-14 shrink-0 text-xs uppercase tracking-wide text-zinc-400">{tt("编号")}</dt>
+            <dd className="font-medium text-zinc-900">{nos.join(" · ")}</dd>
+          </div>
+        ) : null}
+      </dl>
+    </div>
+  );
+}
+
 function CopyButton({ text, label }: { text: string; label?: string }) {
   const tt = useUI();
   const [done, setDone] = useState(false);
@@ -199,6 +256,8 @@ export function AssetDetail({
   const is3d = is3dModel(asset);
   const isChart = isChartAsset(asset);
   const isPpt = asset.type === "ppt" && asset.id.startsWith("library:");
+  const isDocument = asset.type === "document";
+  const dims = dimensionLabel(asset.width, asset.height);
   // PPT 模板的 source_url 按落库约定指向网页版 deck.html。
   const pptHtmlUrl =
     isPpt && asset.source_url.endsWith(".html") ? asset.source_url : "";
@@ -232,6 +291,8 @@ export function AssetDetail({
               <ChartFrame asset={asset} />
             ) : isPpt ? (
               <PptPager asset={asset} />
+            ) : isDocument ? (
+              <DocumentPreview asset={asset} />
             ) : is3d ? (
               <ModelViewer src={asset.full_url} poster={asset.thumb_url} alt={asset.title} />
             ) : isAudio ? (
@@ -278,6 +339,10 @@ export function AssetDetail({
               </div>
             </div>
           </div>
+
+          {dims ? (
+            <p className="mt-3 text-sm tabular-nums text-zinc-600">{dims}</p>
+          ) : null}
 
           {/* 产权卡：这件素材是谁的、能不能拿走、用了要背什么义务。三个问题在一处
               回答，紧挨着上面的「作者 / 来源」与「授权」，不另开一屏。 */}
@@ -330,7 +395,7 @@ export function AssetDetail({
             download
             className="rounded-lg bg-sky-500 px-4 py-2 text-sm font-medium text-white hover:bg-sky-600"
           >
-            {isPpt ? tt("下载 .pptx") : isChart ? tt("下载 HTML") : tt("下载")}
+            {isPpt ? tt("下载 .pptx") : isChart ? tt("下载 HTML") : isDocument ? tt("下载文件") : tt("下载")}
           </a>
           {isChart && (
             <a

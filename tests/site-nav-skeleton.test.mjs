@@ -22,6 +22,7 @@ import {
   SERIES_ZONE,
   TYPE_ZONES,
   ZONE_LABELS,
+  ZONE_LIVE_UNAVAILABLE_NOTE,
   ZONE_ORIGIN,
   defaultZone,
   fallbackTypeFor,
@@ -75,15 +76,15 @@ test("左栏没有任何按数据来源分的伪类型（专区 / 总览 / 精�
   }
 });
 
-test("类型轴共 12 格 = 库内 10 + 代码常量 2", () => {
+test("类型轴共 13 格 = 库内 11 + 代码常量 2", () => {
   const libraryTypes = arrayLength(ASSETS, "TYPE_ORDER");
-  assert.equal(libraryTypes, 10);
+  assert.equal(libraryTypes, 11);
 
   // 「网站」「网页动效」是写死在 SiteShell 里的两格（上游是代码常量不是 DB 表）。
   const codeTypes = navLabels(SHELL).filter((l) => l === "网站" || l === "网页动效");
   assert.deepEqual(codeTypes, ["网站", "网页动效"]);
 
-  assert.equal(libraryTypes + codeTypes.length, 12);
+  assert.equal(libraryTypes + codeTypes.length, 13);
 });
 
 test("平面设计模板十格已下架：左栏不再出 /design/<类型>", () => {
@@ -97,7 +98,7 @@ test("成品与工具单独成组，我的素材库那组不挂 heading", () => 
   assert.ok(labels.includes("我的素材库"), "我的素材库不在左栏");
   assert.ok(labels.includes("授权说明"), "授权说明不在左栏");
   // 「成品」与「插件」都不是素材类型（成品是按新工作流做出来的整件作品，插件是能打开
-  // 素材的工具、可看不可下），所以它们自己一组并带 heading，不混进类型轴那 12 格里。
+  // 素材的工具、可看不可下），所以它们自己一组并带 heading，不混进类型轴那 13 格里。
   // 原判据钉的是「只有类型轴带 heading」，那是这一组存在之前的样子。
   assert.ok(labels.includes("成品"), "成品不在左栏");
   assert.ok(labels.includes("插件"), "插件不在左栏");
@@ -133,7 +134,7 @@ test("三个分区一个不少，且名字讲的是「来源 × 在不在库里�
 test("判据是两种，不是一张白名单：①② 与数据无关，③ 看上游能力", () => {
   // ①② 是同一张货架的两个来源切片。今天没货的类型明天可能有（W7 归拢），
   // 所以判据里不许出现「这一类有没有货」。
-  for (const t of ["image", "vector", "sticker", "font", "chart", "prompt", "ppt", "video", "audio", "3d"]) {
+  for (const t of ["image", "vector", "sticker", "font", "chart", "prompt", "ppt", "document", "video", "audio", "3d"]) {
     assert.ok(zoneIsUsable(t, "owned"), `${t} 的「OceanLeo 自有」不该被判为不可用`);
     assert.ok(zoneIsUsable(t, "stocked"), `${t} 的「开源专区（已入库）」不该被判为不可用`);
   }
@@ -143,9 +144,43 @@ test("判据是两种，不是一张白名单：①② 与数据无关，③ 看
   assert.ok(!LIVE_SEARCH_TYPES.includes("music"), "music 没有左栏格子");
   assert.match(ASSETS, /OPEN_SOURCE_TYPES/, "上游类型表不在 assets.ts 里了");
   assert.equal(arrayLength(ASSETS, "OPEN_SOURCE_TYPES"), 6);
-  for (const t of ["sticker", "font", "chart", "prompt", "ppt"]) {
+  for (const t of ["sticker", "font", "chart", "prompt", "ppt", "document"]) {
     assert.ok(!zoneIsUsable(t, "live"), `${t} 没有实时上游，③ 不该可用`);
   }
+});
+
+test("document 是库内第 11 类，不进开源实时上游两张表", () => {
+  const typeOrderMatch = /export const TYPE_ORDER: AssetType\[\] = \[([\s\S]*?)\];/.exec(ASSETS);
+  assert.ok(typeOrderMatch, "找不到 TYPE_ORDER");
+  const typeOrder = [...typeOrderMatch[1].matchAll(/"([^"]+)"/g)].map((m) => m[1]);
+  assert.deepEqual(typeOrder, [
+    "image", "prompt", "chart", "vector", "sticker",
+    "ppt", "document", "video", "3d", "audio", "font",
+  ]);
+  assert.equal(typeOrder.indexOf("document"), typeOrder.indexOf("ppt") + 1);
+
+  const openMatch = /export const OPEN_SOURCE_TYPES: AssetType\[\] = \[([\s\S]*?)\];/.exec(ASSETS);
+  assert.ok(openMatch, "找不到 OPEN_SOURCE_TYPES");
+  const openSource = [...openMatch[1].matchAll(/"([^"]+)"/g)].map((m) => m[1]);
+  assert.equal(openSource.includes("document"), false);
+  assert.equal(arrayLength(ASSETS, "OPEN_SOURCE_TYPES"), 6);
+  assert.equal(LIVE_SEARCH_TYPES.includes("document"), false);
+
+  for (const t of typeOrder) {
+    const escaped = t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    assert.match(
+      ASSETS,
+      new RegExp(`["']?${escaped}["']?:\\s*"[^"]+"`),
+      `TYPE_LABELS 缺 ${t}`,
+    );
+  }
+  assert.match(ASSETS, /document:\s*"文档"/);
+
+  assert.equal(zoneIsUsable("document", "live"), false);
+  assert.equal(zoneIsUsable("document", "owned"), true);
+  assert.equal(defaultZone("document", { owned: 0, stocked: 0 }), "owned");
+  // ③ 那格点不动时的原文：把 {type} 换成「文档」就是用户看见的。
+  assert.match(ZONE_LIVE_UNAVAILABLE_NOTE, /没有可以实时搜索的开源上游/);
 });
 
 test("三格永远画出来：不可用的那格是点不动，不是不画", () => {

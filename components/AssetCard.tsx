@@ -29,6 +29,14 @@ function CubeGlyph() {
   );
 }
 
+function DocGlyph() {
+  return (
+    <svg className="h-10 w-10 opacity-60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>
+      <path d="M7 3h8l5 5v13H7zM15 3v5h5M9 12h6M9 16h4" strokeLinejoin="round" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 function BookmarkGlyph({ filled }: { filled: boolean }) {
   return (
     <svg
@@ -67,7 +75,8 @@ export function AssetCard({
   const isPpt = asset.type === "ppt";
   // 图表封面是整张 pyecharts 静态图，裁切会切掉标题/图例——同样 contain 到素色底。
   const isChart = asset.type === "chart";
-  const isContain = isChecker || isPpt || isChart;
+  const isDocument = asset.type === "document";
+  const isContain = isChecker || isPpt || isChart || isDocument;
 
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
@@ -83,7 +92,9 @@ export function AssetCard({
                 ? "bg-zinc-200 p-3"
                 : isChart
                   ? "bg-white p-2"
-                  : "bg-zinc-100"
+                  : isDocument
+                    ? "bg-zinc-100 p-3"
+                    : "bg-zinc-100"
           }`}
         >
           {asset.thumb_url ? (
@@ -98,7 +109,7 @@ export function AssetCard({
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center text-zinc-400">
-              {is3d ? <CubeGlyph /> : <span className="text-xs">{tt("无预览")}</span>}
+              {is3d ? <CubeGlyph /> : isDocument ? <DocGlyph /> : <span className="text-xs">{tt("无预览")}</span>}
             </div>
           )}
 

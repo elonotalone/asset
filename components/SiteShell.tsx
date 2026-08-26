@@ -46,6 +46,7 @@ function TypeIcon({ type }: { type: AssetType }) {
     "3d": "M12 2l9 5v10l-9 5-9-5V7zM12 12l9-5M12 12v10M12 12L3 7",
     font: "M5 7V5h14v2M9 19h6M12 5v14",
     ppt: "M4 4h16v12H4zM4 16l3 4M20 16l-3 4M9 12V8h3a2 2 0 010 4z",
+    document: "M7 3h8l5 5v13H7zM15 3v5h5M9 12h6M9 16h4",
     chart: "M4 4v16h16M8 16v-4M12 16V8M16 16v-6",
     prompt: "M4 5h16v10H4zM8 19h8M12 15v4M7 8h6M7 11h10",
   };
@@ -171,7 +172,7 @@ function SiteShellInner({ children }: { children: ReactNode }) {
       items: [...libraryTypes, ...codeTypes],
     },
     // 这一组也不是类型轴：「成品」是按新工作流做出来的整件作品（14 类都落在这里，
-    // 上面那 12 格没有一格装得下），「插件」是能打开素材的工具（可看不可下）。
+    // 上面那 13 格没有一格装得下），「插件」是能打开素材的工具（可看不可下）。
     // 两者都**不是素材类型**，所以单独成组，不混进「素材类型」那一栏。
     {
       heading: tt("成品与工具"),
