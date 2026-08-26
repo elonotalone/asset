@@ -169,6 +169,41 @@ test("22 件的运行字节、自测与封面在磁盘上一件不剩", () => {
   assert.equal(existsSync("content/active-runtime/game"), true);
   assert.equal(existsSync("content/active-runtime/website"), true);
   assert.equal(existsSync("content/active-runtime/manifest.game-website.json"), true);
+
+  // 根目录两份名册以前漏改：清单仍指向已不存在的 plugin/ 目录。
+  const rootManifest = JSON.parse(
+    readFileSync("active-runtime-manifest.json", "utf8"),
+  ) as { items: { id: string; kind: string }[] };
+  const rootPlan = JSON.parse(readFileSync("active-runtime-plan.json", "utf8")) as {
+    items: { item: { id: string; kind: string } }[];
+  };
+  for (const item of rootManifest.items) {
+    assert.notEqual(
+      item.kind,
+      "plugin",
+      `根名册 active-runtime-manifest.json 仍登记 plugin ${item.id}：名册漏改会让 verify 指向空处`,
+    );
+  }
+  for (const entry of rootPlan.items) {
+    assert.notEqual(
+      entry.item.kind,
+      "plugin",
+      `根名册 active-runtime-plan.json 仍登记 plugin ${entry.item.id}：名册漏改会让 verify 指向空处`,
+    );
+  }
+  for (const id of RETIRED_IDS) {
+    const runtimeId = `${id}-01`;
+    assert.equal(
+      rootManifest.items.some((item) => item.id === runtimeId || item.id === id),
+      false,
+      `根名册 active-runtime-manifest.json 仍出现 ${runtimeId}：名册漏改会让 verify 指向空处`,
+    );
+    assert.equal(
+      rootPlan.items.some((entry) => entry.item.id === runtimeId || entry.item.id === id),
+      false,
+      `根名册 active-runtime-plan.json 仍出现 ${runtimeId}：名册漏改会让 verify 指向空处`,
+    );
+  }
 });
 
 test("隔离域运行入口连接收端都拆干净了", () => {
