@@ -7,12 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:artifacts": "node --import ./tests/register-tsx.mjs --test tests/artifact-surface.test.tsx",
+    "test": "node --import ./tests/register-tsx.mjs --test tests/*.test.mjs tests/*.test.tsx",
+    "test:artifacts": "node --import ./tests/register-tsx.mjs --test tests/artifact-surface.test.tsx tests/site-strip.test.mjs",
     "test:catalog": "node scripts/validate-oceanleo-catalog.mjs && node --import ./tests/register-tsx.mjs --test tests/oceanleo-catalog.test.mjs",
     "test:security": "node --test tests/untrusted-render-surface.test.mjs",
-    "test:template-gate2": "node --import ./tests/register-tsx.mjs --test tests/template-gate2.test.mjs",
-    "verify:catalog": "node scripts/verify-oceanleo-catalog.mjs",
-    "check:templates": "node --import ./tests/register-tsx.mjs scripts/check-templates.mjs"
+    "verify:catalog": "node scripts/verify-oceanleo-catalog.mjs"
   },
   "dependencies": {
     "@oceanleo/ui": "github:elonotalone/oceanleo-ui#v0.215.0",

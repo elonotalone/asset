@@ -1,6 +1,0 @@
-# 署名与许可 —— 滨海科研园区体量研究 · 棱柱阵列
-
-- OceanLeo 第一方原创体量研究
-  许可:CC0(https://creativecommons.org/publicdomain/zero/1.0/)
-- OceanLeo 程序化生成
-  许可:OCEANLEO-AIGEN(https://oceanleo.com/licenses/aigen)

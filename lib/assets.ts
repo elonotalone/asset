@@ -3,17 +3,8 @@
 // Asset library client — thin wrapper over the shared gateway's /v1/assets/*.
 // Browsing is PUBLIC (no token needed), so unlike other sites' gateway clients
 // these are unauthenticated GETs. The gateway holds every source key.
-import {
-  currentDomainProfile,
-  currentFamilySubsiteOrigin,
-} from "@oceanleo/ui/contracts";
-import { accessToken } from "@oceanleo/ui/lib/auth";
-import { assetPreviewUrl } from "@oceanleo/ui/lib";
-import {
-  artifactTypeHasRoutableEditor,
-  workspaceTemplatePreviewHref,
-} from "@oceanleo/ui/shell";
 import type { MaterialOrigin } from "@/lib/type-page-views";
+import { attachShelfPins, libraryPrefixedId } from "@/lib/shelf-pins";
 
 const GATEWAY =
   process.env.NEXT_PUBLIC_GATEWAY_URL || "https://api.oceanleo.com";
@@ -211,9 +202,26 @@ export async function searchAssets(params: {
     `/v1/assets/library/search?${libQs.toString()}`,
   );
   const raw = lib.items || [];
-  const items = params.origin
+  let items = params.origin
     ? raw.filter((a) => a.origin === params.origin)
     : raw;
+  // 洗白新件置顶：只在本仓钉名单，不改网关排序。见 lib/shelf-pins.ts。
+  if (params.category) {
+    items = await attachShelfPins({
+      category: params.category,
+      page,
+      items,
+      fetchPinned: async (bareId) => {
+        const row = await getJson<Asset>(
+          `/v1/assets/detail?id=${encodeURIComponent(libraryPrefixedId(bareId))}`,
+        );
+        if (params.origin && row.origin && row.origin !== params.origin) {
+          throw new Error("pinned asset origin mismatch");
+        }
+        return row;
+      },
+    });
+  }
   return {
     items,
     page: lib.page,
@@ -1062,10 +1070,17 @@ export const CATEGORY_PANELS: CategoryPanel[] = [
   { key: "abstract", label: "抽象艺术", icon: "🎨", type: "prompt", subs: [ALL_SUB] },
   { key: "interior", label: "室内", icon: "🛋", type: "prompt", subs: [ALL_SUB] },
   { key: "vehicle", label: "载具", icon: "🚗", type: "prompt", subs: [ALL_SUB] },
-  // 法律文书（A/B 链入库的 category；二级 tab 等 C 链分类树映射后再加）
+  // 文档分区（素材洗白 v2）：合同区 / 简历区等。面板键 = platform_assets.category。
+  // 流程架构图产出是 pptx，落 PPT 类型页；长图海报 / 电商详情产出是 png，落图片类型页。
   { key: "legal-contract-model", label: "合同示范文本", icon: "📜", type: "document", subs: [ALL_SUB] },
-  { key: "legal-litigation-form", label: "诉讼文书样式", icon: "⚖", type: "document", subs: [ALL_SUB] },
+  { key: "contract-agreement", label: "合同协议", icon: "📑", type: "document", subs: [ALL_SUB] },
+  { key: "legal-litigation-form", label: "诉讼文书", icon: "⚖", type: "document", subs: [ALL_SUB] },
   { key: "legal-lawyer-template", label: "律师业务文书", icon: "📝", type: "document", subs: [ALL_SUB] },
+  { key: "resume-template", label: "简历", icon: "👤", type: "document", subs: [ALL_SUB] },
+  { key: "document-template", label: "通用模板", icon: "📄", type: "document", subs: [ALL_SUB] },
+  { key: "flowchart-diagram", label: "流程架构图", icon: "🔀", type: "ppt", subs: [ALL_SUB] },
+  { key: "longform-poster", label: "长图海报", icon: "🖼", type: "image", subs: [ALL_SUB] },
+  { key: "ecommerce-detail", label: "电商详情", icon: "🛒", type: "image", subs: [ALL_SUB] },
 ];
 
 export function panelByKey(key: string): CategoryPanel | undefined {
@@ -1180,10 +1195,16 @@ const CATEGORY_LABELS: Record<string, string> = {
   radar: "雷达图",
   funnel: "漏斗图",
   gauge: "仪表盘",
-  // document（A 链合同示范文本 / B 链诉讼文书样式；category 窄查走网关原样参数）
+  // document 分区 + 洗白五类（flowchart 在 ppt 页，poster/ecommerce 在图片页）
   "legal-contract-model": "合同示范文本",
-  "legal-litigation-form": "诉讼文书样式",
+  "contract-agreement": "合同协议",
+  "legal-litigation-form": "诉讼文书",
   "legal-lawyer-template": "律师业务文书",
+  "resume-template": "简历",
+  "document-template": "通用模板",
+  "flowchart-diagram": "流程架构图",
+  "longform-poster": "长图海报",
+  "ecommerce-detail": "电商详情",
   // ppt（风格族目录；slug = OSS deck 目录名 = platform_assets.category）
   etching: "蚀刻编辑风",
   editorial: "杂志编辑风",
@@ -1293,316 +1314,4 @@ export function listLibraryCategories(
 export function listSeries(type?: AssetType): Promise<{ series: Series[] }> {
   const qs = type ? `?type=${encodeURIComponent(type)}` : "";
   return getJson<{ series: Series[] }>(`/v1/assets/library/series${qs}`);
-}
-
-// --- Personal asset library (collection) ----------------------------------
-// All authed against the shared SSO bearer token. Unauthenticated callers get a
-// clean "未登录" so the UI can prompt login instead of crashing.
-
-async function authedJson<T>(path: string, init?: RequestInit): Promise<T> {
-  const token = await accessToken();
-  if (!token) throw new Error("未登录");
-  let resp: Response;
-  try {
-    resp = await fetch(`${GATEWAY}${path}`, {
-      ...init,
-      headers: {
-        ...(init?.headers || {}),
-        Authorization: `Bearer ${token}`,
-        ...(init?.body ? { "Content-Type": "application/json" } : {}),
-      },
-      cache: "no-store",
-    });
-  } catch {
-    throw new Error("网络错误：无法连接到素材网关。");
-  }
-  let data: unknown = null;
-  try {
-    data = await resp.json();
-  } catch {
-    /* non-JSON */
-  }
-  if (!resp.ok) {
-    const detail =
-      (data as { detail?: string } | null)?.detail || `请求失败（HTTP ${resp.status}）`;
-    throw new Error(detail);
-  }
-  return data as T;
-}
-
-export function listCollection(limit = 200): Promise<{ items: Asset[] }> {
-  return authedJson<{ items: Asset[] }>(`/v1/assets/collection?limit=${limit}`);
-}
-
-export function listCollectionIds(): Promise<{ ids: string[] }> {
-  return authedJson<{ ids: string[] }>("/v1/assets/collection/ids");
-}
-
-export function saveToCollection(asset: Asset): Promise<{ ok: boolean; id: string }> {
-  return authedJson<{ ok: boolean; id: string }>("/v1/assets/collection", {
-    method: "POST",
-    body: JSON.stringify(asset),
-  });
-}
-
-export function removeFromCollection(id: string): Promise<{ ok: boolean; id: string }> {
-  return authedJson<{ ok: boolean; id: string }>(
-    `/v1/assets/collection?id=${encodeURIComponent(id)}`,
-    { method: "DELETE" },
-  );
-}
-
-// ---------------------------------------------------------------------------
-// 成品货架接入（`template_materials`，与上面的原料库 `platform_assets` 是两张表）
-// ---------------------------------------------------------------------------
-// 上面所有函数走 /v1/assets/*，读的是原料库：图标、照片、字体、音频，只有裸文件，
-// 没有 artifact 身份，打不开也编不动。本节走 /v1/template-materials，读的是成品库：
-// 文档、表格、海报、PDF 这类**打得开、编得动**的成品。
-//
-// 素材站自己在成品库里一件都没有（site_key='asset' 为 0 行）。所以货架展示的全部是
-// **别的站已发布的成品**，每一件都必须在界面上标明它属于哪个站——这不是装饰，
-// 是「编辑」按钮要跳去哪个站的依据。
-//
-// 为什么不用 /v1/library/search：① 它没有 siteKey 参数（只有 originSiteKey），
-// 且不区分成品与用户产物，全目录 59,512 行；② 宽查询会撞上网关约 8 秒的硬闸稳定 503
-// （`?role=template` 实测 503/8.06s）。/v1/template-materials 按站查实测 0.37s，
-// 且行数与库里 published 计数逐站对得上。
-
-/** 成品库一件已发布成品。字段名对齐 `/v1/template-materials` 回包。 */
-export interface ShelfArtifact {
-  /** 目录键，形如 `<appId>-<n>`，只保证同 app 内唯一。 */
-  id: string;
-  title: string;
-  summary: string;
-  tags: string[];
-  /** artifact 身份。深链按它定位，**不是** `id`（`id` 跨 app 会撞车）。 */
-  artifactId: string;
-  /** 成品库的 16 种类型之一，与原料库的 `AssetType` 是两套词汇表。 */
-  artifactType: string;
-  /** 归属站，界面必须显示。 */
-  siteKey: string;
-  /** 归属 app，「编辑」深链的落点锚点。 */
-  appId: string;
-  /** 裸 OSS key（`<category>/<slug>`）或绝对 https URL。 */
-  previewKey: string;
-  width: number;
-  height: number;
-}
-
-/**
- * 这一类素材有没有一个**到得了的**编辑器。
- *
- * 判据交给共享包的 `artifactTypeHasRoutableEditor`，本文件**不再自己维护清单**。
- *
- * 这里原先手抄了一份六种类型的表，抄的是后端 `RELEASED_EDITOR_FEATURE_IDS`。
- * 2026-08-07 查实那是**答错了问题**：那份名单钉的是 `ADVANCED_FEATURE_PACKS`，
- * 即哪些能力被打包成了高级功能包——一个产品与计费的划分，不是「有没有编辑器」。
- * 代价是 16 种类型里有 10 种（网站、复合图片、矢量图、文档、幻灯片、视频、音频、
- * 3D 模型、流程图工程、游戏）明明编辑器已存在且可路由，却被一律告知
- * 「这一类还没有已发布的编辑器」，一颗编辑按钮都不出。
- * `[实测 2026-08-07]` 这 10 类在架共 3,443 件 —— 网站 49、文档 2,052、
- * 复合图片 352、幻灯片 277、矢量图 240、3D 模型 218、
- * 流程图工程（`artifact_type` = `workflow`）161、音频 91、游戏 3。
- *
- * 换成共享包推导之后，原表那句「不在表里就不画按钮」的纪律**一个字都没放松**：
- * 现在仍然只在编辑器真的到得了时才画，只是「到得了」这件事改由适配器注册表回答，
- * 而不是由一份会漂的手抄清单回答。新增可路由适配器，这里自动跟上。
- */
-export function artifactTypeHasEditor(artifactType: string): boolean {
-  return artifactTypeHasRoutableEditor(artifactType);
-}
-
-/**
- * 成品库 16 种 `artifact_type` 的中文名。与 `TYPE_LABELS`（原料库）**不是**一套。
- *
- * `workflow` 这一类的显示名是「流程图工程」而不是「工作流」（裁定 9 / 裁定 17）。
- * 站上「工作流」一词已经被另一件东西占了：它指**产线**——某件成品是由哪一条
- * 「基础架构文档 + 风格设计文档 + 产品文档指南」做出来的。同一个站上两个意思
- * 会让人第一眼分不清，而这 161 件本来就是流程图（传送带 / 分诊 / 状态机 / 多源汇一）。
- * **`artifactType` 字符串仍是 `workflow`**，改的只有这里的显示名，数据一个字没动。
- */
-export const SHELF_ARTIFACT_TYPE_LABELS: Record<string, string> = {
-  document: "文档",
-  grid: "表格",
-  deck: "幻灯片",
-  pdf: "PDF",
-  website: "网站",
-  single_file_image: "单文件图片",
-  composite_image: "复合图片",
-  vector_image: "矢量图片",
-  chart: "图表",
-  model_3d: "3D 模型",
-  workflow: "流程图工程",
-  audio: "音频",
-  video: "视频",
-  game: "游戏",
-  geo_map: "地图",
-  interactive_doc: "交互文档",
-};
-
-export function shelfArtifactTypeLabel(artifactType: string): string {
-  return SHELF_ARTIFACT_TYPE_LABELS[artifactType] || artifactType;
-}
-
-/**
- * 有成品的 33 个站。`host` 是子域名前缀。
- *
- * 权威是门户仓的 `oceanleo/lib/sites.tsx` 的 `SITES` 数组（`href` 字段），校验脚本
- * `scripts/oceanleo-sites-check.sh`。这里是一份只读镜像，因为素材站 import 不到门户仓。
- *
- * ⚠️ **`host` 不能按 `<siteKey>.oceanleo.com` 硬拼**：35 个站里有 3 个不符合这个规律
- * （`ecommerce`→`e-commerce`、`ppt`→`slide`、`threed`→`3d`）。这三个站合计 412 件
- * 已发布成品，按规律拼会给它们全部生成打不开的编辑链接。
- *
- * `oceanleo` 是门户自己（87 件成品），它不在 `SITES` 数组里（门户不出现在自己的导航
- * 里），origin 是无子域的 `oceanleo.com`，故 `host` 留空。
- */
-export const SHELF_SITES: readonly { key: string; label: string; host: string }[] = [
-  { key: "med", label: "LeoMed 体检解读", host: "med" },
-  { key: "design", label: "LeoDesign 设计", host: "design" },
-  { key: "law", label: "LeoLaw 法律", host: "law" },
-  { key: "study", label: "LeoStudy 学习", host: "study" },
-  { key: "image", label: "LeoImage 图片", host: "image" },
-  { key: "threed", label: "Leo3D 三维", host: "3d" },
-  { key: "prompt", label: "LeoPrompt 提示词", host: "prompt" },
-  { key: "logo", label: "LeoLogo 标志", host: "logo" },
-  { key: "paper", label: "LeoPaper 论文", host: "paper" },
-  { key: "script", label: "LeoScript 剧本", host: "script" },
-  { key: "website", label: "Website 建站", host: "website" },
-  { key: "novel", label: "LeoNovel 小说", host: "novel" },
-  { key: "word", label: "LeoDoc 文档", host: "word" },
-  { key: "converter", label: "LeoConvert 转换", host: "converter" },
-  { key: "notebook", label: "LeoNote 笔记", host: "notebook" },
-  { key: "ecommerce", label: "LeoStudio 电商", host: "e-commerce" },
-  { key: "travel", label: "LeoTravel 旅行", host: "travel" },
-  { key: "aihuman", label: "LeoHuman 数字人", host: "aihuman" },
-  { key: "resume", label: "LeoResume 简历", host: "resume" },
-  { key: "edu", label: "LeoEdu 教育", host: "edu" },
-  { key: "oceanleo", label: "OceanLeo 门户", host: "" },
-  { key: "interior", label: "LeoInterior 室内", host: "interior" },
-  { key: "music", label: "LeoMusic 音乐", host: "music" },
-  { key: "make", label: "LeoMake 制作", host: "make" },
-  { key: "chat", label: "LeoChat 对话", host: "chat" },
-  { key: "ppt", label: "LeoSlides 幻灯片", host: "slide" },
-  { key: "meeting", label: "LeoMeeting 会议", host: "meeting" },
-  { key: "video", label: "LeoVideo 视频", host: "video" },
-  { key: "search", label: "LeoSearch 搜索", host: "search" },
-  { key: "finance", label: "LeoFinance 财务", host: "finance" },
-  { key: "excel", label: "LeoSheet 表格", host: "excel" },
-  { key: "bizdev", label: "LeoBizDev 商务", host: "bizdev" },
-  { key: "game", label: "LeoPlay 游戏", host: "game" },
-];
-
-const SHELF_SITE_BY_KEY = new Map(SHELF_SITES.map((s) => [s.key, s]));
-
-export function shelfSiteLabel(siteKey: string): string {
-  return SHELF_SITE_BY_KEY.get(siteKey)?.label || siteKey;
-}
-
-/**
- * 归属站的 origin。名册里没有的站返回 ""，调用方据此**不画**编辑按钮——
- * 猜一个 origin 出来只会得到一颗点开是 404 的按钮。
- *
- * 域名后缀不写死：`.com` 家族返回 `https://<host>.oceanleo.com`（与改前逐字相同），
- * `.cn` 家族返回境内同名站。境内还没有的站 `currentFamilySubsiteOrigin()` 给
- * `undefined`，一样返回 ""——宁可少一颗按钮，也不能把境内用户送去境外站重新登录。
- */
-export function shelfSiteOrigin(siteKey: string): string {
-  const site = SHELF_SITE_BY_KEY.get(siteKey);
-  if (!site) return "";
-  if (!site.host) return currentDomainProfile().portalOrigin;
-  return currentFamilySubsiteOrigin(site.host) || "";
-}
-
-/** 预览图直链。`previewKey` 已是绝对 https URL 时原样透传。 */
-export function shelfPreviewImageUrl(item: ShelfArtifact): string {
-  return item.previewKey ? assetPreviewUrl(item.previewKey) : "";
-}
-
-/**
- * 「编辑」的跨站落点。
- *
- * query 形状**不自己拼**，交给共享包的 `workspaceTemplatePreviewHref(appId, artifactId)`
- * ——它是这条深链的唯一事实源，键名将来改了我们自动跟上。它产出的是站内路径
- * （`/workspace?…`），素材站要跳的是**别的站**，所以在前面接上归属站的 origin。
- *
- * 归属站或归属 app 缺一，就返回 ""：没有 app 锚点的预览链接落不了地
- * （共享包自己也会退回目录并告警），宁可不画这颗按钮。
- */
-export function shelfEditHref(item: ShelfArtifact): string {
-  const origin = shelfSiteOrigin(item.siteKey);
-  if (!origin || !item.appId || !item.artifactId) return "";
-  return `${origin}${workspaceTemplatePreviewHref(item.appId, item.artifactId)}`;
-}
-
-const SHELF_PREVIEW_KEY = /^[A-Za-z0-9][A-Za-z0-9._/-]*$/;
-
-// 预览 key 是目录行里唯一能变成任意图片请求的字段，照共享包 `safeTemplatePreviewKey`
-// 的口径收紧：只收裸 OSS key 或绝对 https URL，不收 http:，不收 `..`。
-function safeShelfPreviewKey(raw: unknown): string {
-  const value = typeof raw === "string" ? raw.trim() : "";
-  if (!value) return "";
-  if (/^[a-z][a-z0-9+.-]*:/i.test(value)) {
-    try {
-      return new URL(value).protocol === "https:" ? value : "";
-    } catch {
-      return "";
-    }
-  }
-  return SHELF_PREVIEW_KEY.test(value) && !value.includes("..") ? value : "";
-}
-
-function toShelfArtifact(raw: Record<string, unknown>): ShelfArtifact | null {
-  const id = typeof raw.id === "string" ? raw.id.trim() : "";
-  const artifactId =
-    typeof raw.artifactId === "string" ? raw.artifactId.trim() : "";
-  const artifactType =
-    typeof raw.artifactType === "string" ? raw.artifactType.trim() : "";
-  const siteKey = typeof raw.siteKey === "string" ? raw.siteKey.trim() : "";
-  // 归属 app 缺失的行直接丢：它撑不起「编辑」按钮，也说不清自己属于哪个 app。
-  const appId =
-    typeof raw.primaryAppId === "string" && raw.primaryAppId.trim()
-      ? raw.primaryAppId.trim()
-      : typeof raw.appId === "string"
-        ? raw.appId.trim()
-        : "";
-  if (!id || !artifactId || !artifactType || !siteKey || !appId) return null;
-  const size = (v: unknown) => {
-    const n = typeof v === "number" ? v : Number(v);
-    return Number.isFinite(n) && n > 0 ? Math.floor(n) : 0;
-  };
-  return {
-    id,
-    title: typeof raw.title === "string" ? raw.title : "",
-    summary: typeof raw.summary === "string" ? raw.summary : "",
-    tags: Array.isArray(raw.tags)
-      ? raw.tags.filter((t): t is string => typeof t === "string")
-      : [],
-    artifactId,
-    artifactType,
-    siteKey,
-    appId,
-    previewKey: safeShelfPreviewKey(raw.previewUrl),
-    width: size(raw.width),
-    height: size(raw.height),
-  };
-}
-
-/**
- * 读某个站的已发布成品。
- *
- * **必须带 `siteKey`**：不带的话网关按 1,000 行截断（实测只覆盖到 11 个站），
- * 用户会以为别的站没有成品。按站查实测 0.37 s，且行数与库里逐站 published 计数一致。
- */
-export async function listShelfArtifacts(
-  siteKey: string,
-): Promise<ShelfArtifact[]> {
-  const data = await getJson<{ items?: unknown[] }>(
-    `/v1/template-materials?siteKey=${encodeURIComponent(siteKey)}`,
-  );
-  const rows = Array.isArray(data.items) ? data.items : [];
-  return rows
-    .filter((r): r is Record<string, unknown> => !!r && typeof r === "object")
-    .map(toShelfArtifact)
-    .filter((r): r is ShelfArtifact => r !== null);
 }

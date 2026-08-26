@@ -1,8 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-// works 页海报查看器的美术字 @font-face。工程文件里的 fontFamily 只有在这里
-// 加载过，站内打开才和货架封面是同一套字。
-import "./poster-fonts.css";
 // 全家桶统一样式预编译产物（JS 方式 import，避开 pnpm git 依赖路径含 # 的问题）。
 import "@oceanleo/ui/theme/ui.css";
 import { LeoAssistant } from "@oceanleo/ui/shell";

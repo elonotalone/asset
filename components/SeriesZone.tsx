@@ -5,10 +5,7 @@ import { useUI } from "@oceanleo/ui/i18n";
 import {
   Asset,
   AssetType,
-  listCollectionIds,
   listSeries,
-  removeFromCollection,
-  saveToCollection,
   searchAssets,
   Series,
 } from "@/lib/assets";
@@ -68,7 +65,6 @@ export function SeriesZone({
   const [hasMore, setHasMore] = useState(false);
   const [loadingItems, setLoadingItems] = useState(false);
   const [active, setActive] = useState<Asset | null>(null);
-  const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
   const reqId = useRef(0);
 
   useEffect(() => {
@@ -83,11 +79,6 @@ export function SeriesZone({
       })
       .finally(() => {
         if (alive) setLoadingList(false);
-      });
-    listCollectionIds()
-      .then((r) => alive && setSavedIds(new Set(r.ids)))
-      .catch(() => {
-        /* 未登录：保持空集 */
       });
     return () => {
       alive = false;
@@ -128,25 +119,6 @@ export function SeriesZone({
       });
   }
 
-  function toggleSave(a: Asset) {
-    const isSaved = savedIds.has(a.id);
-    setSavedIds((prev) => {
-      const next = new Set(prev);
-      if (isSaved) next.delete(a.id);
-      else next.add(a.id);
-      return next;
-    });
-    const p = isSaved ? removeFromCollection(a.id) : saveToCollection(a);
-    p.catch(() => {
-      setSavedIds((prev) => {
-        const next = new Set(prev);
-        if (isSaved) next.add(a.id);
-        else next.delete(a.id);
-        return next;
-      });
-    });
-  }
-
   // —— 整套详情视图 ——
   if (openSeries) {
     return (
@@ -176,13 +148,7 @@ export function SeriesZone({
         ) : (
           <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-6">
             {items.map((a) => (
-              <AssetCard
-                key={a.id}
-                asset={a}
-                onOpen={setActive}
-                saved={savedIds.has(a.id)}
-                onToggleSave={toggleSave}
-              />
+              <AssetCard key={a.id} asset={a} onOpen={setActive} />
             ))}
           </div>
         )}
@@ -202,12 +168,7 @@ export function SeriesZone({
         )}
 
         {active && (
-          <AssetDetail
-            asset={active}
-            onClose={() => setActive(null)}
-            saved={savedIds.has(active.id)}
-            onToggleSave={toggleSave}
-          />
+          <AssetDetail asset={active} onClose={() => setActive(null)} />
         )}
       </div>
     );

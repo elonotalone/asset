@@ -24,6 +24,11 @@ test("官方发布编号从 tags 里挑出来，机器标签不算", () => {
   );
   assert.deepEqual(officialDocNumbers(["HF-2025-04", "SDF-2025-0003"]), ["HF-2025-04", "SDF-2025-0003"]);
   assert.deepEqual(officialDocNumbers(["OLW-0001", "律师业务文书"]), ["OLW-0001"]);
+  assert.deepEqual(officialDocNumbers(["OLC-0001", "OLR-0002", "OLF-0003"]), [
+    "OLC-0001",
+    "OLR-0002",
+    "OLF-0003",
+  ]);
   assert.deepEqual(officialDocNumbers(["ind-law", "pages:3"]), []);
   assert.deepEqual(officialDocNumbers(undefined), []);
 });
@@ -65,4 +70,11 @@ test("详情页文档走 DocumentPreview，尺寸行只渲染 dimensionLabel 的
   assert.match(DETAIL, /officialDocNumbers\(asset\.tags\)/);
   assert.match(ASSETS, /export function listLibraryCategories/);
   assert.match(ASSETS, /const qs = new URLSearchParams\(\{ type \}\)/);
+  assert.match(ASSETS, /key: "contract-agreement"/);
+  assert.match(ASSETS, /key: "resume-template"/);
+  assert.match(ASSETS, /key: "flowchart-diagram"/);
+  assert.match(ASSETS, /key: "longform-poster"/);
+  assert.match(ASSETS, /key: "ecommerce-detail"/);
+  assert.match(ASSETS, /"legal-contract-model": "合同示范文本"/);
+  assert.match(ASSETS, /"resume-template": "简历"/);
 });

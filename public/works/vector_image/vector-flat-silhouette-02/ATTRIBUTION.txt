@@ -1,6 +1,0 @@
-# 署名与许可 —— 潮汐观测站主视觉 · 平涂剪影拼贴
-
-- OceanLeo 第一方原创剪影
-  许可:CC0(https://creativecommons.org/publicdomain/zero/1.0/)
-- OceanLeo 程序化生成
-  许可:OCEANLEO-AIGEN(https://oceanleo.com/licenses/aigen)

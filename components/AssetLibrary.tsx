@@ -4,17 +4,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useUI } from "@oceanleo/ui/i18n";
-import { ResultCanvas, type CanvasTab } from "@oceanleo/ui/shell";
 import {
   Asset,
   AssetType,
   CategoryPanel,
   buildPanelsFromCategories,
-  listCollectionIds,
   loadTypeOriginIndex,
   PPT_INDUSTRIES,
-  removeFromCollection,
-  saveToCollection,
   searchAssetsInZone,
   TYPE_LABELS,
   TYPE_ORDER,
@@ -36,7 +32,6 @@ import {
 } from "@/lib/type-page-views";
 import { AssetCard } from "@/components/AssetCard";
 import { AssetDetail } from "@/components/AssetDetail";
-import { ArtifactShelf } from "@/components/ArtifactShelf";
 import { SeriesZone } from "@/components/SeriesZone";
 
 // 左侧栏「素材类型」是唯一事实源：?type= 决定当前类型，?cat= 可直达该类型下某目录，
@@ -82,7 +77,6 @@ export function AssetLibrary() {
   const urlCat = search.get("cat");
   const urlView = search.get("view");
   const urlSeries = search.get("series");
-  const showContextShelf = !search.has("type") && !search.has("cat");
 
   // 目录→来源索引：分区件数、每个分区有哪些目录、分区首页的预览行都从它来。
   // 它按类型缓存，所以顶部那排页签与这里读的是同一份，不会各说一个数。
@@ -151,7 +145,6 @@ export function AssetLibrary() {
       origin={ZONE_ORIGIN[zone]}
       seriesOn={seriesOn}
       index={index}
-      showContextShelf={showContextShelf}
     />
   );
 }
@@ -163,7 +156,6 @@ function AssetLibraryContent({
   origin,
   seriesOn,
   index,
-  showContextShelf,
 }: {
   urlType: AssetType;
   urlCat: string | null;
@@ -171,10 +163,8 @@ function AssetLibraryContent({
   origin: MaterialOrigin;
   seriesOn: boolean;
   index: TypeOriginIndex;
-  showContextShelf: boolean;
 }) {
   const tt = useUI();
-  const [artifactView, setArtifactView] = useState("materials");
   const loadFailedText = tt("加载失败");
 
   // 本分区真实拥有的一级目录面板（首项恒为「全部」占位，仅用于兜底）。
@@ -208,12 +198,7 @@ function AssetLibraryContent({
 
   // 目录网格 / 搜索网格共用的列表状态。
   const [searchResult, setSearchResult] = useState<LibrarySearchResult | null>(null);
-  const [actionError, setActionError] = useState<{
-    key: string | null;
-    message: string;
-  } | null>(null);
   const [active, setActive] = useState<Asset | null>(null);
-  const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
   const reqId = useRef(0);
 
   const type = urlType;
@@ -230,21 +215,6 @@ function AssetLibraryContent({
     () => panels.find((p) => p.key === panelKey) || null,
     [panels, panelKey],
   );
-
-  // 登录用户已收藏 id（卡片高亮）。未登录静默为空。
-  useEffect(() => {
-    let alive = true;
-    listCollectionIds()
-      .then((r) => {
-        if (alive) setSavedIds(new Set(r.ids));
-      })
-      .catch(() => {
-        /* 未登录 / 网络错误：保持空集合 */
-      });
-    return () => {
-      alive = false;
-    };
-  }, []);
 
   // 分区首页的每行预览**直接用索引里的采样**，不再为预览另打一轮请求
   // （索引本来就是靠「每个目录取一小把」建起来的，那一把就是这一行）。
@@ -266,10 +236,7 @@ function AssetLibraryContent({
   const page = currentSearch?.page ?? 1;
   const hasMore = currentSearch?.hasMore ?? false;
   const loading = searchKey !== null && (!currentSearch || currentSearch.loadingMore);
-  const error =
-    actionError?.key === searchKey
-      ? actionError.message
-      : currentSearch?.error ?? "";
+  const error = currentSearch?.error ?? "";
 
   // 目录网格 / 搜索网格取数（browse 态不取，用索引的采样代替）。
   useEffect(() => {
@@ -400,30 +367,6 @@ function AssetLibraryContent({
     return label ? tt(label) : key;
   };
 
-  function toggleSave(a: Asset) {
-    const isSaved = savedIds.has(a.id);
-    setActionError(null);
-    setSavedIds((prev) => {
-      const next = new Set(prev);
-      if (isSaved) next.delete(a.id);
-      else next.add(a.id);
-      return next;
-    });
-    const p = isSaved ? removeFromCollection(a.id) : saveToCollection(a);
-    p.catch((e) => {
-      setSavedIds((prev) => {
-        const next = new Set(prev);
-        if (isSaved) next.add(a.id);
-        else next.delete(a.id);
-        return next;
-      });
-      setActionError({
-        key: searchKey,
-        message: e instanceof Error ? e.message : tt("收藏失败，请先登录"),
-      });
-    });
-  }
-
   // 快捷 chips：本分区前若干个真实目录（点击直达目录网格）。
   const quickChips = useMemo(
     () => panels.filter((p) => p.key).slice(0, 12),
@@ -465,35 +408,6 @@ function AssetLibraryContent({
 
   return (
     <div className="mx-auto max-w-6xl px-5 py-6 sm:py-8">
-      {showContextShelf && (
-        <section className="mb-8 rounded-2xl border border-sky-100 bg-sky-50/40 p-4">
-          <div className="mb-3">
-            <h2 className="text-base font-semibold text-zinc-900">
-              {tt("已接入耐久素材")}
-            </h2>
-            <p className="mt-1 text-xs text-zinc-500">
-              {tt("这里只展示已有 artifact/revision 身份且通过权限校验的素材；下方旧库存保持只读，等待迁移，不会伪造耐久身份。")}
-            </p>
-          </div>
-          <ResultCanvas
-            tabs={
-              [
-                { id: "materials", label: tt("素材库"), content: null },
-              ] as CanvasTab[]
-            }
-            active={artifactView}
-            onChange={setArtifactView}
-            accent="#0ea5e9"
-            className="h-[32rem]"
-            siteId="asset"
-            showTemplate={false}
-          />
-        </section>
-      )}
-      {/* 成品货架落位点：与上面那块「已接入耐久素材」同属素材库首页，只在没有
-          ?type= / ?cat= 的落地态出现——进了某个类型页用户是来找原件的，不该被
-          别站的成品打断。 */}
-      {showContextShelf && <ArtifactShelf />}
       <header className="mb-4">
         <h1 className="text-2xl font-semibold text-zinc-900">
           {typeName}
@@ -631,13 +545,7 @@ function AssetLibraryContent({
                   </div>
                   <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-6">
                     {pv.items.map((a) => (
-                      <AssetCard
-                        key={a.id}
-                        asset={a}
-                        onOpen={setActive}
-                        saved={savedIds.has(a.id)}
-                        onToggleSave={toggleSave}
-                      />
+                      <AssetCard key={a.id} asset={a} onOpen={setActive} />
                     ))}
                   </div>
                 </section>
@@ -711,13 +619,7 @@ function AssetLibraryContent({
           ) : (
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
               {items.map((a) => (
-                <AssetCard
-                  key={a.id}
-                  asset={a}
-                  onOpen={setActive}
-                  saved={savedIds.has(a.id)}
-                  onToggleSave={toggleSave}
-                />
+                <AssetCard key={a.id} asset={a} onOpen={setActive} />
               ))}
             </div>
           )}
@@ -740,12 +642,7 @@ function AssetLibraryContent({
       )}
 
       {active && (
-        <AssetDetail
-          asset={active}
-          onClose={() => setActive(null)}
-          saved={savedIds.has(active.id)}
-          onToggleSave={toggleSave}
-        />
+        <AssetDetail asset={active} onClose={() => setActive(null)} />
       )}
     </div>
   );

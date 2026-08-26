@@ -15,7 +15,7 @@
 
 import assert from "node:assert/strict";
 import test from "node:test";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 
 import {
   LIVE_SEARCH_TYPES,
@@ -25,7 +25,6 @@ import {
   ZONE_LIVE_UNAVAILABLE_NOTE,
   ZONE_ORIGIN,
   defaultZone,
-  fallbackTypeFor,
   hasSeriesFilter,
   normSeriesFlag,
   parseZone,
@@ -41,8 +40,6 @@ const ASSETS = readFileSync(new URL("../lib/assets.ts", import.meta.url), "utf8"
 const CHROME = readFileSync(new URL("../components/TypePageChrome.tsx", import.meta.url), "utf8");
 const LIBRARY = readFileSync(new URL("../components/AssetLibrary.tsx", import.meta.url), "utf8");
 const HOME = readFileSync(new URL("../app/page.tsx", import.meta.url), "utf8");
-const OPEN_ROUTE = readFileSync(new URL("../app/open/page.tsx", import.meta.url), "utf8");
-const SERIES_ROUTE = readFileSync(new URL("../app/series/page.tsx", import.meta.url), "utf8");
 
 /**
  * 左栏真正渲染出来的名称。两个 ShellNavItem 数组（libraryTypes / codeTypes）
@@ -76,15 +73,12 @@ test("左栏没有任何按数据来源分的伪类型（专区 / 总览 / 精�
   }
 });
 
-test("类型轴共 13 格 = 库内 11 + 代码常量 2", () => {
+test("类型轴只有库内 11 格，不再挂网站模板 / 网页动效", () => {
   const libraryTypes = arrayLength(ASSETS, "TYPE_ORDER");
   assert.equal(libraryTypes, 11);
-
-  // 「网站」「网页动效」是写死在 SiteShell 里的两格（上游是代码常量不是 DB 表）。
-  const codeTypes = navLabels(SHELL).filter((l) => l === "网站" || l === "网页动效");
-  assert.deepEqual(codeTypes, ["网站", "网页动效"]);
-
-  assert.equal(libraryTypes + codeTypes.length, 13);
+  const labels = navLabels(SHELL);
+  assert.ok(!labels.includes("网站"), "网站模板入口还在左栏");
+  assert.ok(!labels.includes("网页动效"), "网页动效入口还在左栏");
 });
 
 test("平面设计模板十格已下架：左栏不再出 /design/<类型>", () => {
@@ -93,19 +87,14 @@ test("平面设计模板十格已下架：左栏不再出 /design/<类型>", () 
   assert.ok(!/href:\s*"\/design"/.test(SHELL), "旧的 /design 单一入口还在");
 });
 
-test("成品与工具单独成组，我的素材库那组不挂 heading", () => {
+test("左栏只剩素材类型 + 授权说明", () => {
   const labels = navLabels(SHELL);
-  assert.ok(labels.includes("我的素材库"), "我的素材库不在左栏");
   assert.ok(labels.includes("授权说明"), "授权说明不在左栏");
-  // 「成品」与「插件」都不是素材类型（成品是按新工作流做出来的整件作品，插件是能打开
-  // 素材的工具、可看不可下），所以它们自己一组并带 heading，不混进类型轴那 13 格里。
-  // 原判据钉的是「只有类型轴带 heading」，那是这一组存在之前的样子。
-  assert.ok(labels.includes("成品"), "成品不在左栏");
-  assert.ok(labels.includes("插件"), "插件不在左栏");
+  for (const gone of ["我的素材库", "成品", "插件", "网站", "网页动效"]) {
+    assert.ok(!labels.includes(gone), `「${gone}」还在左栏`);
+  }
   const headings = [...SHELL.matchAll(/heading:\s*tt\("([^"]+)"\)/g)].map((m) => m[1]);
-  assert.deepEqual(headings, ["素材类型", "成品与工具"]);
-  // 收藏与说明那一组仍然不挂 heading，靠分隔线隔开——三个 heading 就说明它也挂上了。
-  assert.equal(headings.length, 2, "我的素材库那组不该有 heading");
+  assert.deepEqual(headings, ["素材类型"]);
 });
 
 // —— 类型页右侧的三分区（W8）————————————————————————————————
@@ -259,20 +248,9 @@ test("落地不落在空区上，但空区的页签仍然在", () => {
   assert.ok(zoneIsUsable("vector", "owned"));
 });
 
-test("旧的 /open 与 /series 只剩重定向，不再是独立入口", () => {
-  for (const [name, src] of [
-    ["/open", OPEN_ROUTE],
-    ["/series", SERIES_ROUTE],
-  ]) {
-    assert.match(src, /redirect\(/, `${name} 还不是重定向`);
-    assert.ok(!/SiteShell/.test(src), `${name} 还在自己渲染一个整页`);
-  }
-  // 老链接带过来的 ?type= 要保住；落不住才退到该入口里样本最多的那一类。
-  assert.equal(fallbackTypeFor("open", "audio"), "audio");
-  assert.equal(fallbackTypeFor("open", "font"), "image");
-  assert.equal(fallbackTypeFor("open", undefined), "image");
-  assert.equal(fallbackTypeFor("series", "vector"), "vector");
-  assert.equal(fallbackTypeFor("series", "audio"), "ppt");
+test("旧的 /open 与 /series 独立入口已删", () => {
+  assert.equal(existsSync(new URL("../app/open/page.tsx", import.meta.url)), false);
+  assert.equal(existsSync(new URL("../app/series/page.tsx", import.meta.url)), false);
 });
 
 test("按来源取数：服务端筛选已开，但逐件硬过滤仍然必须在", () => {

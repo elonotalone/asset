@@ -6,11 +6,8 @@ import { useUI } from "@oceanleo/ui/i18n";
 import {
   Asset,
   AssetType,
-  listCollectionIds,
   OPEN_SOURCE_TYPES,
   OPEN_SOURCE_TYPE_LABELS,
-  removeFromCollection,
-  saveToCollection,
   searchOpenSource,
 } from "@/lib/assets";
 import { AssetCard } from "@/components/AssetCard";
@@ -51,9 +48,7 @@ export function OpenZone({ lockType }: { lockType?: AssetType } = {}) {
   const [query, setQuery] = useState("");
   const [input, setInput] = useState("");
   const [result, setResult] = useState<OpenSearchResult | null>(null);
-  const [actionError, setActionError] = useState<{ key: string; message: string } | null>(null);
   const [active, setActive] = useState<Asset | null>(null);
-  const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
   const reqId = useRef(0);
   const searchKey = `${type}\u0000${query}`;
   const currentResult = result?.key === searchKey ? result : null;
@@ -61,22 +56,7 @@ export function OpenZone({ lockType }: { lockType?: AssetType } = {}) {
   const page = currentResult?.page ?? 1;
   const hasMore = currentResult?.hasMore ?? false;
   const loading = !currentResult || currentResult.loadingMore;
-  const error =
-    actionError?.key === searchKey ? actionError.message : currentResult?.error ?? "";
-
-  useEffect(() => {
-    let alive = true;
-    listCollectionIds()
-      .then((r) => {
-        if (alive) setSavedIds(new Set(r.ids));
-      })
-      .catch(() => {
-        /* 未登录 / 网络错误：保持空集合 */
-      });
-    return () => {
-      alive = false;
-    };
-  }, []);
+  const error = currentResult?.error ?? "";
 
   // 切类型或提交搜索时重新拉取上游。开源专区默认不预搜——空 query 时后端返回该类型的
   // 热门/精选，让用户一进来也有内容看。
@@ -157,30 +137,6 @@ export function OpenZone({ lockType }: { lockType?: AssetType } = {}) {
             : prev,
         );
       });
-  }
-
-  function toggleSave(a: Asset) {
-    const isSaved = savedIds.has(a.id);
-    setActionError(null);
-    setSavedIds((prev) => {
-      const next = new Set(prev);
-      if (isSaved) next.delete(a.id);
-      else next.add(a.id);
-      return next;
-    });
-    const p = isSaved ? removeFromCollection(a.id) : saveToCollection(a);
-    p.catch((e) => {
-      setSavedIds((prev) => {
-        const next = new Set(prev);
-        if (isSaved) next.add(a.id);
-        else next.delete(a.id);
-        return next;
-      });
-      setActionError({
-        key: searchKey,
-        message: e instanceof Error ? e.message : tt("收藏失败，请先登录"),
-      });
-    });
   }
 
   function submitSearch(e?: React.FormEvent) {
@@ -279,13 +235,7 @@ export function OpenZone({ lockType }: { lockType?: AssetType } = {}) {
       ) : (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {items.map((a) => (
-            <AssetCard
-              key={a.id}
-              asset={a}
-              onOpen={setActive}
-              saved={savedIds.has(a.id)}
-              onToggleSave={toggleSave}
-            />
+            <AssetCard key={a.id} asset={a} onOpen={setActive} />
           ))}
         </div>
       )}
@@ -306,12 +256,7 @@ export function OpenZone({ lockType }: { lockType?: AssetType } = {}) {
       )}
 
       {active && (
-        <AssetDetail
-          asset={active}
-          onClose={() => setActive(null)}
-          saved={savedIds.has(active.id)}
-          onToggleSave={toggleSave}
-        />
+        <AssetDetail asset={active} onClose={() => setActive(null)} />
       )}
     </div>
   );

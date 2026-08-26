@@ -434,7 +434,7 @@ export function AssetDetail({
             </button>
           )}
           <span className="text-xs text-zinc-500">
-            {tt("预览、编辑、插入与替换统一由共享素材库按 artifact/revision、权限和目标证据判定；旧库存不会伪造耐久身份。")}
+            {tt("下载后请按授权说明使用。")}
           </span>
         </div>
       </div>

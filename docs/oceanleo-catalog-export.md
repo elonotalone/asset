@@ -76,12 +76,9 @@ closure.
 
 Its separate preview is a decodable 1200×675 PNG whose manifest entry records
 both the source digest from which it was rendered and its own byte digest. The
-asset consumer now passes only `siteId="asset"` to the shared `ResultCanvas`;
-it no longer injects local `lib/materials` rows or an obsolete site-only
-context. The shared More library therefore owns the sequence: card selection
-opens the common preview/detail workbench, and the explicit Edit action prepares
-the pinned source revision before entering the website editor. The website
-workbench itself defaults an absent `view` query to `preview`.
+catalog is served from `/api/oceanleo-catalog/v1`. This export is a static
+material catalog for editors. The asset site itself only lists downloadable
+library rows; it does not mount a product workbench.
 
 ## Publisher interface
 
