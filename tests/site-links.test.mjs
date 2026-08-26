@@ -90,7 +90,10 @@ function extractHrefs(text) {
     /location\.href\s*=\s*["'`](\/[^"'`]*)["'`]/g,
   ];
   for (const re of patterns) {
-    for (const m of text.matchAll(re)) out.push(m[1]);
+    for (const m of text.matchAll(re)) {
+      if (m[1].includes("${")) continue;
+      out.push(m[1]);
+    }
   }
   return out;
 }
@@ -105,6 +108,15 @@ for (const file of files) {
   for (const href of extractHrefs(text)) {
     hits.push({ rel, href, path: logicalPath(href) });
   }
+}
+
+const zoneSrc = readFileSync(join(ROOT, "lib/document-zones.ts"), "utf8");
+for (const m of zoneSrc.matchAll(/slug:\s*"([^"]+)"/g)) {
+  hits.push({
+    rel: "lib/document-zones.ts",
+    href: `/zones/${m[1]}`,
+    path: `/zones/${m[1]}`,
+  });
 }
 
 test("活代码不链到已删除的账户/设置/积分/成品路由", () => {
@@ -146,6 +158,17 @@ test("站内链接清单可打印（给 journal 用）", () => {
   const uniq = [...new Set(hits.map((h) => h.path))].sort();
   assert.ok(uniq.includes("/"), "首页不在清单里");
   assert.ok(uniq.includes("/licenses"), "授权说明不在清单里");
-  // 把清单写到 stdout，journal 从测试输出抄。
+  for (const slug of [
+    "contract",
+    "diligence",
+    "litigation",
+    "lawyer",
+    "resume",
+    "flowchart",
+    "poster",
+    "ecommerce",
+  ]) {
+    assert.ok(uniq.includes(`/zones/${slug}`), `分区 /zones/${slug} 不在清单里`);
+  }
   console.log("SITE_LINKS " + uniq.join(" "));
 });

@@ -1073,14 +1073,15 @@ export const CATEGORY_PANELS: CategoryPanel[] = [
   // 文档分区（素材洗白 v2）：合同区 / 简历区等。面板键 = platform_assets.category。
   // 流程架构图产出是 pptx，落 PPT 类型页；长图海报 / 电商详情产出是 png，落图片类型页。
   { key: "legal-contract-model", label: "合同示范文本", icon: "📜", type: "document", subs: [ALL_SUB] },
-  { key: "contract-agreement", label: "合同协议", icon: "📑", type: "document", subs: [ALL_SUB] },
-  { key: "legal-litigation-form", label: "诉讼文书", icon: "⚖", type: "document", subs: [ALL_SUB] },
-  { key: "legal-lawyer-template", label: "律师业务文书", icon: "📝", type: "document", subs: [ALL_SUB] },
-  { key: "resume-template", label: "简历", icon: "👤", type: "document", subs: [ALL_SUB] },
+  { key: "contract-agreement", label: "合同区", icon: "📑", type: "document", subs: [ALL_SUB] },
+  { key: "legal-diligence", label: "尽职调查区", icon: "🔎", type: "document", subs: [ALL_SUB] },
+  { key: "legal-litigation-form", label: "诉讼文书区", icon: "⚖", type: "document", subs: [ALL_SUB] },
+  { key: "legal-lawyer-template", label: "律师文书区", icon: "📝", type: "document", subs: [ALL_SUB] },
+  { key: "resume-template", label: "简历区", icon: "👤", type: "document", subs: [ALL_SUB] },
   { key: "document-template", label: "通用模板", icon: "📄", type: "document", subs: [ALL_SUB] },
-  { key: "flowchart-diagram", label: "流程架构图", icon: "🔀", type: "ppt", subs: [ALL_SUB] },
-  { key: "longform-poster", label: "长图海报", icon: "🖼", type: "image", subs: [ALL_SUB] },
-  { key: "ecommerce-detail", label: "电商详情", icon: "🛒", type: "image", subs: [ALL_SUB] },
+  { key: "flowchart-diagram", label: "流程架构图区", icon: "🔀", type: "ppt", subs: [ALL_SUB] },
+  { key: "longform-poster", label: "长图海报区", icon: "🖼", type: "image", subs: [ALL_SUB] },
+  { key: "ecommerce-detail", label: "电商详情区", icon: "🛒", type: "image", subs: [ALL_SUB] },
 ];
 
 export function panelByKey(key: string): CategoryPanel | undefined {
@@ -1197,14 +1198,15 @@ const CATEGORY_LABELS: Record<string, string> = {
   gauge: "仪表盘",
   // document 分区 + 洗白五类（flowchart 在 ppt 页，poster/ecommerce 在图片页）
   "legal-contract-model": "合同示范文本",
-  "contract-agreement": "合同协议",
-  "legal-litigation-form": "诉讼文书",
-  "legal-lawyer-template": "律师业务文书",
-  "resume-template": "简历",
+  "contract-agreement": "合同区",
+  "legal-diligence": "尽职调查区",
+  "legal-litigation-form": "诉讼文书区",
+  "legal-lawyer-template": "律师文书区",
+  "resume-template": "简历区",
   "document-template": "通用模板",
-  "flowchart-diagram": "流程架构图",
-  "longform-poster": "长图海报",
-  "ecommerce-detail": "电商详情",
+  "flowchart-diagram": "流程架构图区",
+  "longform-poster": "长图海报区",
+  "ecommerce-detail": "电商详情区",
   // ppt（风格族目录；slug = OSS deck 目录名 = platform_assets.category）
   etching: "蚀刻编辑风",
   editorial: "杂志编辑风",

@@ -1,10 +1,11 @@
 // 库内素材详情用的纯函数：文件名 / 格式 / 大小 / 像素尺寸 / 官方文书编号。
 // 不放进 lib/assets.ts：那个文件是 "use client"；官方编号测试走这一份纯函数。
 
-/** 官方发布编号。合同示范文本是 `GF-2026-2621` / `HF-2025-04` / `SDF-2025-0003`；最高法样式是 `SPC民-C01-003`。 */
+/** 官方发布编号。合同示范文本是 `GF-2026-2621` / `HF-2025-04` / `SDF-2025-0003`；最高法样式是 `SPC民-C01-003`；证监会公告是 `证监会公告〔2022〕36号`。 */
 const CONTRACT_DOC_NO = /^[A-Z]{2,5}-\d{4}-\d+$/;
 const SPC_DOC_NO = /^SPC[\u4e00-\u9fffA-Za-z0-9]*-.+$/;
 const WASH_DOC_NO = /^OL[A-Z]-\d{4}$/;
+const CSRC_ANNOUNCEMENT = /^证监会公告〔\d{4}〕\d+号/;
 
 export function officialDocNumbers(tags: readonly string[] | null | undefined): string[] {
   if (!tags) return [];
@@ -13,7 +14,12 @@ export function officialDocNumbers(tags: readonly string[] | null | undefined): 
   for (const raw of tags) {
     const tag = typeof raw === "string" ? raw.trim() : "";
     if (!tag || seen.has(tag)) continue;
-    if (CONTRACT_DOC_NO.test(tag) || SPC_DOC_NO.test(tag) || WASH_DOC_NO.test(tag)) {
+    if (
+      CONTRACT_DOC_NO.test(tag) ||
+      SPC_DOC_NO.test(tag) ||
+      WASH_DOC_NO.test(tag) ||
+      CSRC_ANNOUNCEMENT.test(tag)
+    ) {
       seen.add(tag);
       out.push(tag);
     }

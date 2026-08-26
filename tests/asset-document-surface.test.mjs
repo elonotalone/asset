@@ -23,6 +23,9 @@ test("官方发布编号从 tags 里挑出来，机器标签不算", () => {
     ["GF-2026-2621", "SPC民-C01-003"],
   );
   assert.deepEqual(officialDocNumbers(["HF-2025-04", "SDF-2025-0003"]), ["HF-2025-04", "SDF-2025-0003"]);
+  assert.deepEqual(officialDocNumbers(["证监会公告〔2022〕36号", "pages:11"]), [
+    "证监会公告〔2022〕36号",
+  ]);
   assert.deepEqual(officialDocNumbers(["OLW-0001", "律师业务文书"]), ["OLW-0001"]);
   assert.deepEqual(officialDocNumbers(["OLC-0001", "OLR-0002", "OLF-0003"]), [
     "OLC-0001",
@@ -75,6 +78,9 @@ test("详情页文档走 DocumentPreview，尺寸行只渲染 dimensionLabel 的
   assert.match(ASSETS, /key: "flowchart-diagram"/);
   assert.match(ASSETS, /key: "longform-poster"/);
   assert.match(ASSETS, /key: "ecommerce-detail"/);
-  assert.match(ASSETS, /"legal-contract-model": "合同示范文本"/);
-  assert.match(ASSETS, /"resume-template": "简历"/);
+  assert.match(ASSETS, /key: "legal-diligence"/);
+  assert.match(ASSETS, /key: "legal-litigation-form"/);
+  assert.match(ASSETS, /key: "legal-lawyer-template"/);
+  assert.match(ASSETS, /"legal-diligence": "尽职调查区"/);
+  assert.match(ASSETS, /"resume-template": "简历区"/);
 });

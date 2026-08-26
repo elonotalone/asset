@@ -5,6 +5,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { useUI } from "@oceanleo/ui/i18n";
 import { AssetSiteShell, type AssetNavGroup, type AssetNavItem } from "@/components/AssetSiteShell";
 import { AssetType, TYPE_LABELS, TYPE_ORDER } from "@/lib/assets";
+import { DOCUMENT_ZONES } from "@/lib/document-zones";
 
 function LeoAssetLogo() {
   return (
@@ -60,18 +61,34 @@ export function SiteShell({ children }: { children: ReactNode }) {
   );
 }
 
+function IconZone() {
+  return (
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M7 3h8l5 5v13H7zM15 3v5h5M9 12h6M9 16h4" />
+    </svg>
+  );
+}
+
 function SiteShellInner({ children }: { children: ReactNode }) {
   const tt = useUI();
   const pathname = usePathname() || "/";
   const search = useSearchParams();
 
   const onLibrary = pathname === "/";
+  const onZones = pathname.startsWith("/zones/");
   const activeType = (search.get("type") as AssetType) || "image";
 
-  // 左栏只有一条轴：**素材类型**（platform_assets 走网关实时查）。
+  // 左栏两条轴：文档分区（本轮八个中文分区页）+ 素材类型。
   // 成品 / 插件 / 我的素材库 / 网站模板 / 网页动效 已从本站拿掉：asset 只摆素材让人下载。
   // 账户 / 设置 / 积分入口也不再出现：共享 AppShell 没有关菜单的 prop，本站改走
   // AssetSiteShell（见该文件顶部注释）。
+
+  const documentZones: AssetNavItem[] = DOCUMENT_ZONES.map((z) => ({
+    label: tt(z.title),
+    icon: <IconZone />,
+    href: `/zones/${z.slug}`,
+    match: () => onZones && pathname === `/zones/${z.slug}`,
+  }));
 
   const libraryTypes: AssetNavItem[] = TYPE_ORDER.map((t) => ({
     label: tt(TYPE_LABELS[t]),
@@ -81,6 +98,10 @@ function SiteShellInner({ children }: { children: ReactNode }) {
   }));
 
   const navGroups: AssetNavGroup[] = [
+    {
+      heading: tt("文档分区"),
+      items: documentZones,
+    },
     {
       heading: tt("素材类型"),
       items: libraryTypes,

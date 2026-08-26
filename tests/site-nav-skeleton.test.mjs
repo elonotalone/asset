@@ -87,14 +87,14 @@ test("平面设计模板十格已下架：左栏不再出 /design/<类型>", () 
   assert.ok(!/href:\s*"\/design"/.test(SHELL), "旧的 /design 单一入口还在");
 });
 
-test("左栏只剩素材类型 + 授权说明", () => {
+test("左栏是文档分区 + 素材类型 + 授权说明", () => {
   const labels = navLabels(SHELL);
   assert.ok(labels.includes("授权说明"), "授权说明不在左栏");
   for (const gone of ["我的素材库", "成品", "插件", "网站", "网页动效"]) {
     assert.ok(!labels.includes(gone), `「${gone}」还在左栏`);
   }
   const headings = [...SHELL.matchAll(/heading:\s*tt\("([^"]+)"\)/g)].map((m) => m[1]);
-  assert.deepEqual(headings, ["素材类型"]);
+  assert.deepEqual(headings, ["文档分区", "素材类型"]);
 });
 
 // —— 类型页右侧的三分区（W8）————————————————————————————————
