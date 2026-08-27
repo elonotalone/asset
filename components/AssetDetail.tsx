@@ -18,6 +18,7 @@ import {
 import { LicenseFlags } from "@/components/LicenseBadge";
 import { ModelViewer } from "@/components/ModelViewer";
 import { AssetProvenance } from "@/components/AssetProvenance";
+import { ZoomablePreview } from "@/components/ZoomablePreview";
 
 const subscribeToHydration = () => () => {};
 
@@ -33,55 +34,29 @@ function isChartAsset(asset: Asset): boolean {
   return asset.type === "chart" && !!asset.full_url;
 }
 
-// 放大图：先用已加载好的缩略图秒显占位，原始大图后台加载完再淡入替换。
-// 解决「点开后白屏 / 转圈很久」——尤其是 preview_url 对部分源是几 MB 的大图。
-function ZoomImage({ thumb, full, alt }: { thumb: string; full: string; alt: string }) {
-  const tt = useUI();
-  const [loaded, setLoaded] = useState(false);
-  const src = full || thumb;
-  return (
-    <div className="relative flex max-h-[50vh] w-full items-center justify-center">
-      {thumb && !loaded && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={thumb}
-          alt=""
-          aria-hidden
-          className="max-h-[50vh] w-full scale-105 object-contain blur-md"
-        />
-      )}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={src}
-        alt={alt}
-        onLoad={() => setLoaded(true)}
-        className={`max-h-[50vh] w-full object-contain transition-opacity duration-300 ${
-          loaded ? "opacity-100" : "absolute inset-0 opacity-0"
-        }`}
-      />
-      {thumb && !loaded && (
-        <span className="absolute bottom-2 right-2 rounded bg-black/55 px-2 py-0.5 text-[11px] text-white">
-          {tt("高清加载中…")}
-        </span>
-      )}
-    </div>
-  );
-}
-
-// PPT 模板专用预览：整页大图 + 底部页缩略条翻阅（p01..pN 命名约定，见 lib/assets.ts）。
+// PPT 模板专用预览：整页大图可放大 + 底部页缩略条翻阅（p01..pN 命名约定，见 lib/assets.ts）。
 function PptPager({ asset }: { asset: Asset }) {
   const tt = useUI();
   const pages = pptPageUrls(asset);
   const [idx, setIdx] = useState(0);
   if (pages.length === 0) {
-    return <ZoomImage thumb={asset.thumb_url} full={asset.preview_url} alt={asset.title} />;
+    return (
+      <ZoomablePreview
+        thumb={asset.thumb_url}
+        full={asset.preview_url}
+        alt={asset.title}
+      />
+    );
   }
   return (
-    <div className="flex flex-col gap-2 p-3">
+    <div className="flex flex-col gap-2">
       <div className="relative w-full overflow-hidden rounded-lg border border-zinc-200 bg-white">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={pages[idx]} alt={tt("{title} 第 {n} 页", { title: asset.title, n: idx + 1 })} className="aspect-video w-full object-contain" />
-        <span className="absolute bottom-2 right-2 rounded bg-black/55 px-2 py-0.5 text-[11px] text-white">
+        <ZoomablePreview
+          thumb={pages[idx]}
+          full={pages[idx]}
+          alt={tt("{title} 第 {n} 页", { title: asset.title, n: idx + 1 })}
+        />
+        <span className="pointer-events-none absolute right-3 top-3 rounded bg-black/55 px-2 py-0.5 text-[11px] text-white">
           {idx + 1} / {pages.length}
         </span>
       </div>
@@ -156,8 +131,8 @@ function DocGlyph() {
 }
 
 /**
- * 文档没有 width/height/duration，不能走 ZoomImage（会把 .doc/.pdf 当图片加载），
- * 也不能把空的宽高直接拼进尺寸行。退化成文件名 + 格式 + 大小 + 编号。
+ * 文档不能把 full_url（.doc/.pdf/.docx）塞进 <img>。有 preview/thumb 图就走看图器，
+ * 没有图才退到文件名 + 格式 + 大小 + 编号。空的宽高不能拼进尺寸行。
  */
 function DocumentPreview({ asset }: { asset: Asset }) {
   const tt = useUI();
@@ -165,15 +140,17 @@ function DocumentPreview({ asset }: { asset: Asset }) {
   const format = assetFormat(asset);
   const size = formatByteSize(asset.file_size);
   const nos = officialDocNumbers(asset.tags);
+  const preview = asset.preview_url || asset.thumb_url;
   return (
-    <div className="flex flex-col gap-4 p-6">
-      {asset.thumb_url ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={asset.thumb_url} alt="" className="mx-auto max-h-40 object-contain" />
+    <div className="flex flex-col gap-4">
+      {preview ? (
+        <ZoomablePreview thumb={asset.thumb_url} full={preview} alt={asset.title} />
       ) : (
-        <DocGlyph />
+        <div className="px-6 pt-6">
+          <DocGlyph />
+        </div>
       )}
-      <dl className="grid gap-2 text-sm">
+      <dl className="grid gap-2 px-6 pb-6 text-sm">
         <div className="flex gap-3">
           <dt className="w-14 shrink-0 text-xs uppercase tracking-wide text-zinc-400">{tt("文件名")}</dt>
           <dd className="min-w-0 break-all text-zinc-800">{name}</dd>
@@ -273,7 +250,7 @@ export function AssetDetail({
       onClick={onClose}
     >
       <div
-        className="flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
+        className="flex max-h-[90vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-zinc-200 px-5 py-3">
@@ -296,17 +273,27 @@ export function AssetDetail({
             ) : is3d ? (
               <ModelViewer src={asset.full_url} poster={asset.thumb_url} alt={asset.title} />
             ) : isAudio ? (
-              <div className="flex flex-col gap-3 p-6">
-                {asset.thumb_url && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={asset.thumb_url} alt="" className="h-24 w-full rounded object-contain" />
-                )}
-                <audio controls src={asset.preview_url} className="w-full" />
+              <div className="flex flex-col">
+                {asset.thumb_url ? (
+                  <ZoomablePreview thumb={asset.thumb_url} full={asset.thumb_url} alt={asset.title} />
+                ) : null}
+                <div className="px-4 py-3">
+                  <audio controls src={asset.preview_url} className="w-full" />
+                </div>
               </div>
             ) : isVideo ? (
-              <video controls poster={asset.thumb_url} src={asset.preview_url} className="max-h-[50vh] w-full" />
+              <video
+                controls
+                poster={asset.thumb_url}
+                src={asset.preview_url}
+                className="max-h-[72vh] w-full bg-black"
+              />
             ) : (
-              <ZoomImage thumb={asset.thumb_url} full={asset.preview_url || asset.thumb_url} alt={asset.title} />
+              <ZoomablePreview
+                thumb={asset.thumb_url}
+                full={asset.preview_url || asset.thumb_url}
+                alt={asset.title}
+              />
             )}
           </div>
 
