@@ -65,98 +65,139 @@ export function AssetSiteShell({
     return pathname === item.href || pathname.startsWith(`${item.href}/`);
   }
 
-  const brandLink = (
-    <Link
-      href="/"
-      onClick={() => setMobileOpen(false)}
-      className="leo-tap-row flex items-center gap-2 text-neutral-900"
-    >
-      <span className="flex h-5 w-5 items-center justify-center" style={{ color: brand.accent }}>
-        {brand.logo}
-      </span>
-      <span className="text-[15px] font-semibold tracking-tight">{brand.name}</span>
-    </Link>
-  );
+  function renderSidebar(rail = false): ReactNode {
+    const brandLink = (
+      <Link
+        href="/"
+        onClick={() => setMobileOpen(false)}
+        className={
+          rail
+            ? "leo-tap-icon flex items-center justify-center rounded-md p-1.5 text-neutral-900"
+            : "leo-tap-row flex items-center gap-2 text-neutral-900"
+        }
+        title={rail ? brand.name : undefined}
+        aria-label={rail ? brand.name : undefined}
+      >
+        <span className="flex h-5 w-5 items-center justify-center" style={{ color: brand.accent }}>
+          {brand.logo}
+        </span>
+        {!rail && (
+          <span className="text-[15px] font-semibold tracking-tight">{brand.name}</span>
+        )}
+      </Link>
+    );
 
-  const navSection = (
-    <nav className="px-2 pb-1 pt-1" aria-label={tt("站点导航")}>
-      {navGroups.map((group, gi) => (
-        <div key={group.heading ?? gi} className="mb-1">
-          {group.heading && (
-            <div className="px-3 pb-1 pt-3 text-[12px] text-neutral-600">{group.heading}</div>
-          )}
-          <div className="space-y-0.5">
-            {group.items.map((item) => {
-              const active = itemIsActive(item);
-              const cls = `leo-tap-row group/nav flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-[13px] transition-all duration-150 ${
-                active
-                  ? "bg-neutral-200/80 font-medium text-neutral-900"
-                  : "text-neutral-800 hover:bg-neutral-200/50 hover:text-neutral-900"
-              }`;
-              return (
-                <Link
-                  key={item.href + item.label}
-                  href={item.href}
-                  onClick={() => setMobileOpen(false)}
-                  className={cls}
-                  style={active ? { boxShadow: `inset 3px 0 0 ${brand.accent}` } : undefined}
-                  aria-current={active ? "page" : undefined}
-                >
-                  <span className="transition-colors" style={{ color: active ? brand.accent : undefined }}>
-                    {item.icon}
-                  </span>
-                  <span className="flex-1 truncate">{item.label}</span>
-                </Link>
-              );
-            })}
+    const navSection = (
+      <nav
+        className={rail ? "px-1 pb-1 pt-1" : "px-2 pb-1 pt-1"}
+        aria-label={tt("站点导航")}
+        data-oceanleo-sidebar-rail-nav={rail ? "" : undefined}
+      >
+        {navGroups.map((group, gi) => (
+          <div key={group.heading ?? gi} className="mb-1">
+            {!rail && group.heading && (
+              <div className="px-3 pb-1 pt-3 text-[12px] text-neutral-600">{group.heading}</div>
+            )}
+            <div className="space-y-0.5">
+              {group.items.map((item) => {
+                const active = itemIsActive(item);
+                const cls = `leo-tap-row group/nav flex w-full items-center rounded-lg text-left text-[13px] transition-all duration-150 ${
+                  rail ? "justify-center px-1 py-2" : "gap-2.5 px-3 py-2"
+                } ${
+                  active
+                    ? "bg-neutral-200/80 font-medium text-neutral-900"
+                    : "text-neutral-800 hover:bg-neutral-200/50 hover:text-neutral-900"
+                }`;
+                return (
+                  <Link
+                    key={item.href + item.label}
+                    href={item.href}
+                    onClick={() => setMobileOpen(false)}
+                    className={cls}
+                    style={!rail && active ? { boxShadow: `inset 3px 0 0 ${brand.accent}` } : undefined}
+                    aria-current={active ? "page" : undefined}
+                    title={rail ? item.label : undefined}
+                    aria-label={rail ? item.label : undefined}
+                  >
+                    <span
+                      className="transition-colors"
+                      style={{ color: active ? brand.accent : undefined }}
+                      data-oceanleo-nav-icon
+                    >
+                      {item.icon}
+                    </span>
+                    {!rail && <span className="flex-1 truncate">{item.label}</span>}
+                  </Link>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      ))}
-    </nav>
-  );
+        ))}
+      </nav>
+    );
 
-  const sidebarBody = (
-    <>
+    return (
       <div
         className="min-h-0 flex-1 overflow-y-auto"
         data-oceanleo-scroll-nav
         data-oceanleo-sidebar-scroll="whole"
       >
-        <div className="flex items-center justify-between px-4 pb-2 pt-4">
-          {brandLink}
-          <button
-            type="button"
-            onClick={() => {
-              toggleCollapsed(true);
-              setMobileOpen(false);
-            }}
-            className="leo-tap-icon hidden rounded-md p-1.5 text-neutral-600 transition hover:bg-neutral-200/70 active:scale-95 md:inline-flex"
-            title={tt("收起侧栏")}
-          >
-            <PanelIcon />
-          </button>
-        </div>
+        {rail ? (
+          <div className="flex flex-col items-center gap-1 px-1 pb-2 pt-3">
+            {brandLink}
+            <button
+              type="button"
+              onClick={() => toggleCollapsed(false)}
+              className="leo-tap-icon rounded-md p-1.5 text-neutral-600 transition hover:bg-neutral-200/70 active:scale-95"
+              title={tt("展开侧栏")}
+            >
+              <PanelIcon />
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center justify-between px-4 pb-2 pt-4">
+            {brandLink}
+            <button
+              type="button"
+              onClick={() => {
+                toggleCollapsed(true);
+                setMobileOpen(false);
+              }}
+              className="leo-tap-icon hidden rounded-md p-1.5 text-neutral-600 transition hover:bg-neutral-200/70 active:scale-95 md:inline-flex"
+              title={tt("收起侧栏")}
+            >
+              <PanelIcon />
+            </button>
+          </div>
+        )}
         {navSection}
       </div>
-    </>
-  );
+    );
+  }
 
   return (
     <div className="leo-safe-shell flex min-h-screen bg-transparent" data-oceanleo-shell>
       <aside
         data-oceanleo-chrome
+        data-oceanleo-sidebar-mode={collapsed ? "rail" : "expanded"}
         className={`hidden h-screen flex-col overflow-hidden border-r border-neutral-200/70 bg-[#f7f7f7]/85 backdrop-blur-sm transition-[width] duration-200 ease-out md:fixed md:start-0 md:top-0 md:z-30 md:flex ${
-          collapsed ? "w-0 border-r-0" : "w-[256px]"
+          collapsed ? "w-14" : "w-[256px]"
         }`}
       >
-        <div className="leo-safe-sidebar flex h-full w-[256px] flex-col">{sidebarBody}</div>
+        <div
+          className={`leo-safe-sidebar flex h-full flex-col ${
+            collapsed ? "w-14" : "w-[256px]"
+          }`}
+        >
+          {renderSidebar(collapsed)}
+        </div>
       </aside>
       <div
         aria-hidden="true"
         data-oceanleo-chrome
         data-oceanleo-sidebar-spacer
         className={`hidden shrink-0 transition-[width] duration-200 ease-out md:block ${
-          collapsed ? "w-0" : "w-[256px]"
+          collapsed ? "w-14" : "w-[256px]"
         }`}
       />
 
@@ -164,23 +205,12 @@ export function AssetSiteShell({
         <div data-oceanleo-chrome className="fixed inset-0 z-[80] md:hidden">
           <div className="v-fade-in absolute inset-0 bg-black/40" onClick={() => setMobileOpen(false)} />
           <aside className="leo-safe-drawer absolute left-0 top-0 flex h-full flex-col bg-[#f7f7f7] shadow-xl">
-            {sidebarBody}
+            {renderSidebar(false)}
           </aside>
         </div>
       )}
 
       <div className="relative flex min-h-screen min-w-0 flex-1 flex-col">
-        {collapsed && (
-          <button
-            type="button"
-            data-oceanleo-chrome
-            onClick={() => toggleCollapsed(false)}
-            className="leo-chrome-topleft leo-tap-target fixed z-50 hidden items-center justify-center rounded-md border border-neutral-200 bg-white p-1.5 text-neutral-500 shadow-sm transition hover:bg-neutral-50 active:scale-95 md:flex"
-            title={tt("展开侧栏")}
-          >
-            <PanelIcon />
-          </button>
-        )}
         <button
           type="button"
           data-oceanleo-chrome
@@ -190,9 +220,7 @@ export function AssetSiteShell({
         >
           <PanelIcon />
         </button>
-        <main
-          className={`leo-safe-main leo-safe-main-top flex-1 pl-14 ${collapsed ? "md:pl-14" : "md:pl-0"}`}
-        >
+        <main className="leo-safe-main leo-safe-main-top flex-1 pl-14 md:pl-0">
           <div data-oceanleo-route-surface className="contents">
             {children}
           </div>
